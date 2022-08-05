@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="lb_focus_animator" type="id"/>
+    <item name="lb_shadow_impl" type="id"/>
+</resources>
