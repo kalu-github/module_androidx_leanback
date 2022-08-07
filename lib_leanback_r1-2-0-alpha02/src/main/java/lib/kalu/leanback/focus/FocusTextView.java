@@ -1,50 +1,66 @@
 package lib.kalu.leanback.focus;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Rect;
 import android.os.Build;
 import android.util.AttributeSet;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
+import android.widget.ImageView;
+import android.widget.TextView;
 
+import androidx.annotation.DrawableRes;
+import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.core.view.ViewCompat;
 import androidx.leanback.R;
 
-public class FocusLinearLayout extends LinearLayout {
+@SuppressLint("AppCompatCustomView")
+public class FocusTextView extends TextView {
+
+    @DrawableRes
+    int mBgNormal = -1;
+    @DrawableRes
+    int mBgFocus = -1;
 
     public float mScale = 1.05f;
     public int mDuration = 100;
 
-    public FocusLinearLayout(Context context) {
+    public FocusTextView(Context context) {
         super(context);
     }
 
-    public FocusLinearLayout(Context context, AttributeSet attrs) {
+    public FocusTextView(Context context, AttributeSet attrs) {
         super(context, attrs);
         init(context, attrs);
     }
 
-    public FocusLinearLayout(Context context, AttributeSet attrs, int defStyleAttr) {
+    public FocusTextView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init(context, attrs);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-    public FocusLinearLayout(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+    public FocusTextView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
         init(context, attrs);
     }
 
+    @Override
+    protected void onFinishInflate() {
+        super.onFinishInflate();
+        refreshBackground(false);
+    }
 
     public void init(@NonNull Context context, @NonNull AttributeSet attrs) {
 
         TypedArray typedArray = null;
         try {
             typedArray = context.obtainStyledAttributes(attrs, R.styleable.FocusLayout);
+            mBgNormal = typedArray.getResourceId(R.styleable.FocusLayout_fl_bg_normal, -1);
+            mBgFocus = typedArray.getResourceId(R.styleable.FocusLayout_fl_bg_focus, -1);
             mScale = typedArray.getFloat(R.styleable.FocusLayout_fl_scale, 1.05f);
             mDuration = typedArray.getInteger(R.styleable.FocusLayout_fl_duration, 100);
         } catch (Exception e) {
@@ -59,6 +75,21 @@ public class FocusLinearLayout extends LinearLayout {
     @Override
     protected void onFocusChanged(boolean gainFocus, int direction, @Nullable Rect previouslyFocusedRect) {
         super.onFocusChanged(gainFocus, direction, previouslyFocusedRect);
+        // bg
+        refreshBackground(gainFocus);
+        // anim
         ViewCompat.animate(this).scaleX(gainFocus ? mScale : 1f).scaleY(gainFocus ? mScale : 1f).setDuration(mDuration).start();
+    }
+
+    private final void refreshBackground(boolean gainFocus) {
+        @DrawableRes
+        int res = gainFocus ? mBgFocus : mBgNormal;
+        if (res == -1)
+            return;
+        try {
+            setBackgroundResource(res);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

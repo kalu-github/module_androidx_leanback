@@ -82,7 +82,7 @@ public class ItemBridgeAdapter extends RecyclerView.Adapter implements FacetProv
         FocusHighlightHandler mFocusHighlight;
 
         ChainingFocusChangeListener(View.OnFocusChangeListener chainedListener,
-                boolean hasWrapper, FocusHighlightHandler focusHighlight) {
+                                    boolean hasWrapper, FocusHighlightHandler focusHighlight) {
             mChainedListener = chainedListener;
             mHasWrapper = hasWrapper;
             mFocusHighlight = focusHighlight;
@@ -211,6 +211,10 @@ public class ItemBridgeAdapter extends RecyclerView.Adapter implements FacetProv
     }
 
     public ItemBridgeAdapter() {
+    }
+
+    public ObjectAdapter getAdapter() {
+        return this.mAdapter;
     }
 
     /**
@@ -415,8 +419,8 @@ public class ItemBridgeAdapter extends RecyclerView.Adapter implements FacetProv
 
     @Override
     @SuppressWarnings("unchecked")
-    public final  void onBindViewHolder(RecyclerView.ViewHolder holder, int position,
-            List payloads) {
+    public final void onBindViewHolder(RecyclerView.ViewHolder holder, int position,
+                                       List payloads) {
         if (DEBUG) Log.v(TAG, "onBindViewHolder position " + position);
         ViewHolder viewHolder = (ViewHolder) holder;
         viewHolder.mItem = mAdapter.get(position);

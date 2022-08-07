@@ -92,12 +92,22 @@ public class RoundImageView extends ImageView {
 
     @Override
     public ScaleType getScaleType() {
-        return ScaleType.CENTER_CROP;
+        return ScaleType.FIT_XY;
     }
 
     @Override
     public void setScaleType(ScaleType scaleType) {
-        super.setScaleType(ScaleType.CENTER_CROP);
+        super.setScaleType(ScaleType.FIT_XY);
+    }
+
+    @Override
+    public void setImageResource(int resId) {
+        try {
+            Drawable drawable = getResources().getDrawable(resId);
+            setImageDrawable(drawable);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -111,6 +121,7 @@ public class RoundImageView extends ImageView {
                 super.setImageDrawable(drawable);
             }
         } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 //

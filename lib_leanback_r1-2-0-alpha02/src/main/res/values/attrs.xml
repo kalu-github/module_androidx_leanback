@@ -337,9 +337,10 @@
         <attr name="riv_duration" format="reference|integer" />
     </declare-styleable>
     <declare-styleable name="FocusLayout">
-        <attr name="fl_focus" format="reference|boolean" />
         <attr name="fl_scale" format="reference|float" />
         <attr name="fl_duration" format="reference|integer" />
+        <attr name="fl_bg_normal" format="reference" />
+        <attr name="fl_bg_focus" format="reference" />
     </declare-styleable>
     <declare-styleable name="TextViewPlus">
         <attr name="tvp_drawable_left_width" format="dimension|reference" />

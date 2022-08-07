@@ -16,7 +16,6 @@ import androidx.leanback.R;
 
 public class FocusFrameLayout extends FrameLayout {
 
-    public boolean mFocus = false;
     public float mScale = 1.05f;
     public int mDuration = 100;
 
@@ -46,7 +45,6 @@ public class FocusFrameLayout extends FrameLayout {
         TypedArray typedArray = null;
         try {
             typedArray = context.obtainStyledAttributes(attrs, R.styleable.FocusLayout);
-            mFocus = typedArray.getBoolean(R.styleable.FocusLayout_fl_focus, false);
             mScale = typedArray.getFloat(R.styleable.FocusLayout_fl_scale, 1.05f);
             mDuration = typedArray.getInteger(R.styleable.FocusLayout_fl_duration, 100);
         } catch (Exception e) {
@@ -61,8 +59,6 @@ public class FocusFrameLayout extends FrameLayout {
     @Override
     protected void onFocusChanged(boolean gainFocus, int direction, @Nullable Rect previouslyFocusedRect) {
         super.onFocusChanged(gainFocus, direction, previouslyFocusedRect);
-        if (!mFocus)
-            return;
         ViewCompat.animate(this).scaleX(gainFocus ? mScale : 1f).scaleY(gainFocus ? mScale : 1f).setDuration(mDuration).start();
     }
 }
