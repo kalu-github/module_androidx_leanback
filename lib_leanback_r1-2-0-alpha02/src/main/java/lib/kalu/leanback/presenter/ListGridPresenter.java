@@ -189,4 +189,30 @@ public abstract class ListGridPresenter<T> extends Presenter {
     protected abstract int initSpan();
 
     protected abstract int initMax();
+
+    @SuppressLint("AppCompatCustomView")
+    public static final class TextViewListGridPresenter extends TextView {
+        public TextViewListGridPresenter(Context context) {
+            super(context);
+        }
+
+        public TextViewListGridPresenter(Context context, @Nullable AttributeSet attrs) {
+            super(context, attrs);
+        }
+
+        public TextViewListGridPresenter(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+            super(context, attrs, defStyleAttr);
+        }
+
+        @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+        public TextViewListGridPresenter(Context context, @Nullable AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+            super(context, attrs, defStyleAttr, defStyleRes);
+        }
+
+        @Override
+        public void setText(CharSequence text, BufferType type) {
+            super.setText(text, type);
+            setVisibility(null != text && text.length() > 0 ? View.VISIBLE : View.GONE);
+        }
+    }
 }

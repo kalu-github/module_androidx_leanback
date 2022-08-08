@@ -11,8 +11,9 @@
     android:longClickable="false"
     android:orientation="vertical">
 
-    <lib.kalu.leanback.text.TextViewListGridPresenter
+    <view
         android:id="@+id/module_leanback_lgp_header"
+        class="lib.kalu.leanback.presenter.ListGridPresenter$TextViewListGridPresenter"
         android:layout_width="wrap_content"
         android:layout_height="50dp"
         android:clickable="false"
@@ -20,7 +21,6 @@
         android:focusableInTouchMode="false"
         android:gravity="center_vertical|left"
         android:longClickable="false"
-        android:text="-"
         android:textColor="@android:color/white"
         android:textSize="18sp"
         android:visibility="gone" />
