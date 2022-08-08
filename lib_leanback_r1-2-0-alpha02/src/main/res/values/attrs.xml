@@ -319,16 +319,18 @@
         <attr name="pickerItemLayout" format="reference" />
         <attr name="pickerItemTextViewId" format="reference" />
     </declare-styleable>
-    <declare-styleable name="RoundApi">
-        <attr name="ra_clip_background" format="reference|boolean" />
-        <attr name="ra_clip_circle" format="reference|boolean" />
-        <attr name="ra_focus" format="reference|boolean" />
-        <attr name="ra_scale" format="reference|float" />
-        <attr name="ra_duration" format="reference|integer" />
-        <attr name="ra_corner_top_left" format="reference|dimension" />
-        <attr name="ra_corner_top_right" format="reference|dimension" />
-        <attr name="ra_corner_bottom_left" format="reference|dimension" />
-        <attr name="ra_corner_bottom_right" format="reference|dimension" />
+    <declare-styleable name="RoundLayout">
+        <attr name="rl_rate_width" format="reference|float" />
+        <attr name="rl_rate_height" format="reference|float" />
+        <attr name="rl_clip_background" format="reference|boolean" />
+        <attr name="rl_clip_circle" format="reference|boolean" />
+        <attr name="rl_focus" format="reference|boolean" />
+        <attr name="rl_scale" format="reference|float" />
+        <attr name="rl_duration" format="reference|integer" />
+        <attr name="rl_corner_top_left" format="reference|dimension" />
+        <attr name="rl_corner_top_right" format="reference|dimension" />
+        <attr name="rl_corner_bottom_left" format="reference|dimension" />
+        <attr name="rl_corner_bottom_right" format="reference|dimension" />
     </declare-styleable>
     <declare-styleable name="RoundImageView">
         <attr name="riv_corner" format="reference|dimension" />
@@ -341,6 +343,8 @@
         <attr name="fl_duration" format="reference|integer" />
         <attr name="fl_bg_normal" format="reference" />
         <attr name="fl_bg_focus" format="reference" />
+        <attr name="fl_width" format="reference|float" />
+        <attr name="fl_height" format="reference|float" />
     </declare-styleable>
     <declare-styleable name="TextViewPlus">
         <attr name="tvp_drawable_left_width" format="dimension|reference" />

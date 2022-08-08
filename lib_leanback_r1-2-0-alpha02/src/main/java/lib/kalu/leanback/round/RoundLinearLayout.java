@@ -40,7 +40,31 @@ public class RoundLinearLayout extends LinearLayout {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        float rateW = mRCHelper.getRateW();
+        float rateH = mRCHelper.getRateH();
+        if (rateH <= 0 && rateW <= 0) {
+            super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        } else {
+            try {
+                int width;
+                int height;
+                int spec;
+                if (rateW > 0) {
+                    height = MeasureSpec.getSize(heightMeasureSpec);
+                    width = (int) (height * rateW);
+                    spec = MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY);
+                    super.onMeasure(spec, heightMeasureSpec);
+                } else {
+                    width = MeasureSpec.getSize(widthMeasureSpec);
+                    height = (int) (width * rateH);
+                    spec = MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY);
+                    super.onMeasure(widthMeasureSpec, spec);
+                }
+                setMeasuredDimension(width, height);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     @Override

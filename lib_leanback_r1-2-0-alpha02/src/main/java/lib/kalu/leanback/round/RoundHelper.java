@@ -33,20 +33,23 @@ public final class RoundHelper {
     public RectF mLayer;                   // 画布图层大小
     private Paint mPaint; // 画笔
 
+    private float mRateWidth = 0;
+    private float mRateHeight = 0;
+
     public void init(@NonNull Context context, @NonNull AttributeSet attrs) {
 
         TypedArray typedArray = null;
         try {
-            typedArray = context.obtainStyledAttributes(attrs, R.styleable.RoundApi);
-            mClipCircle = typedArray.getBoolean(R.styleable.RoundApi_ra_clip_circle, false);
-            mClipBackground = typedArray.getBoolean(R.styleable.RoundApi_ra_clip_background, false);
-            mFocus = typedArray.getBoolean(R.styleable.RoundApi_ra_focus, false);
-            mScale = typedArray.getFloat(R.styleable.RoundApi_ra_scale, 1.05f);
-            mDuration = typedArray.getInt(R.styleable.RoundApi_ra_duration, 100);
-            int topLeft = typedArray.getDimensionPixelOffset(R.styleable.RoundApi_ra_corner_top_left, 0);
-            int topRight = typedArray.getDimensionPixelOffset(R.styleable.RoundApi_ra_corner_top_right, 0);
-            int bottomLeft = typedArray.getDimensionPixelSize(R.styleable.RoundApi_ra_corner_bottom_left, 0);
-            int bottomRight = typedArray.getDimensionPixelSize(R.styleable.RoundApi_ra_corner_bottom_right, 0);
+            typedArray = context.obtainStyledAttributes(attrs, R.styleable.RoundLayout);
+            mClipCircle = typedArray.getBoolean(R.styleable.RoundLayout_rl_clip_circle, false);
+            mClipBackground = typedArray.getBoolean(R.styleable.RoundLayout_rl_clip_background, false);
+            mFocus = typedArray.getBoolean(R.styleable.RoundLayout_rl_focus, false);
+            mScale = typedArray.getFloat(R.styleable.RoundLayout_rl_scale, 1.05f);
+            mDuration = typedArray.getInt(R.styleable.RoundLayout_rl_duration, 100);
+            int topLeft = typedArray.getDimensionPixelOffset(R.styleable.RoundLayout_rl_corner_top_left, 0);
+            int topRight = typedArray.getDimensionPixelOffset(R.styleable.RoundLayout_rl_corner_top_right, 0);
+            int bottomLeft = typedArray.getDimensionPixelSize(R.styleable.RoundLayout_rl_corner_bottom_left, 0);
+            int bottomRight = typedArray.getDimensionPixelSize(R.styleable.RoundLayout_rl_corner_bottom_right, 0);
             mRadii[0] = topLeft;
             mRadii[1] = topLeft;
             mRadii[2] = topRight;
@@ -55,6 +58,10 @@ public final class RoundHelper {
             mRadii[5] = bottomRight;
             mRadii[6] = bottomLeft;
             mRadii[7] = bottomLeft;
+            float w = typedArray.getFloat(R.styleable.RoundLayout_rl_rate_width, 0);
+            float h = typedArray.getFloat(R.styleable.RoundLayout_rl_rate_height, 0);
+            mRateHeight = h;
+            mRateWidth = w > 0 && h > 0 ? 0 : w;
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -139,5 +146,13 @@ public final class RoundHelper {
         if (!mFocus)
             return;
         ViewCompat.animate(view).scaleX(gainFocus ? mScale : 1f).scaleY(gainFocus ? mScale : 1f).setDuration(mDuration).start();
+    }
+
+    protected float getRateW() {
+        return mRateWidth;
+    }
+
+    protected float getRateH() {
+        return mRateHeight;
     }
 }
