@@ -356,4 +356,22 @@
         <attr name="tvp_drawable_bottom_width" format="dimension|reference" />
         <attr name="tvp_drawable_bottom_height" format="dimension|reference" />
     </declare-styleable>
+
+    <declare-styleable name="ClassLayout">
+        <attr name="cl_dispatch_left" format="boolean" />
+        <attr name="cl_dispatch_right" format="boolean" />
+        <attr name="cl_dispatch_top" format="boolean" />
+        <attr name="cl_dispatch_bottom" format="boolean" />
+        <attr name="cl_item_height" format="reference|dimension" />
+        <attr name="cl_item_text_size" format="reference|dimension" />
+        <attr name="cl_item_text_color" format="reference|color" />
+        <attr name="cl_item_text_color_highlight" format="reference|color" />
+        <attr name="cl_item_text_color_checked" format="reference|color" />
+        <attr name="cl_item_background_color" format="reference|color" />
+        <attr name="cl_item_background_color_highlight" format="reference|color" />
+        <attr name="cl_item_background_color_checked" format="reference|color" />
+        <attr name="cl_item_background_resource" format="reference" />
+        <attr name="cl_item_background_resource_highlight" format="reference" />
+        <attr name="cl_item_background_resource_checked" format="reference" />
+    </declare-styleable>
 </resources>
