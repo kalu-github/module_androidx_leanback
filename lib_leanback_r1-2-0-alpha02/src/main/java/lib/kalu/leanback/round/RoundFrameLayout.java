@@ -76,6 +76,7 @@ public class RoundFrameLayout extends FrameLayout {
     @Override
     protected void onFocusChanged(boolean gainFocus, int direction, @Nullable Rect previouslyFocusedRect) {
         super.onFocusChanged(gainFocus, direction, previouslyFocusedRect);
+        mRCHelper.onFocusCall(this, gainFocus);
         mRCHelper.onFocusChanged(this, gainFocus);
     }
 

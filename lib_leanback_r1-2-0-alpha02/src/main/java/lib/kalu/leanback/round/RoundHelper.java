@@ -15,11 +15,16 @@ import android.graphics.Region;
 import android.os.Build;
 import android.util.AttributeSet;
 import android.view.View;
+import android.view.ViewGroup;
 
+import androidx.annotation.ColorInt;
+import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.view.ViewCompat;
 import androidx.leanback.R;
+
+import lib.kalu.leanback.focus.FocusTextView;
 
 public final class RoundHelper {
     public float[] mRadii = new float[8];   // top-left, top-right, bottom-right, bottom-left
@@ -146,6 +151,18 @@ public final class RoundHelper {
         if (!mFocus)
             return;
         ViewCompat.animate(view).scaleX(gainFocus ? mScale : 1f).scaleY(gainFocus ? mScale : 1f).setDuration(mDuration).start();
+    }
+
+    protected void onFocusCall(@NonNull ViewGroup viewGroup, boolean gainFocus) {
+        int count = viewGroup.getChildCount();
+        for (int i = 0; i < count; i++) {
+            View view = viewGroup.getChildAt(i);
+            if (null == view)
+                continue;
+            if (view instanceof FocusTextView) {
+                ((FocusTextView) view).onFocusCall(gainFocus);
+            }
+        }
     }
 
     protected float getRateW() {

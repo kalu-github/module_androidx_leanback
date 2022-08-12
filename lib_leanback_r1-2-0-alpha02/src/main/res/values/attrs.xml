@@ -331,6 +331,9 @@
         <attr name="rl_corner_top_right" format="reference|dimension" />
         <attr name="rl_corner_bottom_left" format="reference|dimension" />
         <attr name="rl_corner_bottom_right" format="reference|dimension" />
+        <attr name="rl_child_text_id" format="reference" />
+        <attr name="rl_child_text_color_normal" format="reference|color" />
+        <attr name="rl_child_text_color_focus" format="reference|color" />
     </declare-styleable>
     <declare-styleable name="RoundImageView">
         <attr name="riv_corner" format="reference|dimension" />
@@ -345,6 +348,8 @@
         <attr name="fl_bg_focus" format="reference" />
         <attr name="fl_width" format="reference|float" />
         <attr name="fl_height" format="reference|float" />
+        <attr name="fl_color_normal" format="reference|color" />
+        <attr name="fl_color_focus" format="reference|color" />
     </declare-styleable>
     <declare-styleable name="TextViewPlus">
         <attr name="tvp_drawable_left_width" format="dimension|reference" />

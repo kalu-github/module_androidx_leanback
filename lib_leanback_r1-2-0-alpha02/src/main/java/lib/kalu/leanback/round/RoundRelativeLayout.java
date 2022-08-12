@@ -6,6 +6,7 @@ import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.util.AttributeSet;
+import android.view.View;
 import android.widget.RelativeLayout;
 
 import androidx.annotation.Nullable;
@@ -78,6 +79,8 @@ public class RoundRelativeLayout extends RelativeLayout {
     @Override
     protected void onFocusChanged(boolean gainFocus, int direction, @Nullable Rect previouslyFocusedRect) {
         super.onFocusChanged(gainFocus, direction, previouslyFocusedRect);
+
+        mRCHelper.onFocusCall(this, gainFocus);
         mRCHelper.onFocusChanged(this, gainFocus);
     }
 
