@@ -9,9 +9,12 @@ import android.os.Build;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.FocusFinder;
 import android.view.Gravity;
 import android.view.KeyEvent;
+import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -89,7 +92,7 @@ public final class ClassLayout extends ScrollView {
         if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_UP) {
             int count = getCount();
             int index = getCheckedIndex();
-            Log.e("ClassLayout", "up => count = " + count + ", index = " + index);
+//            Log.e("ClassLayout", "up => count = " + count + ", index = " + index);
             if (count > 0 && index == 0) {
                 if (mDispatchTop) {
                     return true;
@@ -112,7 +115,7 @@ public final class ClassLayout extends ScrollView {
         else if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_DOWN) {
             int count = getCount();
             int index = getCheckedIndex();
-            Log.e("ClassLayout", "down => count = " + count + ", index = " + index);
+//            Log.e("ClassLayout", "down => count = " + count + ", index = " + index);
             if (count > 0 && index + 1 == count) {
                 if (mDispatchBottom) {
                     return true;
@@ -140,15 +143,9 @@ public final class ClassLayout extends ScrollView {
         }
         // left
         else if (event.getAction() == KeyEvent.ACTION_UP && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_LEFT) {
-            int count = getCount();
             int index = getCheckedIndex();
-            Log.e("ClassLayout", "left => count = " + count + ", index = " + index);
             updateBackground(index, true, false);
             updateText(true);
-            return false;
-        }
-        // left2
-        else if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_LEFT) {
             return false;
         }
         // pass
