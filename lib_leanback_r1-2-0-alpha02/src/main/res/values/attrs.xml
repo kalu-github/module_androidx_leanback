@@ -367,7 +367,9 @@
         <attr name="cl_dispatch_right" format="boolean" />
         <attr name="cl_dispatch_top" format="boolean" />
         <attr name="cl_dispatch_bottom" format="boolean" />
+        <attr name="cl_item_margin" format="reference|dimension" />
         <attr name="cl_item_height" format="reference|dimension" />
+        <attr name="cl_item_width" format="reference|dimension" />
         <attr name="cl_item_text_size" format="reference|dimension" />
         <attr name="cl_item_text_color" format="reference|color" />
         <attr name="cl_item_text_color_highlight" format="reference|color" />

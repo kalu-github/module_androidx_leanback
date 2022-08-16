@@ -11,6 +11,7 @@ import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.KeyEvent;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
@@ -28,9 +29,9 @@ import androidx.leanback.R;
 import java.util.List;
 
 /**
- * 垂直
+ * 水平
  */
-public final class ClassLayout extends ScrollView {
+public final class HorizontalClassLayout extends ScrollView {
 
     boolean mDispatchTop = false;
     boolean mDispatchBottom = false;
@@ -39,7 +40,7 @@ public final class ClassLayout extends ScrollView {
     @Dimension
     int mItemMargin;
     @Dimension
-    int mItemHeight;
+    int mItemWidth;
     @Dimension
     int mTextSize;
     @ColorInt
@@ -61,37 +62,38 @@ public final class ClassLayout extends ScrollView {
     @ColorInt
     int mColorHighlight;
 
-    public ClassLayout(Context context) {
+    public HorizontalClassLayout(Context context) {
         super(context);
         init(context, null);
     }
 
-    public ClassLayout(Context context, AttributeSet attrs) {
+    public HorizontalClassLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
         init(context, attrs);
     }
 
-    public ClassLayout(Context context, AttributeSet attrs, int defStyleAttr) {
+    public HorizontalClassLayout(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init(context, attrs);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-    public ClassLayout(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+    public HorizontalClassLayout(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
         init(context, attrs);
     }
 
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
-        Log.e("ClassLayout", "dispatchKeyEvent => action = " + event.getAction() + ", code = " + event.getKeyCode());
-        // up
-        if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_UP) {
+        Log.e("HorizontalClassLayout", "dispatchKeyEvent => action = " + event.getAction() + ", code = " + event.getKeyCode());
+
+        // move => left
+        if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_LEFT) {
             int count = getCount();
             int index = getCheckedIndex();
-            Log.e("ClassLayout", "up => count = " + count + ", index = " + index);
+//            Log.e("HorizontalClassLayout", "left => count = " + count + ", index = " + index);
             if (count > 0 && index == 0) {
-                if (mDispatchTop) {
+                if (mDispatchLeft) {
                     return true;
                 } else {
                     updateBackground(index, false, true);
@@ -108,13 +110,13 @@ public final class ClassLayout extends ScrollView {
                 return false;
             }
         }
-        // down
-        else if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_DOWN) {
+        // move => right
+        else if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_RIGHT) {
             int count = getCount();
             int index = getCheckedIndex();
-            Log.e("ClassLayout", "down => count = " + count + ", index = " + index);
+//            Log.e("HorizontalClassLayout", "down => count = " + count + ", index = " + index);
             if (count > 0 && index + 1 == count) {
-                if (mDispatchBottom) {
+                if (mDispatchRight) {
                     return true;
                 } else {
                     updateBackground(index, false, true);
@@ -131,25 +133,55 @@ public final class ClassLayout extends ScrollView {
                 return false;
             }
         }
-        // right
-        else if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_RIGHT) {
-            int index = getCheckedIndex();
-            updateBackground(index, false, true);
-            updateText(false);
-            return false;
+        // leave => up
+        else if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_UP) {
+            if (mDispatchTop) {
+                return true;
+            } else {
+                int index = getCheckedIndex();
+                updateBackground(index, false, true);
+                updateText(false);
+                return false;
+            }
         }
-        // left
-        else if (event.getAction() == KeyEvent.ACTION_UP && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_LEFT) {
-            int count = getCount();
+        // leave => down
+        else if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_DOWN) {
+            if (mDispatchBottom) {
+                return true;
+            } else {
+                int index = getCheckedIndex();
+                updateBackground(index, false, true);
+                updateText(false);
+                return false;
+            }
+        }
+        // into => up
+        else if (event.getAction() == KeyEvent.ACTION_UP && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_UP) {
             int index = getCheckedIndex();
-            Log.e("ClassLayout", "left => count = " + count + ", index = " + index);
             updateBackground(index, true, false);
             updateText(true);
-            return false;
+            return true;
         }
-        // left2
-        else if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_LEFT) {
-            return false;
+        // into => down
+        else if (event.getAction() == KeyEvent.ACTION_UP && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_DOWN) {
+            int index = getCheckedIndex();
+            updateBackground(index, true, false);
+            updateText(true);
+            return true;
+        }
+        // into => right
+        else if (event.getAction() == KeyEvent.ACTION_UP && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_RIGHT) {
+            int index = getCheckedIndex();
+            updateBackground(index, true, false);
+            updateText(true);
+            return true;
+        }
+        // into => left
+        else if (event.getAction() == KeyEvent.ACTION_UP && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_LEFT) {
+            int index = getCheckedIndex();
+            updateBackground(index, true, false);
+            updateText(true);
+            return true;
         }
         // pass
         else {
@@ -173,7 +205,7 @@ public final class ClassLayout extends ScrollView {
             mColorHighlight = typedArray.getColor(R.styleable.ClassLayout_cl_item_text_color_highlight, Color.BLACK);
             mTextSize = typedArray.getDimensionPixelOffset(R.styleable.ClassLayout_cl_item_text_size, 20);
             mItemMargin = typedArray.getDimensionPixelOffset(R.styleable.ClassLayout_cl_item_margin, 0);
-            mItemHeight = typedArray.getDimensionPixelOffset(R.styleable.ClassLayout_cl_item_height, 100);
+            mItemWidth = typedArray.getDimensionPixelOffset(R.styleable.ClassLayout_cl_item_width, 100);
             mDispatchLeft = typedArray.getBoolean(R.styleable.ClassLayout_cl_dispatch_left, false);
             mDispatchRight = typedArray.getBoolean(R.styleable.ClassLayout_cl_dispatch_right, false);
             mDispatchTop = typedArray.getBoolean(R.styleable.ClassLayout_cl_dispatch_top, false);
@@ -199,7 +231,7 @@ public final class ClassLayout extends ScrollView {
         RadioGroup layout = new RadioGroup(context);
         ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         layout.setLayoutParams(params);
-        layout.setOrientation(LinearLayout.VERTICAL);
+        layout.setOrientation(LinearLayout.HORIZONTAL);
         layout.setClickable(false);
         layout.setLongClickable(false);
         layout.setFocusable(false);
@@ -268,7 +300,7 @@ public final class ClassLayout extends ScrollView {
             if (count <= 0)
                 throw new IllegalArgumentException("getCheckedIndex => child num is empty");
             for (int i = 0; i < count; i++) {
-//                Log.e("ClassLayout", "setChecked => i = " + i + ", index = " + index);
+//                Log.e("HorizontalClassLayout", "setChecked => i = " + i + ", index = " + index);
                 RadioButton radioButton = (RadioButton) radioGroup.getChildAt(i);
                 radioButton.setChecked(false);
             }
@@ -282,6 +314,7 @@ public final class ClassLayout extends ScrollView {
     }
 
     private final void updateBackground(@NonNull int index, boolean highlight, boolean checked) {
+//        Log.e("HorizontalClassLayout", "updateBackground => index = " + index + ", highlight = " + highlight + ", checked = " + checked);
 
         int count = getChildCount();
         if (count != 1)
@@ -334,7 +367,7 @@ public final class ClassLayout extends ScrollView {
         }
     }
 
-    private final void updateText(@NonNull boolean highlight) {
+    private void updateText(@NonNull boolean highlight) {
 
         int count = getChildCount();
         if (count != 1)
@@ -362,7 +395,7 @@ public final class ClassLayout extends ScrollView {
             } else {
                 str = ((ClassApi) tag).textNormal(getContext());
             }
-//            Log.e("ClassLayout", "updateTextW => str = " + str);
+//            Log.e("HorizontalClassLayout", "updateTextW => str = " + str);
             if (null != str && str.length() > 0) {
                 radioButton.setText(str);
             }
@@ -450,10 +483,10 @@ public final class ClassLayout extends ScrollView {
             if (api.checked()) {
                 index = i;
             }
-            ClassRadioButton view = new ClassRadioButton(context);
-            RadioGroup.LayoutParams params = new RadioGroup.LayoutParams(RadioGroup.LayoutParams.MATCH_PARENT, mItemHeight);
+            HorizontalClassLayout.ClassRadioButton view = new HorizontalClassLayout.ClassRadioButton(context);
+            RadioGroup.LayoutParams params = new RadioGroup.LayoutParams(mItemWidth, RadioGroup.LayoutParams.MATCH_PARENT);
             if (i > 0 && mItemMargin > 0) {
-                params.topMargin = mItemMargin;
+                params.leftMargin = mItemMargin;
             }
             view.setLayoutParams(params);
             view.setChecked(false);
