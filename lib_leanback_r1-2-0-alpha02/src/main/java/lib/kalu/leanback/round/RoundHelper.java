@@ -40,12 +40,14 @@ public final class RoundHelper {
 
     private float mRateWidth = 0;
     private float mRateHeight = 0;
+    private boolean mClip = false;
 
     public void init(@NonNull Context context, @NonNull AttributeSet attrs) {
 
         TypedArray typedArray = null;
         try {
             typedArray = context.obtainStyledAttributes(attrs, R.styleable.RoundLayout);
+            mClip = typedArray.getBoolean(R.styleable.RoundLayout_rl_clip_path, false);
             mClipCircle = typedArray.getBoolean(R.styleable.RoundLayout_rl_clip_circle, false);
             mClipBackground = typedArray.getBoolean(R.styleable.RoundLayout_rl_clip_background, false);
             mFocus = typedArray.getBoolean(R.styleable.RoundLayout_rl_focus, false);
@@ -123,19 +125,34 @@ public final class RoundHelper {
         mAreaRegion.setPath(mClipPath, clip);
     }
 
-    public void onClipDraw(Canvas canvas) {
+    public void saveLayer(Canvas canvas) {
+        if (!mClip) {
+            canvas.saveLayer(mLayer, null, Canvas.ALL_SAVE_FLAG);
+        }
+    }
 
-        mPaint.setColor(Color.WHITE);
-        mPaint.setStyle(Paint.Style.FILL);
-        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.O) {
-            mPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_IN));
-            canvas.drawPath(mClipPath, mPaint);
-        } else {  //android 9.0
-            mPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_OUT));
-            final Path path = new Path();
-            path.addRect(0, 0, (int) mLayer.width(), (int) mLayer.height(), Path.Direction.CW);
-            path.op(mClipPath, Path.Op.DIFFERENCE);
-            canvas.drawPath(path, mPaint);
+    public void clipPath(Canvas canvas) {
+        if (mClip) {
+            canvas.save();
+            canvas.clipPath(mClipPath);
+        }
+    }
+
+    public void drawPath(Canvas canvas) {
+
+        if (!mClip) {
+            mPaint.setColor(Color.WHITE);
+            mPaint.setStyle(Paint.Style.FILL);
+            if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.O) {
+                mPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_IN));
+                canvas.drawPath(mClipPath, mPaint);
+            } else {  //android 9.0
+                mPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_OUT));
+                final Path path = new Path();
+                path.addRect(0, 0, (int) mLayer.width(), (int) mLayer.height(), Path.Direction.CW);
+                path.op(mClipPath, Path.Op.DIFFERENCE);
+                canvas.drawPath(path, mPaint);
+            }
         }
 
 //        // 边框

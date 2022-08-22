@@ -82,9 +82,10 @@ public class RoundLinearLayout extends LinearLayout {
 
     @Override
     public void dispatchDraw(Canvas canvas) {
-        canvas.saveLayer(mRCHelper.mLayer, null, Canvas.ALL_SAVE_FLAG);
+        mRCHelper.saveLayer(canvas);
+        mRCHelper.clipPath(canvas);
         super.dispatchDraw(canvas);
-        mRCHelper.onClipDraw(canvas);
+        mRCHelper.drawPath(canvas);
         canvas.restore();
     }
 

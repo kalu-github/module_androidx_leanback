@@ -320,6 +320,7 @@
         <attr name="pickerItemTextViewId" format="reference" />
     </declare-styleable>
     <declare-styleable name="RoundLayout">
+        <attr name="rl_clip_path" format="reference|boolean" />
         <attr name="rl_rate_width" format="reference|float" />
         <attr name="rl_rate_height" format="reference|float" />
         <attr name="rl_clip_background" format="reference|boolean" />
