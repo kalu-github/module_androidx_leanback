@@ -69,7 +69,12 @@ public abstract class ListGridPresenter<T> extends Presenter {
             int span = initSpan();
             int size = t.size();
             int length = Math.min(max, size);
-            int col = Math.min(span, size);
+            int col;
+            if (size <= span) {
+                col = span;
+            } else {
+                col = Math.min(span, size);
+            }
 
             // 1
             RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
