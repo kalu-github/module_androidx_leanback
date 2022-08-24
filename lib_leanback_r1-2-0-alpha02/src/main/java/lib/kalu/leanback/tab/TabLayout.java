@@ -271,6 +271,14 @@ public class TabLayout extends HorizontalScrollView {
         scroll(before, next, callback, false, before == next);
     }
 
+    public final void checked(@IntRange(from = 0, to = Integer.MAX_VALUE) int index) {
+
+        int before = getIndex();
+        TabUtil.logE("checked => index = " + index);
+
+        scroll(before, index, false, true, before == index);
+    }
+
     /**
      * 强制选中
      *
