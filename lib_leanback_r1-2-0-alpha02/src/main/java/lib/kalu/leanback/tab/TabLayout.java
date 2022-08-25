@@ -207,19 +207,19 @@ public class TabLayout extends HorizontalScrollView {
         TypedArray attributes = null;
         try {
             attributes = getContext().obtainStyledAttributes(attrs, R.styleable.TabLayout);
-            mScale = attributes.getFloat(R.styleable.TabLayout_tl_scale, 1);
-            mMargin = attributes.getDimensionPixelOffset(R.styleable.TabLayout_tl_margin, 0);
-            mBackgroundColorsRadius = attributes.getDimensionPixelOffset(R.styleable.TabLayout_tl_background_colors_radius, 0);
-            mTextPadding = attributes.getDimensionPixelOffset(R.styleable.TabLayout_tl_text_padding, 0);
-            mTextUnderline = attributes.getBoolean(R.styleable.TabLayout_tl_text_underline, false);
-            mTextUnderlineColor = attributes.getColor(R.styleable.TabLayout_tl_text_underline_color, Color.TRANSPARENT);
-            mTextUnderlineWidth = attributes.getDimensionPixelOffset(R.styleable.TabLayout_tl_text_underline_width, 0);
-            mTextUnderlineHeight = attributes.getDimensionPixelOffset(R.styleable.TabLayout_tl_text_underline_height, 0);
-            mTextSize = attributes.getDimensionPixelOffset(R.styleable.TabLayout_tl_text_dimen, 10);
-            mImageWidthMin = attributes.getDimensionPixelOffset(R.styleable.TabLayout_tl_image_width_min, 0);
-            mImageWidthMax = attributes.getDimensionPixelOffset(R.styleable.TabLayout_tl_image_width_max, 0);
-            mImageHeight = attributes.getDimensionPixelOffset(R.styleable.TabLayout_tl_image_height, 0);
-            mImagePadding = attributes.getDimensionPixelOffset(R.styleable.TabLayout_tl_image_padding, 0);
+            mScale = attributes.getFloat(R.styleable.TabLayout_tab_scale, 1);
+            mMargin = attributes.getDimensionPixelOffset(R.styleable.TabLayout_tab_margin, 0);
+            mBackgroundColorsRadius = attributes.getDimensionPixelOffset(R.styleable.TabLayout_tab_background_colors_radius, 0);
+            mTextPadding = attributes.getDimensionPixelOffset(R.styleable.TabLayout_tab_text_padding, 0);
+            mTextUnderline = attributes.getBoolean(R.styleable.TabLayout_tab_text_underline, false);
+            mTextUnderlineColor = attributes.getColor(R.styleable.TabLayout_tab_text_underline_color, Color.TRANSPARENT);
+            mTextUnderlineWidth = attributes.getDimensionPixelOffset(R.styleable.TabLayout_tab_text_underline_width, 0);
+            mTextUnderlineHeight = attributes.getDimensionPixelOffset(R.styleable.TabLayout_tab_text_underline_height, 0);
+            mTextSize = attributes.getDimensionPixelOffset(R.styleable.TabLayout_tab_text_size, 10);
+            mImageWidthMin = attributes.getDimensionPixelOffset(R.styleable.TabLayout_tab_image_width_min, 0);
+            mImageWidthMax = attributes.getDimensionPixelOffset(R.styleable.TabLayout_tab_image_width_max, 0);
+            mImageHeight = attributes.getDimensionPixelOffset(R.styleable.TabLayout_tab_image_height, 0);
+            mImagePadding = attributes.getDimensionPixelOffset(R.styleable.TabLayout_tab_image_padding, 0);
         } catch (Exception e) {
         }
 

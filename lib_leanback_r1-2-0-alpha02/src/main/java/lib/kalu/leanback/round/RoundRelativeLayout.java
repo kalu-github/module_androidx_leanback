@@ -9,6 +9,7 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.RelativeLayout;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.leanback.R;
 
@@ -103,5 +104,13 @@ public class RoundRelativeLayout extends RelativeLayout {
         } else {
             super.draw(canvas);
         }
+    }
+
+    public void refreshRound(@NonNull float topLeft, @NonNull float topRight, @NonNull float bottomLeft, @NonNull float bottomRight) {
+        mRCHelper.refreshRound(this, topLeft, topRight, bottomLeft, bottomRight);
+    }
+
+    public void resetRound() {
+        mRCHelper.resetRound(this);
     }
 }

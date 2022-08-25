@@ -28,6 +28,7 @@ import lib.kalu.leanback.focus.FocusTextView;
 
 public final class RoundHelper {
     public float[] mRadii = new float[8];   // top-left, top-right, bottom-right, bottom-left
+    public float[] mRadiiTemp = new float[8];   // top-left, top-right, bottom-right, bottom-left
     public Path mClipPath;                 // 剪裁区域路径
     public boolean mClipBackground;        // 是否剪裁背景
     public boolean mClipCircle;        // 是否剪裁背景
@@ -88,10 +89,10 @@ public final class RoundHelper {
 
     public void onSizeChanged(View view, int w, int h) {
         mLayer.set(0, 0, w, h);
-        refreshRegion(view);
+        refreshRegion(view, false);
     }
 
-    public void refreshRegion(View view) {
+    public void refreshRegion(@NonNull View view, @NonNull boolean temp) {
         int w = (int) mLayer.width();
         int h = (int) mLayer.height();
         RectF areas = new RectF();
@@ -118,7 +119,11 @@ public final class RoundHelper {
                 mClipPath.addCircle(center.x, y + r, r, Path.Direction.CW);
             }
         } else {
-            mClipPath.addRoundRect(areas, mRadii, Path.Direction.CW);
+            if (temp) {
+                mClipPath.addRoundRect(areas, mRadiiTemp, Path.Direction.CW);
+            } else {
+                mClipPath.addRoundRect(areas, mRadii, Path.Direction.CW);
+            }
         }
         Region clip = new Region((int) areas.left, (int) areas.top,
                 (int) areas.right, (int) areas.bottom);
@@ -188,5 +193,31 @@ public final class RoundHelper {
 
     protected float getRateH() {
         return mRateHeight;
+    }
+
+    protected void refreshRound(@NonNull View view, @NonNull float topLeft, @NonNull float topRight, @NonNull float bottomLeft, @NonNull float bottomRight) {
+        mRadiiTemp[0] = topLeft;
+        mRadiiTemp[1] = topLeft;
+        mRadiiTemp[2] = topRight;
+        mRadiiTemp[3] = topRight;
+        mRadiiTemp[4] = bottomRight;
+        mRadiiTemp[5] = bottomRight;
+        mRadiiTemp[6] = bottomLeft;
+        mRadiiTemp[7] = bottomLeft;
+        refreshRegion(view, true);
+        view.invalidate();
+    }
+
+    protected void resetRound(@NonNull View view) {
+        mRadiiTemp[0] = 0;
+        mRadiiTemp[1] = 0;
+        mRadiiTemp[2] = 0;
+        mRadiiTemp[3] = 0;
+        mRadiiTemp[4] = 0;
+        mRadiiTemp[5] = 0;
+        mRadiiTemp[6] = 0;
+        mRadiiTemp[7] = 0;
+        refreshRegion(view, false);
+        view.invalidate();
     }
 }

@@ -8,6 +8,7 @@ import android.graphics.Paint;
 import android.text.TextPaint;
 import android.util.Log;
 import android.view.Gravity;
+import android.webkit.WebSettings;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -108,12 +109,6 @@ class TabTextView extends TextView {
         setLines(1);
         setMinEms(2);
         setGravity(Gravity.CENTER);
-    }
-
-
-    @Override
-    public void setTextSize(int unit, float size) {
-        super.setTextSize(unit, size);
     }
 
     protected final void setUnderline(boolean underline) {

@@ -103,6 +103,8 @@ public abstract class ListGridPresenter<T> extends Presenter {
                     recyclerView.addItemDecoration(itemDecoration);
                 }
                 recyclerView.setLayoutManager(manager);
+                recyclerView.setAnimation(null);
+                recyclerView.setItemAnimator(null);
             }
 
             RecyclerView.Adapter adapter = recyclerView.getAdapter();

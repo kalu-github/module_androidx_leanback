@@ -99,16 +99,16 @@ public class TagsLayout extends LinearLayout {
         TypedArray attributes = null;
         try {
             attributes = getContext().obtainStyledAttributes(attrs, R.styleable.TagsLayout);
-            mItemHeight = attributes.getDimensionPixelOffset(R.styleable.TagsLayout_tl_item_height, 0);
-            mItemPaddingTop = attributes.getDimensionPixelOffset(R.styleable.TagsLayout_tl_item_padding_top, 0);
-            mItemPaddingBottom = attributes.getDimensionPixelOffset(R.styleable.TagsLayout_tl_item_padding_bottom, 0);
-            mTextSize = attributes.getDimensionPixelOffset(R.styleable.TagsLayout_tl_text_size, 0);
-            mTextPaddingLeft = attributes.getDimensionPixelOffset(R.styleable.TagsLayout_tl_text_padding_left, 0);
-            mTextPaddingRight = attributes.getDimensionPixelOffset(R.styleable.TagsLayout_tl_text_padding_right, 0);
-            mUnderlineHeight = attributes.getDimensionPixelOffset(R.styleable.TagsLayout_tl_underline_height, 0);
-            mUnderlinePaddingLeft = attributes.getDimensionPixelOffset(R.styleable.TagsLayout_tl_underline_padding_left, 0);
-            mUnderlinePaddingRight = attributes.getDimensionPixelOffset(R.styleable.TagsLayout_tl_underline_padding_right, 0);
-            mUnderlineColor = attributes.getColor(R.styleable.TagsLayout_tl_underline_color, Color.TRANSPARENT);
+            mItemHeight = attributes.getDimensionPixelOffset(R.styleable.TagsLayout_tag_item_height, 0);
+            mItemPaddingTop = attributes.getDimensionPixelOffset(R.styleable.TagsLayout_tag_item_padding_top, 0);
+            mItemPaddingBottom = attributes.getDimensionPixelOffset(R.styleable.TagsLayout_tag_item_padding_bottom, 0);
+            mTextSize = attributes.getDimensionPixelOffset(R.styleable.TagsLayout_tag_text_size, 0);
+            mTextPaddingLeft = attributes.getDimensionPixelOffset(R.styleable.TagsLayout_tag_text_padding_left, 0);
+            mTextPaddingRight = attributes.getDimensionPixelOffset(R.styleable.TagsLayout_tag_text_padding_right, 0);
+            mUnderlineHeight = attributes.getDimensionPixelOffset(R.styleable.TagsLayout_tag_underline_height, 0);
+            mUnderlinePaddingLeft = attributes.getDimensionPixelOffset(R.styleable.TagsLayout_tag_underline_padding_left, 0);
+            mUnderlinePaddingRight = attributes.getDimensionPixelOffset(R.styleable.TagsLayout_tag_underline_padding_right, 0);
+            mUnderlineColor = attributes.getColor(R.styleable.TagsLayout_tag_underline_color, Color.TRANSPARENT);
         } catch (Exception e) {
         }
         if (null != attributes) {

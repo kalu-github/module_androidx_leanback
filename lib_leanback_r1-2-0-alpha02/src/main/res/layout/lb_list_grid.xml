@@ -15,14 +15,14 @@
         android:id="@+id/module_leanback_lgp_header"
         class="lib.kalu.leanback.presenter.ListGridPresenter$TextViewListGridPresenter"
         android:layout_width="wrap_content"
-        android:layout_height="50dp"
+        android:layout_height="64dp"
         android:clickable="false"
         android:focusable="false"
         android:focusableInTouchMode="false"
         android:gravity="center_vertical|left"
         android:longClickable="false"
         android:textColor="@android:color/white"
-        android:textSize="18sp"
+        android:textSize="20sp"
         android:visibility="gone" />
 
     <androidx.recyclerview.widget.RecyclerView
@@ -33,6 +33,8 @@
         android:clipChildren="false"
         android:clipToPadding="false"
         android:focusable="false"
+        android:animationCache="false"
+        android:animateLayoutChanges="false"
         android:focusableInTouchMode="false"
         android:longClickable="false"
         app:focusOutEnd="true"
