@@ -87,7 +87,7 @@ public final class ClassLayout extends ScrollView {
 
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
-        Log.e("ClassLayout", "dispatchKeyEvent => action = " + event.getAction() + ", code = " + event.getKeyCode());
+//        Log.e("ClassLayout", "dispatchKeyEvent => action = " + event.getAction() + ", code = " + event.getKeyCode());
         // up
         if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_UP) {
             int count = getCount();
@@ -97,14 +97,14 @@ public final class ClassLayout extends ScrollView {
                 if (mDispatchTop) {
                     return true;
                 } else {
-                    updateBackground(index, false, true);
+                    updateBackground(true, false, index, false, true);
                     updateText(false);
                     return false;
                 }
             } else if (count > 0 && index > 0) {
                 int next = index - 1;
                 setChecked(next);
-                updateBackground(next, true, false);
+                updateBackground(true, false, next, true, false);
                 updateText(true);
                 return true;
             } else {
@@ -120,14 +120,14 @@ public final class ClassLayout extends ScrollView {
                 if (mDispatchBottom) {
                     return true;
                 } else {
-                    updateBackground(index, false, true);
+                    updateBackground(false, true, index, false, true);
                     updateText(false);
                     return false;
                 }
             } else if (count > 0 && index >= 0) {
                 int next = index + 1;
                 setChecked(next);
-                updateBackground(next, true, false);
+                updateBackground(false, true, next, true, false);
                 updateText(true);
                 return true;
             } else {
@@ -137,14 +137,14 @@ public final class ClassLayout extends ScrollView {
         // right
         else if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_RIGHT) {
             int index = getCheckedIndex();
-            updateBackground(index, false, true);
+            updateBackground(false, false, index, false, true);
             updateText(false);
             return false;
         }
         // left
         else if (event.getAction() == KeyEvent.ACTION_UP && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_LEFT) {
             int index = getCheckedIndex();
-            updateBackground(index, true, false);
+            updateBackground(false, false, index, true, false);
             updateText(true);
             return false;
         }
@@ -278,7 +278,7 @@ public final class ClassLayout extends ScrollView {
         }
     }
 
-    private final void updateBackground(@NonNull int index, boolean highlight, boolean checked) {
+    private void updateBackground(@NonNull boolean up, @NonNull boolean down, @NonNull int index, boolean highlight, boolean checked) {
 
         int count = getChildCount();
         if (count != 1)
@@ -309,9 +309,23 @@ public final class ClassLayout extends ScrollView {
         } else {
             radioButton.setBackgroundColor(background);
         }
+
+        // scroll
+//        int top = radioButton.getTop();
+//        scrollTo(0, top);
+        int scrollY = getScrollY();
+        int top = radioButton.getTop();
+//        Log.e("ClassLayout", "updateBackground => index = " + index + ", scrollY");
+        setDescendantFocusability(ViewGroup.FOCUS_AFTER_DESCENDANTS);
+        radioButton.requestFocus();
+        radioButton.clearFocus();
+        setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
+        if (scrollY > top) {
+            scrollTo(0, top);
+        }
     }
 
-    private final void call() {
+    private void call() {
         if (null == mListener)
             return;
         int count = getChildCount();
@@ -331,7 +345,7 @@ public final class ClassLayout extends ScrollView {
         }
     }
 
-    private final void updateText(@NonNull boolean highlight) {
+    private void updateText(@NonNull boolean highlight) {
 
         int count = getChildCount();
         if (count != 1)
@@ -583,8 +597,8 @@ public final class ClassLayout extends ScrollView {
             setSingleLine();
             setClickable(false);
             setLongClickable(false);
-            setFocusable(false);
-            setFocusableInTouchMode(false);
+            setFocusable(true);
+            setFocusableInTouchMode(true);
             setTextSize(TypedValue.COMPLEX_UNIT_PX, mTextSize);
             setGravity(Gravity.CENTER);
             setButtonDrawable(new ColorDrawable(Color.TRANSPARENT));
