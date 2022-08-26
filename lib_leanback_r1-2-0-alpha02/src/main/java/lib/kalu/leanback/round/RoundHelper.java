@@ -24,6 +24,8 @@ import androidx.annotation.Nullable;
 import androidx.core.view.ViewCompat;
 import androidx.leanback.R;
 
+import lib.kalu.leanback.auto.AutoImageView;
+import lib.kalu.leanback.auto.AutoTextView;
 import lib.kalu.leanback.focus.FocusTextView;
 
 public final class RoundHelper {
@@ -181,8 +183,10 @@ public final class RoundHelper {
             View view = viewGroup.getChildAt(i);
             if (null == view)
                 continue;
-            if (view instanceof FocusTextView) {
-                ((FocusTextView) view).onFocusCall(gainFocus);
+            if (view instanceof AutoTextView) {
+                ((AutoTextView) view).onFocusCall(gainFocus);
+            } else if (view instanceof AutoImageView) {
+                view.setVisibility(gainFocus ? View.VISIBLE : View.INVISIBLE);
             }
         }
     }

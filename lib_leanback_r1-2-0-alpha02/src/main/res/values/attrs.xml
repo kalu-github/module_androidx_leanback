@@ -345,12 +345,14 @@
     <declare-styleable name="FocusLayout">
         <attr name="fl_scale" format="reference|float" />
         <attr name="fl_duration" format="reference|integer" />
-        <attr name="fl_bg_normal" format="reference" />
-        <attr name="fl_bg_focus" format="reference" />
+        <attr name="fl_bg_resource_normal" format="reference" />
+        <attr name="fl_bg_resource_focus" format="reference" />
+        <attr name="fl_bg_color_normal" format="reference|color" />
+        <attr name="fl_bg_color_focus" format="reference|color" />
+        <attr name="fl_text_color_normal" format="reference|color" />
+        <attr name="fl_text_color_focus" format="reference|color" />
         <attr name="fl_width" format="reference|float" />
         <attr name="fl_height" format="reference|float" />
-        <attr name="fl_color_normal" format="reference|color" />
-        <attr name="fl_color_focus" format="reference|color" />
     </declare-styleable>
     <declare-styleable name="TextViewPlus">
         <attr name="tvp_drawable_left_width" format="dimension|reference" />
