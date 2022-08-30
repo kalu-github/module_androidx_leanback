@@ -44,13 +44,6 @@ public abstract class ListGridPresenterPlus<T> extends Presenter {
 
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, Object item) {
-        // header
-        try {
-            TextView textView = viewHolder.view.findViewById(R.id.module_leanback_lgp_header);
-            onBindHeader(textView, (List<T>) item);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
 
         // add
         try {
@@ -59,6 +52,14 @@ public abstract class ListGridPresenterPlus<T> extends Presenter {
             mDatas.addAll(tem[0]);
             mSubs.clear();
             mSubs.addAll(tem[1]);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        // header
+        try {
+            TextView textView = viewHolder.view.findViewById(R.id.module_leanback_lgp_header);
+            onBindHeader(textView, (List<T>) mDatas);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -208,7 +209,6 @@ public abstract class ListGridPresenterPlus<T> extends Presenter {
         int span = initSpan();
         int start = index * span;
         int count = start + 10;
-        Log.e("ListGridPresenterPlus", "refreshTemps => start = " + start + ", count = " + count);
         for (int i = start; i < count; i++) {
             T t = mDatas.get(i);
             if (null == t)
