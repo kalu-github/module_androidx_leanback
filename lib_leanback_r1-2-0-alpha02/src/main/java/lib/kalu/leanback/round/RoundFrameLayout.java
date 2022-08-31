@@ -7,6 +7,7 @@ import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.widget.FrameLayout;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 public class RoundFrameLayout extends FrameLayout {
@@ -99,5 +100,13 @@ public class RoundFrameLayout extends FrameLayout {
         } else {
             super.draw(canvas);
         }
+    }
+
+    public void refreshRound(@NonNull float topLeft, @NonNull float topRight, @NonNull float bottomLeft, @NonNull float bottomRight) {
+        mRCHelper.refreshRound(this, topLeft, topRight, bottomLeft, bottomRight);
+    }
+
+    public void resetRound() {
+        mRCHelper.resetRound(this);
     }
 }

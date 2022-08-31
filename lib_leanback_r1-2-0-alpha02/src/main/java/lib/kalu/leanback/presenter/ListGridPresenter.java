@@ -7,6 +7,7 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.view.ViewStub;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -178,9 +179,9 @@ public abstract class ListGridPresenter<T> extends Presenter {
 //            }
     }
 
-    protected final void requestFocus(@NonNull RecyclerView.ViewHolder viewHolder, @NonNull int position) {
+    protected final void requestFocus(@NonNull View v, @NonNull int position) {
         try {
-            RecyclerView recyclerView = (RecyclerView) viewHolder.itemView.findViewById(R.id.module_leanback_lgp_list);
+            RecyclerView recyclerView = findRecyclerView(v, true);
             View viewByPosition = recyclerView.getLayoutManager().findViewByPosition(position);
             viewByPosition.requestFocus();
         } catch (Exception e) {
@@ -188,21 +189,46 @@ public abstract class ListGridPresenter<T> extends Presenter {
         }
     }
 
-    protected final void notifyDataSetChanged(@NonNull RecyclerView.ViewHolder viewHolder) {
+    protected final void notifyDataSetChanged(@NonNull View v) {
         try {
-            RecyclerView recyclerView = (RecyclerView) viewHolder.itemView.findViewById(R.id.module_leanback_lgp_list);
+            RecyclerView recyclerView = findRecyclerView(v, true);
             recyclerView.getAdapter().notifyDataSetChanged();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    protected final void notifyItemRangeChanged(@NonNull RecyclerView.ViewHolder viewHolder, int start, int itemCount) {
+    protected final void notifyItemRangeChanged(@NonNull View v, int start, int itemCount) {
         try {
-            RecyclerView recyclerView = (RecyclerView) viewHolder.itemView.findViewById(R.id.module_leanback_lgp_list);
+            RecyclerView recyclerView = findRecyclerView(v, true);
             recyclerView.getAdapter().notifyItemRangeChanged(start, itemCount);
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    private final RecyclerView findRecyclerView(@NonNull View v, @NonNull boolean init) {
+
+        if (init) {
+            View view = v.findViewById(R.id.module_leanback_lgp_list);
+            if (view instanceof RecyclerView) {
+                return (RecyclerView) view;
+            } else {
+                return findRecyclerView(v, false);
+            }
+        } else {
+            ViewParent parent = v.getParent();
+            if (null == parent) {
+                return null;
+            } else if (parent instanceof RecyclerView) {
+                if (((RecyclerView) parent).getId() == R.id.module_leanback_lgp_list) {
+                    return (RecyclerView) parent;
+                } else {
+                    return null;
+                }
+            } else {
+                return findRecyclerView((View) parent, false);
+            }
         }
     }
 
