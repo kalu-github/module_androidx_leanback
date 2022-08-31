@@ -178,6 +178,34 @@ public abstract class ListGridPresenter<T> extends Presenter {
 //            }
     }
 
+    protected final void requestFocus(@NonNull RecyclerView.ViewHolder viewHolder, @NonNull int position) {
+        try {
+            RecyclerView recyclerView = (RecyclerView) viewHolder.itemView.findViewById(R.id.module_leanback_lgp_list);
+            View viewByPosition = recyclerView.getLayoutManager().findViewByPosition(position);
+            viewByPosition.requestFocus();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    protected final void notifyDataSetChanged(@NonNull RecyclerView.ViewHolder viewHolder) {
+        try {
+            RecyclerView recyclerView = (RecyclerView) viewHolder.itemView.findViewById(R.id.module_leanback_lgp_list);
+            recyclerView.getAdapter().notifyDataSetChanged();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    protected final void notifyItemRangeChanged(@NonNull RecyclerView.ViewHolder viewHolder, int start, int itemCount) {
+        try {
+            RecyclerView recyclerView = (RecyclerView) viewHolder.itemView.findViewById(R.id.module_leanback_lgp_list);
+            recyclerView.getAdapter().notifyItemRangeChanged(start, itemCount);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     protected boolean initScrollHorizontally() {
         return true;
     }
