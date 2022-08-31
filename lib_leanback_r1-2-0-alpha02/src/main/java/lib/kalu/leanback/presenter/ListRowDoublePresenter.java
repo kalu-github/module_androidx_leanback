@@ -389,7 +389,7 @@ public abstract class ListRowDoublePresenter<T extends ListRowDoublePresenter.Li
     }
 
     private final void focusTop(@NonNull View view) {
-        Toast.makeText(view.getContext(), "focusTop", Toast.LENGTH_SHORT).show();
+//        Toast.makeText(view.getContext(), "focusTop", Toast.LENGTH_SHORT).show();
     }
 
     private final boolean scrollLeft(@NonNull View view) {
