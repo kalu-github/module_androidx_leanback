@@ -26,6 +26,8 @@ import java.util.List;
 
 public abstract class ListGridPresenter<T> extends Presenter {
 
+    private final List<T> mDatas = new ArrayList<>();
+
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent) {
         try {
@@ -77,6 +79,15 @@ public abstract class ListGridPresenter<T> extends Presenter {
                 col = Math.min(span, size);
             }
 
+            // 0
+            mDatas.clear();
+            for (int i = 0; i < length; i++) {
+                T o = t.get(i);
+                if (null == o)
+                    continue;
+                mDatas.add(o);
+            }
+
             // 1
             RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
             if (null == layoutManager) {
@@ -109,14 +120,9 @@ public abstract class ListGridPresenter<T> extends Presenter {
             }
 
             RecyclerView.Adapter adapter = recyclerView.getAdapter();
-            if (null == adapter) {
-                ArrayList<T> list = new ArrayList<>();
-                for (int i = 0; i < length; i++) {
-                    T o = t.get(i);
-                    if (null == o)
-                        continue;
-                    list.add(o);
-                }
+            if (null != adapter) {
+                adapter.notifyDataSetChanged();
+            } else {
                 recyclerView.setAdapter(new RecyclerView.Adapter() {
                     @NonNull
                     @Override
@@ -127,7 +133,7 @@ public abstract class ListGridPresenter<T> extends Presenter {
                             View view = LayoutInflater.from(context).inflate(initLayout(viewType), parent, false);
                             RecyclerView.ViewHolder holder = new RecyclerView.ViewHolder(view) {
                             };
-                            onCreateHolder(context, holder, view, list, viewType);
+                            onCreateHolder(context, holder, view, mDatas, viewType);
                             return holder;
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -138,7 +144,7 @@ public abstract class ListGridPresenter<T> extends Presenter {
                     @Override
                     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
                         try {
-                            T t1 = list.get(position);
+                            T t1 = mDatas.get(position);
                             int viewType = holder.getItemViewType();
                             onBindHolder(holder.itemView, t1, position, viewType);
                         } catch (Exception e) {
@@ -154,7 +160,7 @@ public abstract class ListGridPresenter<T> extends Presenter {
 
                     @Override
                     public int getItemCount() {
-                        return list.size();
+                        return mDatas.size();
                     }
                 });
             }
