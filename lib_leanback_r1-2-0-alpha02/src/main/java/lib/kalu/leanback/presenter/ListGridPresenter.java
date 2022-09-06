@@ -12,6 +12,7 @@ import android.view.ViewStub;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.annotation.Keep;
 import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -24,7 +25,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class ListGridPresenter<T> extends Presenter {
+public abstract class ListGridPresenter<T extends ListGridPresenter.ListGridBean> extends Presenter {
 
     private final List<T> mDatas = new ArrayList<>();
 
@@ -43,36 +44,15 @@ public abstract class ListGridPresenter<T> extends Presenter {
 
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, Object item) {
-        // header
+
+        // datas
+        int col = -1;
         try {
-            TextView textView = viewHolder.view.findViewById(R.id.module_leanback_lgp_header);
-            onBindHeader(textView, (List<T>) item);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        // list
-        try {
-            RecyclerView recyclerView = viewHolder.view.findViewById(R.id.module_leanback_lgp_list);
-            Context context = recyclerView.getContext();
-            setAdapter(context, recyclerView, (List<T>) item);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    public void onUnbindViewHolder(ViewHolder viewHolder) {
-    }
-
-    private final void setAdapter(@NonNull Context context, @NonNull RecyclerView recyclerView, @NonNull List<T> t) {
-        try {
-
+            List<T> t = (List<T>) item;
             int max = initMax();
             int span = initSpan();
             int size = t.size();
             int length = Math.min(max, size);
-            int col;
             if (size <= span) {
                 col = span;
             } else {
@@ -87,6 +67,53 @@ public abstract class ListGridPresenter<T> extends Presenter {
                     continue;
                 mDatas.add(o);
             }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        if (col == -1)
+            return;
+
+        // header
+        try {
+            String head = null;
+            int size = mDatas.size();
+            for (int i = 0; i < size; i++) {
+                T t = mDatas.get(i);
+                if (null == t) {
+                    continue;
+                }
+                String str = t.getGridHead();
+                if (null != str && str.length() > 0) {
+                    head = str;
+                    break;
+                }
+            }
+            if (null != head && head.length() > 0) {
+                TextView textView = viewHolder.view.findViewById(R.id.module_leanback_lgp_header);
+                textView.setText(head);
+                textView.setVisibility(View.VISIBLE);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        // list
+        try {
+            RecyclerView recyclerView = viewHolder.view.findViewById(R.id.module_leanback_lgp_list);
+            Context context = recyclerView.getContext();
+            setAdapter(context, recyclerView, col);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void onUnbindViewHolder(ViewHolder viewHolder) {
+    }
+
+    private final void setAdapter(@NonNull Context context, @NonNull RecyclerView recyclerView, @NonNull int col) {
+        try {
 
             // 1
             RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
@@ -262,9 +289,6 @@ public abstract class ListGridPresenter<T> extends Presenter {
         return null;
     }
 
-    protected void onBindHeader(@NonNull TextView textView, @NonNull List<T> t) {
-    }
-
     protected abstract void onCreateHolder(@NonNull Context context, @NonNull RecyclerView.ViewHolder holder, @NonNull View view, @NonNull List<T> datas, @NonNull int viewType);
 
     protected abstract void onBindHolder(@NonNull View view, @NonNull T item, @NonNull int position, @NonNull int viewType);
@@ -275,6 +299,11 @@ public abstract class ListGridPresenter<T> extends Presenter {
     protected abstract int initSpan();
 
     protected abstract int initMax();
+
+    @Keep
+    public interface ListGridBean {
+        String getGridHead();
+    }
 
     @SuppressLint("AppCompatCustomView")
     public static final class TextViewListGridPresenter extends TextView {

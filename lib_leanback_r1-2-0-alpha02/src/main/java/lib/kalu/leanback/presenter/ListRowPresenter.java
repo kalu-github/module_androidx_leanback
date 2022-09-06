@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import androidx.annotation.Keep;
 import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -21,7 +22,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class ListRowPresenter<T> extends Presenter {
+public abstract class ListRowPresenter<T extends ListRowPresenter.ListRowBean> extends Presenter {
+
+    private final List<T> mDatas = new ArrayList<>();
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent) {
@@ -38,10 +41,42 @@ public abstract class ListRowPresenter<T> extends Presenter {
 
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, Object item) {
+
+        // data
+        try {
+            List<T> t = (List<T>) item;
+            int size = t.size();
+            mDatas.clear();
+            for (int i = 0; i < size; i++) {
+                T o = t.get(i);
+                if (null == o)
+                    continue;
+                mDatas.add(o);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         // header
         try {
-            TextView textView = viewHolder.view.findViewById(R.id.module_leanback_llr_header);
-            onBindHeader(textView, (List<T>) item);
+            String head = null;
+            int size = mDatas.size();
+            for (int i = 0; i < size; i++) {
+                T t = mDatas.get(i);
+                if (null == t) {
+                    continue;
+                }
+                String str = t.getRowHead();
+                if (null != str && str.length() > 0) {
+                    head = str;
+                    break;
+                }
+            }
+            if (null != head && head.length() > 0) {
+                TextView textView = viewHolder.view.findViewById(R.id.module_leanback_llr_header);
+                textView.setText(head);
+                textView.setVisibility(View.VISIBLE);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -50,7 +85,7 @@ public abstract class ListRowPresenter<T> extends Presenter {
         try {
             RecyclerView recyclerView = viewHolder.view.findViewById(R.id.module_leanback_llr_list);
             Context context = recyclerView.getContext();
-            setAdapter(context, recyclerView, (List<T>) item);
+            setAdapter(context, recyclerView);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -60,7 +95,7 @@ public abstract class ListRowPresenter<T> extends Presenter {
     public void onUnbindViewHolder(ViewHolder viewHolder) {
     }
 
-    private final void setAdapter(@NonNull Context context, @NonNull RecyclerView recyclerView, @NonNull List<T> t) {
+    private final void setAdapter(@NonNull Context context, @NonNull RecyclerView recyclerView) {
         try {
 
             // 1
@@ -76,15 +111,9 @@ public abstract class ListRowPresenter<T> extends Presenter {
             }
 
             RecyclerView.Adapter adapter = recyclerView.getAdapter();
-            if (null == adapter) {
-                int length = t.size();
-                ArrayList<T> list = new ArrayList<>();
-                for (int i = 0; i < length; i++) {
-                    T o = t.get(i);
-                    if (null == o)
-                        continue;
-                    list.add(o);
-                }
+            if (null != adapter) {
+                adapter.notifyDataSetChanged();
+            } else {
                 recyclerView.setAdapter(new RecyclerView.Adapter() {
                     @NonNull
                     @Override
@@ -95,7 +124,7 @@ public abstract class ListRowPresenter<T> extends Presenter {
                             View view = LayoutInflater.from(context).inflate(initLayout(viewType), parent, false);
                             RecyclerView.ViewHolder holder = new RecyclerView.ViewHolder(view) {
                             };
-                            onCreateHolder(context, holder, view, list);
+                            onCreateHolder(context, holder, view, mDatas);
                             return holder;
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -106,16 +135,22 @@ public abstract class ListRowPresenter<T> extends Presenter {
                     @Override
                     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
                         try {
-                            T t1 = list.get(position);
-                            onBindHolder(holder.itemView, t1, position);
+                            T t1 = mDatas.get(position);
+                            int itemViewType = holder.getItemViewType();
+                            onBindHolder(holder.itemView, t1, position, itemViewType);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
                     }
 
                     @Override
+                    public int getItemViewType(int position) {
+                        return initItemViewType(position);
+                    }
+
+                    @Override
                     public int getItemCount() {
-                        return list.size();
+                        return mDatas.size();
                     }
                 });
             }
@@ -144,15 +179,21 @@ public abstract class ListRowPresenter<T> extends Presenter {
         return null;
     }
 
-    protected void onBindHeader(@NonNull TextView textView, @NonNull List<T> t) {
-    }
-
     protected abstract void onCreateHolder(@NonNull Context context, @NonNull RecyclerView.ViewHolder holder, @NonNull View view, @NonNull List<T> datas);
 
-    protected abstract void onBindHolder(@NonNull View view, @NonNull T item, @NonNull int position);
+    protected abstract void onBindHolder(@NonNull View view, @NonNull T item, @NonNull int position, @NonNull int viewType);
 
     @LayoutRes
     protected abstract int initLayout(int viewType);
+
+    protected int initItemViewType(int position){
+        return 1;
+    }
+
+    @Keep
+    public interface ListRowBean {
+        String getRowHead();
+    }
 
     @SuppressLint("AppCompatCustomView")
     public static final class TextViewListRowPresenter extends TextView {
