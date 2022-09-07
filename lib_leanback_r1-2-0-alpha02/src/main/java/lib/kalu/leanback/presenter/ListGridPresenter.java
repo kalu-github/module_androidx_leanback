@@ -171,9 +171,9 @@ public abstract class ListGridPresenter<T extends ListGridPresenter.ListGridBean
                     @Override
                     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
                         try {
-                            T t1 = mDatas.get(position);
+                            T t = mDatas.get(position);
                             int viewType = holder.getItemViewType();
-                            onBindHolder(holder.itemView, t1, position, viewType);
+                            onBindHolder(holder.itemView, t, position, viewType);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -181,7 +181,8 @@ public abstract class ListGridPresenter<T extends ListGridPresenter.ListGridBean
 
                     @Override
                     public int getItemViewType(int position) {
-                        int i = initItemViewType(position);
+                        T t = mDatas.get(position);
+                        int i = initItemViewType(position, t);
                         return i != -1 ? i : super.getItemViewType(position);
                     }
 
@@ -277,7 +278,7 @@ public abstract class ListGridPresenter<T extends ListGridPresenter.ListGridBean
         return RecyclerView.VERTICAL;
     }
 
-    protected int initItemViewType(int position) {
+    protected int initItemViewType(int position, T t) {
         return -1;
     }
 
