@@ -135,9 +135,9 @@ public abstract class ListRowPresenter<T extends ListRowPresenter.ListRowBean> e
                     @Override
                     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
                         try {
-                            T t1 = mDatas.get(position);
+                            T t = mDatas.get(position);
                             int itemViewType = holder.getItemViewType();
-                            onBindHolder(holder.itemView, t1, position, itemViewType);
+                            onBindHolder(holder.itemView, t, position, itemViewType);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -145,7 +145,8 @@ public abstract class ListRowPresenter<T extends ListRowPresenter.ListRowBean> e
 
                     @Override
                     public int getItemViewType(int position) {
-                        return initItemViewType(position);
+                        T t = mDatas.get(position);
+                        return initItemViewType(position, t);
                     }
 
                     @Override
@@ -186,7 +187,7 @@ public abstract class ListRowPresenter<T extends ListRowPresenter.ListRowBean> e
     @LayoutRes
     protected abstract int initLayout(int viewType);
 
-    protected int initItemViewType(int position){
+    protected int initItemViewType(int position, T t) {
         return 1;
     }
 
