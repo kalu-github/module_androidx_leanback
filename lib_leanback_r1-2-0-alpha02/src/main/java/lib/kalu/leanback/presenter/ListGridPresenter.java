@@ -27,7 +27,6 @@ import java.util.List;
 
 public abstract class ListGridPresenter<T extends ListGridPresenter.ListGridBean> extends Presenter {
 
-    private final List<T> mDatas = new ArrayList<>();
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent) {
@@ -47,6 +46,7 @@ public abstract class ListGridPresenter<T extends ListGridPresenter.ListGridBean
 
         // datas
         int col = -1;
+        List<T> list = new ArrayList<>();
         try {
             List<T> t = (List<T>) item;
             int max = initMax();
@@ -60,12 +60,11 @@ public abstract class ListGridPresenter<T extends ListGridPresenter.ListGridBean
             }
 
             // 0
-            mDatas.clear();
             for (int i = 0; i < length; i++) {
                 T o = t.get(i);
                 if (null == o)
                     continue;
-                mDatas.add(o);
+                list.add(o);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -77,9 +76,9 @@ public abstract class ListGridPresenter<T extends ListGridPresenter.ListGridBean
         // header
         try {
             String head = null;
-            int size = mDatas.size();
+            int size = list.size();
             for (int i = 0; i < size; i++) {
-                T t = mDatas.get(i);
+                T t = list.get(i);
                 if (null == t) {
                     continue;
                 }
@@ -102,7 +101,7 @@ public abstract class ListGridPresenter<T extends ListGridPresenter.ListGridBean
         try {
             RecyclerView recyclerView = viewHolder.view.findViewById(R.id.module_leanback_lgp_list);
             Context context = recyclerView.getContext();
-            setAdapter(context, recyclerView, col);
+            setAdapter(context, recyclerView, col, list);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -112,7 +111,7 @@ public abstract class ListGridPresenter<T extends ListGridPresenter.ListGridBean
     public void onUnbindViewHolder(ViewHolder viewHolder) {
     }
 
-    private final void setAdapter(@NonNull Context context, @NonNull RecyclerView recyclerView, @NonNull int col) {
+    private final void setAdapter(@NonNull Context context, @NonNull RecyclerView recyclerView, @NonNull int col, @NonNull List<T> list) {
         try {
 
             // 1
@@ -160,7 +159,7 @@ public abstract class ListGridPresenter<T extends ListGridPresenter.ListGridBean
                             View view = LayoutInflater.from(context).inflate(initLayout(viewType), parent, false);
                             RecyclerView.ViewHolder holder = new RecyclerView.ViewHolder(view) {
                             };
-                            onCreateHolder(context, holder, view, mDatas, viewType);
+                            onCreateHolder(context, holder, view, list, viewType);
                             return holder;
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -171,7 +170,7 @@ public abstract class ListGridPresenter<T extends ListGridPresenter.ListGridBean
                     @Override
                     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
                         try {
-                            T t = mDatas.get(position);
+                            T t = list.get(position);
                             int viewType = holder.getItemViewType();
                             onBindHolder(holder.itemView, t, position, viewType);
                         } catch (Exception e) {
@@ -181,14 +180,14 @@ public abstract class ListGridPresenter<T extends ListGridPresenter.ListGridBean
 
                     @Override
                     public int getItemViewType(int position) {
-                        T t = mDatas.get(position);
+                        T t = list.get(position);
                         int i = initItemViewType(position, t);
                         return i != -1 ? i : super.getItemViewType(position);
                     }
 
                     @Override
                     public int getItemCount() {
-                        return mDatas.size();
+                        return list.size();
                     }
                 });
             }
