@@ -27,7 +27,6 @@ import java.util.List;
 
 public abstract class ListGridPresenter<T extends ListGridPresenter.ListGridBean> extends Presenter {
 
-
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent) {
         try {
