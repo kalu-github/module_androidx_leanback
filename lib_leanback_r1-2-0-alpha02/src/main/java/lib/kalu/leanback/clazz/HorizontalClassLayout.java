@@ -85,7 +85,7 @@ public final class HorizontalClassLayout extends ScrollView {
 
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
-        Log.e("HorizontalClassLayout", "dispatchKeyEvent => action = " + event.getAction() + ", code = " + event.getKeyCode());
+       // Log.e("HorizontalClassLayout", "dispatchKeyEvent => action = " + event.getAction() + ", code = " + event.getKeyCode());
 
         // move => left
         if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_LEFT) {

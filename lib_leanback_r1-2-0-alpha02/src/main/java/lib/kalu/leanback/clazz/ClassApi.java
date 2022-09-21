@@ -39,7 +39,6 @@ public interface ClassApi {
             ss.setSpan(span, 0, "@@".length(), Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
             return ss;
         } catch (Exception e) {
-            e.printStackTrace();
             return text();
         }
     }
@@ -57,7 +56,6 @@ public interface ClassApi {
             ss.setSpan(span, 0, "@@".length(), Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
             return ss;
         } catch (Exception e) {
-            e.printStackTrace();
             return text();
         }
     }
@@ -75,7 +73,6 @@ public interface ClassApi {
             ss.setSpan(span, 0, "@@".length(), Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
             return ss;
         } catch (Exception e) {
-            e.printStackTrace();
             return text();
         }
     }
