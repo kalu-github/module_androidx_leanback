@@ -2,6 +2,7 @@ package lib.kalu.leanback.presenter;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Typeface;
 import android.os.Build;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -73,6 +74,14 @@ public abstract class ListRowPresenter<T extends ListRowPresenter.ListRowBean> e
             }
             if (null != head && head.length() > 0) {
                 TextView textView = viewHolder.view.findViewById(R.id.module_leanback_llr_header);
+                String ttf = initHeadAssetsTTF();
+                if (null != ttf && ttf.length() > 0) {
+                    try {
+                        textView.setTypeface(Typeface.createFromAsset(textView.getContext().getAssets(), ttf));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
                 textView.setText(head);
                 textView.setVisibility(View.VISIBLE);
             }
@@ -190,9 +199,14 @@ public abstract class ListRowPresenter<T extends ListRowPresenter.ListRowBean> e
         return 1;
     }
 
+    protected String initHeadAssetsTTF() {
+        return null;
+    }
+
     @Keep
     public interface ListRowBean {
         String getRowHead();
+
     }
 
     @SuppressLint("AppCompatCustomView")

@@ -2,6 +2,7 @@ package lib.kalu.leanback.presenter;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Typeface;
 import android.os.Build;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -89,6 +90,14 @@ public abstract class ListGridPresenter<T extends ListGridPresenter.ListGridBean
             }
             if (null != head && head.length() > 0) {
                 TextView textView = viewHolder.view.findViewById(R.id.module_leanback_lgp_header);
+                String ttf = initHeadAssetsTTF();
+                if (null != ttf && ttf.length() > 0) {
+                    try {
+                        textView.setTypeface(Typeface.createFromAsset(textView.getContext().getAssets(), ttf));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
                 textView.setText(head);
                 textView.setVisibility(View.VISIBLE);
             }
@@ -298,6 +307,10 @@ public abstract class ListGridPresenter<T extends ListGridPresenter.ListGridBean
     protected abstract int initSpan();
 
     protected abstract int initMax();
+
+    protected String initHeadAssetsTTF() {
+        return null;
+    }
 
     @Keep
     public interface ListGridBean {

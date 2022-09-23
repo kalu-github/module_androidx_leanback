@@ -1,6 +1,7 @@
 package lib.kalu.leanback.presenter;
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.os.Handler;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -84,6 +85,14 @@ public abstract class ListRowDoublePresenter<T extends ListRowDoublePresenter.Li
             }
             if (null != head && head.length() > 0) {
                 TextView textView = viewHolder.view.findViewById(R.id.module_leanback_llrd_head);
+                String ttf = initHeadAssetsTTF();
+                if (null != ttf && ttf.length() > 0) {
+                    try {
+                        textView.setTypeface(Typeface.createFromAsset(textView.getContext().getAssets(), ttf));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
                 textView.setText(head);
                 textView.setVisibility(View.VISIBLE);
             }
@@ -465,6 +474,10 @@ public abstract class ListRowDoublePresenter<T extends ListRowDoublePresenter.Li
 
     @LayoutRes
     protected abstract int initLayoutTop();
+
+    protected String initHeadAssetsTTF() {
+        return null;
+    }
 
     @Keep
     public static class ListRowDoubleBean {
