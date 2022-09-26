@@ -136,16 +136,22 @@ public final class ClassLayout extends ScrollView {
         }
         // right
         else if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_RIGHT) {
-            int index = getCheckedIndex();
-            updateBackground(false, false, index, false, true);
-            updateText(false);
+            int count = getCount();
+            if(count>0){
+                int index = getCheckedIndex();
+                updateBackground(false, false, index, false, true);
+                updateText(false);
+            }
             return false;
         }
         // left
         else if (event.getAction() == KeyEvent.ACTION_UP && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_LEFT) {
-            int index = getCheckedIndex();
-            updateBackground(false, false, index, true, false);
-            updateText(true);
+            int count = getCount();
+            if(count>0){
+                int index = getCheckedIndex();
+                updateBackground(false, false, index, true, false);
+                updateText(true);
+            }
             return false;
         }
         // pass
@@ -189,7 +195,7 @@ public final class ClassLayout extends ScrollView {
         setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
         setClickable(false);
         setLongClickable(false);
-        setFocusable(true);
+        setFocusable(false);
         setFocusableInTouchMode(true);
         setFillViewport(true);
         // 2
@@ -450,7 +456,7 @@ public final class ClassLayout extends ScrollView {
         int count = getChildCount();
         if (count != 1)
             return;
-
+        setFocusable(true);
         int index = 0;
         Context context = getContext();
         RadioGroup radioGroup = (RadioGroup) getChildAt(0);
