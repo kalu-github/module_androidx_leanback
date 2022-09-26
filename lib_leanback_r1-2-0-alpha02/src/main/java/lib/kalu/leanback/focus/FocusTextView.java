@@ -4,8 +4,13 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Path;
+import android.graphics.PointF;
 import android.graphics.Rect;
+import android.graphics.RectF;
+import android.graphics.Region;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.text.TextUtils;
@@ -45,6 +50,7 @@ public class FocusTextView extends TextView {
 
     public FocusTextView(Context context) {
         super(context);
+        init(context, null);
     }
 
     public FocusTextView(Context context, AttributeSet attrs) {
@@ -66,6 +72,7 @@ public class FocusTextView extends TextView {
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
+        refreshTextColor(false);
         refreshBackground(false);
     }
 
@@ -86,9 +93,45 @@ public class FocusTextView extends TextView {
             e.printStackTrace();
         }
 
+        Log.d("FocusTextView", "init => mBgColorNormal = " + mBgColorNormal);
+        Log.d("FocusTextView", "init => mBgColorFocus = " + mBgColorFocus);
+
         if (null != typedArray) {
             typedArray.recycle();
         }
+    }
+
+    @Override
+    protected void onDraw(Canvas canvas) {
+        super.onDraw(canvas);
+//        if (mCorner > 0) {
+//            if (null == mPath) {
+//                mPath = new Path();
+//            }
+//
+//            RectF areas = new RectF();
+//            areas.left = 0;
+//            areas.top = 0;
+//            areas.right = getWidth();
+//            areas.bottom = getHeight();
+//
+//            float[] floats = new float[8];
+//            floats[0] = mCorner;
+//            floats[1] = mCorner;
+//            floats[2] = mCorner;
+//            floats[3] = mCorner;
+//            floats[4] = mCorner;
+//            floats[5] = mCorner;
+//            floats[6] = mCorner;
+//            floats[7] = mCorner;
+//
+//            mPath.reset();
+//            mPath.addRoundRect(areas, floats, Path.Direction.CW);
+//
+//
+//            canvas.save();
+//            canvas.clipPath(mPath);
+//        }
     }
 
     @Override
@@ -103,7 +146,9 @@ public class FocusTextView extends TextView {
     }
 
     protected final void refreshBackground(boolean gainFocus) {
-
+        Log.d("FocusTextView", "refreshBackground => gainFocus = " + gainFocus);
+        Log.d("FocusTextView", "refreshBackground => mBgColorFocus = " + mBgColorFocus);
+        Log.d("FocusTextView", "refreshBackground => mBgColorNormal = " + mBgColorNormal);
         if (gainFocus) {
             if (mBgColorFocus != -1) {
                 setBackgroundColor(mBgColorFocus);

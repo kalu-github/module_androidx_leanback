@@ -41,8 +41,6 @@ dependencies {
     compileOnly 'androidx.appcompat:appcompat:1.4.2'
     // https://mvnrepository.com/artifact/androidx.annotation/annotation
     compileOnly 'androidx.annotation:annotation:1.4.0'
-    // https://mvnrepository.com/artifact/androidx.annotation/annotation
-    compileOnly 'androidx.annotation:annotation:1.4.0'
     // https://mvnrepository.com/artifact/androidx.recyclerview/recyclerview
     compileOnly 'androidx.recyclerview:recyclerview:1.2.1'
 }
