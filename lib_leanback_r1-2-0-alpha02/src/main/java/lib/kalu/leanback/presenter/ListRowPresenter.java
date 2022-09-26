@@ -109,7 +109,18 @@ public abstract class ListRowPresenter<T extends ListRowPresenter.ListRowBean> e
             // 1
             RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
             if (null == layoutManager) {
-                LinearLayoutManager manager = new LinearLayoutManager(context);
+                LinearLayoutManager manager = new LinearLayoutManager(context) {
+                    @Override
+                    public boolean canScrollHorizontally() {
+                        int size = list.size();
+                        return ListRowPresenter.this.canScrollHorizontally(size);
+                    }
+
+                    @Override
+                    public boolean canScrollVertically() {
+                        return false;
+                    }
+                };
                 manager.setOrientation(LinearLayoutManager.HORIZONTAL);
                 RecyclerView.ItemDecoration itemDecoration = initItemDecoration();
                 if (null != itemDecoration) {
@@ -201,6 +212,10 @@ public abstract class ListRowPresenter<T extends ListRowPresenter.ListRowBean> e
 
     protected String initHeadAssetsTTF() {
         return null;
+    }
+
+    protected boolean canScrollHorizontally(int count) {
+        return true;
     }
 
     @Keep
