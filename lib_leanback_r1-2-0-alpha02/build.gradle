@@ -34,11 +34,8 @@ android {
 //}
 
 dependencies {
-
-    // https://mvnrepository.com/artifact/androidx.core/core
-    compileOnly 'androidx.core:core:1.8.0'
     // https://mvnrepository.com/artifact/androidx.appcompat/appcompat
-    compileOnly 'androidx.appcompat:appcompat:1.4.2'
+    compileOnly 'androidx.appcompat:appcompat:1.5.1'
     // https://mvnrepository.com/artifact/androidx.annotation/annotation
     compileOnly 'androidx.annotation:annotation:1.4.0'
     // https://mvnrepository.com/artifact/androidx.recyclerview/recyclerview
