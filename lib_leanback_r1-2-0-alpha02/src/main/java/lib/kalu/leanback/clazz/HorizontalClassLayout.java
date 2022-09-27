@@ -580,7 +580,7 @@ public final class HorizontalClassLayout extends ScrollView {
         if (null == radioGroup)
             return;
         int size = radioGroup.getChildCount();
-        if (index + 1 >= size)
+        if (index + 1 > size)
             return;
 
         // reset
@@ -621,7 +621,7 @@ public final class HorizontalClassLayout extends ScrollView {
         if (null == radioGroup)
             return;
         int size = radioGroup.getChildCount();
-        if (index + 1 >= size)
+        if (index + 1 > size)
             return;
 
         // reset

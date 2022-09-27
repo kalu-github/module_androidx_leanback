@@ -505,7 +505,7 @@ public final class ClassLayout extends ScrollView {
             return;
         RadioGroup radioGroup = (RadioGroup) getChildAt(0);
         int size = radioGroup.getChildCount();
-        if (index + 1 >= size)
+        if (index + 1 > size)
             return;
 
         // reset
@@ -544,7 +544,7 @@ public final class ClassLayout extends ScrollView {
             return;
         RadioGroup radioGroup = (RadioGroup) getChildAt(0);
         int size = radioGroup.getChildCount();
-        if (index + 1 >= size)
+        if (index + 1 > size)
             return;
 
         // reset
