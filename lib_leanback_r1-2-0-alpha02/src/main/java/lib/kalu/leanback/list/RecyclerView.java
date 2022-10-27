@@ -73,7 +73,7 @@ public class RecyclerView extends androidx.recyclerview.widget.RecyclerView {
 
     private View findLeft() {
         View focusedView = getFocusedChild();  // 获取当前获得焦点的view
-        return FocusFinder.getInstance().findNextFocus(this, focusedView, View.FOCUS_UP);
+        return FocusFinder.getInstance().findNextFocus(this, focusedView, View.FOCUS_LEFT);
     }
 
     private View findRight() {
