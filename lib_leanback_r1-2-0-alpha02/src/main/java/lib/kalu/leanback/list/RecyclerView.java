@@ -40,16 +40,12 @@ public class RecyclerView extends androidx.recyclerview.widget.RecyclerView {
             int keyCode = event.getKeyCode();
             if (keyCode == KeyEvent.KEYCODE_DPAD_LEFT || keyCode == KeyEvent.KEYCODE_DPAD_RIGHT) {
                 View nextFocusView;
-                try {
-                    if (keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
-                        // 通过findNextFocus获取下一个需要得到焦点的view
-                        nextFocusView = findLeft();
-                    } else {
-                        // 通过findNextFocus获取下一个需要得到焦点的view
-                        nextFocusView = findRight();
-                    }
-                } catch (Exception e) {
-                    nextFocusView = null;
+                if (keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
+                    // 通过findNextFocus获取下一个需要得到焦点的view
+                    nextFocusView = findLeft();
+                } else {
+                    // 通过findNextFocus获取下一个需要得到焦点的view
+                    nextFocusView = findRight();
                 }
                 // 如果获取失败（也就是说需要交给系统来处理焦点， 消耗掉事件，不让系统处理， 并让先前获取焦点的view获取焦点）
                 if (null != nextFocusView) {
@@ -57,22 +53,14 @@ public class RecyclerView extends androidx.recyclerview.widget.RecyclerView {
                     return true;
                 }
             } else if (keyCode == KeyEvent.KEYCODE_DPAD_UP || keyCode == KeyEvent.KEYCODE_DPAD_DOWN) {
-                View focusedView = getFocusedChild();  // 获取当前获得焦点的view
                 View nextFocusView;
-                try {
-                    if (keyCode == KeyEvent.KEYCODE_DPAD_UP) {
-                        // 通过findNextFocus获取下一个需要得到焦点的view
-                        nextFocusView = findUp();
-                    } else {
-                        // 通过findNextFocus获取下一个需要得到焦点的view
-                        nextFocusView = findDown();
-                    }
-                } catch (Exception e) {
-                    nextFocusView = null;
+                if (keyCode == KeyEvent.KEYCODE_DPAD_UP) {
+                    // 通过findNextFocus获取下一个需要得到焦点的view
+                    nextFocusView = findUp();
+                } else {
+                    // 通过findNextFocus获取下一个需要得到焦点的view
+                    nextFocusView = findDown();
                 }
-
-                // fix
-
                 // 如果获取失败（也就是说需要交给系统来处理焦点， 消耗掉事件，不让系统处理， 并让先前获取焦点的view获取焦点）
                 if (null != nextFocusView) {
                     nextFocusView.requestFocus();
