@@ -14,14 +14,24 @@ import androidx.recyclerview.widget.GridLayoutManager;
 public class RecyclerView extends androidx.recyclerview.widget.RecyclerView {
     public RecyclerView(@NonNull Context context) {
         super(context);
+        init();
     }
 
     public RecyclerView(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
+        init();
     }
 
     public RecyclerView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        init();
+    }
+
+    private void init() {
+        setAnimation(null);
+        setItemAnimator(null);
+        setAnimationCacheEnabled(false);
+        setNestedScrollingEnabled(false);
     }
 
     @Override
