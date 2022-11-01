@@ -35,7 +35,6 @@ class TabTextView extends TextView {
     protected void onDraw(Canvas canvas) {
         getPaint().setFakeBoldText(false);
         super.onDraw(canvas);
-        Log.e("TabTextView", "onDraw =>");
 
         // 驻留文字下划线
         if (mUnderline && mUnderlineHeight > 0f && String.valueOf(1).equals(getHint())) {
@@ -80,7 +79,6 @@ class TabTextView extends TextView {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        Log.e("TabTextView", "onMeasure =>");
         int height = MeasureSpec.getSize(heightMeasureSpec);
         CharSequence text = getText();
 
@@ -100,7 +98,6 @@ class TabTextView extends TextView {
     }
 
     private final void init() {
-        Log.e("TabTextView", "init =>");
         setClickable(true);
         setLongClickable(false);
         setFocusable(true);
