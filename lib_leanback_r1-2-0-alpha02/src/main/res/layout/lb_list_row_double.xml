@@ -14,14 +14,12 @@
     <TextView
         android:id="@+id/module_leanback_llrd_head"
         android:layout_width="wrap_content"
-        android:layout_height="50dp"
-        android:clickable="false"
+        android:layout_height="wrap_content"
         android:focusable="false"
-        android:focusableInTouchMode="false"
         android:gravity="center_vertical|left"
         android:longClickable="false"
-        android:textColor="@android:color/white"
-        android:textSize="18sp"
+        android:textColor="#ffffff"
+        android:textSize="20sp"
         android:visibility="gone" />
 
     <LinearLayout

@@ -11,11 +11,11 @@
         android:id="@+id/module_leanback_lgp_header"
         class="lib.kalu.leanback.presenter.ListGridPresenter$TextViewListGridPresenter"
         android:layout_width="wrap_content"
-        android:layout_height="40dp"
-        android:gravity="top|left"
+        android:layout_height="wrap_content"
         android:focusable="false"
+        android:gravity="top|left"
         android:singleLine="true"
-        android:textColor="@android:color/white"
+        android:textColor="#ffffff"
         android:textSize="20sp"
         android:visibility="gone" />
 

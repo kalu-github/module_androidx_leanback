@@ -31,7 +31,7 @@ public abstract class ListRowPresenter<T extends ListRowPresenter.ListRowBean> e
             Context context = parent.getContext();
             onLife(context);
             View view = LayoutInflater.from(context).inflate(R.layout.lb_list_row_news, parent, false);
-            initStyle(context, view, parent);
+            initStyle(context, parent, view, R.id.module_leanback_llr_header);
             return new ViewHolder(view);
         } catch (Exception e) {
             e.printStackTrace();
@@ -75,14 +75,6 @@ public abstract class ListRowPresenter<T extends ListRowPresenter.ListRowBean> e
             }
             if (null != head && head.length() > 0) {
                 TextView textView = viewHolder.view.findViewById(R.id.module_leanback_llr_header);
-                String ttf = initHeadAssetsTTF();
-                if (null != ttf && ttf.length() > 0) {
-                    try {
-                        textView.setTypeface(Typeface.createFromAsset(textView.getContext().getAssets(), ttf));
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
                 textView.setText(head);
                 textView.setVisibility(View.VISIBLE);
             }
@@ -209,10 +201,6 @@ public abstract class ListRowPresenter<T extends ListRowPresenter.ListRowBean> e
 
     protected int initItemViewType(int position, T t) {
         return 1;
-    }
-
-    protected String initHeadAssetsTTF() {
-        return null;
     }
 
     protected boolean canScrollHorizontally(int count) {

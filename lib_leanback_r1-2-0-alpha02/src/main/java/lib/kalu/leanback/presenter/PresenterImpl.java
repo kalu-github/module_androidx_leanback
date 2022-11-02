@@ -2,14 +2,40 @@ package lib.kalu.leanback.presenter;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.Typeface;
+import android.text.TextUtils;
+import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.annotation.ColorInt;
+import androidx.annotation.Dimension;
+import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
 import androidx.leanback.widget.VerticalGridView;
 
 public interface PresenterImpl {
+
+    @ColorInt
+    default int initHeadBackgroundColor(@NonNull Context context) {
+        return Color.TRANSPARENT;
+    }
+
+    @Dimension
+    default int initHeadPadding(@NonNull Context context) {
+        return 0;
+    }
+
+    @Dimension
+    default int initHeadTextSize(@NonNull Context context) {
+        return 0;
+    }
+
+    default String initHeadAssetTTF(@NonNull Context context) {
+        return null;
+    }
+
 
     @ColorInt
     default int initBackgroundColor(@NonNull Context context) {
@@ -24,7 +50,7 @@ public interface PresenterImpl {
         return 0;
     }
 
-    default void initStyle(@NonNull Context context, @NonNull View view, @NonNull ViewGroup parent) {
+    default void initStyle(@NonNull Context context, @NonNull ViewGroup parent, @NonNull View view, @IdRes int headId) {
         int magrinTop = initMagrinTop(context);
         int magrinBottom = initMagrinBottom(context);
         if (magrinTop > 0 || magrinBottom > 0) {
@@ -35,6 +61,30 @@ public interface PresenterImpl {
         int backgroundColor = initBackgroundColor(context);
         if (backgroundColor != Color.TRANSPARENT) {
             view.setBackgroundColor(backgroundColor);
+        }
+
+        // head
+        View viewById = view.findViewById(headId);
+        if (null != viewById) {
+            int initHeadBackgroundColor = initHeadBackgroundColor(context);
+            if (initHeadBackgroundColor != Color.TRANSPARENT) {
+                viewById.setBackgroundColor(initHeadBackgroundColor);
+            }
+            int initHeadPadding = initHeadPadding(context);
+            if (initHeadPadding > 0) {
+                viewById.setPadding(0, 0, 0, initHeadPadding);
+            }
+            int initHeadTextSize = initHeadTextSize(context);
+            if (initHeadTextSize > 0) {
+                ((TextView) viewById).setTextSize(TypedValue.COMPLEX_UNIT_PX, initHeadTextSize);
+            }
+            String initHeadAssetTTF = initHeadAssetTTF(context);
+            if (null != initHeadAssetTTF && initHeadAssetTTF.length() > 0) {
+                try {
+                    ((TextView) viewById).setTypeface(Typeface.createFromAsset(context.getAssets(), initHeadAssetTTF));
+                } catch (Exception e) {
+                }
+            }
         }
     }
 }

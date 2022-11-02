@@ -36,7 +36,7 @@ public abstract class ListRowDoublePresenter<T extends ListRowDoublePresenter.Li
         try {
             Context context = parent.getContext();
             View view = LayoutInflater.from(context).inflate(R.layout.lb_list_row_double, parent, false);
-            initStyle(context, view, parent);
+            initStyle(context, parent, view, R.id.module_leanback_llrd_head);
             setAdapterTop(context, view);
             setAdapterBottom(context, view);
             return new ViewHolder(view);
@@ -86,14 +86,6 @@ public abstract class ListRowDoublePresenter<T extends ListRowDoublePresenter.Li
             }
             if (null != head && head.length() > 0) {
                 TextView textView = viewHolder.view.findViewById(R.id.module_leanback_llrd_head);
-                String ttf = initHeadAssetsTTF();
-                if (null != ttf && ttf.length() > 0) {
-                    try {
-                        textView.setTypeface(Typeface.createFromAsset(textView.getContext().getAssets(), ttf));
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
                 textView.setText(head);
                 textView.setVisibility(View.VISIBLE);
             }
@@ -475,10 +467,6 @@ public abstract class ListRowDoublePresenter<T extends ListRowDoublePresenter.Li
 
     @LayoutRes
     protected abstract int initLayoutTop();
-
-    protected String initHeadAssetsTTF() {
-        return null;
-    }
 
     @Keep
     public static class ListRowDoubleBean {
