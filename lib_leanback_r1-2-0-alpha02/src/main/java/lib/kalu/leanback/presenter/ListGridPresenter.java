@@ -2,6 +2,7 @@ package lib.kalu.leanback.presenter;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.util.AttributeSet;
@@ -13,6 +14,7 @@ import android.view.ViewStub;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.annotation.ColorInt;
 import androidx.annotation.Keep;
 import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
@@ -20,13 +22,14 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.leanback.R;
 import androidx.leanback.widget.Presenter;
+import androidx.leanback.widget.VerticalGridView;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class ListGridPresenter<T extends ListGridPresenter.ListGridBean> extends Presenter {
+public abstract class ListGridPresenter<T extends ListGridPresenter.ListGridBean> extends Presenter implements PresenterImpl {
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent) {
@@ -34,6 +37,7 @@ public abstract class ListGridPresenter<T extends ListGridPresenter.ListGridBean
             Context context = parent.getContext();
             onLife(context);
             View view = LayoutInflater.from(context).inflate(R.layout.lb_list_grid, parent, false);
+            initStyle(context, view, parent);
             return new ViewHolder(view);
         } catch (Exception e) {
             e.printStackTrace();

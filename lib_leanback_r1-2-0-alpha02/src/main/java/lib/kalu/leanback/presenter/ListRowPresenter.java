@@ -23,7 +23,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class ListRowPresenter<T extends ListRowPresenter.ListRowBean> extends Presenter {
+public abstract class ListRowPresenter<T extends ListRowPresenter.ListRowBean> extends Presenter implements PresenterImpl {
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent) {
@@ -31,6 +31,7 @@ public abstract class ListRowPresenter<T extends ListRowPresenter.ListRowBean> e
             Context context = parent.getContext();
             onLife(context);
             View view = LayoutInflater.from(context).inflate(R.layout.lb_list_row_news, parent, false);
+            initStyle(context, view, parent);
             return new ViewHolder(view);
         } catch (Exception e) {
             e.printStackTrace();

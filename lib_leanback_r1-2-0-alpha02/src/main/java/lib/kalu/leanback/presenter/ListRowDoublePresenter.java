@@ -25,7 +25,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class ListRowDoublePresenter<T extends ListRowDoublePresenter.ListRowDoubleBean> extends Presenter {
+public abstract class ListRowDoublePresenter<T extends ListRowDoublePresenter.ListRowDoubleBean> extends Presenter implements PresenterImpl {
 
     private final List<T> mDatas = new ArrayList();
     private final List<T> mDataTop = new ArrayList<>();
@@ -36,6 +36,7 @@ public abstract class ListRowDoublePresenter<T extends ListRowDoublePresenter.Li
         try {
             Context context = parent.getContext();
             View view = LayoutInflater.from(context).inflate(R.layout.lb_list_row_double, parent, false);
+            initStyle(context, view, parent);
             setAdapterTop(context, view);
             setAdapterBottom(context, view);
             return new ViewHolder(view);
