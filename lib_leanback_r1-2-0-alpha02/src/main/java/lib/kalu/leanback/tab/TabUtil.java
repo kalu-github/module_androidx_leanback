@@ -83,14 +83,32 @@ class TabUtil {
             return;
 
         logE("updateImageBackground => ************************");
+
+        // 1
         String[] urls = t.initImageBackgroundUrls();
         logE("updateImageBackground => urls = " + Arrays.toString(urls));
+
+        // 2
         String[] files = t.initImageBackgroundFiles();
+        try {
+            String path = stay ? files[2] : (focus ? files[1] : files[0]);
+            File file = new File(path);
+            if (!file.exists()) {
+                files = null;
+            }
+        } catch (Exception e) {
+        }
         logE("updateImageBackground => files = " + Arrays.toString(files));
+
+        // 3
         String[] assets = t.initImageBackgroundAssets();
         logE("updateImageBackground => assets = " + Arrays.toString(assets));
+
+        // 4
         int[] resources = t.initImageBackgroundResources();
         logE("updateImageBackground => resources = " + Arrays.toString(resources));
+
+        // 5
         int[][] colors = t.initImageBackgroundColors();
         logE("updateImageBackground => colors = " + Arrays.toString(colors));
 
@@ -172,14 +190,31 @@ class TabUtil {
         logE("updateTextBackground => ************************");
         logE("updateTextBackground => focus = " + focus + ", stay = " + stay);
 
+        // 1
         int[][] colors = t.initTextBackgroundColors();
         logE("updateTextBackground => colors = " + Arrays.toString(colors));
+
+        // 2
         String[] urls = t.initTextBackgroundUrls();
         logE("updateTextBackground => urls = " + Arrays.toString(urls));
+
+        // 3
         String[] files = t.initTextBackgroundFiles();
+        try {
+            String path = stay ? files[2] : (focus ? files[1] : files[0]);
+            File file = new File(path);
+            if (!file.exists()) {
+                files = null;
+            }
+        } catch (Exception e) {
+        }
         logE("updateTextBackground => files = " + Arrays.toString(files));
+
+        // 4
         String[] assets = t.initTextBackgroundAssets();
         logE("updateTextBackground => assets = " + Arrays.toString(assets));
+
+        // 5
         int[] resources = t.initTextBackgroundResources();
         logE("updateTextBackground => resources = " + Arrays.toString(resources));
 

@@ -190,17 +190,11 @@ public class TabLayout extends HorizontalScrollView {
             setNestedScrollingEnabled(true);
         }
         setHorizontalScrollBarEnabled(false);
-        setWillNotDraw(true);
-        setLongClickable(false);
-        setClickable(false);
+//        setWillNotDraw(true);
         setFocusable(true);
-        setFocusableInTouchMode(true);
         LinearLayout root = new LinearLayout(getContext());
         root.setPadding(0, 0, 0, 0);
-        root.setClickable(true);
-        root.setLongClickable(false);
         root.setFocusable(true);
-        root.setFocusableInTouchMode(true);
         root.setOrientation(LinearLayout.HORIZONTAL);
         root.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
         addView(root, 0);
