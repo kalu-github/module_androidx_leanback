@@ -183,6 +183,7 @@ public class TabLayout extends HorizontalScrollView {
     /************************************/
 
     private final void init(@Nullable AttributeSet attrs) {
+        // 1
         setPadding(0, 0, 0, 0);
         setDescendantFocusability(FOCUS_AFTER_DESCENDANTS);
         setSmoothScrollingEnabled(true);
@@ -190,13 +191,10 @@ public class TabLayout extends HorizontalScrollView {
             setNestedScrollingEnabled(true);
         }
         setHorizontalScrollBarEnabled(false);
-//        setWillNotDraw(true);
+        setWillNotDraw(true);
         setFocusable(true);
-        LinearLayout root = new LinearLayout(getContext());
-        root.setPadding(0, 0, 0, 0);
-        root.setFocusable(true);
-        root.setOrientation(LinearLayout.HORIZONTAL);
-        root.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
+        // 2
+        TabLinearLayout root = new TabLinearLayout(getContext());
         addView(root, 0);
         TypedArray attributes = null;
         try {
@@ -245,9 +243,9 @@ public class TabLayout extends HorizontalScrollView {
     /**
      * 强制选中tab
      *
-     * @param next   新索引位置
+     * @param next     新索引位置
      * @param callback 开启通知
-     * @param anim   开启动画
+     * @param anim     开启动画
      */
     @Keep
     private final void select(@IntRange(from = 0, to = Integer.MAX_VALUE) int next, boolean callback, boolean anim, boolean ignore, boolean activated) {
@@ -276,11 +274,11 @@ public class TabLayout extends HorizontalScrollView {
     /**
      * 强制选中
      *
-     * @param before 旧索引位置
-     * @param next   新索引位置
+     * @param before   旧索引位置
+     * @param next     新索引位置
      * @param callback 通知
-     * @param leave  离开
-     * @param repeat 重复
+     * @param leave    离开
+     * @param repeat   重复
      */
     private final void scroll(@IntRange(from = 0, to = Integer.MAX_VALUE) int before, @IntRange(from = 0, to = Integer.MAX_VALUE) int next, boolean callback, boolean leave, boolean repeat) {
         if (next < 0)
@@ -327,11 +325,11 @@ public class TabLayout extends HorizontalScrollView {
     /**
      * 更新焦点状态
      *
-     * @param before 旧索引位置
-     * @param next   新索引位置
+     * @param before   旧索引位置
+     * @param next     新索引位置
      * @param callback 通知
-     * @param leave  离开
-     * @param repeat 重复
+     * @param leave    离开
+     * @param repeat   重复
      */
     private final void updateFocus(@IntRange(from = 0, to = Integer.MAX_VALUE) int before, @IntRange(from = 0, to = Integer.MAX_VALUE) int next, boolean callback, boolean leave, boolean repeat) {
         TabUtil.logE("updateFocus => before = " + before + ", next = " + next + ", callback = " + callback + ", leave = " + leave + ", repeat = " + repeat);
@@ -614,8 +612,16 @@ public class TabLayout extends HorizontalScrollView {
     }
 
     @Keep
-    public final void select(@IntRange(from = 0, to = Integer.MAX_VALUE) int next, boolean callback,  boolean ignore) {
+    public final void select(@IntRange(from = 0, to = Integer.MAX_VALUE) int next, boolean callback, boolean ignore) {
         select(next, callback, false, ignore, true);
+    }
+
+    public final boolean isInstanceofItem(@NonNull View view) {
+        try {
+            return view instanceof TabTextView || view instanceof TabImageView;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     /************************************/

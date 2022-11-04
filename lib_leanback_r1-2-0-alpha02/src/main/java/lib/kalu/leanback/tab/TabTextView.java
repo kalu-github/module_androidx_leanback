@@ -26,7 +26,7 @@ class TabTextView extends TextView {
 //        init();
 //    }
 
-    public TabTextView(@NonNull Context context) {
+    TabTextView(@NonNull Context context) {
         super(context);
         init();
     }
@@ -98,10 +98,7 @@ class TabTextView extends TextView {
     }
 
     private final void init() {
-        setClickable(true);
-        setLongClickable(false);
         setFocusable(true);
-        setFocusableInTouchMode(true);
         setMaxLines(1);
         setLines(1);
         setMinEms(2);
