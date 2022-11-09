@@ -1,5 +1,7 @@
 package lib.kalu.leanback.util;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 
 public final class LeanBackUtil {
@@ -29,9 +31,9 @@ public final class LeanBackUtil {
             return;
 
         if (null == throwable) {
-            LeanBackUtil.log(tag, message);
+            Log.e(tag, message);
         } else {
-            LeanBackUtil.log(tag, message, throwable);
+            Log.e(tag, message, throwable);
         }
     }
 }
