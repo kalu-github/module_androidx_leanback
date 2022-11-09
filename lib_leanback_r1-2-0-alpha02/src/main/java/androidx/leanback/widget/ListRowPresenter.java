@@ -15,7 +15,6 @@ package androidx.leanback.widget;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +23,8 @@ import androidx.leanback.R;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.HashMap;
+
+import lib.kalu.leanback.util.LeanbackUtil;
 
 /**
  * ListRowPresenter renders {@link ListRow} using a
@@ -525,7 +526,7 @@ public class ListRowPresenter extends RowPresenter {
         // Note: sufficient bottom padding needed for card shadows.
         if (vh.isExpanded()) {
             int headerSpaceUnderBaseline = getSpaceUnderBaseline(vh);
-            if (DEBUG) Log.v(TAG, "headerSpaceUnderBaseline " + headerSpaceUnderBaseline);
+            if (DEBUG) LeanbackUtil.log(TAG, "headerSpaceUnderBaseline " + headerSpaceUnderBaseline);
             paddingTop = (vh.isSelected() ? sExpandedSelectedRowTopPadding : vh.mPaddingTop)
                     - headerSpaceUnderBaseline;
             paddingBottom = mHoverCardPresenterSelector == null

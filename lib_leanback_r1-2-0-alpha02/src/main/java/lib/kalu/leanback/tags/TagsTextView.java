@@ -128,7 +128,7 @@ class TagsTextView extends TextView {
 
 //    @Override
 //    public boolean onKeyDown(int keyCode, KeyEvent event) {
-//        Log.e("TagsTextView", "onKeyDown => keyCode = " + keyCode + ", action = " + event.getAction());
+//        LbLogUtil.log("TagsTextView", "onKeyDown => keyCode = " + keyCode + ", action = " + event.getAction());
 //        if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN || keyCode == KeyEvent.KEYCODE_DPAD_UP) {
 //            mAutoCall = false;
 //            setSelected(true);
@@ -142,7 +142,7 @@ class TagsTextView extends TextView {
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
 //        View focus = findFocus();
-//        Log.e("TagsTextView111", "dispatchKeyEvent => focus = " + focus);
+//        LbLogUtil.log("TagsTextView111", "dispatchKeyEvent => focus = " + focus);
         return super.dispatchKeyEvent(event);
     }
 

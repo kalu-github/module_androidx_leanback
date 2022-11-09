@@ -8,7 +8,6 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -25,6 +24,7 @@ import java.util.Map;
 
 import lib.kalu.leanback.tags.listener.OnTagsChangeListener;
 import lib.kalu.leanback.tags.model.TagsModel;
+import lib.kalu.leanback.util.LeanbackUtil;
 
 @Keep
 public class TagsLayout extends LinearLayout {
@@ -214,7 +214,7 @@ public class TagsLayout extends LinearLayout {
             } catch (Exception e) {
             }
         }
-        Log.e("TagsLinearLayoutChild", "isFirst => status = " + status);
+        LeanbackUtil.log("TagsLinearLayoutChild", "isFirst => status = " + status);
         return status;
     }
 
@@ -236,7 +236,7 @@ public class TagsLayout extends LinearLayout {
             } catch (Exception e) {
             }
         }
-        Log.e("TagsLinearLayoutChild", "isLast => status = " + status);
+        LeanbackUtil.log("TagsLinearLayoutChild", "isLast => status = " + status);
         return status;
     }
 

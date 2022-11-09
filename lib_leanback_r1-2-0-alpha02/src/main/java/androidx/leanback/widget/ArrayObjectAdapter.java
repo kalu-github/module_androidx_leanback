@@ -13,8 +13,6 @@
  */
 package androidx.leanback.widget;
 
-import android.util.Log;
-
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListUpdateCallback;
@@ -23,6 +21,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+
+import lib.kalu.leanback.util.LeanbackUtil;
 
 /**
  * An {@link ObjectAdapter} implemented with an {@link ArrayList}.
@@ -293,7 +293,7 @@ public class ArrayObjectAdapter extends ObjectAdapter {
                 @Override
                 public void onInserted(int position, int count) {
                     if (DEBUG) {
-                        Log.d(TAG, "onInserted");
+                        LeanbackUtil.log(TAG, "onInserted");
                     }
                     notifyItemRangeInserted(position, count);
                 }
@@ -301,7 +301,7 @@ public class ArrayObjectAdapter extends ObjectAdapter {
                 @Override
                 public void onRemoved(int position, int count) {
                     if (DEBUG) {
-                        Log.d(TAG, "onRemoved");
+                        LeanbackUtil.log(TAG, "onRemoved");
                     }
                     notifyItemRangeRemoved(position, count);
                 }
@@ -309,7 +309,7 @@ public class ArrayObjectAdapter extends ObjectAdapter {
                 @Override
                 public void onMoved(int fromPosition, int toPosition) {
                     if (DEBUG) {
-                        Log.d(TAG, "onMoved");
+                        LeanbackUtil.log(TAG, "onMoved");
                     }
                     notifyItemMoved(fromPosition, toPosition);
                 }
@@ -317,7 +317,7 @@ public class ArrayObjectAdapter extends ObjectAdapter {
                 @Override
                 public void onChanged(int position, int count, Object payload) {
                     if (DEBUG) {
-                        Log.d(TAG, "onChanged");
+                        LeanbackUtil.log(TAG, "onChanged");
                     }
                     notifyItemRangeChanged(position, count, payload);
                 }

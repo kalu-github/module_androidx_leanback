@@ -8,17 +8,14 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.KeyEvent;
-import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.ScrollView;
-import android.widget.Toast;
 
 import androidx.annotation.ColorInt;
 import androidx.annotation.Dimension;
@@ -87,13 +84,13 @@ public final class HorizontalClassLayout extends ScrollView {
 
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
-        // Log.e("HorizontalClassLayout", "dispatchKeyEvent => action = " + event.getAction() + ", code = " + event.getKeyCode());
+        // LbLogUtil.log("HorizontalClassLayout", "dispatchKeyEvent => action = " + event.getAction() + ", code = " + event.getKeyCode());
 
         // move => left
         if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_LEFT) {
             int count = getCount();
             int index = getCheckedIndex();
-//            Log.e("HorizontalClassLayout", "left => count = " + count + ", index = " + index);
+//            LbLogUtil.log("HorizontalClassLayout", "left => count = " + count + ", index = " + index);
             if (count > 0 && index == 0) {
                 if (mDispatchLeft) {
                     return true;
@@ -116,7 +113,7 @@ public final class HorizontalClassLayout extends ScrollView {
         else if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_RIGHT) {
             int count = getCount();
             int index = getCheckedIndex();
-//            Log.e("HorizontalClassLayout", "down => count = " + count + ", index = " + index);
+//            LbLogUtil.log("HorizontalClassLayout", "down => count = " + count + ", index = " + index);
             if (count > 0 && index + 1 == count) {
                 if (mDispatchRight) {
                     return true;
@@ -330,7 +327,7 @@ public final class HorizontalClassLayout extends ScrollView {
             if (count <= 0)
                 throw new IllegalArgumentException("getCheckedIndex => child num is empty");
             for (int i = 0; i < count; i++) {
-//                Log.e("HorizontalClassLayout", "setChecked => i = " + i + ", index = " + index);
+//                LbLogUtil.log("HorizontalClassLayout", "setChecked => i = " + i + ", index = " + index);
                 RadioButton radioButton = (RadioButton) radioGroup.getChildAt(i);
                 if (null == radioButton)
                     continue;
@@ -346,7 +343,7 @@ public final class HorizontalClassLayout extends ScrollView {
     }
 
     private void updateBackground(@NonNull int index, boolean highlight, boolean checked) {
-//        Log.e("HorizontalClassLayout", "updateBackground => index = " + index + ", highlight = " + highlight + ", checked = " + checked);
+//        LbLogUtil.log("HorizontalClassLayout", "updateBackground => index = " + index + ", highlight = " + highlight + ", checked = " + checked);
 
         int count = getChildCount();
         if (count != 1)
@@ -440,7 +437,7 @@ public final class HorizontalClassLayout extends ScrollView {
             } else {
                 str = ((ClassApi) tag).textNormal(getContext());
             }
-//            Log.e("HorizontalClassLayout", "updateTextW => str = " + str);
+//            LbLogUtil.log("HorizontalClassLayout", "updateTextW => str = " + str);
             if (null != str && str.length() > 0) {
                 radioButton.setText(str);
             }

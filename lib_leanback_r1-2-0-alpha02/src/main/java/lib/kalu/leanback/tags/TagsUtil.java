@@ -1,9 +1,9 @@
 package lib.kalu.leanback.tags;
 
-import android.util.Log;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import lib.kalu.leanback.util.LeanbackUtil;
 
 class TagsUtil {
 
@@ -19,9 +19,9 @@ class TagsUtil {
             return;
 
         if (null == tr) {
-            Log.e(TAG, message);
+            LeanbackUtil.log(TAG, message);
         } else {
-            Log.e(TAG, message, tr);
+            LeanbackUtil.log(TAG, message, tr);
         }
     }
 }

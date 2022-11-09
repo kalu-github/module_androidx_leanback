@@ -19,7 +19,6 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.text.TextUtils;
 import android.util.AttributeSet;
-import android.util.Log;
 
 import androidx.annotation.VisibleForTesting;
 import androidx.core.view.ViewCompat;
@@ -33,6 +32,8 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
+
+import lib.kalu.leanback.util.LeanbackUtil;
 
 /**
  * {@link DatePicker} is a directly subclass of {@link Picker}.
@@ -123,7 +124,7 @@ public class DatePicker extends Picker {
             outDate.setTime(mDateFormat.parse(date));
             return true;
         } catch (ParseException e) {
-            Log.w(LOG_TAG, "Date: " + date + " not in format: " + DATE_FORMAT);
+            LeanbackUtil.log(LOG_TAG, "Date: " + date + " not in format: " + DATE_FORMAT);
             return false;
         }
     }

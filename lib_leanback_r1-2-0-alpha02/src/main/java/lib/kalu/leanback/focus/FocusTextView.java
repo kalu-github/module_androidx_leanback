@@ -2,32 +2,22 @@ package lib.kalu.leanback.focus;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Path;
-import android.graphics.PointF;
 import android.graphics.Rect;
-import android.graphics.RectF;
-import android.graphics.Region;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
-import android.text.TextUtils;
 import android.util.AttributeSet;
-import android.util.Log;
-import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.ColorInt;
 import androidx.annotation.DrawableRes;
-import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.core.view.ViewCompat;
 import androidx.leanback.R;
+
+import lib.kalu.leanback.util.LeanbackUtil;
 
 @SuppressLint("AppCompatCustomView")
 public class FocusTextView extends TextView {
@@ -93,8 +83,8 @@ public class FocusTextView extends TextView {
             e.printStackTrace();
         }
 
-        Log.d("FocusTextView", "init => mBgColorNormal = " + mBgColorNormal);
-        Log.d("FocusTextView", "init => mBgColorFocus = " + mBgColorFocus);
+        LeanbackUtil.log("FocusTextView", "init => mBgColorNormal = " + mBgColorNormal);
+        LeanbackUtil.log("FocusTextView", "init => mBgColorFocus = " + mBgColorFocus);
 
         if (null != typedArray) {
             typedArray.recycle();
@@ -146,9 +136,9 @@ public class FocusTextView extends TextView {
     }
 
     protected final void refreshBackground(boolean gainFocus) {
-        Log.d("FocusTextView", "refreshBackground => gainFocus = " + gainFocus);
-        Log.d("FocusTextView", "refreshBackground => mBgColorFocus = " + mBgColorFocus);
-        Log.d("FocusTextView", "refreshBackground => mBgColorNormal = " + mBgColorNormal);
+        LeanbackUtil.log("FocusTextView", "refreshBackground => gainFocus = " + gainFocus);
+        LeanbackUtil.log("FocusTextView", "refreshBackground => mBgColorFocus = " + mBgColorFocus);
+        LeanbackUtil.log("FocusTextView", "refreshBackground => mBgColorNormal = " + mBgColorNormal);
         if (gainFocus) {
             if (mBgColorFocus != -1) {
                 setBackgroundColor(mBgColorFocus);

@@ -15,11 +15,11 @@ package androidx.leanback.util;
 
 import static androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP_PREFIX;
 
-import android.util.Log;
-
 import androidx.annotation.RestrictTo;
 
 import java.util.ArrayList;
+
+import lib.kalu.leanback.util.LeanbackUtil;
 
 /**
  * State: each State has incoming Transitions and outgoing Transitions.
@@ -215,7 +215,7 @@ public final class StateMachine {
             if (mStatus != STATUS_INVOKED) {
                 if (checkPreCondition()) {
                     if (DEBUG) {
-                        Log.d(TAG, "execute " + this);
+                        LeanbackUtil.log(TAG, "execute " + this);
                     }
                     mStatus = STATUS_INVOKED;
                     run();
@@ -232,7 +232,7 @@ public final class StateMachine {
                     if (t.mEvent == null) {
                         if (t.mCondition == null || t.mCondition.canProceed()) {
                             if (DEBUG) {
-                                Log.d(TAG, "signal " + t);
+                                LeanbackUtil.log(TAG, "signal " + t);
                             }
                             mInvokedOutTransitions++;
                             t.mState = STATUS_INVOKED;
@@ -310,7 +310,7 @@ public final class StateMachine {
      */
     public void start() {
         if (DEBUG) {
-            Log.d(TAG, "start");
+            LeanbackUtil.log(TAG, "start");
         }
         mUnfinishedStates.addAll(mStates);
         runUnfinishedStates();
@@ -344,7 +344,7 @@ public final class StateMachine {
                 for (Transition t : state.mOutgoings) {
                     if (t.mState != STATUS_INVOKED && t.mEvent == event) {
                         if (DEBUG) {
-                            Log.d(TAG, "signal " + t);
+                            LeanbackUtil.log(TAG, "signal " + t);
                         }
                         t.mState = STATUS_INVOKED;
                         state.mInvokedOutTransitions++;
@@ -363,7 +363,7 @@ public final class StateMachine {
      */
     public void reset() {
         if (DEBUG) {
-            Log.d(TAG, "reset");
+            LeanbackUtil.log(TAG, "reset");
         }
         mUnfinishedStates.clear();
         mFinishedStates.clear();

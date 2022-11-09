@@ -1,29 +1,25 @@
 package lib.kalu.leanback.presenter;
 
 import android.content.Context;
-import android.graphics.Typeface;
-import android.os.Handler;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewParent;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.Keep;
 import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.leanback.R;
 import androidx.leanback.widget.Presenter;
-import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import lib.kalu.leanback.util.LeanbackUtil;
 
 public abstract class ListRowDoublePresenter<T extends ListRowDoublePresenter.ListRowDoubleBean> extends Presenter implements PresenterImpl {
 
@@ -245,7 +241,7 @@ public abstract class ListRowDoublePresenter<T extends ListRowDoublePresenter.Li
             if (count >= size) {
                 count = size;
             }
-            Log.e("ListRowDoublePresenter", "refreshTemps => selected = " + selected + ", start = " + start + ", count = " + count + ", size = " + size);
+            LeanbackUtil.log("ListRowDoublePresenter", "refreshTemps => selected = " + selected + ", start = " + start + ", count = " + count + ", size = " + size);
             for (int i = start; i < count; ++i) {
                 T t = this.mDatas.get(i);
                 if (null != t && t.isTop()) {
@@ -345,7 +341,7 @@ public abstract class ListRowDoublePresenter<T extends ListRowDoublePresenter.Li
         } catch (Exception e) {
             e.printStackTrace();
         }
-//        Log.e("ListRowDoublePresenter", "scrollRight => index = " + index);
+//        LbLogUtil.log("ListRowDoublePresenter", "scrollRight => index = " + index);
         if (index == -1)
             return false;
 
@@ -355,7 +351,7 @@ public abstract class ListRowDoublePresenter<T extends ListRowDoublePresenter.Li
         int end = column - 1;
         int selected = getSelected();
         int position = index + selected * column;
-//        Log.e("ListRowDoublePresenter", "scrollRight => position = " + position + ", count = " + count + ", end = " + end);
+//        LbLogUtil.log("ListRowDoublePresenter", "scrollRight => position = " + position + ", count = " + count + ", end = " + end);
         if (position >= count)
             return false;
 

@@ -7,14 +7,10 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.util.TypedValue;
-import android.view.FocusFinder;
 import android.view.Gravity;
 import android.view.KeyEvent;
-import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewParent;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -87,12 +83,12 @@ public final class ClassLayout extends ScrollView {
 
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
-//        Log.e("ClassLayout", "dispatchKeyEvent => action = " + event.getAction() + ", code = " + event.getKeyCode());
+//        LbLogUtil.log("ClassLayout", "dispatchKeyEvent => action = " + event.getAction() + ", code = " + event.getKeyCode());
         // up
         if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_UP) {
             int count = getCount();
             int index = getCheckedIndex();
-//            Log.e("ClassLayout", "up => count = " + count + ", index = " + index);
+//            LbLogUtil.log("ClassLayout", "up => count = " + count + ", index = " + index);
             if (count > 0 && index == 0) {
                 if (mDispatchTop) {
                     return true;
@@ -115,7 +111,7 @@ public final class ClassLayout extends ScrollView {
         else if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_DOWN) {
             int count = getCount();
             int index = getCheckedIndex();
-//            Log.e("ClassLayout", "down => count = " + count + ", index = " + index);
+//            LbLogUtil.log("ClassLayout", "down => count = " + count + ", index = " + index);
             if (count > 0 && index + 1 == count) {
                 if (mDispatchBottom) {
                     return true;
@@ -271,7 +267,7 @@ public final class ClassLayout extends ScrollView {
             if (count <= 0)
                 throw new IllegalArgumentException("getCheckedIndex => child num is empty");
             for (int i = 0; i < count; i++) {
-//                Log.e("ClassLayout", "setChecked => i = " + i + ", index = " + index);
+//                LbLogUtil.log("ClassLayout", "setChecked => i = " + i + ", index = " + index);
                 RadioButton radioButton = (RadioButton) radioGroup.getChildAt(i);
                 radioButton.setChecked(false);
             }
@@ -321,7 +317,7 @@ public final class ClassLayout extends ScrollView {
 //        scrollTo(0, top);
         int scrollY = getScrollY();
         int top = radioButton.getTop();
-//        Log.e("ClassLayout", "updateBackground => index = " + index + ", scrollY");
+//        LbLogUtil.log("ClassLayout", "updateBackground => index = " + index + ", scrollY");
         setDescendantFocusability(ViewGroup.FOCUS_AFTER_DESCENDANTS);
         radioButton.requestFocus();
         radioButton.clearFocus();
@@ -379,7 +375,7 @@ public final class ClassLayout extends ScrollView {
             } else {
                 str = ((ClassApi) tag).textNormal(getContext());
             }
-//            Log.e("ClassLayout", "updateTextW => str = " + str);
+//            LbLogUtil.log("ClassLayout", "updateTextW => str = " + str);
             if (null != str && str.length() > 0) {
                 radioButton.setText(str);
             }

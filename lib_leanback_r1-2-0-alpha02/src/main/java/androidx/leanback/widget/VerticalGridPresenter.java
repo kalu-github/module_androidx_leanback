@@ -13,13 +13,13 @@
  */
 package androidx.leanback.widget;
 
-import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.leanback.R;
+
+import lib.kalu.leanback.util.LeanbackUtil;
 
 /**
  * A presenter that renders objects in a {@link VerticalGridView}.
@@ -255,7 +255,7 @@ public class VerticalGridPresenter extends Presenter {
         if (mNumColumns == -1) {
             throw new IllegalStateException("Number of columns must be set");
         }
-        if (DEBUG) Log.v(TAG, "mNumColumns " + mNumColumns);
+        if (DEBUG) LeanbackUtil.log(TAG, "mNumColumns " + mNumColumns);
         vh.getGridView().setNumColumns(mNumColumns);
         vh.mInitialized = true;
 
@@ -309,7 +309,7 @@ public class VerticalGridPresenter extends Presenter {
 
     @Override
     public void onBindViewHolder(Presenter.ViewHolder viewHolder, Object item) {
-        if (DEBUG) Log.v(TAG, "onBindViewHolder " + item);
+        if (DEBUG) LeanbackUtil.log(TAG, "onBindViewHolder " + item);
         ViewHolder vh = (ViewHolder) viewHolder;
         vh.mItemBridgeAdapter.setAdapter((ObjectAdapter) item);
         vh.getGridView().setAdapter(vh.mItemBridgeAdapter);
@@ -317,7 +317,7 @@ public class VerticalGridPresenter extends Presenter {
 
     @Override
     public void onUnbindViewHolder(Presenter.ViewHolder viewHolder) {
-        if (DEBUG) Log.v(TAG, "onUnbindViewHolder");
+        if (DEBUG) LeanbackUtil.log(TAG, "onUnbindViewHolder");
         ViewHolder vh = (ViewHolder) viewHolder;
         vh.mItemBridgeAdapter.setAdapter(null);
         vh.getGridView().setAdapter(null);

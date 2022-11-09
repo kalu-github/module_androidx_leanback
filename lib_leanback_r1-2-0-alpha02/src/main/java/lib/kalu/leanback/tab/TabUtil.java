@@ -8,7 +8,6 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Looper;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -30,6 +29,7 @@ import java.util.concurrent.Executors;
 
 import lib.kalu.leanback.tab.model.TabModel;
 import lib.kalu.leanback.tab.ninepatch.NinePatchChunk;
+import lib.kalu.leanback.util.LeanbackUtil;
 
 /**
  * utils
@@ -47,7 +47,7 @@ class TabUtil {
         if (null == message || message.length() == 0)
             return;
 
-        Log.e("module-tablayout", message);
+        LeanbackUtil.log("module-tablayout", message);
     }
 
     public static final <T extends TabModel> void updateImageUI(@NonNull ImageView view, @NonNull T t, @NonNull float radius, boolean focus, boolean stay) {
