@@ -33,7 +33,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 
-import lib.kalu.leanback.util.LeanbackUtil;
+import lib.kalu.leanback.util.LeanBackUtil;
 
 /**
  * {@link DatePicker} is a directly subclass of {@link Picker}.
@@ -124,7 +124,7 @@ public class DatePicker extends Picker {
             outDate.setTime(mDateFormat.parse(date));
             return true;
         } catch (ParseException e) {
-            LeanbackUtil.log(LOG_TAG, "Date: " + date + " not in format: " + DATE_FORMAT);
+            LeanBackUtil.log(LOG_TAG, "Date: " + date + " not in format: " + DATE_FORMAT);
             return false;
         }
     }

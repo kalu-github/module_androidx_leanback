@@ -17,7 +17,7 @@ import androidx.annotation.RequiresApi;
 import androidx.core.view.ViewCompat;
 import androidx.leanback.R;
 
-import lib.kalu.leanback.util.LeanbackUtil;
+import lib.kalu.leanback.util.LeanBackUtil;
 
 @SuppressLint("AppCompatCustomView")
 public class FocusTextView extends TextView {
@@ -83,8 +83,8 @@ public class FocusTextView extends TextView {
             e.printStackTrace();
         }
 
-        LeanbackUtil.log("FocusTextView", "init => mBgColorNormal = " + mBgColorNormal);
-        LeanbackUtil.log("FocusTextView", "init => mBgColorFocus = " + mBgColorFocus);
+        LeanBackUtil.log("FocusTextView", "init => mBgColorNormal = " + mBgColorNormal);
+        LeanBackUtil.log("FocusTextView", "init => mBgColorFocus = " + mBgColorFocus);
 
         if (null != typedArray) {
             typedArray.recycle();
@@ -136,9 +136,9 @@ public class FocusTextView extends TextView {
     }
 
     protected final void refreshBackground(boolean gainFocus) {
-        LeanbackUtil.log("FocusTextView", "refreshBackground => gainFocus = " + gainFocus);
-        LeanbackUtil.log("FocusTextView", "refreshBackground => mBgColorFocus = " + mBgColorFocus);
-        LeanbackUtil.log("FocusTextView", "refreshBackground => mBgColorNormal = " + mBgColorNormal);
+        LeanBackUtil.log("FocusTextView", "refreshBackground => gainFocus = " + gainFocus);
+        LeanBackUtil.log("FocusTextView", "refreshBackground => mBgColorFocus = " + mBgColorFocus);
+        LeanBackUtil.log("FocusTextView", "refreshBackground => mBgColorNormal = " + mBgColorNormal);
         if (gainFocus) {
             if (mBgColorFocus != -1) {
                 setBackgroundColor(mBgColorFocus);

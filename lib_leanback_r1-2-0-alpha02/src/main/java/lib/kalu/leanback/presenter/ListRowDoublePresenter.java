@@ -19,7 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.List;
 
-import lib.kalu.leanback.util.LeanbackUtil;
+import lib.kalu.leanback.util.LeanBackUtil;
 
 public abstract class ListRowDoublePresenter<T extends ListRowDoublePresenter.ListRowDoubleBean> extends Presenter implements PresenterImpl {
 
@@ -241,7 +241,7 @@ public abstract class ListRowDoublePresenter<T extends ListRowDoublePresenter.Li
             if (count >= size) {
                 count = size;
             }
-            LeanbackUtil.log("ListRowDoublePresenter", "refreshTemps => selected = " + selected + ", start = " + start + ", count = " + count + ", size = " + size);
+            LeanBackUtil.log("ListRowDoublePresenter", "refreshTemps => selected = " + selected + ", start = " + start + ", count = " + count + ", size = " + size);
             for (int i = start; i < count; ++i) {
                 T t = this.mDatas.get(i);
                 if (null != t && t.isTop()) {

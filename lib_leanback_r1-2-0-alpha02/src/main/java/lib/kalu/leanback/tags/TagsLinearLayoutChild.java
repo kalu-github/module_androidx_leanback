@@ -21,7 +21,7 @@ import androidx.annotation.RequiresApi;
 import java.util.List;
 
 import lib.kalu.leanback.tags.model.TagsModel;
-import lib.kalu.leanback.util.LeanbackUtil;
+import lib.kalu.leanback.util.LeanBackUtil;
 
 @Keep
 class TagsLinearLayoutChild extends LinearLayout {
@@ -67,7 +67,7 @@ class TagsLinearLayoutChild extends LinearLayout {
             HorizontalScrollView parent = (HorizontalScrollView) getParent();
             LinearLayout root = (LinearLayout) parent.getParent();
             int index = root.indexOfChild(parent);
-            LeanbackUtil.log("TagsLinearLayoutChild", "dispatchKeyEvent[up come] => index = " + index);
+            LeanBackUtil.log("TagsLinearLayoutChild", "dispatchKeyEvent[up come] => index = " + index);
             resetFocus();
             return true;
         }
@@ -76,7 +76,7 @@ class TagsLinearLayoutChild extends LinearLayout {
             HorizontalScrollView parent = (HorizontalScrollView) getParent();
             LinearLayout root = (LinearLayout) parent.getParent();
             int index = root.indexOfChild(parent);
-            LeanbackUtil.log("TagsLinearLayoutChild", "dispatchKeyEvent[down come] => index = " + index);
+            LeanBackUtil.log("TagsLinearLayoutChild", "dispatchKeyEvent[down come] => index = " + index);
             resetFocus();
             return true;
         }
@@ -85,14 +85,14 @@ class TagsLinearLayoutChild extends LinearLayout {
             View focus = findFocus();
             View next = FocusFinder.getInstance().findNextFocus(this, focus, View.FOCUS_RIGHT);
             if (null == next && focus instanceof TagsLinearLayoutChild) {
-                LeanbackUtil.log("TagsLinearLayoutChild", "dispatchKeyEvent[right come] => focus = " + focus + ", next = " + next);
+                LeanBackUtil.log("TagsLinearLayoutChild", "dispatchKeyEvent[right come] => focus = " + focus + ", next = " + next);
                 resetFocus();
                 return true;
             }
         }
         // left come
         else if (event.getAction() == KeyEvent.ACTION_UP && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_LEFT) {
-            LeanbackUtil.log("TagsLinearLayoutChild", "dispatchKeyEvent[left come] => action = " + event.getAction() + ", code = " + event.getKeyCode());
+            LeanBackUtil.log("TagsLinearLayoutChild", "dispatchKeyEvent[left come] => action = " + event.getAction() + ", code = " + event.getKeyCode());
         }
         // right move
         else if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_RIGHT) {
@@ -103,9 +103,9 @@ class TagsLinearLayoutChild extends LinearLayout {
                 if (index + 1 == count) {
                     clearFocus();
                     ((TagsTextView) focus).hightlight();
-                    LeanbackUtil.log("TagsLinearLayoutChild", "dispatchKeyEvent[right leave] => focus = " + focus + ", index = " + index + ", count = " + count);
+                    LeanBackUtil.log("TagsLinearLayoutChild", "dispatchKeyEvent[right leave] => focus = " + focus + ", index = " + index + ", count = " + count);
                 } else {
-                    LeanbackUtil.log("TagsLinearLayoutChild", "dispatchKeyEvent[right move] => focus = " + focus + ", index = " + index + ", count = " + count);
+                    LeanBackUtil.log("TagsLinearLayoutChild", "dispatchKeyEvent[right move] => focus = " + focus + ", index = " + index + ", count = " + count);
                     focus.clearFocus();
                     nextFocus(index + 1);
                 }
@@ -115,16 +115,16 @@ class TagsLinearLayoutChild extends LinearLayout {
         // left move
         else if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_LEFT) {
             View focus = findFocus();
-            LeanbackUtil.log("TagsLinearLayoutChild", "dispatchKeyEvent[left] => focus = " + focus);
+            LeanBackUtil.log("TagsLinearLayoutChild", "dispatchKeyEvent[left] => focus = " + focus);
             if (null != focus && focus instanceof TagsTextView) {
                 int index = indexOfChild(focus);
                 int count = getChildCount();
                 if (index <= 0) {
                     clearFocus();
                     ((TagsTextView) focus).hightlight();
-                    LeanbackUtil.log("TagsLinearLayoutChild", "dispatchKeyEvent[left leave] => focus = " + focus + ", index = " + index + ", count = " + count);
+                    LeanBackUtil.log("TagsLinearLayoutChild", "dispatchKeyEvent[left leave] => focus = " + focus + ", index = " + index + ", count = " + count);
                 } else {
-                    LeanbackUtil.log("TagsLinearLayoutChild", "dispatchKeyEvent[left move] => focus = " + focus + ", index = " + index + ", count = " + count);
+                    LeanBackUtil.log("TagsLinearLayoutChild", "dispatchKeyEvent[left move] => focus = " + focus + ", index = " + index + ", count = " + count);
                     focus.clearFocus();
                     nextFocus(index - 1);
                 }
@@ -137,11 +137,11 @@ class TagsLinearLayoutChild extends LinearLayout {
             TagsLayout root = (TagsLayout) parent.getParent();
             int index = root.indexOfChild(parent);
             if (index > 0) {
-                LeanbackUtil.log("TagsLinearLayoutChild", "dispatchKeyEvent[up come] => index = " + (index - 1));
+                LeanBackUtil.log("TagsLinearLayoutChild", "dispatchKeyEvent[up come] => index = " + (index - 1));
                 ((TagsLinearLayoutChild) ((ViewGroup) root.getChildAt(index - 1)).getChildAt(0)).resetFocus();
                 return true;
             } else {
-                LeanbackUtil.log("TagsLinearLayoutChild", "dispatchKeyEvent[up leave] => index = " + index);
+                LeanBackUtil.log("TagsLinearLayoutChild", "dispatchKeyEvent[up leave] => index = " + index);
             }
         }
         // down leave
@@ -151,15 +151,15 @@ class TagsLinearLayoutChild extends LinearLayout {
             int index = root.indexOfChild(parent);
             int count = root.getChildCount();
             if (index + 1 < count) {
-                LeanbackUtil.log("TagsLinearLayoutChild", "dispatchKeyEvent[down come] => index = " + (index + 1));
+                LeanBackUtil.log("TagsLinearLayoutChild", "dispatchKeyEvent[down come] => index = " + (index + 1));
                 ((TagsLinearLayoutChild) ((ViewGroup) root.getChildAt(index + 1)).getChildAt(0)).resetFocus();
                 return true;
             } else {
-                LeanbackUtil.log("TagsLinearLayoutChild", "dispatchKeyEvent[down leave] => index = " + index);
+                LeanBackUtil.log("TagsLinearLayoutChild", "dispatchKeyEvent[down leave] => index = " + index);
             }
         } else {
             View focus = findFocus();
-            LeanbackUtil.log("TagsLinearLayoutChild", "dispatchKeyEvent[null] => focus = " + focus);
+            LeanBackUtil.log("TagsLinearLayoutChild", "dispatchKeyEvent[null] => focus = " + focus);
         }
         return super.dispatchKeyEvent(event);
     }
@@ -174,7 +174,7 @@ class TagsLinearLayoutChild extends LinearLayout {
                 if (null != child && child instanceof TagsTextView) {
                     TagsTextView textView = (TagsTextView) child;
                     boolean hightlight = textView.isHightlight();
-                    LeanbackUtil.log("TagsLinearLayoutChild", "searchFocus[" + i + "] => i = " + i + ", hightlight = " + hightlight + ", text = " + textView.getText());
+                    LeanBackUtil.log("TagsLinearLayoutChild", "searchFocus[" + i + "] => i = " + i + ", hightlight = " + hightlight + ", text = " + textView.getText());
                     if (hightlight) {
                         index = i;
                         break;
@@ -186,7 +186,7 @@ class TagsLinearLayoutChild extends LinearLayout {
                 index = 0;
             }
 
-            LeanbackUtil.log("TagsLinearLayoutChild", "reset => index = " + index);
+            LeanBackUtil.log("TagsLinearLayoutChild", "reset => index = " + index);
             View child = getChildAt(index);
             return child;
         } catch (Exception e) {
@@ -206,7 +206,7 @@ class TagsLinearLayoutChild extends LinearLayout {
         View focus = getChildAt(index);
         if (focus instanceof TagsTextView) {
             TagsTextView textView = (TagsTextView) focus;
-            LeanbackUtil.log("TagsLinearLayoutChild", "nextFocus => focus = " + focus + ", text = " + textView.getText() + ", index = " + index);
+            LeanBackUtil.log("TagsLinearLayoutChild", "nextFocus => focus = " + focus + ", text = " + textView.getText() + ", index = " + index);
             // 首先自己尝试获取焦点, 如果自己不能获取焦点, 则尝试让子控件获取焦点
             setDescendantFocusability(ViewGroup.FOCUS_BEFORE_DESCENDANTS);
             textView.requestFocus();
@@ -222,13 +222,13 @@ class TagsLinearLayoutChild extends LinearLayout {
     protected final void resetFocus() {
 
         View focus = searchFocus();
-        LeanbackUtil.log("TagsLinearLayoutChild", "nextFocus => focus = " + focus);
+        LeanBackUtil.log("TagsLinearLayoutChild", "nextFocus => focus = " + focus);
         if (null == focus)
             return;
 
         if (focus instanceof TagsTextView) {
             TagsTextView textView = (TagsTextView) focus;
-            LeanbackUtil.log("TagsLinearLayoutChild", "nextFocus => focus = " + focus + ", text = " + textView.getText());
+            LeanBackUtil.log("TagsLinearLayoutChild", "nextFocus => focus = " + focus + ", text = " + textView.getText());
             // 首先自己尝试获取焦点, 如果自己不能获取焦点, 则尝试让子控件获取焦点
             setDescendantFocusability(ViewGroup.FOCUS_BEFORE_DESCENDANTS);
             textView.requestFocus();
@@ -243,7 +243,7 @@ class TagsLinearLayoutChild extends LinearLayout {
         if (null == key || key.length() == 0 || null == list || list.size() == 0)
             return;
 
-        LeanbackUtil.log("TagsLinearLayoutChild", "**********************");
+        LeanBackUtil.log("TagsLinearLayoutChild", "**********************");
         int size = list.size();
         for (int i = 0; i < size; i++) {
 
@@ -252,7 +252,7 @@ class TagsLinearLayoutChild extends LinearLayout {
                 continue;
 
             String initText = temp.initText();
-            LeanbackUtil.log("TagsLinearLayoutChild", "update => initText = " + initText);
+            LeanBackUtil.log("TagsLinearLayoutChild", "update => initText = " + initText);
             if (null == initText || initText.length() == 0)
                 continue;
 
@@ -275,7 +275,7 @@ class TagsLinearLayoutChild extends LinearLayout {
             child.setHint(key);
             addView(child);
         }
-        LeanbackUtil.log("TagsLinearLayoutChild", "**********************");
+        LeanBackUtil.log("TagsLinearLayoutChild", "**********************");
     }
 
     protected final void callback(@NonNull int column) {

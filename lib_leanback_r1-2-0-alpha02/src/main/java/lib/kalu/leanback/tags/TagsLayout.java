@@ -24,7 +24,7 @@ import java.util.Map;
 
 import lib.kalu.leanback.tags.listener.OnTagsChangeListener;
 import lib.kalu.leanback.tags.model.TagsModel;
-import lib.kalu.leanback.util.LeanbackUtil;
+import lib.kalu.leanback.util.LeanBackUtil;
 
 @Keep
 public class TagsLayout extends LinearLayout {
@@ -214,7 +214,7 @@ public class TagsLayout extends LinearLayout {
             } catch (Exception e) {
             }
         }
-        LeanbackUtil.log("TagsLinearLayoutChild", "isFirst => status = " + status);
+        LeanBackUtil.log("TagsLinearLayoutChild", "isFirst => status = " + status);
         return status;
     }
 
@@ -236,7 +236,7 @@ public class TagsLayout extends LinearLayout {
             } catch (Exception e) {
             }
         }
-        LeanbackUtil.log("TagsLinearLayoutChild", "isLast => status = " + status);
+        LeanBackUtil.log("TagsLinearLayoutChild", "isLast => status = " + status);
         return status;
     }
 

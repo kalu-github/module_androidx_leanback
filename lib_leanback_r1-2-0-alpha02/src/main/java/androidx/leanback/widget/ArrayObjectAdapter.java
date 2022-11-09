@@ -22,7 +22,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import lib.kalu.leanback.util.LeanbackUtil;
+import lib.kalu.leanback.util.LeanBackUtil;
 
 /**
  * An {@link ObjectAdapter} implemented with an {@link ArrayList}.
@@ -293,7 +293,7 @@ public class ArrayObjectAdapter extends ObjectAdapter {
                 @Override
                 public void onInserted(int position, int count) {
                     if (DEBUG) {
-                        LeanbackUtil.log(TAG, "onInserted");
+                        LeanBackUtil.log(TAG, "onInserted");
                     }
                     notifyItemRangeInserted(position, count);
                 }
@@ -301,7 +301,7 @@ public class ArrayObjectAdapter extends ObjectAdapter {
                 @Override
                 public void onRemoved(int position, int count) {
                     if (DEBUG) {
-                        LeanbackUtil.log(TAG, "onRemoved");
+                        LeanBackUtil.log(TAG, "onRemoved");
                     }
                     notifyItemRangeRemoved(position, count);
                 }
@@ -309,7 +309,7 @@ public class ArrayObjectAdapter extends ObjectAdapter {
                 @Override
                 public void onMoved(int fromPosition, int toPosition) {
                     if (DEBUG) {
-                        LeanbackUtil.log(TAG, "onMoved");
+                        LeanBackUtil.log(TAG, "onMoved");
                     }
                     notifyItemMoved(fromPosition, toPosition);
                 }
@@ -317,7 +317,7 @@ public class ArrayObjectAdapter extends ObjectAdapter {
                 @Override
                 public void onChanged(int position, int count, Object payload) {
                     if (DEBUG) {
-                        LeanbackUtil.log(TAG, "onChanged");
+                        LeanBackUtil.log(TAG, "onChanged");
                     }
                     notifyItemRangeChanged(position, count, payload);
                 }

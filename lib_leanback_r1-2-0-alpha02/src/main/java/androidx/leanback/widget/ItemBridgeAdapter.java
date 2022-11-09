@@ -21,7 +21,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.List;
 
-import lib.kalu.leanback.util.LeanbackUtil;
+import lib.kalu.leanback.util.LeanBackUtil;
 
 /**
  * Bridge from {@link Presenter} to {@link RecyclerView.Adapter}. Public to allow use by third
@@ -95,7 +95,7 @@ public class ItemBridgeAdapter extends RecyclerView.Adapter implements FacetProv
         @Override
         public void onFocusChange(View view, boolean hasFocus) {
             if (DEBUG) {
-                LeanbackUtil.log(TAG, "onFocusChange " + hasFocus + " " + view
+                LeanBackUtil.log(TAG, "onFocusChange " + hasFocus + " " + view
                         + " mFocusHighlight" + mFocusHighlight);
             }
             if (mHasWrapper) {
@@ -265,7 +265,7 @@ public class ItemBridgeAdapter extends RecyclerView.Adapter implements FacetProv
 
     void setFocusHighlight(FocusHighlightHandler listener) {
         mFocusHighlight = listener;
-        if (DEBUG) LeanbackUtil.log(TAG, "setFocusHighlight " + mFocusHighlight);
+        if (DEBUG) LeanBackUtil.log(TAG, "setFocusHighlight " + mFocusHighlight);
     }
 
     /**
@@ -304,7 +304,7 @@ public class ItemBridgeAdapter extends RecyclerView.Adapter implements FacetProv
         if (type < 0) {
             mPresenters.add(presenter);
             type = mPresenters.indexOf(presenter);
-            if (DEBUG) LeanbackUtil.log(TAG, "getItemViewType added presenter " + presenter + " type " + type);
+            if (DEBUG) LeanBackUtil.log(TAG, "getItemViewType added presenter " + presenter + " type " + type);
             onAddPresenter(presenter, type);
             if (mAdapterListener != null) {
                 mAdapterListener.onAddPresenter(presenter, type);
@@ -356,7 +356,7 @@ public class ItemBridgeAdapter extends RecyclerView.Adapter implements FacetProv
      */
     @Override
     public final RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        if (DEBUG) LeanbackUtil.log(TAG, "onCreateViewHolder viewType " + viewType);
+        if (DEBUG) LeanBackUtil.log(TAG, "onCreateViewHolder viewType " + viewType);
         Presenter presenter = mPresenters.get(viewType);
         Presenter.ViewHolder presenterVh;
         View view;
@@ -404,7 +404,7 @@ public class ItemBridgeAdapter extends RecyclerView.Adapter implements FacetProv
 
     @Override
     public final void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        if (DEBUG) LeanbackUtil.log(TAG, "onBindViewHolder position " + position);
+        if (DEBUG) LeanBackUtil.log(TAG, "onBindViewHolder position " + position);
         ViewHolder viewHolder = (ViewHolder) holder;
         viewHolder.mItem = mAdapter.get(position);
 
@@ -420,7 +420,7 @@ public class ItemBridgeAdapter extends RecyclerView.Adapter implements FacetProv
     @SuppressWarnings("unchecked")
     public final void onBindViewHolder(RecyclerView.ViewHolder holder, int position,
                                        List payloads) {
-        if (DEBUG) LeanbackUtil.log(TAG, "onBindViewHolder position " + position);
+        if (DEBUG) LeanBackUtil.log(TAG, "onBindViewHolder position " + position);
         ViewHolder viewHolder = (ViewHolder) holder;
         viewHolder.mItem = mAdapter.get(position);
 
