@@ -35,6 +35,8 @@ import androidx.leanback.R;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SimpleItemAnimator;
 
+import lib.kalu.leanback.util.LeanBackUtil;
+
 /**
  * An abstract base class for vertically and horizontally scrolling lists. The items come
  * from the {@link Adapter} associated with this view.
