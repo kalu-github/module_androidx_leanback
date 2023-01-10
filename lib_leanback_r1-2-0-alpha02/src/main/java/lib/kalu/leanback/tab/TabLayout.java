@@ -364,13 +364,13 @@ public class TabLayout extends HorizontalScrollView {
                         ((TabImageView) view).refresh(true, leave);
                     }
 
-                    if (callback && null != mOnTabChangeListener) {
+                    if (callback && null != mListener) {
                         if (repeat) {
-                            mOnTabChangeListener.onRepeat(next);
+                            mListener.onRepeat(next);
                         } else if (leave) {
-                            mOnTabChangeListener.onLeave(next);
+                            mListener.onLeave(next);
                         } else {
-                            mOnTabChangeListener.onSelect(next);
+                            mListener.onSelect(next);
                         }
                     }
                 }
@@ -383,8 +383,8 @@ public class TabLayout extends HorizontalScrollView {
                     } else if (view instanceof TabImageView) {
                         ((TabImageView) view).refresh(false, false);
                     }
-                    if (callback && null != mOnTabChangeListener) {
-                        mOnTabChangeListener.onBefore(before);
+                    if (callback && null != mListener) {
+                        mListener.onBefore(before);
                     }
                 }
             }
@@ -626,9 +626,9 @@ public class TabLayout extends HorizontalScrollView {
 
     /************************************/
 
-    public OnTabChangeListener mOnTabChangeListener;
+    public OnTabChangeListener mListener;
 
     public final void setOnTabChangeListener(@NonNull OnTabChangeListener listener) {
-        this.mOnTabChangeListener = listener;
+        this.mListener = listener;
     }
 }

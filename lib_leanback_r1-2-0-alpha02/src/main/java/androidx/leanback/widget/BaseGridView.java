@@ -32,15 +32,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RestrictTo;
 import androidx.leanback.R;
-import androidx.leanback.widget.FacetProviderAdapter;
-import androidx.leanback.widget.GridLayoutManager;
-import androidx.leanback.widget.HorizontalGridView;
-import androidx.leanback.widget.ItemAlignmentFacet;
-import androidx.leanback.widget.OnChildLaidOutListener;
-import androidx.leanback.widget.OnChildSelectedListener;
-import androidx.leanback.widget.OnChildViewHolderSelectedListener;
-import androidx.leanback.widget.VerticalGridView;
-import androidx.leanback.widget.ViewHolderTask;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SimpleItemAnimator;
 
@@ -840,7 +831,7 @@ public abstract class BaseGridView extends RecyclerView {
                 addOnChildViewHolderSelectedListener(new OnChildViewHolderSelectedListener() {
                     @Override
                     public void onChildViewHolderSelected(@NonNull RecyclerView parent,
-                            ViewHolder child, int selectedPosition, int subposition) {
+                                                          ViewHolder child, int selectedPosition, int subposition) {
                         if (selectedPosition == position) {
                             removeOnChildViewHolderSelectedListener(this);
                             task.run(child);
@@ -868,7 +859,7 @@ public abstract class BaseGridView extends RecyclerView {
                 addOnChildViewHolderSelectedListener(new OnChildViewHolderSelectedListener() {
                     @Override
                     public void onChildViewHolderSelectedAndPositioned(@NonNull RecyclerView parent,
-                            ViewHolder child, int selectedPosition, int subposition) {
+                                                                       ViewHolder child, int selectedPosition, int subposition) {
                         if (selectedPosition == position) {
                             removeOnChildViewHolderSelectedListener(this);
                             task.run(child);
@@ -961,7 +952,7 @@ public abstract class BaseGridView extends RecyclerView {
 
     @Override
     public boolean onRequestFocusInDescendants(int direction,
-            @Nullable Rect previouslyFocusedRect) {
+                                               @Nullable Rect previouslyFocusedRect) {
         if ((mPrivateFlag & PFLAG_RETAIN_FOCUS_FOR_CHILD) == PFLAG_RETAIN_FOCUS_FOR_CHILD) {
             // dont focus to child if GridView itself retains focus for child
             return false;
@@ -1007,7 +998,7 @@ public abstract class BaseGridView extends RecyclerView {
 
     @Override
     protected void onFocusChanged(boolean gainFocus, int direction,
-            @Nullable Rect previouslyFocusedRect) {
+                                  @Nullable Rect previouslyFocusedRect) {
         super.onFocusChanged(gainFocus, direction, previouslyFocusedRect);
         mLayoutManager.onFocusChanged(gainFocus, direction, previouslyFocusedRect);
     }
@@ -1460,6 +1451,48 @@ public abstract class BaseGridView extends RecyclerView {
         super.removeViewAt(index);
         if (retainFocusForChild) {
             mPrivateFlag ^= ~PFLAG_RETAIN_FOCUS_FOR_CHILD;
+        }
+    }
+
+    /***********/
+
+    public final <T extends Presenter> T getPresenter(Class<T> cls) {
+        T t = null;
+        try {
+            ItemBridgeAdapter itemBridgeAdapter = (ItemBridgeAdapter) getAdapter();
+            ArrayObjectAdapter objectAdapter = (ArrayObjectAdapter) itemBridgeAdapter.getAdapter();
+            Presenter[] presenters = objectAdapter.getPresenterSelector().getPresenters();
+            int size = presenters.length;
+            for (int i = 0; i < size; i++) {
+                Presenter p = presenters[i];
+                if (null == p)
+                    continue;
+                if (!p.getClass().getName().equals(cls.getName()))
+                    continue;
+                t = (T) p;
+                break;
+            }
+        } catch (Exception e) {
+        }
+        return t;
+    }
+
+    public final <T extends Object> T getAdapter(int position) {
+        T t = null;
+        try {
+            ItemBridgeAdapter itemBridgeAdapter = (ItemBridgeAdapter) getAdapter();
+            ArrayObjectAdapter objectAdapter = (ArrayObjectAdapter) itemBridgeAdapter.getAdapter();
+            t = (T) objectAdapter.get(position);
+        } catch (Exception e) {
+        }
+        return t;
+    }
+
+    public final void notifyItemChanged(int position) {
+        try {
+            ItemBridgeAdapter itemBridgeAdapter = (ItemBridgeAdapter) getAdapter();
+            itemBridgeAdapter.notifyItemChanged(position);
+        } catch (Exception e) {
         }
     }
 }
