@@ -15,6 +15,8 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.leanback.R;
 
+import lib.kalu.leanback.util.LeanBackUtil;
+
 public class PageView extends FrameLayout {
     public PageView(@NonNull Context context) {
         super(context);
@@ -37,23 +39,39 @@ public class PageView extends FrameLayout {
     public boolean dispatchKeyEvent(KeyEvent event) {
         // left
         if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_LEFT) {
+            mPressNumRight = 0;
+            LeanBackUtil.log("PageView => dispatchKeyEvent => left => mPressNumLeft = " + mPressNumLeft + ", mPressNumRight = " + mPressNumRight);
             View focus = findFocus();
             View nextFocus = FocusFinder.getInstance().findNextFocus(this, focus, View.FOCUS_LEFT);
             if (null != focus && null == nextFocus) {
-                shakeAnim();
-                if (null != mListener) {
-                    mListener.onLeft();
+                if (mPressNumLeft >= 1) {
+                    if (null != mListener) {
+                        mPressNumLeft = 0;
+                        mPressNumRight = 0;
+                        mListener.onLeft();
+                    }
+                } else {
+                    mPressNumLeft++;
+                    shakeAnim();
                 }
             }
         }
         // right
         else if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_RIGHT) {
+            mPressNumLeft = 0;
+            LeanBackUtil.log("PageView => dispatchKeyEvent => right => mPressNumLeft = " + mPressNumLeft + ", mPressNumRight = " + mPressNumRight);
             View focus = findFocus();
             View nextFocus = FocusFinder.getInstance().findNextFocus(this, focus, View.FOCUS_RIGHT);
             if (null != focus && null == nextFocus) {
-                shakeAnim();
-                if (null != mListener) {
-                    mListener.onRight();
+                if (mPressNumRight >= 1) {
+                    if (null != mListener) {
+                        mPressNumLeft = 0;
+                        mPressNumRight = 0;
+                        mListener.onRight();
+                    }
+                } else {
+                    mPressNumRight++;
+                    shakeAnim();
                 }
             }
         }
@@ -69,6 +87,8 @@ public class PageView extends FrameLayout {
         focus.startAnimation(shake);
     }
 
+    private int mPressNumLeft = 0;
+    private int mPressNumRight = 0;
     private OnPageChangeListener mListener;
 
     public void setOnPageChangeListener(OnPageChangeListener l) {
