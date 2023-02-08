@@ -19,11 +19,11 @@ public class ClassBean implements Serializable {
     private int drawableHighlight = 0;
     @DrawableRes
     private int drawableNormal;
-    private CharSequence text;
+    private String text;
     private String code;
     private boolean checked;
 
-    public CharSequence getText() {
+    public String getText() {
         return text;
     }
 
@@ -62,7 +62,7 @@ public class ClassBean implements Serializable {
         this.drawableNormal = drawableNormal;
     }
 
-    public void setText(CharSequence text) {
+    public void setText(String text) {
         this.text = text;
     }
 
