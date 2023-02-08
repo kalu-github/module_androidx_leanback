@@ -424,18 +424,18 @@ public final class HorizontalClassLayout extends ScrollView {
             // 2=>highlight
             // 3=>checked
             Object tag = radioButton.getTag();
-            if (null == tag || !(tag instanceof ClassApi))
+            if (null == tag || !(tag instanceof ClassBean))
                 continue;
 
             boolean checked = radioButton.isChecked();
 
             CharSequence str;
             if (highlight && checked) {
-                str = ((ClassApi) tag).textHighlight(getContext());
+                str = ClassUtil.textHighlight(getContext(), (ClassBean) tag);
             } else if (checked) {
-                str = ((ClassApi) tag).textChecked(getContext());
+                str = ClassUtil.textChecked(getContext(), (ClassBean) tag);
             } else {
-                str = ((ClassApi) tag).textNormal(getContext());
+                str = ClassUtil.textNormal(getContext(), (ClassBean) tag);
             }
 //            LbLogUtil.log("HorizontalClassLayout", "updateTextW => str = " + str);
             if (null != str && str.length() > 0) {
@@ -510,11 +510,11 @@ public final class HorizontalClassLayout extends ScrollView {
         radioButton.setText(str);
     }
 
-    public void update(@NonNull List<? extends ClassApi> list) {
+    public void update(@NonNull List<? extends ClassBean> list) {
         update(list, false);
     }
 
-    public void update(@NonNull List<? extends ClassApi> list, boolean highlight) {
+    public void update(@NonNull List<? extends ClassBean> list, boolean highlight) {
 
         if (null == list)
             return;
@@ -531,10 +531,10 @@ public final class HorizontalClassLayout extends ScrollView {
         if (null == radioGroup)
             return;
         for (int i = 0; i < size; i++) {
-            ClassApi api = list.get(i);
+            ClassBean api = list.get(i);
             if (null == api)
                 continue;
-            if (api.checked()) {
+            if (api.isChecked()) {
                 index = i;
             }
             HorizontalClassLayout.ClassRadioButton view = new HorizontalClassLayout.ClassRadioButton(context);
@@ -545,7 +545,7 @@ public final class HorizontalClassLayout extends ScrollView {
             view.setLayoutParams(params);
             view.setChecked(false);
             view.setTag(api);
-            view.setHint(api.code());
+            view.setHint(api.getCode());
             if (mBackgroundResource != -1) {
                 view.setBackgroundResource(mBackgroundResource);
             } else {

@@ -20,7 +20,7 @@ import androidx.annotation.RequiresApi;
 
 import java.util.List;
 
-import lib.kalu.leanback.tags.model.TagsModel;
+import lib.kalu.leanback.tags.model.TagBean;
 import lib.kalu.leanback.util.LeanBackUtil;
 
 @Keep
@@ -238,7 +238,7 @@ class TagsLinearLayoutChild extends LinearLayout {
 
     /*************/
 
-    protected final void update(@NonNull String key, @NonNull List<TagsModel> list, @NonNull int textSize, @NonNull int paddingLeft, @NonNull int paddingRight) {
+    protected final void update(@NonNull String key, @NonNull List<TagBean> list, @NonNull int textSize, @NonNull int paddingLeft, @NonNull int paddingRight) {
 
         if (null == key || key.length() == 0 || null == list || list.size() == 0)
             return;
@@ -247,11 +247,11 @@ class TagsLinearLayoutChild extends LinearLayout {
         int size = list.size();
         for (int i = 0; i < size; i++) {
 
-            TagsModel temp = list.get(i);
+            TagBean temp = list.get(i);
             if (null == temp)
                 continue;
 
-            String initText = temp.initText();
+            String initText = temp.getText();
             LeanBackUtil.log("TagsLinearLayoutChild", "update => initText = " + initText);
             if (null == initText || initText.length() == 0)
                 continue;
@@ -262,13 +262,13 @@ class TagsLinearLayoutChild extends LinearLayout {
             child.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize);
             child.setPadding(paddingLeft, 0, paddingRight, 0);
 
-            child.setTextColorDefault(temp.initTextColorDetault());
-            child.setTextColorSelect(temp.initTextColorSelect());
-            child.setTextColorFocus(temp.initTextColorFocus());
+            child.setTextColorDefault(temp.getTextColorDetault());
+            child.setTextColorSelect(temp.getTextColorSelect());
+            child.setTextColorFocus(temp.getTextColorFocus());
 
-            child.setBackgroundResourceDefault(temp.initBackgroundResourceDefault());
-            child.setBackgroundResourceSelect(temp.initBackgroundResourceSelect());
-            child.setBackgroundResourceFocus(temp.initBackgroundResourceFocus());
+            child.setBackgroundResourceDefault(temp.getBackgroundResourceDefault());
+            child.setBackgroundResourceSelect(temp.getBackgroundResourceSelect());
+            child.setBackgroundResourceFocus(temp.getBackgroundResourceFocus());
 
             child.setSelected(false);
             child.setText(initText, i == 0);

@@ -6,83 +6,58 @@ import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ImageSpan;
 
-import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 
-public interface ClassApi {
-
-    @DrawableRes
-    default int drawableHighlight() {
-        return 0;
-    }
-
-    @DrawableRes
-    default int drawableChecked() {
-        return 0;
-    }
-
-    @DrawableRes
-    default int drawableNormal() {
-        return 0;
-    }
+class ClassUtil {
 
     @NonNull
-    default CharSequence textHighlight(@NonNull Context context) {
+    public static CharSequence textHighlight(@NonNull Context context, @NonNull ClassBean data) {
         try {
-            int id = drawableHighlight();
+            int id = data.getDrawableHighlight();
             if (id == 0)
                 throw new IllegalArgumentException("not exist drawableHighlight");
-            SpannableString ss = new SpannableString("@@ " + text());
+            SpannableString ss = new SpannableString("@@ " + data.getText());
             Drawable d = context.getResources().getDrawable(id);
             d.setBounds(0, 0, d.getIntrinsicWidth(), d.getIntrinsicHeight());
             ImageSpan span = new ImageSpan(d, ImageSpan.ALIGN_BASELINE);
             ss.setSpan(span, 0, "@@".length(), Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
             return ss;
         } catch (Exception e) {
-            return text();
+            return data.getText();
         }
     }
 
     @NonNull
-    default CharSequence textChecked(@NonNull Context context) {
+    public static CharSequence textChecked(@NonNull Context context, @NonNull ClassBean data) {
         try {
-            int id = drawableChecked();
+            int id = data.getDrawableChecked();
             if (id == 0)
                 throw new IllegalArgumentException("not exist drawableChecked");
-            SpannableString ss = new SpannableString("@@ " + text());
+            SpannableString ss = new SpannableString("@@ " + data.getText());
             Drawable d = context.getResources().getDrawable(id);
             d.setBounds(0, 0, d.getIntrinsicWidth(), d.getIntrinsicHeight());
             ImageSpan span = new ImageSpan(d, ImageSpan.ALIGN_BASELINE);
             ss.setSpan(span, 0, "@@".length(), Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
             return ss;
         } catch (Exception e) {
-            return text();
+            return data.getText();
         }
     }
 
     @NonNull
-    default CharSequence textNormal(@NonNull Context context) {
+    public static CharSequence textNormal(@NonNull Context context, @NonNull ClassBean data) {
         try {
-            int id = drawableNormal();
+            int id = data.getDrawableNormal();
             if (id == 0)
                 throw new IllegalArgumentException("not exist drawableNormal");
-            SpannableString ss = new SpannableString("@@ " + text());
+            SpannableString ss = new SpannableString("@@ " + data.getText());
             Drawable d = context.getResources().getDrawable(id);
             d.setBounds(0, 0, d.getIntrinsicWidth(), d.getIntrinsicHeight());
             ImageSpan span = new ImageSpan(d, ImageSpan.ALIGN_BASELINE);
             ss.setSpan(span, 0, "@@".length(), Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
             return ss;
         } catch (Exception e) {
-            return text();
+            return data.getText();
         }
     }
-
-    @NonNull
-    CharSequence text();
-
-    @NonNull
-    String code();
-
-    @NonNull
-    boolean checked();
 }

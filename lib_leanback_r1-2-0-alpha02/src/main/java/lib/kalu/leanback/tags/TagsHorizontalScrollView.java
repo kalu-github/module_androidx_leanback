@@ -14,7 +14,7 @@ import androidx.annotation.RequiresApi;
 
 import java.util.List;
 
-import lib.kalu.leanback.tags.model.TagsModel;
+import lib.kalu.leanback.tags.model.TagBean;
 
 @SuppressLint("NewApi")
 @Keep
@@ -48,7 +48,7 @@ class TagsHorizontalScrollView extends HorizontalScrollView {
 
     /********************/
 
-    protected final void update(@NonNull String key, @NonNull List<TagsModel> list, @NonNull int textSize, @NonNull int paddingLeft, @NonNull int paddingRight) {
+    protected final void update(@NonNull String key, @NonNull List<TagBean> list, @NonNull int textSize, @NonNull int paddingLeft, @NonNull int paddingRight) {
 
         if (null == key || key.length() == 0 || null == list || list.size() == 0)
             return;

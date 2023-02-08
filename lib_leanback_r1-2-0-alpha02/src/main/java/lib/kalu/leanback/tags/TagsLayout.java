@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 import lib.kalu.leanback.tags.listener.OnTagsChangeListener;
-import lib.kalu.leanback.tags.model.TagsModel;
+import lib.kalu.leanback.tags.model.TagBean;
 import lib.kalu.leanback.util.LeanBackUtil;
 
 @Keep
@@ -136,7 +136,7 @@ public class TagsLayout extends LinearLayout {
 
     /*************/
 
-    private final void add(@NonNull String key, @NonNull List<TagsModel> list) {
+    private final void add(@NonNull String key, @NonNull List<TagBean> list) {
         TagsHorizontalScrollView child = new TagsHorizontalScrollView(getContext());
         LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, mItemHeight);
         child.setPadding(0, mItemPaddingTop, 0, mItemPaddingBottom);
@@ -147,7 +147,7 @@ public class TagsLayout extends LinearLayout {
     }
 
     @Keep
-    public final void update(@NonNull Map<String, List<TagsModel>> map) {
+    public final void update(@NonNull Map<String, List<TagBean>> map) {
 
         if (null == map || map.size() == 0)
             return;
@@ -155,7 +155,7 @@ public class TagsLayout extends LinearLayout {
         for (String key : map.keySet()) {
             if (null == key || key.length() == 0)
                 continue;
-            List<TagsModel> list = map.get(key);
+            List<TagBean> list = map.get(key);
             if (null == list || list.size() == 0)
                 continue;
             add(key, list);
