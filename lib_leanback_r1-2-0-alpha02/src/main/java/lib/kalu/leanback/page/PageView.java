@@ -1,5 +1,8 @@
 package lib.kalu.leanback.page;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.os.Build;
 import android.util.AttributeSet;
@@ -8,6 +11,8 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.view.animation.CycleInterpolator;
+import android.view.animation.TranslateAnimation;
 import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
@@ -75,16 +80,54 @@ public class PageView extends FrameLayout {
                 }
             }
         }
+        // up
+        else if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_UP) {
+            mPressNumLeft = 0;
+            mPressNumRight = 0;
+        }
+        // down
+        else if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_DOWN) {
+            mPressNumLeft = 0;
+            mPressNumRight = 0;
+        }
         return super.dispatchKeyEvent(event);
     }
 
+    private ObjectAnimator mObjectAnimator;
+
     private final void shakeAnim() {
+
+        if (null != mObjectAnimator) {
+            mObjectAnimator.removeAllListeners();
+            mObjectAnimator.cancel();
+            mObjectAnimator = null;
+        }
+
         View focus = findFocus();
         if (null == focus)
             return;
-        Context context = getContext().getApplicationContext();
-        Animation shake = AnimationUtils.loadAnimation(context, R.anim.anim_shake);
-        focus.startAnimation(shake);
+
+        mObjectAnimator = ObjectAnimator.ofFloat(focus, "translationX", -4F, 0F, 4F, 0F);
+        mObjectAnimator.setDuration(40);
+        mObjectAnimator.setRepeatCount(1);
+        mObjectAnimator.setInterpolator(new CycleInterpolator(2));
+        mObjectAnimator.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                focus.requestFocus();
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+                focus.requestFocus();
+            }
+
+            @Override
+            public void onAnimationPause(Animator animation) {
+                focus.requestFocus();
+            }
+        });
+        mObjectAnimator.start();
     }
 
     private int mPressNumLeft = 0;
