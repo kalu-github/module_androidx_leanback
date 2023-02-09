@@ -649,6 +649,16 @@ public final class HorizontalClassLayout extends ScrollView {
         updateText(false);
     }
 
+    public void leave() {
+        int index = getCheckedIndex();
+        leave(index);
+    }
+
+    public void leave(int index) {
+        updateBackground(index, false, true);
+        updateText(false);
+    }
+
     @SuppressLint("AppCompatCustomView")
     private final class ClassRadioButton extends RadioButton {
 
