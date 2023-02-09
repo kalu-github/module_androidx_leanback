@@ -86,6 +86,10 @@ public final class HorizontalClassLayout extends ScrollView {
     public boolean dispatchKeyEvent(KeyEvent event) {
         // LbLogUtil.log("HorizontalClassLayout", "dispatchKeyEvent => action = " + event.getAction() + ", code = " + event.getKeyCode());
 
+        int i = getDescendantFocusability();
+        if (i == ViewGroup.FOCUS_BLOCK_DESCENDANTS)
+            return super.dispatchKeyEvent(event);
+
         // move => left
         if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_LEFT) {
             int count = getCount();
