@@ -7,8 +7,10 @@ import android.view.FocusFinder;
 import android.view.KeyEvent;
 import android.view.View;
 
+import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.leanback.R;
 import androidx.recyclerview.widget.GridLayoutManager;
 
 public class RecyclerView extends androidx.recyclerview.widget.RecyclerView {
@@ -130,5 +132,34 @@ public class RecyclerView extends androidx.recyclerview.widget.RecyclerView {
         }
 
         return nextFocusView;
+    }
+
+    @Override
+    public void scrollToPosition(int position) {
+        smoothScrollToPosition(position);
+    }
+
+    @Override
+    public void smoothScrollToPosition(int position) {
+        try {
+            super.smoothScrollToPosition(position);
+        } catch (Exception e) {
+        }
+    }
+
+    public void requestFocusChild(int position, @IdRes int id) {
+        try {
+            ViewHolder viewHolder = findViewHolderForAdapterPosition(position);
+            viewHolder.itemView.findViewById(id).requestFocus();
+        } catch (Exception e) {
+        }
+    }
+
+    public void performClickChild(int position, @IdRes int id) {
+        try {
+            ViewHolder viewHolder = findViewHolderForAdapterPosition(position);
+            viewHolder.itemView.findViewById(id).performClick();
+        } catch (Exception e) {
+        }
     }
 }
