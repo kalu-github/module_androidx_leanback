@@ -11,11 +11,13 @@ import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.KeyEvent;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.ScrollView;
+import android.widget.Toast;
 
 import androidx.annotation.ColorInt;
 import androidx.annotation.Dimension;
@@ -86,9 +88,9 @@ public final class HorizontalClassLayout extends ScrollView {
     public boolean dispatchKeyEvent(KeyEvent event) {
         // LbLogUtil.log("HorizontalClassLayout", "dispatchKeyEvent => action = " + event.getAction() + ", code = " + event.getKeyCode());
 
-        int i = getDescendantFocusability();
-        if (i == ViewGroup.FOCUS_BLOCK_DESCENDANTS)
-            return super.dispatchKeyEvent(event);
+        boolean hasFocus = hasFocus();
+        if (!hasFocus)
+            return false;
 
         // move => left
         if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_LEFT) {
@@ -244,21 +246,14 @@ public final class HorizontalClassLayout extends ScrollView {
         // blocksDescendants：ViewGroup拦截，不让子 view获取焦点。
         // beforeDescendants：ViewGroup优先尝试（尝试的意思是，根据View或ViewGroup当前状态来判断是否能得到焦点，如是否可见，是否可获取焦点等等，在View的requestFocus方法的注释中提到，下同）获取焦点，若ViewGroup没拿到焦点，再遍历子 view（包括所有直接子 view和间接子 view），让子 view尝试获取焦点。
         // afterDescendants：先遍历子 view，让子 view尝试获取焦点，若所有子 view（包括所有直接子 view和间接子 view）都没拿到焦点，才让ViewGroup尝试获取焦点。
-        setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
-        setClickable(false);
-        setLongClickable(false);
-        setFocusable(false);
-        setFocusableInTouchMode(false);
+//        setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
         setFillViewport(true);
         // 2
         RadioGroup layout = new RadioGroup(context);
         ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         layout.setLayoutParams(params);
         layout.setOrientation(LinearLayout.HORIZONTAL);
-        layout.setClickable(false);
-        layout.setLongClickable(false);
         layout.setFocusable(false);
-        layout.setFocusableInTouchMode(false);
         addView(layout);
     }
 
@@ -528,7 +523,6 @@ public final class HorizontalClassLayout extends ScrollView {
         int count = getChildCount();
         if (count != 1)
             return;
-        setFocusable(true);
         int index = 0;
         Context context = getContext();
         RadioGroup radioGroup = (RadioGroup) getChildAt(0);
@@ -689,10 +683,7 @@ public final class HorizontalClassLayout extends ScrollView {
 
         private void init() {
             setSingleLine();
-            setClickable(false);
-            setLongClickable(false);
             setFocusable(false);
-            setFocusableInTouchMode(false);
             setTextSize(TypedValue.COMPLEX_UNIT_PX, mTextSize);
             setGravity(Gravity.CENTER);
             setButtonDrawable(new ColorDrawable(Color.TRANSPARENT));
@@ -726,6 +717,4 @@ public final class HorizontalClassLayout extends ScrollView {
     public interface OnCheckedChangeListener {
         void onChecked(@NonNull int index, @NonNull String name, @NonNull String code);
     }
-
-    /*************/
 }
