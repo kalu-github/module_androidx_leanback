@@ -29,7 +29,7 @@ import java.util.List;
 /**
  * 垂直
  */
-public final class ClassLayout extends ScrollView {
+public final class VerticalClassLayout extends ScrollView {
 
     boolean mDispatchTop = false;
     boolean mDispatchBottom = false;
@@ -60,23 +60,23 @@ public final class ClassLayout extends ScrollView {
     @ColorInt
     int mColorHighlight;
 
-    public ClassLayout(Context context) {
+    public VerticalClassLayout(Context context) {
         super(context);
         init(context, null);
     }
 
-    public ClassLayout(Context context, AttributeSet attrs) {
+    public VerticalClassLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
         init(context, attrs);
     }
 
-    public ClassLayout(Context context, AttributeSet attrs, int defStyleAttr) {
+    public VerticalClassLayout(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init(context, attrs);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-    public ClassLayout(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+    public VerticalClassLayout(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
         init(context, attrs);
     }
@@ -133,7 +133,7 @@ public final class ClassLayout extends ScrollView {
         // right
         else if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_RIGHT) {
             int count = getCount();
-            if(count>0){
+            if (count > 0) {
                 int index = getCheckedIndex();
                 updateBackground(false, false, index, false, true);
                 updateText(false);
@@ -143,7 +143,7 @@ public final class ClassLayout extends ScrollView {
         // left
         else if (event.getAction() == KeyEvent.ACTION_UP && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_LEFT) {
             int count = getCount();
-            if(count>0){
+            if (count > 0) {
                 int index = getCheckedIndex();
                 updateBackground(false, false, index, true, false);
                 updateText(true);
@@ -569,6 +569,37 @@ public final class ClassLayout extends ScrollView {
 
         // text
         updateText(false);
+    }
+
+
+    public void requestFocusTab() {
+        int index = getCheckedIndex();
+        requestFocusTab(index);
+    }
+
+    public void requestFocusTab(int index) {
+        RadioButton radioButton = getTab(index);
+        if (null == radioButton)
+            return;
+        setFocusable(true);
+        requestFocus();
+        updateBackground(true, false, index, false, true);
+        updateText(false);
+    }
+
+    public RadioButton getTab(int index) {
+        if (index < 0)
+            return null;
+        int count = getChildCount();
+        if (count != 1)
+            return null;
+        RadioGroup radioGroup = (RadioGroup) getChildAt(0);
+        if (null == radioGroup)
+            return null;
+        int size = radioGroup.getChildCount();
+        if (index + 1 > size)
+            return null;
+        return (RadioButton) radioGroup.getChildAt(index);
     }
 
     @SuppressLint("AppCompatCustomView")
