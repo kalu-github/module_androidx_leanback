@@ -657,6 +657,36 @@ public final class HorizontalClassLayout extends ScrollView {
         updateText(false);
     }
 
+    public void requestFocusTab() {
+        int index = getCheckedIndex();
+        requestFocusTab(index);
+    }
+
+    public void requestFocusTab(int index) {
+        RadioButton radioButton = getTab(index);
+        if (null == radioButton)
+            return;
+        setFocusable(true);
+        requestFocus();
+        updateBackground(index, true, false);
+        updateText(true);
+    }
+
+    public RadioButton getTab(int index) {
+        if (index < 0)
+            return null;
+        int count = getChildCount();
+        if (count != 1)
+            return null;
+        RadioGroup radioGroup = (RadioGroup) getChildAt(0);
+        if (null == radioGroup)
+            return null;
+        int size = radioGroup.getChildCount();
+        if (index + 1 > size)
+            return null;
+        return (RadioButton) radioGroup.getChildAt(index);
+    }
+
     @SuppressLint("AppCompatCustomView")
     private final class ClassRadioButton extends RadioButton {
 
@@ -710,7 +740,7 @@ public final class HorizontalClassLayout extends ScrollView {
 
     private OnCheckedChangeListener mListener;
 
-    public final void setOnCheckedChangeListener(@NonNull OnCheckedChangeListener listener) {
+    public void setOnCheckedChangeListener(@NonNull OnCheckedChangeListener listener) {
         this.mListener = listener;
     }
 
