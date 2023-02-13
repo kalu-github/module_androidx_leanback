@@ -19,7 +19,7 @@
         android:textSize="20sp"
         android:visibility="gone" />
 
-    <lib.kalu.leanback.list.RecyclerView
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/module_leanback_lgp_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

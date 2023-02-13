@@ -1,7 +1,6 @@
 package lib.kalu.leanback.list;
 
 import android.content.Context;
-import android.os.SystemClock;
 import android.util.AttributeSet;
 import android.view.FocusFinder;
 import android.view.KeyEvent;
@@ -10,8 +9,9 @@ import android.view.View;
 import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.leanback.R;
 import androidx.recyclerview.widget.GridLayoutManager;
+
+import lib.kalu.leanback.util.LeanBackUtil;
 
 public class RecyclerView extends androidx.recyclerview.widget.RecyclerView {
     public RecyclerView(@NonNull Context context) {
@@ -38,100 +38,247 @@ public class RecyclerView extends androidx.recyclerview.widget.RecyclerView {
 
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
-        if (event.getAction() == KeyEvent.ACTION_DOWN) {
-            int keyCode = event.getKeyCode();
-            if (keyCode == KeyEvent.KEYCODE_DPAD_LEFT || keyCode == KeyEvent.KEYCODE_DPAD_RIGHT) {
-                View nextFocusView;
-                if (keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
-                    // 通过findNextFocus获取下一个需要得到焦点的view
-                    nextFocusView = findLeft();
-                } else {
-                    // 通过findNextFocus获取下一个需要得到焦点的view
-                    nextFocusView = findRight();
-                }
-                // 如果获取失败（也就是说需要交给系统来处理焦点， 消耗掉事件，不让系统处理， 并让先前获取焦点的view获取焦点）
-                if (null != nextFocusView) {
-                    nextFocusView.requestFocus();
-                    return true;
-                }
-            } else if (keyCode == KeyEvent.KEYCODE_DPAD_UP || keyCode == KeyEvent.KEYCODE_DPAD_DOWN) {
-                View nextFocusView;
-                if (keyCode == KeyEvent.KEYCODE_DPAD_UP) {
-                    // 通过findNextFocus获取下一个需要得到焦点的view
-                    nextFocusView = findUp();
-                } else {
-                    // 通过findNextFocus获取下一个需要得到焦点的view
-                    nextFocusView = findDown();
-                }
-                // 如果获取失败（也就是说需要交给系统来处理焦点， 消耗掉事件，不让系统处理， 并让先前获取焦点的view获取焦点）
-                if (null != nextFocusView) {
-                    nextFocusView.requestFocus();
-                    return true;
-                }
+        // left
+        if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_LEFT) {
+            boolean nextFocus = nextFocus(KeyEvent.KEYCODE_DPAD_LEFT);
+            if (nextFocus) {
+                return true;
+            }
+        }
+        // right
+        else if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_RIGHT) {
+            boolean nextFocus = nextFocus(KeyEvent.KEYCODE_DPAD_RIGHT);
+            if (nextFocus) {
+                return true;
+            }
+        }
+        // up
+        else if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_UP) {
+            boolean nextFocus = nextFocus(KeyEvent.KEYCODE_DPAD_UP);
+            if (nextFocus) {
+                return true;
+            }
+        }
+        // down
+        else if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_DOWN) {
+            boolean nextFocus = nextFocus(KeyEvent.KEYCODE_DPAD_DOWN);
+            if (nextFocus) {
+                return true;
             }
         }
         return super.dispatchKeyEvent(event);
     }
 
-    private View findLeft() {
-        View focusedView = getFocusedChild();  // 获取当前获得焦点的view
-        return FocusFinder.getInstance().findNextFocus(this, focusedView, View.FOCUS_LEFT);
+    private final int getSpanCount() {
+        try {
+            return ((GridLayoutManager) getLayoutManager()).getSpanCount();
+        } catch (Exception e) {
+            return 1;
+        }
     }
 
-    private View findRight() {
-        View focusedView = getFocusedChild();  // 获取当前获得焦点的view
-        return FocusFinder.getInstance().findNextFocus(this, focusedView, View.FOCUS_RIGHT);
+    private final int getItemCount() {
+        try {
+            return getAdapter().getItemCount();
+        } catch (Exception e) {
+            return 0;
+        }
     }
 
-    private View findDown() {
-        View focusedView = getFocusedChild();  // 获取当前获得焦点的view
-        View nextFocusView = FocusFinder.getInstance().findNextFocus(this, focusedView, View.FOCUS_DOWN);
+    private final int findFocusPosition() {
+        try {
+            View focusedView = getFocusedChild();
+            return getChildAdapterPosition(focusedView);
+        } catch (Exception e) {
+            return -1;
+        }
+//        int index = -1;
+//        View view = null;
+//        while (true) {
+//            if (index != -1)
+//                break;
+//            if (null == view) {
+//                view = findFocus();
+//            } else {
+//                view = (View) view.getParent();
+//            }
+//            ViewParent parent = view.getParent();
+//            if (null == parent)
+//                break;
+//            if (parent instanceof RecyclerView) {
+//                index = getChildAdapterPosition(view);
+//                break;
+//            }
+//        }
+//        return index;
+    }
 
-        if (null == nextFocusView) {
-            int span = 1;
-            LayoutManager layoutManager = getLayoutManager();
-            if (null != layoutManager && layoutManager instanceof GridLayoutManager) {
-                span = ((GridLayoutManager) layoutManager).getSpanCount();
-            }
-
-            int position = getChildAdapterPosition(focusedView);
-            int index = (position + 1);
-            int count = getLayoutManager().getItemCount();
-            int max = count % span;
-            if (max <= 0) {
-                max = span;
-            }
-            if (count - index > max) {
-                scrollToPosition(position + span);
-                SystemClock.sleep(10);
-                nextFocusView = FocusFinder.getInstance().findNextFocus(this, focusedView, View.FOCUS_DOWN);
+    private final boolean nextFocus(int keyCode) {
+        // left
+        if (keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
+            View focusedView = getFocusedChild();
+            View nextFocus = FocusFinder.getInstance().findNextFocus(this, focusedView, View.FOCUS_LEFT);
+            if (null != nextFocus) {
+                nextFocus.requestFocus();
+                return true;
             }
         }
-
-        return nextFocusView;
-    }
-
-    private View findUp() {
-        View focusedView = getFocusedChild();  // 获取当前获得焦点的view
-        View nextFocusView = FocusFinder.getInstance().findNextFocus(this, focusedView, View.FOCUS_UP);
-
-        if (null == nextFocusView) {
-            int span = 1;
-            LayoutManager layoutManager = getLayoutManager();
-            if (null != layoutManager && layoutManager instanceof GridLayoutManager) {
-                span = ((GridLayoutManager) layoutManager).getSpanCount();
-            }
-
-            int position = getChildAdapterPosition(focusedView);
-            int index = (position + 1);
-            if (index > span) {
-                scrollToPosition(position - span);
-                SystemClock.sleep(10);
-                nextFocusView = FocusFinder.getInstance().findNextFocus(this, focusedView, View.FOCUS_UP);
+        // right
+        else if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT) {
+            View focusedView = getFocusedChild();
+            View nextFocus = FocusFinder.getInstance().findNextFocus(this, focusedView, View.FOCUS_RIGHT);
+            if (null != nextFocus) {
+                nextFocus.requestFocus();
+                return true;
             }
         }
+        // up
+        else if (keyCode == KeyEvent.KEYCODE_DPAD_UP) {
+            int position = findFocusPosition();
+            int spanCount = getSpanCount();
+            // not 第一行
+            if (position + 1 > spanCount) {
+                boolean hasFocus = hasFocus(keyCode);
+                if (hasFocus) {
+                    boolean reqFocus = reqFocus(keyCode);
+                    if (reqFocus) {
+                        return true;
+                    }
+                } else {
+                    int itemCount = getItemCount();
+                    boolean scrollFocus = scrollFocus(keyCode, position, spanCount, itemCount);
+                    if (scrollFocus) {
+                        boolean reqFocus = reqFocus(keyCode);
+                        if (reqFocus) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        // down
+        else if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN) {
+            int position = findFocusPosition();
+            int itemCount = getItemCount();
+            int spanCount = getSpanCount();
+            // 最后一行
+            if (itemCount - position > spanCount) {
+                boolean hasFocus = hasFocus(keyCode);
+                if (hasFocus) {
+                    boolean reqFocus = reqFocus(keyCode);
+                    if (reqFocus) {
+                        return true;
+                    }
+                } else {
+                    boolean scrollFocus = scrollFocus(keyCode, position, spanCount, itemCount);
+                    if (scrollFocus) {
+                        boolean reqFocus = reqFocus(keyCode);
+                        if (reqFocus) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
 
-        return nextFocusView;
+    private final boolean hasFocus(int keyCode) {
+        View focusedView = getFocusedChild();
+        View nextFocus = null;
+        // left
+        if (keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
+            nextFocus = FocusFinder.getInstance().findNextFocus(this, focusedView, View.FOCUS_LEFT);
+        }
+        // right
+        else if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT) {
+            nextFocus = FocusFinder.getInstance().findNextFocus(this, focusedView, View.FOCUS_RIGHT);
+        }
+        // up
+        else if (keyCode == KeyEvent.KEYCODE_DPAD_UP) {
+            nextFocus = FocusFinder.getInstance().findNextFocus(this, focusedView, View.FOCUS_UP);
+        }
+        // down
+        else if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN) {
+            nextFocus = FocusFinder.getInstance().findNextFocus(this, focusedView, View.FOCUS_DOWN);
+        }
+        if (null != nextFocus) {
+            return true;
+        }
+        return false;
+    }
+
+    private final boolean reqFocus(int keyCode) {
+        View focusedView = getFocusedChild();
+        View nextFocus = null;
+        // left
+        if (keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
+            nextFocus = FocusFinder.getInstance().findNextFocus(this, focusedView, View.FOCUS_LEFT);
+        }
+        // right
+        else if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT) {
+            nextFocus = FocusFinder.getInstance().findNextFocus(this, focusedView, View.FOCUS_RIGHT);
+        }
+        // up
+        else if (keyCode == KeyEvent.KEYCODE_DPAD_UP) {
+            nextFocus = FocusFinder.getInstance().findNextFocus(this, focusedView, View.FOCUS_UP);
+        }
+        // down
+        else if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN) {
+            nextFocus = FocusFinder.getInstance().findNextFocus(this, focusedView, View.FOCUS_DOWN);
+        }
+        if (null != nextFocus) {
+            nextFocus.requestFocus();
+            return true;
+        }
+        return false;
+    }
+
+    private final boolean scrollFocus(int keyCode, int position, int spanCount, int itemCount) {
+
+        // left
+        if (keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
+        }
+        // right
+        else if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT) {
+        }
+        // up
+        else if (keyCode == KeyEvent.KEYCODE_DPAD_UP) {
+            int next = position - spanCount;
+            LeanBackUtil.log("RecyclerView => scrollFocus => up => position = " + position + ", next = " + next + ", spanCount = " + spanCount + ", itemCount = " + itemCount);
+            while (true) {
+                ViewHolder viewHolder = findViewHolderForAdapterPosition(next);
+                LeanBackUtil.log("RecyclerView => scrollFocus => up => viewHolder = " + viewHolder);
+                if (null != viewHolder) {
+                    View itemView = viewHolder.itemView;
+                    if (null != itemView) {
+                        int height = itemView.getHeight();
+                        scrollBy(0, -height);
+                    }
+                    return true;
+                }
+                scrollBy(0, -1);
+            }
+        }
+        // down
+        else if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN) {
+            int next = position + spanCount;
+            LeanBackUtil.log("RecyclerView => scrollFocus => down => position = " + position + ", next = " + next + ", spanCount = " + spanCount + ", itemCount = " + itemCount);
+            while (true) {
+                ViewHolder viewHolder = findViewHolderForAdapterPosition(next);
+                LeanBackUtil.log("RecyclerView => scrollFocus => down => viewHolder = " + viewHolder);
+                if (null != viewHolder) {
+                    View itemView = viewHolder.itemView;
+                    if (null != itemView) {
+                        int height = itemView.getHeight();
+                        scrollBy(0, height);
+                    }
+                    return true;
+                }
+                scrollBy(0, 1);
+            }
+        }
+        return false;
     }
 
     @Override
