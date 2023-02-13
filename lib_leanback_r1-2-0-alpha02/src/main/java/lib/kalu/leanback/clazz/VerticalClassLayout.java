@@ -4,12 +4,14 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Color;
+import android.graphics.Rect;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.KeyEvent;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
@@ -25,6 +27,10 @@ import androidx.annotation.RequiresApi;
 import androidx.leanback.R;
 
 import java.util.List;
+
+import lib.kalu.leanback.list.RecyclerView;
+import lib.kalu.leanback.util.LeanBackUtil;
+import lib.kalu.leanback.util.ViewUtil;
 
 /**
  * 垂直
@@ -86,77 +92,116 @@ public final class VerticalClassLayout extends ScrollView {
 //        LbLogUtil.log("ClassLayout", "dispatchKeyEvent => action = " + event.getAction() + ", code = " + event.getKeyCode());
         // up
         if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_UP) {
-            int count = getCount();
-            int index = getCheckedIndex();
-//            LbLogUtil.log("ClassLayout", "up => count = " + count + ", index = " + index);
-            if (count > 0 && index == 0) {
-                if (mDispatchTop) {
+            int count = getItemCount();
+            if (count > 0) {
+                int index = getCheckedIndex();
+                if (index > 0) {
+                    int next = index - 1;
+                    setChecked(next);
+                    updateBackground(true, false, next, true, false);
+                    updateText(true);
                     return true;
                 } else {
-                    updateBackground(true, false, index, false, true);
-                    updateText(false);
-                    return false;
+                    View focus = findFocus();
+                    View nextFocus = ViewUtil.findNextFocus(getContext(), focus, View.FOCUS_UP);
+                    if (null == nextFocus)
+                        return true;
                 }
-            } else if (count > 0 && index > 0) {
-                int next = index - 1;
-                setChecked(next);
-                updateBackground(true, false, next, true, false);
-                updateText(true);
+            }
+            if (mDispatchTop) {
                 return true;
-            } else {
-                return false;
             }
         }
         // down
         else if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_DOWN) {
-            int count = getCount();
-            int index = getCheckedIndex();
-//            LbLogUtil.log("ClassLayout", "down => count = " + count + ", index = " + index);
-            if (count > 0 && index + 1 == count) {
-                if (mDispatchBottom) {
+            int count = getItemCount();
+            if (count > 0) {
+                int index = getCheckedIndex();
+                if (index + 1 < count) {
+                    int next = index + 1;
+                    setChecked(next);
+                    updateBackground(false, true, next, true, false);
+                    updateText(true);
                     return true;
                 } else {
-                    updateBackground(false, true, index, false, true);
-                    updateText(false);
-                    return false;
+                    View focus = findFocus();
+                    View nextFocus = ViewUtil.findNextFocus(getContext(), focus, View.FOCUS_DOWN);
+                    if (null == nextFocus)
+                        return true;
                 }
-            } else if (count > 0 && index >= 0) {
-                int next = index + 1;
-                setChecked(next);
-                updateBackground(false, true, next, true, false);
-                updateText(true);
+            }
+            if (mDispatchBottom) {
                 return true;
-            } else {
-                return false;
             }
         }
-        // right
+        // right-in
+        else if (event.getAction() == KeyEvent.ACTION_UP && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_RIGHT) {
+            View focus = findFocus();
+            if (null != focus) {
+                focusInto();
+                return true;
+            }
+        }
+        // right-out
         else if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_RIGHT) {
-            int count = getCount();
-            if (count > 0) {
-                int index = getCheckedIndex();
-                updateBackground(false, false, index, false, true);
-                updateText(false);
+            View focus = findFocus();
+            LeanBackUtil.log("VerticalClassLayout => dispatchKeyEvent => rightLeave => focus = " + focus);
+            if (null != focus) {
+                View nextFocus = ViewUtil.findNextFocus(getContext(), focus, View.FOCUS_RIGHT);
+                LeanBackUtil.log("VerticalClassLayout => dispatchKeyEvent => rightLeave => nextFocus = " + nextFocus);
+                if (null == nextFocus) {
+                    return true;
+                }
+                // RecyclerView
+                else if (nextFocus instanceof RecyclerView) {
+                    try {
+                        int count = ((RecyclerView) nextFocus).getAdapter().getItemCount();
+                        LeanBackUtil.log("VerticalClassLayout => dispatchKeyEvent => rightLeave => count = " + count);
+                        if (count <= 0) {
+                            return true;
+                        }
+                    } catch (Exception e) {
+                        return true;
+                    }
+                }
+                // ViewGroup
+                else if (nextFocus instanceof ViewGroup) {
+                }
+                // View
+                else {
+                    boolean hasFocusable = nextFocus.hasFocusable();
+                    if (!hasFocusable) {
+                        return true;
+                    }
+                }
+                focusLeave();
             }
-            return false;
         }
-        // left
+        // left-in
         else if (event.getAction() == KeyEvent.ACTION_UP && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_LEFT) {
-            int count = getCount();
-            if (count > 0) {
-                int index = getCheckedIndex();
-                updateBackground(false, false, index, true, false);
-                updateText(true);
+            View focus = findFocus();
+            if (null != focus) {
+                focusInto();
+                return true;
             }
-            return false;
         }
-        // pass
-        else {
-            return false;
+        // left-leave
+        else if (event.getAction() == KeyEvent.ACTION_UP && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_LEFT) {
+            View focus = findFocus();
+            LeanBackUtil.log("VerticalClassLayout => dispatchKeyEvent => leftLeave => focus = " + focus);
+            if (null != focus) {
+                View nextFocus = ViewUtil.findNextFocus(getContext(), focus, View.FOCUS_LEFT);
+                LeanBackUtil.log("VerticalClassLayout => dispatchKeyEvent => leftLeave => nextFocus = " + nextFocus);
+                if (null == nextFocus) {
+                    return true;
+                }
+                focusLeave();
+            }
         }
+        return super.dispatchKeyEvent(event);
     }
 
-    private final void init(@NonNull Context context, @NonNull AttributeSet attrs) {
+    private void init(@NonNull Context context, @NonNull AttributeSet attrs) {
 
         TypedArray typedArray = null;
         try {
@@ -185,28 +230,17 @@ public final class VerticalClassLayout extends ScrollView {
         }
 
         // 1
-        // blocksDescendants：ViewGroup拦截，不让子 view获取焦点。
-        // beforeDescendants：ViewGroup优先尝试（尝试的意思是，根据View或ViewGroup当前状态来判断是否能得到焦点，如是否可见，是否可获取焦点等等，在View的requestFocus方法的注释中提到，下同）获取焦点，若ViewGroup没拿到焦点，再遍历子 view（包括所有直接子 view和间接子 view），让子 view尝试获取焦点。
-        // afterDescendants：先遍历子 view，让子 view尝试获取焦点，若所有子 view（包括所有直接子 view和间接子 view）都没拿到焦点，才让ViewGroup尝试获取焦点。
-        setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
-        setClickable(false);
-        setLongClickable(false);
-        setFocusable(false);
-        setFocusableInTouchMode(true);
         setFillViewport(true);
         // 2
         RadioGroup layout = new RadioGroup(context);
         ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         layout.setLayoutParams(params);
         layout.setOrientation(LinearLayout.VERTICAL);
-        layout.setClickable(false);
-        layout.setLongClickable(false);
         layout.setFocusable(false);
-        layout.setFocusableInTouchMode(false);
         addView(layout);
     }
 
-    private final int getCount() {
+    private int getItemCount() {
         try {
             int childCount = getChildCount();
             if (childCount != 1)
@@ -215,24 +249,14 @@ public final class VerticalClassLayout extends ScrollView {
             int count = radioGroup.getChildCount();
             if (count <= 0)
                 throw new IllegalArgumentException("getCount => child num is empty");
-            return radioGroup.getChildCount();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return -1;
-        }
-    }
-
-    public final int getItemCount() {
-        try {
-            RadioGroup radioGroup = (RadioGroup) getChildAt(0);
-            return radioGroup.getChildCount();
+            return count;
         } catch (Exception e) {
             e.printStackTrace();
             return 0;
         }
     }
 
-    public final int getCheckedIndex() {
+    public int getCheckedIndex() {
         try {
             int childCount = getChildCount();
             if (childCount != 1)
@@ -257,7 +281,7 @@ public final class VerticalClassLayout extends ScrollView {
         }
     }
 
-    private final void setChecked(@NonNull int index) {
+    private void setChecked(@NonNull int index) {
         try {
             int childCount = getChildCount();
             if (childCount != 1)
@@ -286,44 +310,47 @@ public final class VerticalClassLayout extends ScrollView {
         if (count != 1)
             return;
 
-        RadioGroup radioGroup = (RadioGroup) getChildAt(0);
-        int size = radioGroup.getChildCount();
-        for (int i = 0; i < size; i++) {
-            RadioButton radioButton = (RadioButton) radioGroup.getChildAt(i);
-            if (mBackgroundResource != -1) {
-                radioButton.setBackgroundResource(mBackgroundResource);
-            } else {
-                radioButton.setBackgroundColor(mBackgroundColor);
+        try {
+            RadioGroup radioGroup = (RadioGroup) getChildAt(0);
+            int size = radioGroup.getChildCount();
+            for (int i = 0; i < size; i++) {
+                RadioButton radioButton = (RadioButton) radioGroup.getChildAt(i);
+                if (mBackgroundResource != -1) {
+                    radioButton.setBackgroundResource(mBackgroundResource);
+                } else {
+                    radioButton.setBackgroundColor(mBackgroundColor);
+                }
+                radioButton.setTextColor(mColor);
             }
-            radioButton.setTextColor(mColor);
-        }
 
-        @ColorInt
-        int color = highlight ? mColorHighlight : (checked ? mColorChecked : mColor);
-        @ColorInt
-        int background = highlight ? mBackgroundColorHighlight : (checked ? mBackgroundColorChecked : mBackgroundColor);
-        @DrawableRes
-        int resource = highlight ? mBackgroundResourceHighlight : (checked ? mBackgroundResourceChecked : mBackgroundResource);
-        RadioButton radioButton = (RadioButton) radioGroup.getChildAt(index);
-        radioButton.setTextColor(color);
-        if (resource != -1) {
-            radioButton.setBackgroundResource(resource);
-        } else {
-            radioButton.setBackgroundColor(background);
-        }
+            @ColorInt
+            int color = highlight ? mColorHighlight : (checked ? mColorChecked : mColor);
+            @ColorInt
+            int background = highlight ? mBackgroundColorHighlight : (checked ? mBackgroundColorChecked : mBackgroundColor);
+            @DrawableRes
+            int resource = highlight ? mBackgroundResourceHighlight : (checked ? mBackgroundResourceChecked : mBackgroundResource);
+            RadioButton radioButton = (RadioButton) radioGroup.getChildAt(index);
+            radioButton.setTextColor(color);
+            if (resource != -1) {
+                radioButton.setBackgroundResource(resource);
+            } else {
+                radioButton.setBackgroundColor(background);
+            }
 
-        // scroll
+            // scroll
 //        int top = radioButton.getTop();
 //        scrollTo(0, top);
-        int scrollY = getScrollY();
-        int top = radioButton.getTop();
+            int scrollY = getScrollY();
+            int top = radioButton.getTop();
 //        LbLogUtil.log("ClassLayout", "updateBackground => index = " + index + ", scrollY");
-        setDescendantFocusability(ViewGroup.FOCUS_AFTER_DESCENDANTS);
-        radioButton.requestFocus();
-        radioButton.clearFocus();
-        setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
-        if (scrollY > top) {
-            scrollTo(0, top);
+            setDescendantFocusability(ViewGroup.FOCUS_AFTER_DESCENDANTS);
+            radioButton.requestFocus();
+            radioButton.clearFocus();
+            setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
+            if (scrollY > top) {
+                scrollTo(0, top);
+            }
+        } catch (Exception e) {
         }
     }
 
@@ -353,37 +380,40 @@ public final class VerticalClassLayout extends ScrollView {
         if (count != 1)
             return;
 
-        RadioGroup radioGroup = (RadioGroup) getChildAt(0);
-        int size = radioGroup.getChildCount();
-        for (int i = 0; i < size; i++) {
+        try {
+            RadioGroup radioGroup = (RadioGroup) getChildAt(0);
+            int size = radioGroup.getChildCount();
+            for (int i = 0; i < size; i++) {
 
-            RadioButton radioButton = (RadioButton) radioGroup.getChildAt(i);
-            // 1=>normal
-            // 2=>highlight
-            // 3=>checked
-            Object tag = radioButton.getTag();
-            if (null == tag || !(tag instanceof ClassBean))
-                continue;
+                RadioButton radioButton = (RadioButton) radioGroup.getChildAt(i);
+                // 1=>normal
+                // 2=>highlight
+                // 3=>checked
+                Object tag = radioButton.getTag();
+                if (null == tag || !(tag instanceof ClassBean))
+                    continue;
 
-            boolean checked = radioButton.isChecked();
+                boolean checked = radioButton.isChecked();
 
-            CharSequence str;
-            if (highlight && checked) {
-                str = ClassUtil.textHighlight(getContext(), (ClassBean) tag);
-            } else if (checked) {
-                str = ClassUtil.textChecked(getContext(), (ClassBean) tag);
-            } else {
-                str = ClassUtil.textNormal(getContext(), (ClassBean) tag);
-            }
+                CharSequence str;
+                if (highlight && checked) {
+                    str = ClassUtil.textHighlight(getContext(), (ClassBean) tag);
+                } else if (checked) {
+                    str = ClassUtil.textChecked(getContext(), (ClassBean) tag);
+                } else {
+                    str = ClassUtil.textNormal(getContext(), (ClassBean) tag);
+                }
 //            LbLogUtil.log("ClassLayout", "updateTextW => str = " + str);
-            if (null != str && str.length() > 0) {
-                radioButton.setText(str);
+                if (null != str && str.length() > 0) {
+                    radioButton.setText(str);
+                }
             }
+        } catch (Exception e) {
         }
     }
 
     @Nullable
-    public final String getCheckedCode() {
+    public String getCheckedCode() {
         int count = getChildCount();
         if (count != 1)
             return null;
@@ -403,7 +433,7 @@ public final class VerticalClassLayout extends ScrollView {
     }
 
     @Nullable
-    public final String getCheckedName() {
+    public String getCheckedName() {
         int count = getChildCount();
         if (count != 1)
             return null;
@@ -571,6 +601,24 @@ public final class VerticalClassLayout extends ScrollView {
         updateText(false);
     }
 
+    public void focusInto() {
+        try {
+            int index = getCheckedIndex();
+            updateBackground(false, false, index, true, false);
+            updateText(true);
+        } catch (Exception e) {
+        }
+    }
+
+    public void focusLeave() {
+        try {
+            int index = getCheckedIndex();
+            updateBackground(false, false, index, false, true);
+            updateText(false);
+        } catch (Exception e) {
+        }
+    }
+
 
     public void requestFocusTab() {
         int index = getCheckedIndex();
@@ -583,8 +631,8 @@ public final class VerticalClassLayout extends ScrollView {
             return;
         setFocusable(true);
         requestFocus();
-        updateBackground(true, false, index, false, true);
-        updateText(false);
+        updateBackground(false, true, index, true, false);
+        updateText(true);
     }
 
     public RadioButton getTab(int index) {
@@ -628,10 +676,7 @@ public final class VerticalClassLayout extends ScrollView {
 
         private void init() {
             setSingleLine();
-            setClickable(false);
-            setLongClickable(false);
-            setFocusable(true);
-            setFocusableInTouchMode(true);
+            setFocusable(false);
             setTextSize(TypedValue.COMPLEX_UNIT_PX, mTextSize);
             setGravity(Gravity.CENTER);
             setButtonDrawable(new ColorDrawable(Color.TRANSPARENT));
