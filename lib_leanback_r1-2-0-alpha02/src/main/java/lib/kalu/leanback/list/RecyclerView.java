@@ -34,6 +34,8 @@ public class RecyclerView extends androidx.recyclerview.widget.RecyclerView {
         setItemAnimator(null);
         setAnimationCacheEnabled(false);
         setNestedScrollingEnabled(false);
+        setHasFixedSize(true);
+        setFocusableInTouchMode(false);
     }
 
     @Override

@@ -256,7 +256,7 @@ public abstract class ObjectAdapter {
      * @param positionStart Position where new items has been inserted.
      * @param itemCount     Count of the new items has been inserted.
      */
-    final protected void notifyItemRangeInserted(int positionStart, int itemCount) {
+    public final void notifyItemRangeInserted(int positionStart, int itemCount) {
         mObservable.notifyItemRangeInserted(positionStart, itemCount);
     }
 
