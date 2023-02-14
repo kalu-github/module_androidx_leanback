@@ -36,7 +36,7 @@
         app:focusOutEnd="true"
         app:focusOutFront="true" />
 
-    <androidx.recyclerview.widget.RecyclerView
+    <lib.kalu.leanback.list.RecyclerView
         android:id="@+id/module_leanback_llrd_bottom"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

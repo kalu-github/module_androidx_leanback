@@ -8,8 +8,12 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.util.AttributeSet;
+import android.view.FocusFinder;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 
 import androidx.annotation.ColorInt;
@@ -17,7 +21,9 @@ import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.leanback.R;
+import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,9 +31,10 @@ import java.util.Map;
 import lib.kalu.leanback.tags.listener.OnTagsChangeListener;
 import lib.kalu.leanback.tags.model.TagBean;
 import lib.kalu.leanback.util.LeanBackUtil;
+import lib.kalu.leanback.util.ViewUtil;
 
 @Keep
-public class TagsLayout extends LinearLayout {
+public final class TagsLayout extends LinearLayout {
 
     private int mItemHeight = 0;
     private int mItemPaddingTop = 0;
@@ -57,6 +64,400 @@ public class TagsLayout extends LinearLayout {
     public TagsLayout(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init(attrs);
+    }
+
+    private int findCheckedItemIndex(int row) {
+        try {
+            int childCount = getChildCount();
+            if (childCount <= 0)
+                throw new Exception("error: childCount is " + childCount);
+            if (row + 1 > childCount)
+                throw new Exception("error: childCount is " + childCount + ", row = " + row);
+            return ((TagsHorizontalScrollView) getChildAt(row)).findCheckedItemIndex();
+        } catch (Exception e) {
+            LeanBackUtil.log("TagsLayout => findCheckedItemIndex => " + e.getMessage());
+            return 0;
+        }
+    }
+
+    private int[] findFocusItemIndex() {
+        try {
+            int childCount = getChildCount();
+            if (childCount <= 0)
+                throw new Exception("error: childCount is " + childCount);
+            for (int i = 0; i < childCount; i++) {
+                int index = ((TagsHorizontalScrollView) getChildAt(i)).findFocusItemIndex();
+                if (index != -1) {
+                    return new int[]{i, index};
+                }
+            }
+            throw new Exception("not find");
+        } catch (Exception e) {
+            LeanBackUtil.log("TagsLayout => findFocusItemIndex => " + e.getMessage());
+            return null;
+        }
+    }
+
+    private boolean isFocusItemIndexLast(int row) {
+        try {
+            int childCount = getChildCount();
+            if (childCount <= 0)
+                throw new Exception("error: childCount is " + childCount);
+            if (row + 1 >= childCount)
+                throw new Exception("error: childCount is " + childCount + ", row = " + row);
+            boolean last = ((TagsHorizontalScrollView) getChildAt(row)).isFocusItemIndexLast();
+            if (last) {
+                return true;
+            }
+            throw new Exception("not find");
+        } catch (Exception e) {
+            LeanBackUtil.log("TagsLayout => isFocusItemIndexLast => " + e.getMessage());
+            return false;
+        }
+    }
+
+    private boolean isFocusItemIndexFirst(int row) {
+        try {
+            int childCount = getChildCount();
+            if (childCount <= 0)
+                throw new Exception("error: childCount is " + childCount);
+            if (row + 1 > childCount)
+                throw new Exception("error: childCount is " + childCount + ", row = " + row);
+            boolean last = ((TagsHorizontalScrollView) getChildAt(row)).isFocusItemIndexFirst();
+            if (last) {
+                return true;
+            }
+            throw new Exception("not find");
+        } catch (Exception e) {
+            LeanBackUtil.log("TagsLayout => isFocusItemIndexFirst => " + e.getMessage());
+            return false;
+        }
+    }
+
+    private boolean delFocus(int row, int col, boolean checked) {
+        try {
+            LeanBackUtil.log("TagsLayout => delFocus => row = " + row + ", col = " + col + ", checked = " + checked);
+            int childCount = getChildCount();
+            LeanBackUtil.log("TagsLayout => delFocus => childCount = " + childCount);
+            if (childCount <= 0)
+                throw new Exception("error: childCount is " + childCount);
+            if (row + 1 > childCount)
+                throw new Exception("error: childCount is " + childCount + ", row = " + row);
+            return ((TagsHorizontalScrollView) getChildAt(row)).delFocus(col, checked);
+        } catch (Exception e) {
+            LeanBackUtil.log("TagsLayout => delFocus => " + e.getMessage());
+            return false;
+        }
+    }
+
+    private boolean reqFocus(int row, int col, boolean auto) {
+        try {
+            LeanBackUtil.log("TagsLayout => reqFocus => row = " + row + ", col = " + col + ", auto = " + auto);
+            int childCount = getChildCount();
+            LeanBackUtil.log("TagsLayout => reqFocus => childCount = " + childCount);
+            if (childCount <= 0)
+                throw new Exception("error: childCount is " + childCount);
+            if (row + 1 > childCount)
+                throw new Exception("error: childCount is " + childCount + ", row = " + row);
+            return ((TagsHorizontalScrollView) getChildAt(row)).reqFocus(col, auto);
+        } catch (Exception e) {
+            LeanBackUtil.log("TagsLayout => reqFocus => " + e.getMessage());
+            return false;
+        }
+    }
+
+    private void clear() {
+        int[] ints = findFocusItemIndex();
+        if (null != ints) {
+            int row = ints[0];
+            int before = ints[1];
+            delFocus(row, before, true);
+        }
+    }
+
+    @Override
+    public boolean dispatchKeyEvent(KeyEvent event) {
+        // error
+        if (event.getRepeatCount() > 0) {
+            return true;
+        }
+        // left action_up
+        else if (event.getAction() == KeyEvent.ACTION_UP && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_LEFT) {
+            View focus = findFocus();
+            LeanBackUtil.log("TagsLayout => dispatchKeyEvent => left_action_up => focus = " + focus);
+            if (null != focus && focus instanceof TagsLayout) {
+                int[] ints = findFocusItemIndex();
+                LeanBackUtil.log("TagsLayout => dispatchKeyEvent => left_action_up => ints = " + Arrays.toString(ints));
+                if (null == ints) {
+                    int childCount = getChildCount();
+                    if (childCount > 0) {
+                        reqFocus(0, 0, true);
+                        return true;
+                    }
+                }
+            }
+        }
+        // left action_down
+        else if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_LEFT) {
+            View focus = findFocus();
+            LeanBackUtil.log("TagsLayout => dispatchKeyEvent => left_action_down => focus = " + focus);
+            if (null != focus && focus instanceof TagsLayout) {
+                int[] ints = findFocusItemIndex();
+                LeanBackUtil.log("TagsLayout => dispatchKeyEvent => left_action_down => ints = " + Arrays.toString(ints));
+                if (null != ints) {
+                    int row = ints[0];
+                    boolean first = isFocusItemIndexFirst(row);
+                    LeanBackUtil.log("TagsLayout => dispatchKeyEvent => left_action_down => first = " + first);
+                    if (first) {
+                        View nextFocus = ViewUtil.findNextFocus(getContext(), this, View.FOCUS_LEFT);
+                        LeanBackUtil.log("TagsLayout => dispatchKeyEvent => left_action_down => nextFocus = " + nextFocus);
+                        if (null == nextFocus) {
+                            return true;
+                        } else if (nextFocus instanceof ViewGroup) {
+                            try {
+                                int childCount1 = ((ViewGroup) nextFocus).getChildCount();
+                                LeanBackUtil.log("TagsLayout => dispatchKeyEvent => left_action_down => childCount1 = " + childCount1);
+                                if (childCount1 <= 0) {
+                                    return true;
+                                }
+                            } catch (Exception e) {
+                                return true;
+                            }
+                        } else {
+                            boolean hasFocusable = nextFocus.hasFocusable();
+                            LeanBackUtil.log("TagsLayout => dispatchKeyEvent => left_action_down => hasFocusable = " + hasFocusable);
+                            if (hasFocusable) {
+                                return true;
+                            }
+                        }
+
+                        int before = ints[1];
+                        delFocus(row, before, true);
+
+                    } else {
+                        int before = ints[1];
+                        int next = before - 1;
+                        delFocus(row, before, false);
+                        reqFocus(row, next, false);
+                        return true;
+                    }
+                } else {
+                    boolean reqFocus = reqFocus(0, 0, false);
+                    LeanBackUtil.log("TagsLayout => dispatchKeyEvent => left_action_down => reqFocus = " + reqFocus);
+                }
+            }
+        }
+        // right action_up
+        else if (event.getAction() == KeyEvent.ACTION_UP && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_RIGHT) {
+            View focus = findFocus();
+            LeanBackUtil.log("TagsLayout => dispatchKeyEvent => right_action_up => focus = " + focus);
+            if (null != focus && focus instanceof TagsLayout) {
+                int[] ints = findFocusItemIndex();
+                LeanBackUtil.log("TagsLayout => dispatchKeyEvent => right_action_up => ints = " + Arrays.toString(ints));
+                if (null == ints) {
+                    int childCount = getChildCount();
+                    if (childCount > 0) {
+                        reqFocus(0, 0, true);
+                        return true;
+                    }
+                }
+            }
+        }
+        // right action_down
+        else if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_RIGHT) {
+            View focus = findFocus();
+            LeanBackUtil.log("TagsLayout => dispatchKeyEvent => right_action_down => focus = " + focus);
+            if (null != focus && focus instanceof TagsLayout) {
+                int[] ints = findFocusItemIndex();
+                LeanBackUtil.log("TagsLayout => dispatchKeyEvent => right_action_down => ints = " + Arrays.toString(ints));
+                if (null != ints) {
+                    int row = ints[0];
+                    boolean last = isFocusItemIndexLast(row);
+                    LeanBackUtil.log("TagsLayout => dispatchKeyEvent => right_action_down => last = " + last);
+                    if (last) {
+                        View nextFocus = ViewUtil.findNextFocus(getContext(), this, View.FOCUS_RIGHT);
+                        LeanBackUtil.log("TagsLayout => dispatchKeyEvent => right_action_down => nextFocus = " + nextFocus);
+                        if (null == nextFocus) {
+                            return true;
+                        } else if (nextFocus instanceof ViewGroup) {
+                            try {
+                                int childCount1 = ((ViewGroup) nextFocus).getChildCount();
+                                LeanBackUtil.log("TagsLayout => dispatchKeyEvent => right_action_down => childCount1 = " + childCount1);
+                                if (childCount1 <= 0) {
+                                    return true;
+                                }
+                            } catch (Exception e) {
+                                return true;
+                            }
+                        } else {
+                            boolean hasFocusable = nextFocus.hasFocusable();
+                            LeanBackUtil.log("TagsLayout => dispatchKeyEvent => right_action_down => hasFocusable = " + hasFocusable);
+                            if (hasFocusable) {
+                                return true;
+                            }
+                        }
+
+                        int before = ints[1];
+                        delFocus(row, before, true);
+
+                    } else {
+                        int before = ints[1];
+                        int next = before + 1;
+                        delFocus(row, before, false);
+                        reqFocus(row, next, false);
+                        return true;
+                    }
+                } else {
+                    boolean reqFocus = reqFocus(0, 0, false);
+                    LeanBackUtil.log("TagsLayout => dispatchKeyEvent => right_action_down => reqFocus = " + reqFocus);
+                }
+            }
+        }
+        // up action_up
+        else if (event.getAction() == KeyEvent.ACTION_UP && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_UP) {
+            View focus = findFocus();
+            LeanBackUtil.log("TagsLayout => dispatchKeyEvent => up_action_up => focus = " + focus);
+            if (null != focus && focus instanceof TagsLayout) {
+                int[] ints = findFocusItemIndex();
+                LeanBackUtil.log("TagsLayout => dispatchKeyEvent => up_action_up => ints = " + Arrays.toString(ints));
+                if (null == ints) {
+                    int childCount = getChildCount();
+                    if (childCount > 0) {
+                        int row = childCount - 1;
+                        int colUp = findCheckedItemIndex(row);
+                        reqFocus(row, colUp, true);
+                        return true;
+                    }
+                }
+            }
+        }
+        // up action_down
+        else if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_UP) {
+            View focus = findFocus();
+            LeanBackUtil.log("TagsLayout => dispatchKeyEvent => up_action_down => focus = " + focus);
+            if (null != focus && focus instanceof TagsLayout) {
+                int[] ints = findFocusItemIndex();
+                LeanBackUtil.log("TagsLayout => dispatchKeyEvent => up_action_down => ints = " + Arrays.toString(ints));
+                if (null != ints) {
+                    int row = ints[0];
+                    if (row <= 0) {
+
+                        View nextFocus = ViewUtil.findNextFocus(getContext(), this, View.FOCUS_UP);
+                        LeanBackUtil.log("TagsLayout => dispatchKeyEvent => up_action_down => nextFocus = " + nextFocus);
+                        if (null == nextFocus) {
+                            return true;
+                        } else if (nextFocus instanceof ViewGroup) {
+                            try {
+                                int childCount1 = ((ViewGroup) nextFocus).getChildCount();
+                                LeanBackUtil.log("TagsLayout => dispatchKeyEvent => up_action_down => childCount1 = " + childCount1);
+                                if (childCount1 <= 0) {
+                                    return true;
+                                }
+                            } catch (Exception e) {
+                                return true;
+                            }
+                        } else {
+                            boolean hasFocusable = nextFocus.hasFocusable();
+                            LeanBackUtil.log("TagsLayout => dispatchKeyEvent => up_action_down => hasFocusable = " + hasFocusable);
+                            if (hasFocusable) {
+                                return true;
+                            }
+                        }
+
+                        int before = ints[1];
+                        delFocus(row, before, true);
+
+                    } else {
+                        int col = ints[1];
+                        delFocus(row, col, true);
+                        int rowDown = row - 1;
+                        int colDown = findCheckedItemIndex(rowDown);
+                        reqFocus(rowDown, colDown, true);
+                        return true;
+                    }
+                } else {
+                    View nextFocus = ViewUtil.findNextFocus(getContext(), this, View.FOCUS_UP);
+                    LeanBackUtil.log("TagsLayout => dispatchKeyEvent => up_action_down => nextFocus = " + nextFocus);
+                    if (null == nextFocus) {
+                        return true;
+                    }
+                }
+            }
+        }
+        // down action_up
+        else if (event.getAction() == KeyEvent.ACTION_UP && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_DOWN) {
+            View focus = findFocus();
+            LeanBackUtil.log("TagsLayout => dispatchKeyEvent => down_action_up => focus = " + focus);
+            if (null != focus && focus instanceof TagsLayout) {
+                int[] ints = findFocusItemIndex();
+                LeanBackUtil.log("TagsLayout => dispatchKeyEvent => down_action_up => ints = " + Arrays.toString(ints));
+                if (null == ints) {
+                    int childCount = getChildCount();
+                    if (childCount > 0) {
+                        int rowDown = 0;
+                        int colDown = findCheckedItemIndex(rowDown);
+                        reqFocus(rowDown, colDown, true);
+                        return true;
+                    }
+                }
+            }
+        }
+        // down action_down
+        else if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_DOWN) {
+            View focus = findFocus();
+            LeanBackUtil.log("TagsLayout => dispatchKeyEvent => down_action_down => focus = " + focus);
+            if (null != focus && focus instanceof TagsLayout) {
+                int[] ints = findFocusItemIndex();
+                LeanBackUtil.log("TagsLayout => dispatchKeyEvent => down_action_down => ints = " + Arrays.toString(ints));
+                if (null != ints) {
+                    int row = ints[0];
+                    int childCount = getChildCount();
+                    LeanBackUtil.log("TagsLayout => dispatchKeyEvent => down_action_down => childCount = " + childCount);
+                    if (row + 1 >= childCount) {
+
+                        View nextFocus = ViewUtil.findNextFocus(getContext(), this, View.FOCUS_DOWN);
+                        LeanBackUtil.log("TagsLayout => dispatchKeyEvent => down_action_down => nextFocus = " + nextFocus);
+                        if (null == nextFocus) {
+                            return true;
+                        } else if (nextFocus instanceof ViewGroup) {
+                            try {
+                                int childCount1 = ((ViewGroup) nextFocus).getChildCount();
+                                LeanBackUtil.log("TagsLayout => dispatchKeyEvent => down_action_down => childCount1 = " + childCount1);
+                                if (childCount1 <= 0) {
+                                    return true;
+                                }
+                            } catch (Exception e) {
+                                return true;
+                            }
+                        } else {
+                            boolean hasFocusable = nextFocus.hasFocusable();
+                            LeanBackUtil.log("TagsLayout => dispatchKeyEvent => down_action_down => hasFocusable = " + hasFocusable);
+                            if (hasFocusable) {
+                                return true;
+                            }
+                        }
+
+                        int before = ints[1];
+                        delFocus(row, before, true);
+
+                    } else {
+                        int col = ints[1];
+                        delFocus(row, col, true);
+                        int rowUp = row + 1;
+                        int colUp = findCheckedItemIndex(rowUp);
+                        reqFocus(rowUp, colUp, true);
+                        return true;
+                    }
+                } else {
+                    View nextFocus = ViewUtil.findNextFocus(getContext(), this, View.FOCUS_DOWN);
+                    LeanBackUtil.log("TagsLayout => dispatchKeyEvent => down_action_down => nextFocus = " + nextFocus);
+                    if (null == nextFocus) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return super.dispatchKeyEvent(event);
     }
 
     @Override
@@ -92,10 +493,6 @@ public class TagsLayout extends LinearLayout {
     }
 
     private final void init(@Nullable AttributeSet attrs) {
-        setGravity(Gravity.CENTER_VERTICAL);
-        setOrientation(LinearLayout.VERTICAL);
-        setFocusable(false);
-        setFocusableInTouchMode(false);
         TypedArray attributes = null;
         try {
             attributes = getContext().obtainStyledAttributes(attrs, R.styleable.TagsLayout);
@@ -132,6 +529,9 @@ public class TagsLayout extends LinearLayout {
         if (mItemPaddingBottom <= 0) {
             mItemPaddingBottom = getResources().getDimensionPixelOffset(R.dimen.module_tagslayout_item_padding_bottom_default);
         }
+
+        setOrientation(LinearLayout.VERTICAL);
+        setGravity(Gravity.CENTER_VERTICAL);
     }
 
     /*************/
@@ -147,7 +547,7 @@ public class TagsLayout extends LinearLayout {
     }
 
     @Keep
-    public final void update(@NonNull Map<String, List<TagBean>> map) {
+    public void update(@NonNull Map<String, List<TagBean>> map) {
 
         if (null == map || map.size() == 0)
             return;
@@ -163,98 +563,50 @@ public class TagsLayout extends LinearLayout {
     }
 
     @Keep
-    public final Map<String, String> getTags() {
-        HashMap<String, String> map = new HashMap<>();
-        int count = getChildCount();
-        for (int i = 0; i < count; i++) {
-            TagsHorizontalScrollView layout = (TagsHorizontalScrollView) getChildAt(i);
-            String[] strings = layout.searchTags();
-            map.put(strings[0], strings[1]);
-        }
-        return map;
-    }
+    public Map<String, String> getData() {
 
-//    @Keep
-//    public final int getSelect() {
-//        int select = -1;
-//        try {
-//            int count1 = getChildCount();
-//            for (int i = 0; i < count1; i++) {
-//                TagsLinearLayoutChild linearLayoutChild = (TagsLinearLayoutChild) ((ViewGroup) getChildAt(i)).getChildAt(0);
-//                int count2 = linearLayoutChild.getChildCount();
-//                for (int j = 0; j < count2; j++) {
-//                    View child = linearLayoutChild.getChildAt(j);
-//                    if (child.hasFocus()) {
-//                        select = i;
-//                        break;
-//                    }
-//                }
-//                if (select != -1)
-//                    break;
-//            }
-//        } catch (Exception e) {
-//        }
-//        return select;
-//    }
-
-    @Keep
-    public final boolean isFirst(@NonNull View view) {
-        boolean status = false;
-        if (null != view && view instanceof TagsTextView) {
-            try {
-                int count = getChildCount();
-                for (int i = 0; i < count; i++) {
-                    TagsLinearLayoutChild layout = (TagsLinearLayoutChild) ((TagsHorizontalScrollView) getChildAt(i)).getChildAt(0);
-                    int index = layout.indexOfChild(view);
-                    if (index == 0) {
-                        status = true;
-                        break;
-                    }
-                }
-            } catch (Exception e) {
+        try {
+            int childCount = getChildCount();
+            if (childCount <= 0)
+                throw new Exception("childCount is " + childCount);
+            HashMap<String, String> map = new HashMap<>();
+            for (int i = 0; i < childCount; i++) {
+                TagsHorizontalScrollView layout = (TagsHorizontalScrollView) getChildAt(i);
+                LeanBackUtil.log("TagsLayout => getData => i = " + i + ", layout = " + layout);
+                if (null == layout)
+                    continue;
+                String[] strings = layout.getData();
+                LeanBackUtil.log("TagsLayout => getData => strings = " + Arrays.toString(strings));
+                if (null == strings)
+                    continue;
+                if (strings.length != 2)
+                    continue;
+                map.put(strings[0], strings[1]);
             }
+            return map;
+        } catch (Exception e) {
+            LeanBackUtil.log("TagsLayout => getData => " + e.getMessage());
+            return null;
         }
-        LeanBackUtil.log("TagsLinearLayoutChild", "isFirst => status = " + status);
-        return status;
     }
 
-    @Keep
-    public final boolean isLast(@NonNull View view) {
-        boolean status = false;
-        if (null != view && view instanceof TagsTextView) {
-            try {
-                int count = getChildCount();
-                for (int i = 0; i < count; i++) {
-                    TagsLinearLayoutChild layout = (TagsLinearLayoutChild) ((TagsHorizontalScrollView) getChildAt(i)).getChildAt(0);
-                    int index = layout.indexOfChild(view);
-                    int childCount = layout.getChildCount();
-                    if (index + 1 == childCount) {
-                        status = true;
-                        break;
-                    }
-                }
-            } catch (Exception e) {
-            }
-        }
-        LeanBackUtil.log("TagsLinearLayoutChild", "isLast => status = " + status);
-        return status;
-    }
-
-    protected final void callback(@NonNull int row, @NonNull int column) {
+    protected void callback(@NonNull int row, @NonNull TagsHorizontalScrollView view) {
         if (null == onTagsChangeListener)
             return;
+        int col;
         try {
-            Map<String, String> map = getTags();
-            onTagsChangeListener.onChange(row, column, map);
+            col = indexOfChild(view);
         } catch (Exception e) {
+            col = -1;
         }
+        onTagsChangeListener.onChange(row, col, getData());
     }
 
     /*************************/
 
     private OnTagsChangeListener onTagsChangeListener;
 
-    public final void setOnTagsChangeListener(@NonNull OnTagsChangeListener listener) {
+    public void setOnTagsChangeListener(@NonNull OnTagsChangeListener listener) {
         this.onTagsChangeListener = listener;
     }
 
