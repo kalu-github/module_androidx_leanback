@@ -20,6 +20,7 @@ import androidx.leanback.R;
 @Keep
 public class LoadingView extends View {
 
+    private boolean mPause;
     private int mLoop = 0;
     private final Paint mPaint = new Paint();
 
@@ -77,11 +78,35 @@ public class LoadingView extends View {
     }
 
     @Override
+    protected void onVisibilityChanged(@NonNull View changedView, int visibility) {
+        super.onVisibilityChanged(changedView, visibility);
+        if (visibility == View.VISIBLE) {
+            if (mPause) {
+                mPause = false;
+                invalidate();
+            }
+        }
+    }
+
+    @Override
+    protected void onWindowVisibilityChanged(int visibility) {
+        super.onWindowVisibilityChanged(visibility);
+        if (visibility == View.VISIBLE) {
+            if (mPause) {
+                mPause = false;
+                invalidate();
+            }
+        }
+    }
+
+    @Override
     protected void onDraw(Canvas canvas) {
 //        super.onDraw(canvas);
 
-        if (View.VISIBLE != getVisibility())
+        if (View.VISIBLE != getVisibility()) {
+            mPause = true;
             return;
+        }
 
         // 循环次数
         if (mLoop + 1 >= mCount) {
