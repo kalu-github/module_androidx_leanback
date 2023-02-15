@@ -23,7 +23,7 @@
         android:textSize="20sp"
         android:visibility="gone" />
 
-    <lib.kalu.leanback.list.RecyclerView
+    <lib.kalu.leanback.list.RecyclerViewHorizontal
         android:id="@+id/module_leanback_llr_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

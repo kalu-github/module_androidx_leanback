@@ -6,19 +6,19 @@ import android.util.AttributeSet;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-public class HorizontalGridView extends androidx.leanback.widget.HorizontalGridView {
+public class LeanBackVerticalGridView extends androidx.leanback.widget.VerticalGridView {
 
-    public HorizontalGridView(@NonNull Context context) {
+    public LeanBackVerticalGridView(@NonNull Context context) {
         super(context);
         init();
     }
 
-    public HorizontalGridView(@NonNull Context context, @Nullable AttributeSet attrs) {
+    public LeanBackVerticalGridView(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         init();
     }
 
-    public HorizontalGridView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyle) {
+    public LeanBackVerticalGridView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         init();
     }
