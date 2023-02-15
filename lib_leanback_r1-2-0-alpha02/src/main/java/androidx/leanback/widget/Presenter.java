@@ -94,7 +94,8 @@ public abstract class Presenter implements FacetProvider {
 
         /**
          * Sets dynamic implemented facet in addition to basic ViewHolder functions.
-         * @param facetClass   Facet classes to query,  can be class of {@link ItemAlignmentFacet}.
+         *
+         * @param facetClass Facet classes to query,  can be class of {@link ItemAlignmentFacet}.
          * @param facetImpl  Facet implementation.
          */
         public final void setFacet(Class<?> facetClass, Object facetImpl) {
@@ -102,6 +103,14 @@ public abstract class Presenter implements FacetProvider {
                 mFacets = new ArrayMap<>();
             }
             mFacets.put(facetClass, facetImpl);
+        }
+
+        public final int getChildAdapterPosition() {
+            try {
+                return ((BaseGridView) (this.view).getParent()).getChildAdapterPosition(this.view);
+            } catch (Exception e) {
+                return -1;
+            }
         }
     }
 
@@ -111,6 +120,7 @@ public abstract class Presenter implements FacetProvider {
     public static abstract class ViewHolderTask {
         /**
          * Called to perform a task on view holder.
+         *
          * @param holder The view holder to perform task.
          */
         public void run(Presenter.ViewHolder holder) {
@@ -131,11 +141,12 @@ public abstract class Presenter implements FacetProvider {
 
     /**
      * Binds a {@link View} to an item with a list of payloads.
-     * @param viewHolder  The ViewHolder which should be updated to represent the contents of the
-     *                    item at the given position in the data set.
-     * @param item        The item which should be bound to view holder.
-     * @param payloads    A non-null list of merged payloads. Can be empty list if requires full
-     *                    update.
+     *
+     * @param viewHolder The ViewHolder which should be updated to represent the contents of the
+     *                   item at the given position in the data set.
+     * @param item       The item which should be bound to view holder.
+     * @param payloads   A non-null list of merged payloads. Can be empty list if requires full
+     *                   update.
      */
     public void onBindViewHolder(ViewHolder viewHolder, Object item, List<Object> payloads) {
         onBindViewHolder(viewHolder, item);
@@ -167,7 +178,7 @@ public abstract class Presenter implements FacetProvider {
      * <p>Becoming detached from the window is not necessarily a permanent condition;
      * the consumer of an presenter's views may choose to cache views offscreen while they
      * are not visible, attaching and detaching them as appropriate.</p>
-     *
+     * <p>
      * Any view property animations should be cancelled here or the view may fail
      * to be recycled.
      *
@@ -195,12 +206,12 @@ public abstract class Presenter implements FacetProvider {
 
     /**
      * Called to set a click listener for the given view holder.
-     *
+     * <p>
      * The default implementation sets the click listener on the root view in the view holder.
      * If the root view isn't focusable this method should be overridden to set the listener
      * on the appropriate focusable child view(s).
      *
-     * @param holder The view holder containing the view(s) on which the listener should be set.
+     * @param holder   The view holder containing the view(s) on which the listener should be set.
      * @param listener The click listener to be set.
      */
     public void setOnClickListener(ViewHolder holder, View.OnClickListener listener) {
@@ -217,7 +228,8 @@ public abstract class Presenter implements FacetProvider {
 
     /**
      * Sets dynamic implemented facet in addition to basic Presenter functions.
-     * @param facetClass   Facet classes to query,  can be class of {@link ItemAlignmentFacet}.
+     *
+     * @param facetClass Facet classes to query,  can be class of {@link ItemAlignmentFacet}.
      * @param facetImpl  Facet implementation.
      */
     public final void setFacet(Class<?> facetClass, Object facetImpl) {
