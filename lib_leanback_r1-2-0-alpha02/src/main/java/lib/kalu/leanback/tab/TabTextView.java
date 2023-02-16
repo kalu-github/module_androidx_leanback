@@ -5,13 +5,19 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.text.TextPaint;
 import android.util.Log;
 import android.view.Gravity;
 import android.webkit.WebSettings;
 import android.widget.TextView;
 
+import androidx.annotation.ColorInt;
+import androidx.annotation.ColorRes;
 import androidx.annotation.NonNull;
+
+import lib.kalu.leanback.tab.model.TabModel;
 
 @SuppressLint("AppCompatCustomView")
 class TabTextView extends TextView {
@@ -21,13 +27,11 @@ class TabTextView extends TextView {
     private int mUnderlineHeight = 0;
     private int mUnderlineWidth = 0;
 
-//    public TabTextView(@NonNull Context context) {
-//        super(context);
-//        init();
-//    }
+    private TabModel mTabModel;
 
-    TabTextView(@NonNull Context context) {
+    public TabTextView(@NonNull Context context, @NonNull TabModel data) {
         super(context);
+        this.mTabModel = data;
         init();
     }
 
@@ -97,42 +101,136 @@ class TabTextView extends TextView {
         setMeasuredDimension(width, height);
     }
 
-    private final void init() {
-        setFocusable(true);
+    private void init() {
+        setEnabled(false);
+        setSelected(false);
+        setFocusable(false);
         setMaxLines(1);
         setLines(1);
         setMinEms(2);
         setGravity(Gravity.CENTER);
     }
 
-    protected final void setUnderline(boolean underline) {
+    protected void setUnderline(boolean underline) {
         this.mUnderline = underline;
     }
 
-    protected final void setUnderlineColor(int color) {
+    protected void setUnderlineColor(int color) {
         this.mUnderlineColor = color;
     }
 
-    protected final void setUnderlineWidth(int width) {
+    protected void setUnderlineWidth(int width) {
         this.mUnderlineWidth = width;
     }
 
-    protected final void setUnderlineHeight(int height) {
+    protected void setUnderlineHeight(int height) {
         this.mUnderlineHeight = height;
     }
 
     /*************************/
 
-    protected final void updateTextColor(int color, boolean checked) {
-        setHint(checked ? String.valueOf(1) : null);
-        super.setTextColor(color);
+
+    @Override
+    public void setSelected(boolean selected) {
+        super.setSelected(selected);
+        refreshUI();
     }
 
-    protected final void updateTextColorResource(int color, boolean checked) {
-        setHint(checked ? String.valueOf(1) : null);
-        super.setTextColor(getResources().getColor(color));
+    @Override
+    public void setEnabled(boolean enabled) {
+        super.setEnabled(enabled);
+        refreshUI();
     }
 
-    protected void refresh(boolean focus, boolean checked) {
+    protected void setChecked(boolean v) {
+        setSelected(v);
+    }
+
+    protected boolean isChecked() {
+        return isSelected();
+    }
+
+    protected void setFocus(boolean v) {
+        setEnabled(v);
+    }
+
+    protected boolean isFocus() {
+        return hasFocus();
+    }
+
+    @Override
+    public boolean hasFocus() {
+        return isEnabled();
+    }
+
+    private void refreshUI() {
+        boolean focus = isFocus();
+        boolean checked = isChecked();
+        refreshTextColor(focus, checked);
+        refreshBackground(focus, checked);
+    }
+
+    // text-color 优先级 ：resource > color
+    private void refreshTextColor(boolean focus, boolean checked) {
+
+        try {
+            @ColorRes
+            int c1 = mTabModel.getTextColorResource(focus, checked);
+            if (c1 != 0) {
+                setTextColor(getResources().getColor(c1));
+            } else {
+                @ColorInt
+                int c2 = mTabModel.getTextColor(focus, checked);
+                if (c2 != 0) {
+                    setTextColor(c2);
+                }
+            }
+        } catch (Exception e) {
+        }
+    }
+
+    // 优先级 ：net > path > assets > resource > color
+    private void refreshBackground(boolean focus, boolean checked) {
+
+        try {
+
+            String s1 = mTabModel.getBackgroundImageUrl(focus, checked);
+//            logE("updateImageBackground => url = " + s1);
+
+            String s2 = mTabModel.getBackgroundImagePath(focus, checked);
+//            logE("updateImageBackground => path = " + s2);
+
+            String s3 = mTabModel.getBackgroundImageAssets(focus, checked);
+//            logE("updateImageBackground => assets = " + s3);
+
+            int i4 = mTabModel.getBackgroundResource(focus, checked);
+//            logE("updateImageBackground => resource = " + i4);
+
+            int i5 = mTabModel.getBackgroundColor(focus, checked);
+//            logE("updateImageBackground => color = " + i5);
+
+//        // 背景 => 渐变背景色
+//        if (null != colors && colors.length >= 3) {
+//            int[] color = stay ? colors[2] : (focus ? colors[1] : colors[0]);
+//            logE("updateImageBackground[colors]=> color = " + Arrays.toString(color));
+//            setBackgroundGradient(view, color, radius);
+//        }
+
+            if (null != s1 && s1.length() > 0) {
+                TabUtil.loadImageUrl(this, s1, true);
+            } else if (null != s2 && s2.length() > 0) {
+                Drawable drawable = TabUtil.decodeDrawable(getContext(), s2, false);
+                setBackground(drawable);
+            } else if (null != s3 && s3.length() > 0) {
+                Drawable drawable = TabUtil.decodeDrawable(getContext(), s2, true);
+                setBackground(drawable);
+            } else if (i4 != 0) {
+                setBackgroundResource(i4);
+            } else if (i5 != 0) {
+                ColorDrawable drawable = new ColorDrawable(i5);
+                setBackground(drawable);
+            }
+        } catch (Exception e) {
+        }
     }
 }

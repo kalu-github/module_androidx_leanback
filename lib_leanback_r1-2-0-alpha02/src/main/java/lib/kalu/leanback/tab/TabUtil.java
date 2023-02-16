@@ -173,9 +173,9 @@ class TabUtil {
         @ColorInt
         int c2 = t.getTextColor(focus, checked);
         if (c1 != 0) {
-            view.updateTextColorResource(c1, checked);
+            view.refreshTextColorResource(c1);
         } else if (c2 != 0) {
-            view.updateTextColor(c2, checked);
+            view.refreshTextColor(c2);
         }
     }
 
@@ -293,7 +293,7 @@ class TabUtil {
         }
     }
 
-    private final static Drawable decodeDrawable(@NonNull View view, @NonNull String absolutePath, boolean isAssets) {
+    public final static Drawable decodeDrawable(@NonNull Context context, @NonNull String absolutePath, boolean isAssets) {
 
         Drawable drawable = null;
         InputStream inputStream = null;
@@ -302,22 +302,20 @@ class TabUtil {
 
             if (null != absolutePath && absolutePath.length() > 0) {
 
-                Resources resources = view.getResources();
                 if (isAssets) {
-                    inputStream = resources.getAssets().open(absolutePath);
+                    inputStream = context.getResources().getAssets().open(absolutePath);
                 } else {
                     inputStream = new FileInputStream(absolutePath);
                 }
 
                 // .9
                 if (absolutePath.endsWith(".9.png")) {
-                    Context context = view.getContext().getApplicationContext();
                     drawable = NinePatchChunk.create9PatchDrawable(context, inputStream, null);
                 }
                 // not .9
                 else {
                     Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
-                    drawable = new BitmapDrawable(resources, bitmap);
+                    drawable = new BitmapDrawable(context.getResources(), bitmap);
                 }
             }
         } catch (Exception e) {
@@ -329,12 +327,6 @@ class TabUtil {
                 inputStream.close();
             }
         } catch (Exception e) {
-        }
-
-        if (view instanceof TextView) {
-            logE("decodeDrawable => absolutePath = " + absolutePath + ", drawable = " + drawable + ", text = " + ((TextView) view).getText());
-        } else {
-            logE("decodeDrawable => absolutePath = " + absolutePath + ", drawable = " + drawable);
         }
         return drawable;
     }

@@ -9,12 +9,17 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.widget.ImageView;
 
+import androidx.annotation.ColorInt;
+import androidx.annotation.ColorRes;
 import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import lib.kalu.leanback.tab.model.TabModel;
 
 @SuppressLint("AppCompatCustomView")
 class TabImageView extends ImageView {
@@ -22,14 +27,18 @@ class TabImageView extends ImageView {
     private int mHeight = 0;
     private int mWidthMax = 0;
     private int mWidthMin = 0;
+    private TabModel mTabModel;
 
-    TabImageView(@NonNull Context context) {
+    public TabImageView(@NonNull Context context, @NonNull TabModel data) {
         super(context);
+        this.mTabModel = data;
         init();
     }
 
-    private final void init() {
-        setFocusable(true);
+    private void init() {
+        setEnabled(false);
+        setSelected(false);
+        setFocusable(false);
         setScaleType(ScaleType.FIT_CENTER);
         setPadding(0, 0, 0, 0);
     }
@@ -43,7 +52,7 @@ class TabImageView extends ImageView {
             Drawable drawable = getDrawable();
             int intrinsicWidth = drawable.getIntrinsicWidth();
             int intrinsicHeight = drawable.getIntrinsicHeight();
-            TabUtil.logE("IMGonMeasure => intrinsicWidth = " + intrinsicWidth + ", intrinsicHeight =" + intrinsicHeight);
+            TabUtil.logE("TabImageView => intrinsicWidth = " + intrinsicWidth + ", intrinsicHeight =" + intrinsicHeight);
             width = height * intrinsicWidth / intrinsicHeight;
         } catch (Exception e) {
         }
@@ -54,7 +63,7 @@ class TabImageView extends ImageView {
             width = mWidthMax;
         }
 
-        TabUtil.logE("IMGonMeasure => width = " + width + ", height =" + height);
+        TabUtil.logE("TabImageView => width = " + width + ", height =" + height);
         setMeasuredDimension(width, height);
     }
 
@@ -135,20 +144,134 @@ class TabImageView extends ImageView {
         }
     }
 
-    protected final void setHeight(int height) {
+    protected void setHeight(int height) {
         this.mHeight = height;
     }
 
-    protected final void setWidthMin(int min) {
+    protected void setWidthMin(int min) {
         this.mWidthMin = min;
     }
 
-    protected final void setWidthMax(int max) {
+    protected void setWidthMax(int max) {
         this.mWidthMin = max;
     }
 
-    /*************************/
+    protected void setChecked(boolean v) {
+        setSelected(v);
+    }
 
-    protected void refresh(boolean focus, boolean stay) {
+    protected boolean isChecked() {
+        return isSelected();
+    }
+
+    protected void setFocus(boolean v) {
+        setEnabled(v);
+    }
+
+    protected boolean isFocus() {
+        return hasFocus();
+    }
+
+    @Override
+    public boolean hasFocus() {
+        return isEnabled();
+    }
+
+    @Override
+    public void setSelected(boolean selected) {
+        super.setSelected(selected);
+        refreshUI();
+    }
+
+    @Override
+    public void setEnabled(boolean enabled) {
+        super.setEnabled(enabled);
+        refreshUI();
+    }
+
+    private void refreshUI() {
+        boolean focus = isFocus();
+        boolean checked = isChecked();
+        refreshDrawable(focus, checked);
+        refreshBackground(focus, checked);
+    }
+
+    // text-color 优先级 ：resource > color
+    private void refreshDrawable(boolean focus, boolean checked) {
+
+        try {
+            int placeholder = mTabModel.getImagePlaceholderResource();
+            if (placeholder != 0) {
+                setImageResource(placeholder);
+            }
+        } catch (Exception e) {
+        }
+
+        try {
+
+            String s;
+            // focus
+            if (focus) {
+                s = mTabModel.getImageUrlFocus();
+
+            }
+            // checked
+            else if (checked) {
+                s = mTabModel.getImageUrlChecked();
+            }
+            // normal
+            else {
+                s = t.getImageUrlNormal();
+            }
+            if (null != s && s.length() > 0) {
+                loadImageUrl(view, s, false);
+            }
+        } catch (Exception e) {
+        }
+    }
+
+    // 优先级 ：net > path > assets > resource > color
+    private void refreshBackground(boolean focus, boolean checked) {
+
+        try {
+
+            String s1 = mTabModel.getBackgroundImageUrl(focus, checked);
+//            logE("updateImageBackground => url = " + s1);
+
+            String s2 = mTabModel.getBackgroundImagePath(focus, checked);
+//            logE("updateImageBackground => path = " + s2);
+
+            String s3 = mTabModel.getBackgroundImageAssets(focus, checked);
+//            logE("updateImageBackground => assets = " + s3);
+
+            int i4 = mTabModel.getBackgroundResource(focus, checked);
+//            logE("updateImageBackground => resource = " + i4);
+
+            int i5 = mTabModel.getBackgroundColor(focus, checked);
+//            logE("updateImageBackground => color = " + i5);
+
+//        // 背景 => 渐变背景色
+//        if (null != colors && colors.length >= 3) {
+//            int[] color = stay ? colors[2] : (focus ? colors[1] : colors[0]);
+//            logE("updateImageBackground[colors]=> color = " + Arrays.toString(color));
+//            setBackgroundGradient(view, color, radius);
+//        }
+
+            if (null != s1 && s1.length() > 0) {
+                TabUtil.loadImageUrl(this, s1, true);
+            } else if (null != s2 && s2.length() > 0) {
+                Drawable drawable = TabUtil.decodeDrawable(getContext(), s2, false);
+                setBackground(drawable);
+            } else if (null != s3 && s3.length() > 0) {
+                Drawable drawable = TabUtil.decodeDrawable(getContext(), s2, true);
+                setBackground(drawable);
+            } else if (i4 != 0) {
+                setBackgroundResource(i4);
+            } else if (i5 != 0) {
+                ColorDrawable drawable = new ColorDrawable(i5);
+                setBackground(drawable);
+            }
+        } catch (Exception e) {
+        }
     }
 }

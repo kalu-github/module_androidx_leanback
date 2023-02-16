@@ -421,4 +421,14 @@ public abstract class TabModel implements Serializable {
             return getTextColorResourceNormal();
         }
     }
+    @ColorRes
+    public int getTextColorResource(boolean focus, boolean checked) {
+        if (focus) {
+            return getTextColorResourceFocus();
+        } else if (checked) {
+            return getTextColorResourceChecked();
+        } else {
+            return getTextColorResourceNormal();
+        }
+    }
 }
