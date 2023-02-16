@@ -4,71 +4,14 @@ import androidx.annotation.Keep;
 import androidx.leanback.R;
 
 @Keep
-public abstract class TabModelImage implements TabModel {
-    @Override
-    public String initText() {
-        return null;
-    }
+public final class TabModelImage extends TabModel {
 
     @Override
-    public int[] initTextColors() {
-        return null;
-    }
-
-    @Override
-    public int[][] initTextBackgroundColors() {
-        return null;
-    }
-
-    @Override
-    public String[] initTextBackgroundUrls() {
-        return null;
-    }
-
-    @Override
-    public int[] initTextBackgroundResources() {
-        return null;
-    }
-
-    @Override
-    public String[] initTextBackgroundFiles() {
-        return null;
-    }
-
-    @Override
-    public String[] initTextBackgroundAssets() {
-        return null;
-    }
-
-    /*********************/
-
-    @Override
-    public int initImagePlaceholder() {
-        return R.drawable.module_tablayout_ic_shape_background_normal;
-    }
-
-    @Override
-    public int[][] initImageBackgroundColors() {
-        return null;
-    }
-
-    @Override
-    public String[] initImageBackgroundUrls() {
-        return null;
-    }
-
-    @Override
-    public String[] initImageBackgroundFiles() {
-        return null;
-    }
-
-    @Override
-    public String[] initImageBackgroundAssets() {
-        return null;
-    }
-
-    @Override
-    public int[] initImageBackgroundResources() {
-        return new int[]{R.drawable.module_tablayout_ic_shape_background_normal, R.drawable.module_tablayout_ic_shape_background_focus, R.drawable.module_tablayout_ic_shape_background_select};
+    int getType() {
+        setImagePlaceholderResource(R.drawable.module_tablayout_ic_shape_background_normal);
+        setBackgroundResourceNormal(R.drawable.module_tablayout_ic_shape_background_normal);
+        setBackgroundResourceFocus(R.drawable.module_tablayout_ic_shape_background_focus);
+        setBackgroundResourceChecked(R.drawable.module_tablayout_ic_shape_background_checked);
+        return TYPE_IMG;
     }
 }

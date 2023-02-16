@@ -123,11 +123,16 @@ class TabTextView extends TextView {
 
     /*************************/
 
-    protected final void updateTextColor(int color, boolean stay) {
-        setHint(stay ? String.valueOf(1) : null);
+    protected final void updateTextColor(int color, boolean checked) {
+        setHint(checked ? String.valueOf(1) : null);
         super.setTextColor(color);
     }
 
-    protected void refresh(boolean focus, boolean stay) {
+    protected final void updateTextColorResource(int color, boolean checked) {
+        setHint(checked ? String.valueOf(1) : null);
+        super.setTextColor(getResources().getColor(color));
+    }
+
+    protected void refresh(boolean focus, boolean checked) {
     }
 }

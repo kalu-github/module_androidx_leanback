@@ -1,133 +1,424 @@
 package lib.kalu.leanback.tab.model;
 
+import androidx.annotation.ColorInt;
+import androidx.annotation.ColorRes;
 import androidx.annotation.DrawableRes;
 import androidx.annotation.Keep;
+import androidx.annotation.Nullable;
+
+import java.io.File;
+import java.io.Serializable;
 
 @Keep
-public interface TabModel {
+public abstract class TabModel implements Serializable {
 
-    /**
-     * 文字内容
-     *
-     * @return
-     */
-    String initText();
+    public int TYPE_TXT = 1001;
+    public int TYPE_IMG = 1002;
 
-    /**
-     * 0: 默认文字颜色
-     * 1：焦点文字颜色
-     * 2：选中文字颜色
-     *
-     * @return
-     */
-    int[] initTextColors();
+    abstract int getType();
 
-    /**
-     * 0: 默认文字背景颜色, 支持渐变背景色
-     * 1：焦点文字背景颜色, 支持渐变背景色
-     * 2：选中文字背景颜色, 支持渐变背景色
-     *
-     * @return
-     */
-    int[][] initTextBackgroundColors();
+    public boolean isTxt() {
+        return getType() == TYPE_TXT;
+    }
 
-    /**
-     * 0: 默认文字背景网络图片 => 首先图片下载本地, 之后本地缓存拿
-     * 1：焦点文字背景网络图片 => 首先图片下载本地, 之后本地缓存拿
-     * 2：选中文字背景网络图片 => 首先图片下载本地, 之后本地缓存拿
-     *
-     * @return
-     */
-    String[] initTextBackgroundUrls();
+    public boolean isImg() {
+        return getType() == TYPE_IMG;
+    }
 
-    /**
-     * 0: 默认图片背景本地图片
-     * 1：焦点图片背景本地图片
-     * 2：选中图片背景本地图片
-     *
-     * @return
-     */
-    String[] initTextBackgroundFiles();
+    String text;
 
-    /**
-     * 0: 默认图片背景Assets图片
-     * 1：焦点图片背景Assets图片
-     * 2：选中图片背景Assets图片
-     *
-     * @return
-     */
-    String[] initTextBackgroundAssets();
+    @ColorInt
+    int textColorNormal;
 
-    /**
-     * 0: 默认文字背景本地图片
-     * 1：焦点文字背景本地图片
-     * 2：选中文字背景本地图片
-     *
-     * @return
-     */
-    int[] initTextBackgroundResources();
+    @ColorInt
+    int textColorFocus;
 
-    /****************************/
+    @ColorInt
+    int textColorChecked;
 
-    /**
-     * 0: 默认网络图片 => 首先图片下载本地, 之后本地缓存拿
-     * 1：焦点网络图片 => 首先图片下载本地, 之后本地缓存拿
-     * 2：选中网络图片 => 首先图片下载本地, 之后本地缓存拿
-     *
-     * @return
-     */
-    String[] initImageSrcUrls();
+    @ColorRes
+    int textColorResourceNormal;
 
-    /**
-     * 0: 默认图片背景颜色, 支持渐变背景色
-     * 1：焦点图片背景颜色, 支持渐变背景色
-     * 2：选中图片背景颜色, 支持渐变背景色
-     *
-     * @return
-     */
-    int[][] initImageBackgroundColors();
+    @ColorRes
+    int textColorResourceFocus;
 
-    /**
-     * 0: 默认图片背景网络图片 => 首先图片下载本地, 之后本地缓存拿
-     * 1：焦点图片背景网络图片 => 首先图片下载本地, 之后本地缓存拿
-     * 2：选中图片背景网络图片 => 首先图片下载本地, 之后本地缓存拿
-     *
-     * @return
-     */
-    String[] initImageBackgroundUrls();
+    @ColorRes
+    int textColorResourceChecked;
 
-    /**
-     * 0: 默认图片背景本地图片
-     * 1：焦点图片背景本地图片
-     * 2：选中图片背景本地图片
-     *
-     * @return
-     */
-    String[] initImageBackgroundFiles();
-
-    /**
-     * 0: 默认图片背景Assets图片
-     * 1：焦点图片背景Assets图片
-     * 2：选中图片背景Assets图片
-     *
-     * @return
-     */
-    String[] initImageBackgroundAssets();
-
-    /**
-     * 0: 默认图片背景本地图片
-     * 1：焦点图片背景本地图片
-     * 2：选中图片背景本地图片
-     *
-     * @return
-     */
-    int[] initImageBackgroundResources();
-
-    /**
-     * 占位图
-     *
-     * @return
-     */
     @DrawableRes
-    int initImagePlaceholder();
+    int backgroundResourceNormal;
+
+    @DrawableRes
+    int backgroundResourceFocus;
+
+    @DrawableRes
+    int backgroundResourceChecked;
+
+    @ColorInt
+    int backgroundColorNormal;
+
+    @ColorInt
+    int backgroundColorFocus;
+
+    @ColorInt
+    int backgroundColorChecked;
+
+    @Nullable
+    String backgroundImageUrlNormal;
+
+    @Nullable
+    String backgroundImageUrlFocus;
+
+    @Nullable
+    String backgroundImageUrlChecked;
+
+    @Nullable
+    String backgroundImagePathNormal;
+
+    @Nullable
+    String backgroundImagePathFocus;
+
+    @Nullable
+    String backgroundImagePathChecked;
+
+    @Nullable
+    String backgroundImageAssetsNormal;
+
+    @Nullable
+    String backgroundImageAssetsFocus;
+
+    @Nullable
+    String backgroundImageAssetsChecked;
+
+    @Nullable
+    String imageUrlNormal;
+
+    @Nullable
+    String imageUrlFocus;
+
+    @Nullable
+    String imageUrlChecked;
+
+    @DrawableRes
+    int imagePlaceholderResource;
+
+    public String getText() {
+        return text;
+    }
+
+    public void setText(String text) {
+        this.text = text;
+    }
+
+    public int getTextColorNormal() {
+        return textColorNormal;
+    }
+
+    public void setTextColorNormal(int textColorNormal) {
+        this.textColorNormal = textColorNormal;
+    }
+
+    public int getTextColorFocus() {
+        return textColorFocus;
+    }
+
+    public void setTextColorFocus(int textColorFocus) {
+        this.textColorFocus = textColorFocus;
+    }
+
+    public int getTextColorChecked() {
+        return textColorChecked;
+    }
+
+    public void setTextColorChecked(int textColorChecked) {
+        this.textColorChecked = textColorChecked;
+    }
+
+    public int getTextColorResourceNormal() {
+        return textColorResourceNormal;
+    }
+
+    public void setTextColorResourceNormal(int textColorResourceNormal) {
+        this.textColorResourceNormal = textColorResourceNormal;
+    }
+
+    public int getTextColorResourceFocus() {
+        return textColorResourceFocus;
+    }
+
+    public void setTextColorResourceFocus(int textColorResourceFocus) {
+        this.textColorResourceFocus = textColorResourceFocus;
+    }
+
+    public int getTextColorResourceChecked() {
+        return textColorResourceChecked;
+    }
+
+    public void setTextColorResourceChecked(int textColorResourceChecked) {
+        this.textColorResourceChecked = textColorResourceChecked;
+    }
+
+    public int getBackgroundResourceNormal() {
+        return backgroundResourceNormal;
+    }
+
+    public void setBackgroundResourceNormal(int backgroundResourceNormal) {
+        this.backgroundResourceNormal = backgroundResourceNormal;
+    }
+
+    public int getBackgroundResourceFocus() {
+        return backgroundResourceFocus;
+    }
+
+    public void setBackgroundResourceFocus(int backgroundResourceFocus) {
+        this.backgroundResourceFocus = backgroundResourceFocus;
+    }
+
+    public int getBackgroundResourceChecked() {
+        return backgroundResourceChecked;
+    }
+
+    public void setBackgroundResourceChecked(int backgroundResourceChecked) {
+        this.backgroundResourceChecked = backgroundResourceChecked;
+    }
+
+    public int getBackgroundColorNormal() {
+        return backgroundColorNormal;
+    }
+
+    public void setBackgroundColorNormal(int backgroundColorNormal) {
+        this.backgroundColorNormal = backgroundColorNormal;
+    }
+
+    public int getBackgroundColorFocus() {
+        return backgroundColorFocus;
+    }
+
+    public void setBackgroundColorFocus(int backgroundColorFocus) {
+        this.backgroundColorFocus = backgroundColorFocus;
+    }
+
+    public int getBackgroundColorChecked() {
+        return backgroundColorChecked;
+    }
+
+    public void setBackgroundColorChecked(int backgroundColorChecked) {
+        this.backgroundColorChecked = backgroundColorChecked;
+    }
+
+    @Nullable
+    public String getBackgroundImageUrlNormal() {
+        return backgroundImageUrlNormal;
+    }
+
+    public void setBackgroundImageUrlNormal(@Nullable String backgroundImageUrlNormal) {
+        this.backgroundImageUrlNormal = backgroundImageUrlNormal;
+    }
+
+    @Nullable
+    public String getBackgroundImageUrlFocus() {
+        return backgroundImageUrlFocus;
+    }
+
+    public void setBackgroundImageUrlFocus(@Nullable String backgroundImageUrlFocus) {
+        this.backgroundImageUrlFocus = backgroundImageUrlFocus;
+    }
+
+    @Nullable
+    public String getBackgroundImageUrlChecked() {
+        return backgroundImageUrlChecked;
+    }
+
+    public void setBackgroundImageUrlChecked(@Nullable String backgroundImageUrlChecked) {
+        this.backgroundImageUrlChecked = backgroundImageUrlChecked;
+    }
+
+    @Nullable
+    public String getBackgroundImagePathNormal() {
+        try {
+            File file = new File(backgroundImagePathNormal);
+            if (!file.exists()) {
+                throw new Exception();
+            }
+            return backgroundImagePathNormal;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public void setBackgroundImagePathNormal(@Nullable String backgroundImagePathNormal) {
+        this.backgroundImagePathNormal = backgroundImagePathNormal;
+    }
+
+    @Nullable
+    public String getBackgroundImagePathFocus() {
+        try {
+            File file = new File(backgroundImagePathFocus);
+            if (!file.exists()) {
+                throw new Exception();
+            }
+            return backgroundImagePathFocus;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public void setBackgroundImagePathFocus(@Nullable String backgroundImagePathFocus) {
+        this.backgroundImagePathFocus = backgroundImagePathFocus;
+    }
+
+    @Nullable
+    public String getBackgroundImagePathChecked() {
+        try {
+            File file = new File(backgroundImagePathChecked);
+            if (!file.exists()) {
+                throw new Exception();
+            }
+            return backgroundImagePathChecked;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public void setBackgroundImagePathChecked(@Nullable String backgroundImagePathChecked) {
+        this.backgroundImagePathChecked = backgroundImagePathChecked;
+    }
+
+    @Nullable
+    public String getBackgroundImageAssetsNormal() {
+        return backgroundImageAssetsNormal;
+    }
+
+    public void setBackgroundImageAssetsNormal(@Nullable String backgroundImageAssetsNormal) {
+        this.backgroundImageAssetsNormal = backgroundImageAssetsNormal;
+    }
+
+    @Nullable
+    public String getBackgroundImageAssetsFocus() {
+        return backgroundImageAssetsFocus;
+    }
+
+    public void setBackgroundImageAssetsFocus(@Nullable String backgroundImageAssetsFocus) {
+        this.backgroundImageAssetsFocus = backgroundImageAssetsFocus;
+    }
+
+    @Nullable
+    public String getBackgroundImageAssetsChecked() {
+        return backgroundImageAssetsChecked;
+    }
+
+    public void setBackgroundImageAssetsChecked(@Nullable String backgroundImageAssetsChecked) {
+        this.backgroundImageAssetsChecked = backgroundImageAssetsChecked;
+    }
+
+    @Nullable
+    public String getImageUrlNormal() {
+        return imageUrlNormal;
+    }
+
+    public void setImageUrlNormal(@Nullable String imageUrlNormal) {
+        this.imageUrlNormal = imageUrlNormal;
+    }
+
+    @Nullable
+    public String getImageUrlFocus() {
+        return imageUrlFocus;
+    }
+
+    public void setImageUrlFocus(@Nullable String imageUrlFocus) {
+        this.imageUrlFocus = imageUrlFocus;
+    }
+
+    @Nullable
+    public String getImageUrlChecked() {
+        return imageUrlChecked;
+    }
+
+    public void setImageUrlChecked(@Nullable String imageUrlChecked) {
+        this.imageUrlChecked = imageUrlChecked;
+    }
+
+    public int getImagePlaceholderResource() {
+        return imagePlaceholderResource;
+    }
+
+    public void setImagePlaceholderResource(int imagePlaceholderResource) {
+        this.imagePlaceholderResource = imagePlaceholderResource;
+    }
+
+    /********************/
+
+    public String getBackgroundImageUrl(boolean focus, boolean checked) {
+        if (focus) {
+            return getBackgroundImageUrlFocus();
+        } else if (checked) {
+            return getBackgroundImageUrlChecked();
+        } else {
+            return getBackgroundImageUrlNormal();
+        }
+    }
+
+    public String getBackgroundImagePath(boolean focus, boolean checked) {
+        if (focus) {
+            return getBackgroundImagePathFocus();
+        } else if (checked) {
+            return getBackgroundImagePathChecked();
+        } else {
+            return getBackgroundImagePathNormal();
+        }
+    }
+
+    public String getBackgroundImageAssets(boolean focus, boolean checked) {
+        if (focus) {
+            return getBackgroundImageAssetsFocus();
+        } else if (checked) {
+            return getBackgroundImageAssetsChecked();
+        } else {
+            return getBackgroundImageAssetsNormal();
+        }
+    }
+
+    @DrawableRes
+    public int getBackgroundResource(boolean focus, boolean checked) {
+        if (focus) {
+            return getBackgroundResourceFocus();
+        } else if (checked) {
+            return getBackgroundResourceChecked();
+        } else {
+            return getBackgroundResourceNormal();
+        }
+    }
+
+    @ColorInt
+    public int getBackgroundColor(boolean focus, boolean checked) {
+        if (focus) {
+            return getBackgroundColorFocus();
+        } else if (checked) {
+            return getBackgroundColorChecked();
+        } else {
+            return getBackgroundColorNormal();
+        }
+    }
+
+    @ColorInt
+    public int getTextColor(boolean focus, boolean checked) {
+        if (focus) {
+            return getTextColorFocus();
+        } else if (checked) {
+            return getTextColorChecked();
+        } else {
+            return getTextColorNormal();
+        }
+    }
+
+    @ColorRes
+    public int getTextColorResource(boolean focus, boolean checked) {
+        if (focus) {
+            return getTextColorResourceFocus();
+        } else if (checked) {
+            return getTextColorResourceChecked();
+        } else {
+            return getTextColorResourceNormal();
+        }
+    }
 }

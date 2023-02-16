@@ -415,7 +415,7 @@ public class TabLayout extends HorizontalScrollView {
 
     private final <T extends TabModel> void addText(@NonNull T t, int index, int count) {
 
-        String text = t.initText();
+        String text = t.getText();
         if (null == text || text.length() == 0)
             return;
 
@@ -498,9 +498,9 @@ public class TabLayout extends HorizontalScrollView {
             T t = list.get(i);
             if (null == t)
                 continue;
-            if (null != t.initImageSrcUrls() && t.initImageSrcUrls().length >= 3) {
+            if (t.isImg()) {
                 addImage(t, i, size);
-            } else if (null != t.initTextColors() && t.initTextColors().length >= 3) {
+            } else if (t.isTxt()) {
                 addText(t, i, size);
             }
         }

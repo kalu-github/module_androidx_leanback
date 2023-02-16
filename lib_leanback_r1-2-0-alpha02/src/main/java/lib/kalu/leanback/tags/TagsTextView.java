@@ -5,7 +5,6 @@ import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.view.Gravity;
-import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.ColorInt;
@@ -27,9 +26,9 @@ final class TagsTextView extends TextView {
     @DrawableRes
     private int mBackgroundResourceFocus = R.drawable.module_tagslayout_ic_shape_background_focus;
     @DrawableRes
-    private int mBackgroundResourceChecked = R.drawable.module_tagslayout_ic_shape_background_select;
+    private int mBackgroundResourceChecked = R.drawable.module_tagslayout_ic_shape_background_checked;
     @DrawableRes
-    private int mBackgroundResourceDefault = R.drawable.module_tagslayout_ic_shape_background_default;
+    private int mBackgroundResourceDefault = R.drawable.module_tagslayout_ic_shape_background_normal;
 
     public TagsTextView(Context context) {
         super(context);

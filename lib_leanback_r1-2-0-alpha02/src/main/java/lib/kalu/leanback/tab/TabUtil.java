@@ -5,6 +5,7 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Looper;
@@ -12,6 +13,8 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.ColorInt;
+import androidx.annotation.ColorRes;
 import androidx.annotation.NonNull;
 import androidx.leanback.BuildConfig;
 import androidx.leanback.R;
@@ -56,98 +59,83 @@ class TabUtil {
             return;
 
         updateImageSrc(view, t, focus, stay);
-        updateImageBackground(view, t, radius, focus, stay);
+        updateBackground(view, t, radius, focus, stay);
     }
 
-    private static final <T extends TabModel> void updateImageSrc(@NonNull ImageView view, @NonNull T t, boolean focus, boolean stay) {
+    private static final <T extends TabModel> void updateImageSrc(@NonNull ImageView view, @NonNull T t, boolean focus, boolean checked) {
 
         if (null == t || null == view)
             return;
 
-        int placeholder = t.initImagePlaceholder();
-        try {
-            view.setImageResource(placeholder);
-        } catch (Exception e) {
+        int placeholder = t.getImagePlaceholderResource();
+        if (placeholder != 0) {
+            try {
+                view.setImageResource(placeholder);
+            } catch (Exception e) {
+            }
         }
 
-        String[] urls = t.initImageSrcUrls();
-        if (null == urls || urls.length < 3)
-            return;
+        String s;
+        // focus
+        if (focus) {
+            s = t.getImageUrlFocus();
 
-        String url = stay ? urls[2] : (focus ? urls[1] : urls[0]);
-        loadImageUrl(view, url, false);
+        }
+        // checked
+        else if (checked) {
+            s = t.getImageUrlChecked();
+        }
+        // normal
+        else {
+            s = t.getImageUrlNormal();
+        }
+        if (null != s && s.length() > 0) {
+            loadImageUrl(view, s, false);
+        }
     }
 
-    private static final <T extends TabModel> void updateImageBackground(@NonNull ImageView view, @NonNull T t, @NonNull float radius, boolean focus, boolean stay) {
+    private static final <T extends TabModel> void updateBackground(@NonNull View view, @NonNull T t, @NonNull float radius, boolean focus, boolean checked) {
 
         if (null == t || null == view)
             return;
 
         logE("updateImageBackground => ************************");
 
-        // 1
-        String[] urls = t.initImageBackgroundUrls();
-        logE("updateImageBackground => urls = " + Arrays.toString(urls));
+        // 优先级 ：net > path > assets > resource > color
 
-        // 2
-        String[] files = t.initImageBackgroundFiles();
-        try {
-            String path = stay ? files[2] : (focus ? files[1] : files[0]);
-            File file = new File(path);
-            if (!file.exists()) {
-                files = null;
-            }
-        } catch (Exception e) {
-        }
-        logE("updateImageBackground => files = " + Arrays.toString(files));
+        String s1 = t.getBackgroundImageUrl(focus, checked);
+        logE("updateImageBackground => url = " + s1);
 
-        // 3
-        String[] assets = t.initImageBackgroundAssets();
-        logE("updateImageBackground => assets = " + Arrays.toString(assets));
+        String s2 = t.getBackgroundImagePath(focus, checked);
+        logE("updateImageBackground => path = " + s2);
 
-        // 4
-        int[] resources = t.initImageBackgroundResources();
-        logE("updateImageBackground => resources = " + Arrays.toString(resources));
+        String s3 = t.getBackgroundImageAssets(focus, checked);
+        logE("updateImageBackground => assets = " + s3);
 
-        // 5
-        int[][] colors = t.initImageBackgroundColors();
-        logE("updateImageBackground => colors = " + Arrays.toString(colors));
+        int i4 = t.getBackgroundResource(focus, checked);
+        logE("updateImageBackground => resource = " + i4);
 
-        // 背景 => 渐变背景色
-        if (null != colors && colors.length >= 3) {
-            int[] color = stay ? colors[2] : (focus ? colors[1] : colors[0]);
-            logE("updateImageBackground[colors]=> color = " + Arrays.toString(color));
-            setBackgroundGradient(view, color, radius);
-        }
-        // 背景 => 网络图片
-        else if (null != urls && urls.length >= 3 && (null != urls[0] || null != urls[1] || null != urls[2])) {
-            String url = stay ? urls[2] : (focus ? urls[1] : urls[0]);
-            logE("updateImageBackground[urls]=> url = " + url);
-            loadImageUrl(view, url, true);
-        }
-        // 背景 => 本地图片
-        else if (null != files && files.length >= 3 && (null != files[0] || null != files[1] || null != files[2])) {
-            String file = stay ? files[2] : (focus ? files[1] : files[0]);
-            logE("updateImageBackground[files]=> file = " + file);
-            setBackgroundFile(view, file, true);
-        }
-        // 背景 => Assets图片
-        else if (null != assets && assets.length >= 3 && (null != assets[0] || null != assets[1] || null != assets[2])) {
-            String asset = stay ? assets[2] : (focus ? assets[1] : assets[0]);
-            logE("updateImageBackground[assets]=> asset = " + asset);
-            setBackgroundAssets(view, asset, true);
-        }
-        // 背景 => 资源图片
-        else if (null != resources && resources.length >= 3) {
-            int resId = stay ? resources[2] : (focus ? resources[1] : resources[0]);
-            logE("updateImageBackground[resources]=> resId = " + resId);
-            setBackgroundResource(view, resId, true);
-        }
-        // 背景 => 默认图片
-        else {
-            int resId = stay ? R.drawable.module_tablayout_ic_shape_background_select : (focus ? R.drawable.module_tablayout_ic_shape_background_focus : R.drawable.module_tablayout_ic_shape_background_normal);
-            logE("updateImageBackground[defaults]=> resId = " + resId);
-            setBackgroundResource(view, resId, true);
+        int i5 = t.getBackgroundColor(focus, checked);
+        logE("updateImageBackground => color = " + i5);
+
+//        // 背景 => 渐变背景色
+//        if (null != colors && colors.length >= 3) {
+//            int[] color = stay ? colors[2] : (focus ? colors[1] : colors[0]);
+//            logE("updateImageBackground[colors]=> color = " + Arrays.toString(color));
+//            setBackgroundGradient(view, color, radius);
+//        }
+
+        if (null != s1 && s1.length() > 0) {
+            loadImageUrl(view, s1, true);
+        } else if (null != s2 && s2.length() > 0) {
+            setBackgroundFile(view, s2, true);
+        } else if (null != s3 && s3.length() > 0) {
+            setBackgroundAssets(view, s3, true);
+        } else if (i4 != 0) {
+            setBackgroundResource(view, i4, true);
+        } else if (i5 != 0) {
+            ColorDrawable drawable = new ColorDrawable(i5);
+            setBackgroundDrawable(view, drawable, true);
         }
         logE("updateImageBackground => ************************");
     }
@@ -165,97 +153,34 @@ class TabUtil {
         if (null == t || null == view)
             return;
 
-        view.setText(t.initText());
+        String text = t.getText();
+        if (null != text && text.length() > 0) {
+            view.setText(text);
+        }
 
         updateTextColor(view, t, focus, stay);
-        updateTextBackground(view, t, radius, focus, stay);
+        updateBackground(view, t, radius, focus, stay);
     }
 
-    private static final <T extends TabModel> void updateTextColor(@NonNull TabTextView view, @NonNull T t, boolean focus, boolean stay) {
+    private static final <T extends TabModel> void updateTextColor(@NonNull TabTextView view, @NonNull T t, boolean focus, boolean checked) {
 
         if (null == t || null == view)
             return;
 
-        int[] colors = t.initTextColors();
-        if (null == colors || colors.length < 3)
-            return;
+        // 优先级 ：resource > color
 
-        view.updateTextColor(stay ? colors[2] : (focus ? colors[1] : colors[0]), stay);
-    }
 
-    private static final <T extends TabModel> void updateTextBackground(@NonNull TextView view, @NonNull T t, @NonNull float radius, boolean focus, boolean stay) {
-
-        if (null == t)
-            return;
-
-        logE("updateTextBackground => ************************");
-        logE("updateTextBackground => focus = " + focus + ", stay = " + stay);
-
-        // 1
-        int[][] colors = t.initTextBackgroundColors();
-        logE("updateTextBackground => colors = " + Arrays.toString(colors));
-
-        // 2
-        String[] urls = t.initTextBackgroundUrls();
-        logE("updateTextBackground => urls = " + Arrays.toString(urls));
-
-        // 3
-        String[] files = t.initTextBackgroundFiles();
-        try {
-            String path = stay ? files[2] : (focus ? files[1] : files[0]);
-            File file = new File(path);
-            if (!file.exists()) {
-                files = null;
-            }
-        } catch (Exception e) {
+        @ColorRes
+        int c1 = t.getTextColorResource(focus, checked);
+        ;
+        @ColorInt
+        int c2 = t.getTextColor(focus, checked);
+        ;
+        if (c1 != 0) {
+            view.updateTextColorResource(c1, checked);
+        } else if (c2 != 0) {
+            view.updateTextColor(c2, checked);
         }
-        logE("updateTextBackground => files = " + Arrays.toString(files));
-
-        // 4
-        String[] assets = t.initTextBackgroundAssets();
-        logE("updateTextBackground => assets = " + Arrays.toString(assets));
-
-        // 5
-        int[] resources = t.initTextBackgroundResources();
-        logE("updateTextBackground => resources = " + Arrays.toString(resources));
-
-        // 背景 => 渐变背景色
-        if (null != colors && colors.length >= 3) {
-            int[] color = stay ? colors[2] : (focus ? colors[1] : colors[0]);
-            logE("updateTextBackground[colors]=> color = " + Arrays.toString(color) + ", text = " + view.getText());
-            setBackgroundGradient(view, color, radius);
-        }
-        // 背景 => 网络图片
-        else if (null != urls && urls.length >= 3 && (null != urls[0] || null != urls[1] || null != urls[2])) {
-            String url = stay ? urls[2] : (focus ? urls[1] : urls[0]);
-            logE("updateTextBackground[urls]=> url = " + url + ", text = " + view.getText());
-            loadImageUrl(view, url, true);
-        }
-        // 背景 => 本地图片
-        else if (null != files && files.length >= 3 && (null != files[0] || null != files[1] || null != files[2])) {
-            String file = stay ? files[2] : (focus ? files[1] : files[0]);
-            logE("updateTextBackground[files]=> file = " + file + ", text = " + view.getText());
-            setBackgroundFile(view, file, true);
-        }
-        // 背景 => Assets图片
-        else if (null != assets && assets.length >= 3 && (null != assets[0] || null != assets[1] || null != assets[2])) {
-            String path = stay ? assets[2] : (focus ? assets[1] : assets[0]);
-            logE("updateTextBackground[assets]=> assets = " + path + ", text = " + view.getText());
-            setBackgroundAssets(view, path, true);
-        }
-        // 背景 => 资源图片
-        else if (null != resources && resources.length >= 3) {
-            int resId = stay ? resources[2] : (focus ? resources[1] : resources[0]);
-            logE("updateTextBackground[resources]=> resource = " + resId + ", text = " + view.getText());
-            setBackgroundResource(view, resId, true);
-        }
-        // 背景 => 默认图片
-        else {
-            int resId = stay ? R.drawable.module_tablayout_ic_shape_background_select : (focus ? R.drawable.module_tablayout_ic_shape_background_focus : R.drawable.module_tablayout_ic_shape_background_normal);
-            logE("updateTextBackground[defaults]=> resId = " + resId + ", text = " + view.getText());
-            setBackgroundResource(view, resId, true);
-        }
-        logE("updateTextBackground => ************************");
     }
 
     public final static void loadImageUrl(@NonNull final View view, @NonNull final String imageUrl, final boolean isBackground) {
