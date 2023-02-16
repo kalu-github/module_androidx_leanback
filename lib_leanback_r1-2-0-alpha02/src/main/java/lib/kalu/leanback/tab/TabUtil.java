@@ -168,14 +168,10 @@ class TabUtil {
             return;
 
         // 优先级 ：resource > color
-
-
         @ColorRes
         int c1 = t.getTextColorResource(focus, checked);
-        ;
         @ColorInt
         int c2 = t.getTextColor(focus, checked);
-        ;
         if (c1 != 0) {
             view.updateTextColorResource(c1, checked);
         } else if (c2 != 0) {
