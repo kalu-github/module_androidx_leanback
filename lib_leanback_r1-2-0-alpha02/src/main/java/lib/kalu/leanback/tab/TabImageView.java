@@ -3,6 +3,7 @@ package lib.kalu.leanback.tab;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -11,6 +12,7 @@ import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.widget.ImageView;
 
 import androidx.annotation.ColorInt;
@@ -19,7 +21,15 @@ import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.security.MessageDigest;
+
 import lib.kalu.leanback.tab.model.TabModel;
+import lib.kalu.leanback.util.LeanBackUtil;
 
 @SuppressLint("AppCompatCustomView")
 class TabImageView extends ImageView {
@@ -31,11 +41,11 @@ class TabImageView extends ImageView {
 
     public TabImageView(@NonNull Context context, @NonNull TabModel data) {
         super(context);
-        this.mTabModel = data;
-        init();
+        init(data);
     }
 
-    private void init() {
+    private void init(@NonNull TabModel data) {
+        this.mTabModel = data;
         setEnabled(false);
         setSelected(false);
         setFocusable(false);
@@ -52,7 +62,7 @@ class TabImageView extends ImageView {
             Drawable drawable = getDrawable();
             int intrinsicWidth = drawable.getIntrinsicWidth();
             int intrinsicHeight = drawable.getIntrinsicHeight();
-            TabUtil.logE("TabImageView => intrinsicWidth = " + intrinsicWidth + ", intrinsicHeight =" + intrinsicHeight);
+//            TabUtil.logE("TabImageView => intrinsicWidth = " + intrinsicWidth + ", intrinsicHeight =" + intrinsicHeight);
             width = height * intrinsicWidth / intrinsicHeight;
         } catch (Exception e) {
         }
@@ -63,7 +73,7 @@ class TabImageView extends ImageView {
             width = mWidthMax;
         }
 
-        TabUtil.logE("TabImageView => width = " + width + ", height =" + height);
+//        TabUtil.logE("TabImageView => width = " + width + ", height =" + height);
         setMeasuredDimension(width, height);
     }
 
@@ -208,23 +218,9 @@ class TabImageView extends ImageView {
         }
 
         try {
-
-            String s;
-            // focus
-            if (focus) {
-                s = mTabModel.getImageUrlFocus();
-
-            }
-            // checked
-            else if (checked) {
-                s = mTabModel.getImageUrlChecked();
-            }
-            // normal
-            else {
-                s = t.getImageUrlNormal();
-            }
+            String s = mTabModel.getImageUrl(focus, checked);
             if (null != s && s.length() > 0) {
-                loadImageUrl(view, s, false);
+                show(s, false);
             }
         } catch (Exception e) {
         }
@@ -258,7 +254,7 @@ class TabImageView extends ImageView {
 //        }
 
             if (null != s1 && s1.length() > 0) {
-                TabUtil.loadImageUrl(this, s1, true);
+                show(s1, true);
             } else if (null != s2 && s2.length() > 0) {
                 Drawable drawable = TabUtil.decodeDrawable(getContext(), s2, false);
                 setBackground(drawable);
@@ -272,6 +268,111 @@ class TabImageView extends ImageView {
                 setBackground(drawable);
             }
         } catch (Exception e) {
+        }
+    }
+
+    private void show(String url, boolean isBg) {
+
+        boolean checkPath = checkPath(url);
+        // file
+        if (checkPath) {
+            String path = getPath(url);
+            Drawable drawable = TabUtil.decodeDrawable(getContext(), path, false);
+            if (isBg) {
+                setBackground(drawable);
+            } else {
+                setImageDrawable(drawable);
+            }
+        }
+        // download
+        else {
+            download(url, isBg);
+        }
+    }
+
+    private void download(@NonNull String url, boolean isBg) {
+
+        try {
+            if (null == url || url.length() <= 0) throw new Exception("url is null");
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        // 1. 下载
+                        HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
+                        connection.setDoInput(true);
+                        connection.connect();
+                        InputStream input = connection.getInputStream();
+                        Bitmap bitmap = BitmapFactory.decodeStream(input);
+                        input.close();
+
+                        // 2.保存
+                        String path = getPath(url);
+                        File file = new File(path);
+                        if (file.exists()) {
+                            file.delete();
+                        }
+                        file.createNewFile();
+                        FileOutputStream out = new FileOutputStream(file);
+                        bitmap.compress(Bitmap.CompressFormat.PNG, 60, out);
+                        out.flush();
+                        out.close();
+                        bitmap.recycle();
+
+                        // 3.主线程更新
+                        post(new Runnable() {
+                            @Override
+                            public void run() {
+                                show(url, isBg);
+                            }
+                        });
+                    } catch (Exception e) {
+                    }
+                }
+            }).start();
+        } catch (Exception e) {
+            LeanBackUtil.log("TabImageView => checkPath => " + e.getMessage());
+        }
+    }
+
+    private String getPath(@NonNull String url) {
+        try {
+            if (null == url || url.length() <= 0) throw new Exception("url is null");
+            MessageDigest digest = MessageDigest.getInstance("MD5");
+            byte[] bytes = digest.digest(url.getBytes());
+            StringBuilder builder = new StringBuilder();
+            for (byte b : bytes) {
+                String temp = Integer.toHexString(b & 0xff);
+                if (temp.length() == 1) {
+                    temp = "0" + temp;
+                }
+                builder.append(temp);
+            }
+            String s = builder.toString();
+            File dir = getContext().getFilesDir();
+            String path = dir.getAbsolutePath();
+            File file = new File(path, "tab@@$$");
+            if (file.exists()) {
+                file.delete();
+            }
+            file.mkdirs();
+            return file.getAbsolutePath() + File.separator + s;
+        } catch (Exception e) {
+            LeanBackUtil.log("TabImageView => getPath => " + e.getMessage());
+            return null;
+        }
+    }
+
+    private boolean checkPath(@NonNull String url) {
+        try {
+            if (null == url || url.length() <= 0) throw new Exception("url is null");
+            String name = getPath(url);
+            File file = new File(name);
+            if (!file.exists()) throw new Exception("url not find from sdcard");
+            return true;
+        } catch (Exception e) {
+            LeanBackUtil.log("TabImageView => checkPath => " + e.getMessage());
+            return false;
         }
     }
 }

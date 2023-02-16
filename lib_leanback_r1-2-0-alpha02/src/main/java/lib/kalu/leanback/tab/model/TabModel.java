@@ -4,7 +4,9 @@ import androidx.annotation.ColorInt;
 import androidx.annotation.ColorRes;
 import androidx.annotation.DrawableRes;
 import androidx.annotation.Keep;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.StringRes;
 
 import java.io.File;
 import java.io.Serializable;
@@ -114,7 +116,7 @@ public abstract class TabModel implements Serializable {
         return textColorNormal;
     }
 
-    public void setTextColorNormal(int textColorNormal) {
+    public void setTextColorNormal(@ColorInt int textColorNormal) {
         this.textColorNormal = textColorNormal;
     }
 
@@ -122,7 +124,7 @@ public abstract class TabModel implements Serializable {
         return textColorFocus;
     }
 
-    public void setTextColorFocus(int textColorFocus) {
+    public void setTextColorFocus(@ColorInt int textColorFocus) {
         this.textColorFocus = textColorFocus;
     }
 
@@ -130,7 +132,7 @@ public abstract class TabModel implements Serializable {
         return textColorChecked;
     }
 
-    public void setTextColorChecked(int textColorChecked) {
+    public void setTextColorChecked(@ColorInt int textColorChecked) {
         this.textColorChecked = textColorChecked;
     }
 
@@ -186,7 +188,7 @@ public abstract class TabModel implements Serializable {
         return backgroundColorNormal;
     }
 
-    public void setBackgroundColorNormal(int backgroundColorNormal) {
+    public void setBackgroundColorNormal(@ColorInt int backgroundColorNormal) {
         this.backgroundColorNormal = backgroundColorNormal;
     }
 
@@ -194,7 +196,7 @@ public abstract class TabModel implements Serializable {
         return backgroundColorFocus;
     }
 
-    public void setBackgroundColorFocus(int backgroundColorFocus) {
+    public void setBackgroundColorFocus(@ColorInt int backgroundColorFocus) {
         this.backgroundColorFocus = backgroundColorFocus;
     }
 
@@ -202,7 +204,7 @@ public abstract class TabModel implements Serializable {
         return backgroundColorChecked;
     }
 
-    public void setBackgroundColorChecked(int backgroundColorChecked) {
+    public void setBackgroundColorChecked(@ColorInt int backgroundColorChecked) {
         this.backgroundColorChecked = backgroundColorChecked;
     }
 
@@ -421,14 +423,15 @@ public abstract class TabModel implements Serializable {
             return getTextColorResourceNormal();
         }
     }
-    @ColorRes
-    public int getTextColorResource(boolean focus, boolean checked) {
+
+    @NonNull
+    public String getImageUrl(boolean focus, boolean checked) {
         if (focus) {
-            return getTextColorResourceFocus();
+            return getImageUrlFocus();
         } else if (checked) {
-            return getTextColorResourceChecked();
+            return getImageUrlChecked();
         } else {
-            return getTextColorResourceNormal();
+            return getImageUrlNormal();
         }
     }
 }

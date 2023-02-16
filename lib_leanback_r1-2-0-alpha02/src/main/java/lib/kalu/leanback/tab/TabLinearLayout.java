@@ -2,6 +2,9 @@ package lib.kalu.leanback.tab;
 
 
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.Rect;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
@@ -17,21 +20,21 @@ final class TabLinearLayout extends LinearLayout {
     }
 
     private void init() {
-        setPadding(0, 0, 0, 0);
+        setPadding(10, 10, 10, 10);
+        setBackgroundColor(Color.BLUE);
         setFocusable(false);
+        setGravity(Gravity.CENTER);
         setOrientation(LinearLayout.HORIZONTAL);
-        setLayoutParams(new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
+        setLayoutParams(new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.MATCH_PARENT));
     }
 
     public int getCheckedIndex() {
         try {
             int childCount = getChildCount();
-            if (childCount <= 0)
-                throw new Exception("childCount <= 0");
+            if (childCount <= 0) throw new Exception("childCount <= 0");
             for (int i = 0; i < childCount; i++) {
                 View view = getChildAt(i);
-                if (null == view)
-                    continue;
+                if (null == view) continue;
                 if (view instanceof TabTextView) {
                     boolean focus = ((TabTextView) view).isFocus();
                     if (focus) {
@@ -61,64 +64,26 @@ final class TabLinearLayout extends LinearLayout {
         }
     }
 
-    protected boolean requestItem(int position, int next) {
+    protected boolean focusItem(int position) {
 
         try {
             int childCount = getChildCount();
-            if (childCount <= 0)
-                throw new Exception("childCount <= 0");
-            if (position < 0 || position + 1 >= childCount)
-                throw new Exception("position error: " + position);
-            if (next < 0 || next + 1 >= childCount)
-                throw new Exception("next error: " + next);
-            View view1 = getChildAt(position);
-            if (null != view1) {
-                if (view1 instanceof TabTextView) {
-                    ((TabTextView) view1).setEnabled(false);
-                    ((TabTextView) view1).setSelected(false);
-                } else if (view1 instanceof TabImageView) {
-                    ((TabImageView) view1).setEnabled(false);
-                    ((TabImageView) view1).setSelected(false);
-                }
-            }
-            View view2 = getChildAt(next);
-            if (null != view2) {
-                if (view2 instanceof TabTextView) {
-                    ((TabTextView) view2).setEnabled(true);
-                    ((TabTextView) view2).setSelected(true);
-                } else if (view2 instanceof TabImageView) {
-                    ((TabImageView) view2).setEnabled(true);
-                    ((TabImageView) view2).setSelected(true);
-                }
-            }
-            return true;
-        } catch (Exception e) {
-            LeanBackUtil.log("TabLinearLayout => requestNextFocus => " + e.getMessage());
-            return false;
-        }
-    }
-
-    protected boolean requestItem(int position) {
-
-        try {
-            int childCount = getChildCount();
-            if (childCount <= 0)
-                throw new Exception("childCount <= 0");
-            if (position < 0 || position + 1 >= childCount)
+            if (childCount <= 0) throw new Exception("childCount <= 0");
+            if (position < 0 || position + 1 > childCount)
                 throw new Exception("position error: " + position);
             View view2 = getChildAt(position);
             if (null != view2) {
                 if (view2 instanceof TabTextView) {
-                    ((TabTextView) view2).setEnabled(true);
-                    ((TabTextView) view2).setSelected(true);
+                    view2.setEnabled(true);
+                    view2.setSelected(true);
                 } else if (view2 instanceof TabImageView) {
-                    ((TabImageView) view2).setEnabled(true);
-                    ((TabImageView) view2).setSelected(true);
+                    view2.setEnabled(true);
+                    view2.setSelected(true);
                 }
             }
             return true;
         } catch (Exception e) {
-            LeanBackUtil.log("TabLinearLayout => requestNextFocus => " + e.getMessage());
+            LeanBackUtil.log("TabLinearLayout => focusItem => " + e.getMessage());
             return false;
         }
     }
@@ -127,25 +92,185 @@ final class TabLinearLayout extends LinearLayout {
 
         try {
             int childCount = getChildCount();
-            if (childCount <= 0)
-                throw new Exception("childCount <= 0");
-            if (position < 0 || position + 1 >= childCount)
+            if (childCount <= 0) throw new Exception("childCount <= 0");
+            if (position < 0 || position + 1 > childCount)
                 throw new Exception("position error: " + position);
             View view1 = getChildAt(position);
             if (null != view1) {
                 if (view1 instanceof TabTextView) {
-                    ((TabTextView) view1).setEnabled(false);
-                    ((TabTextView) view1).setSelected(true);
+                    view1.setEnabled(false);
+                    view1.setSelected(true);
                 } else if (view1 instanceof TabImageView) {
-                    ((TabImageView) view1).setEnabled(false);
-                    ((TabImageView) view1).setSelected(true);
+                    view1.setEnabled(false);
+                    view1.setSelected(true);
                 }
             }
             return true;
         } catch (Exception e) {
-            LeanBackUtil.log("TabLinearLayout => requestNextFocus => " + e.getMessage());
+            LeanBackUtil.log("TabLinearLayout => checkItem => " + e.getMessage());
+            return false;
+        }
+    }
+
+    protected boolean resetItem(int position) {
+
+        try {
+            int childCount = getChildCount();
+            if (childCount <= 0) throw new Exception("childCount <= 0");
+            if (position < 0 || position + 1 > childCount)
+                throw new Exception("position error: " + position);
+            View view1 = getChildAt(position);
+            if (null != view1) {
+                if (view1 instanceof TabTextView) {
+                    view1.setEnabled(false);
+                    view1.setSelected(false);
+                } else if (view1 instanceof TabImageView) {
+                    view1.setEnabled(false);
+                    view1.setSelected(false);
+                }
+            }
+            return true;
+        } catch (Exception e) {
+            LeanBackUtil.log("TabLinearLayout => resetItem => " + e.getMessage());
             return false;
         }
 
+    }
+
+    protected boolean scrollTo(int position) {
+        try {
+            int childCount = getChildCount();
+            if (childCount <= 0) throw new Exception("childCount <= 0");
+            if (position < 0 || position + 1 >= childCount)
+                throw new Exception("position error: " + position);
+            View view = getChildAt(position);
+            if (null == view) throw new Exception("view is null");
+            view.setFocusable(true);
+            view.setEnabled(true);
+            view.setSelected(true);
+            view.requestFocus();
+            view.setFocusable(false);
+            return true;
+        } catch (Exception e) {
+            LeanBackUtil.log("TabLinearLayout => checkItemVisable => " + e.getMessage());
+            return false;
+        }
+    }
+
+    protected int getItemgetMeasuredWidth(int position) {
+        try {
+            int childCount = getChildCount();
+            if (childCount <= 0) throw new Exception("childCount <= 0");
+            if (position < 0 || position + 1 >= childCount)
+                throw new Exception("position error: " + position);
+            View view = getChildAt(position);
+            if (null == view) throw new Exception("view is null");
+            Rect rect = new Rect();
+            view.getLocalVisibleRect(rect);
+            return Math.abs(rect.right) - Math.abs(rect.left);
+        } catch (Exception e) {
+            LeanBackUtil.log("TabLinearLayout => checkItemVisibility => " + e.getMessage());
+            return 0;
+        }
+    }
+
+    protected int getItemRectLeft(int position) {
+        try {
+            int childCount = getChildCount();
+            if (childCount <= 0) throw new Exception("childCount <= 0");
+            if (position < 0 || position + 1 >= childCount)
+                throw new Exception("position error: " + position);
+            View view = getChildAt(position);
+            if (null == view) throw new Exception("view is null");
+            Rect rect = new Rect();
+            view.getLocalVisibleRect(rect);
+            return rect.left;
+        } catch (Exception e) {
+            LeanBackUtil.log("TabLinearLayout => getItemRectLeft => " + e.getMessage());
+            return 0;
+        }
+    }
+
+    protected int getItemRectRight(int position) {
+        try {
+            int childCount = getChildCount();
+            if (childCount <= 0) throw new Exception("childCount <= 0");
+            if (position < 0 || position + 1 >= childCount)
+                throw new Exception("position error: " + position);
+            View view = getChildAt(position);
+            if (null == view) throw new Exception("view is null");
+            Rect rect = new Rect();
+            view.getLocalVisibleRect(rect);
+            return rect.right;
+        } catch (Exception e) {
+            LeanBackUtil.log("TabLinearLayout => getItemRectRight => " + e.getMessage());
+            return 0;
+        }
+    }
+
+    protected int getItemLeft(int position) {
+        try {
+            int childCount = getChildCount();
+            if (childCount <= 0) throw new Exception("childCount <= 0");
+            if (position < 0 || position + 1 >= childCount)
+                throw new Exception("position error: " + position);
+            View view = getChildAt(position);
+            if (null == view) throw new Exception("view is null");
+            return view.getLeft();
+        } catch (Exception e) {
+            LeanBackUtil.log("TabLinearLayout => getItemgetLeft => " + e.getMessage());
+            return 0;
+        }
+    }
+
+    protected int getItemRight(int position) {
+        try {
+            int childCount = getChildCount();
+            if (childCount <= 0) throw new Exception("childCount <= 0");
+            if (position < 0 || position + 1 >= childCount)
+                throw new Exception("position error: " + position);
+            View view = getChildAt(position);
+            if (null == view) throw new Exception("view is null");
+            return view.getRight();
+        } catch (Exception e) {
+            LeanBackUtil.log("TabLinearLayout => getItemRight => " + e.getMessage());
+            return 0;
+        }
+    }
+
+//    protected int getScrollRange(int position, int width) {
+//        try {
+//            int childCount = getChildCount();
+//            if (childCount <= 0) throw new Exception("childCount <= 0");
+//            if (position < 0 || position + 1 >= childCount)
+//                throw new Exception("position error: " + position);
+//            View view = getChildAt(position);
+//            if (null == view) throw new Exception("view is null");
+//            return view.getRight();
+//        } catch (Exception e) {
+//            LeanBackUtil.log("TabLinearLayout => getItemRight => " + e.getMessage());
+//            return 0;
+//        }
+//    }
+
+    protected int getItemWidth(int position) {
+
+        try {
+            int childCount = getChildCount();
+            if (childCount <= 0) throw new Exception("childCount <= 0");
+            if (position < 0 || position + 1 >= childCount)
+                throw new Exception("position error: " + position);
+            View view = getChildAt(position);
+            return view.getWidth();
+        } catch (Exception e) {
+            LeanBackUtil.log("TabLinearLayout => getItemWidth => " + e.getMessage());
+            return 0;
+        }
+    }
+
+    protected int getItemRange(int position) {
+        int itemgetMeasuredWidth = getItemgetMeasuredWidth(position);
+        int itemWidth = getItemWidth(position);
+        return Math.abs(itemgetMeasuredWidth - itemWidth);
     }
 }

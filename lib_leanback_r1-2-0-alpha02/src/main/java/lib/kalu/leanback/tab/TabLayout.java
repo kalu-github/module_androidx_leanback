@@ -16,7 +16,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import androidx.annotation.IntRange;
 import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -80,8 +79,7 @@ public final class TabLayout extends HorizontalScrollView {
         View focus = findFocus();
         if (null != focus) {
             int repeatCount = event.getRepeatCount();
-            if (repeatCount > 0)
-                return true;
+            if (repeatCount > 0) return true;
         }
 
         // left action_down
@@ -91,87 +89,90 @@ public final class TabLayout extends HorizontalScrollView {
                 View nextFocus = findNextFocus(View.FOCUS_LEFT);
                 if (null == nextFocus) {
                     return true;
+                } else {
+                    checkedCurrentItem();
                 }
             } else {
-                boolean nextFocus = requestNextFocus(View.FOCUS_LEFT, index);
-                if (nextFocus) {
-                    return true;
+                int next = findNextPosition(View.FOCUS_LEFT, index);
+                if (next != -1) {
+                    boolean scrollRequest = scrollRequest(View.FOCUS_LEFT, index, next);
+                    if (scrollRequest) {
+                        return true;
+                    }
                 }
             }
         }
         // left action_up
         else if (event.getAction() == KeyEvent.ACTION_UP && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_LEFT) {
-            TabUtil.logE("dispatchKeyEvent[left] => isActivated = " + isActivated());
-//            if (isActivated()) {
-//                scroll(View.FOCUS_LEFT, false, false);
-//                return true;
-//            } else {
-//                setActivated(true);
-//            }
+            LeanBackUtil.log("TabLayout => dispatchKeyEvent => left_action_up => focus = " + focus);
+            if (null != focus && focus instanceof TabLayout) {
+                focusCurrentItem();
+            }
         }
         // right action_down
         else if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_RIGHT) {
             int index = getCheckedIndex();
             int itemCount = getItemCount();
+            LeanBackUtil.log("TabLayout => dispatchKeyEvent => right_action_down => index = " + index + ", itemCount = " + itemCount);
             if (index + 1 >= itemCount) {
                 View nextFocus = findNextFocus(View.FOCUS_RIGHT);
                 if (null == nextFocus) {
                     return true;
+                } else {
+                    checkedCurrentItem();
                 }
             } else {
-                boolean nextFocus = requestNextFocus(View.FOCUS_RIGHT, index);
-                if (nextFocus) {
-                    return true;
+                int next = findNextPosition(View.FOCUS_RIGHT, index);
+                LeanBackUtil.log("TabLayout => dispatchKeyEvent => right_action_down => next = " + next);
+                if (next != -1) {
+                    boolean scrollRequest = scrollRequest(View.FOCUS_RIGHT, index, next);
+                    LeanBackUtil.log("TabLayout => dispatchKeyEvent => right_action_down => scrollRequest = " + scrollRequest);
+                    if (scrollRequest) {
+                        return true;
+                    }
                 }
             }
         }
         // right action_up
         else if (event.getAction() == KeyEvent.ACTION_UP && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_RIGHT) {
-//            TabUtil.logE("dispatchKeyEvent[right] => isActivated = " + isActivated());
-//            if (isActivated()) {
-//                scroll(View.FOCUS_RIGHT, false, false);
-//                return true;
-//            } else {
-//                setActivated(true);
-//            }
+            LeanBackUtil.log("TabLayout => dispatchKeyEvent => right_action_up => focus = " + focus);
+            if (null != focus && focus instanceof TabLayout) {
+                focusCurrentItem();
+            }
         }
         // up action_down
         else if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_UP) {
-//            setActivated(false);
-//            anim(true);
-//            scroll(View.FOCUS_UP, true, false);
-//            TabUtil.logE("dispatchKeyEvent[up-leave] =>");
+            LeanBackUtil.log("TabLayout => dispatchKeyEvent => up_action_down => focus = " + focus);
             View nextFocus = findNextFocus(View.FOCUS_UP);
-            if(null == nextFocus){
+            if (null == nextFocus) {
                 return true;
+            } else {
+                checkedCurrentItem();
             }
         }
         // up action_up
         else if (event.getAction() == KeyEvent.ACTION_UP && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_UP) {
-//            setActivated(true);
-//            anim(false);
-//            scroll(View.FOCUS_UP, false, true);
-//            TabUtil.logE("dispatchKeyEvent[up-come] =>");
-//            return true;
+            LeanBackUtil.log("TabLayout => dispatchKeyEvent => up_action_down => focus = " + focus);
+            if (null != focus && focus instanceof TabLayout) {
+                focusCurrentItem();
+            }
         }
         // down action_down
         else if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_DOWN) {
-//            setActivated(false);
-//            anim(true);
-//            scroll(View.FOCUS_DOWN, true, false);
-//            TabUtil.logE("dispatchKeyEvent[down-leave] =>");
+            LeanBackUtil.log("TabLayout => dispatchKeyEvent => down_action_down => focus = " + focus);
             View nextFocus = findNextFocus(View.FOCUS_DOWN);
-            if(null == nextFocus){
+            if (null == nextFocus) {
                 return true;
+            } else {
+                checkedCurrentItem();
             }
         }
         // down action_up
         else if (event.getAction() == KeyEvent.ACTION_UP && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_DOWN) {
-//            setActivated(true);
-//            anim(false);
-//            scroll(View.FOCUS_DOWN, false, true);
-//            TabUtil.logE("dispatchKeyEvent[down-come] =>");
-//            return true;
+            LeanBackUtil.log("TabLayout => dispatchKeyEvent => down_action_up => focus = " + focus);
+            if (null != focus && focus instanceof TabLayout) {
+                focusCurrentItem();
+            }
         }
         return super.dispatchKeyEvent(event);
     }
@@ -182,37 +183,9 @@ public final class TabLayout extends HorizontalScrollView {
         return false;
     }
 
-    /**
-     * scrollTo相对于view的初始位置移动，所以这里view无论点击多少次，都只会相对于view的初始位置移动一定距离。
-     *
-     * @param x
-     * @param y
-     */
-    @Override
-    public void scrollTo(int x, int y) {
-        boolean enabled = isEnabled();
-        if (enabled) {
-            TabUtil.logE("scrollTo => x = " + x);
-            super.scrollTo(x, y);
-        }
-    }
-
-    /**
-     * scrollBy相对于view的当前位置移动，所以此处view是每点击一次就向右下角移动一次的。
-     *
-     * @param x
-     * @param y
-     */
-    @Override
-    public void scrollBy(int x, int y) {
-        boolean enabled = isEnabled();
-        if (enabled) {
-            TabUtil.logE("scrollBy => x = " + x);
-            super.scrollBy(x, y);
-        }
-    }
-
     private void init(@Nullable AttributeSet attrs) {
+        setPadding(10, 10, 10, 10);
+        setDescendantFocusability(ViewGroup.FOCUS_AFTER_DESCENDANTS);
         setSmoothScrollingEnabled(true);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             setNestedScrollingEnabled(true);
@@ -246,376 +219,31 @@ public final class TabLayout extends HorizontalScrollView {
         }
     }
 
-    private final void anim(boolean over) {
-        if (mScale <= 1f)
-            return;
-        ViewCompat.animate(this).scaleX(over ? 1f : mScale).scaleY(over ? 1f : mScale).start();
-    }
-
-//    private final void scroll(int direction, boolean leave, boolean repeat) {
-//        int before = getIndex();
-//        int next;
-//        if (direction == View.FOCUS_LEFT) {
-//            next = before - 1;
-//        } else if (direction == View.FOCUS_RIGHT) {
-//            next = before + 1;
-//        } else {
-//            next = before < 0 ? 0 : before;
-//        }
-//        TabUtil.logE("updateSelect => before = " + before + ", next = " + next);
-//        scroll(before, next, true, leave, repeat && before >= 0);
-//    }
-
-//    /**
-//     * 强制选中tab
-//     *
-//     * @param next     新索引位置
-//     * @param callback 开启通知
-//     * @param anim     开启动画
-//     */
-//    @Keep
-//    private final void select(@IntRange(from = 0, to = Integer.MAX_VALUE) int next, boolean callback, boolean anim, boolean ignore, boolean activated) {
-//
-//        int before = getIndex();
-//        TabUtil.logE("select => before = " + before + ", next = " + next);
-//        if (!ignore && before == next)
-//            return;
-//
-//        if (anim) {
-//            anim(false);
-//        }
-//
-//        setActivated(activated);
-//        scroll(before, next, callback, false, before == next);
-//    }
-
-//    public void checked(@IntRange(from = 0, to = Integer.MAX_VALUE) int index) {
-//
-//        int before = getIndex();
-//        TabUtil.logE("checked => index = " + index);
-//
-//        scroll(before, index, false, true, before == index);
-//    }
-
-//    /**
-//     * 强制选中
-//     *
-//     * @param before   旧索引位置
-//     * @param next     新索引位置
-//     * @param callback 通知
-//     * @param leave    离开
-//     * @param repeat   重复
-//     */
-//    private final void scroll(@IntRange(from = 0, to = Integer.MAX_VALUE) int before, @IntRange(from = 0, to = Integer.MAX_VALUE) int next, boolean callback, boolean leave, boolean repeat) {
-//        if (next < 0)
-//            return;
-//        View container = getContainer();
-//        int count = ((LinearLayout) container).getChildCount();
-//        if (next >= count)
-//            return;
-//
-//        updateIndex(next);
-//        updateFocus(before, next, callback, leave, repeat);
-//    }
-
-//    /**
-//     * 更新选中索引
-//     *
-//     * @param index
-//     */
-//    private final void updateIndex(@IntRange(from = 0, to = Integer.MAX_VALUE) int index) {
-//        if (index < 0)
-//            return;
-//        View container = getContainer();
-//        if (null == container || !(container instanceof LinearLayout))
-//            return;
-//        int count = ((LinearLayout) container).getChildCount();
-//        if (index + 1 > count)
-//            return;
-//        setTag(R.id.module_tablayout_id_index, index);
-//    }
-
-//    /**
-//     * 更新焦点状态
-//     *
-//     * @param before   旧索引位置
-//     * @param next     新索引位置
-//     * @param callback 通知
-//     * @param leave    离开
-//     * @param repeat   重复
-//     */
-//    private final void updateFocus(@IntRange(from = 0, to = Integer.MAX_VALUE) int before, @IntRange(from = 0, to = Integer.MAX_VALUE) int next, boolean callback, boolean leave, boolean repeat) {
-//        TabUtil.logE("updateFocus => before = " + before + ", next = " + next + ", callback = " + callback + ", leave = " + leave + ", repeat = " + repeat);
-//        setEnabled(leave ? false : true);
-//        View container = getContainer();
-//        int count = ((LinearLayout) container).getChildCount();
-//        int num = 0;
-//        for (int i = 0; i < count; i++) {
-//            // over
-//            if (num >= 2) {
-//                TabUtil.logE("updateFocus[强制结束] => num = " + num);
-//                break;
-//            }
-//            // scan
-//            else {
-//                View view = ((LinearLayout) container).getChildAt(i);
-//                if (null == view)
-//                    continue;
-//                // 强制获焦
-//                if (i == next) {
-//                    TabUtil.logE("updateFocus[强制获焦] => index = " + next + ", view = " + view);
-//                    ++num;
-//
-//                    // 焦点
-//                    if (isEnabled()) {
-//                        view.requestFocus();
-//                    }
-//
-//                    if (view instanceof TabTextView) {
-//                        ((TabTextView) view).refresh(true, leave);
-//                    } else if (view instanceof TabImageView) {
-//                        ((TabImageView) view).refresh(true, leave);
-//                    }
-//
-//                    if (callback && null != mListener) {
-//                        if (repeat) {
-//                            mListener.onRepeat(next);
-//                        } else if (leave) {
-//                            mListener.onLeave(next);
-//                        } else {
-//                            mListener.onSelect(next);
-//                        }
-//                    }
-//                }
-//                // 强制失焦
-//                else if (i == before) {
-//                    TabUtil.logE("updateFocus[强制失焦] => index = " + before + ", view = " + view);
-//                    ++num;
-//                    if (view instanceof TabTextView) {
-//                        ((TabTextView) view).refresh(false, false);
-//                    } else if (view instanceof TabImageView) {
-//                        ((TabImageView) view).refresh(false, false);
-//                    }
-//                    if (callback && null != mListener) {
-//                        mListener.onBefore(before);
-//                    }
-//                }
-//            }
-//        }
-//    }
-
-    private final View getContainer() {
-        return getChildAt(0);
-    }
-
-    private final <T extends TabModel> void addContainerText(@NonNull final TextView view, @NonNull final T t) {
-        View container = getContainer();
-        if (null == container || !(container instanceof LinearLayout))
-            return;
-
-        int count = ((LinearLayout) container).getChildCount();
-        ((LinearLayout) container).addView(view, count);
-    }
-
-    private final <T extends TabModel> void addContainerImage(@NonNull final ImageView view, @NonNull final T t) {
-        View container = getContainer();
-        if (null == container || !(container instanceof LinearLayout))
-            return;
-
-        int count = ((LinearLayout) container).getChildCount();
-        ((LinearLayout) container).addView(view, count);
-    }
-
-    private final <T extends TabModel> void addText(@NonNull T t, int index, int count) {
-
-        String text = t.getText();
-        if (null == text || text.length() == 0)
-            return;
-
-        View container = getContainer();
-        if (null == container)
-            return;
-
-        TabTextView view = new TabTextView(getContext(), t);
-        view.setTextSize(TypedValue.COMPLEX_UNIT_PX, mTextSize);
-        view.setUnderline(mTextUnderline);
-        view.setUnderlineColor(mTextUnderlineColor);
-        view.setUnderlineWidth(mTextUnderlineWidth);
-        view.setUnderlineHeight(mTextUnderlineHeight);
-        view.setPadding(mTextPadding, 0, mTextPadding, 0);
-        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(0, getHeight());
-        if (index + 1 != count) {
-            layoutParams.rightMargin = mMargin;
-        }
-        view.setLayoutParams(layoutParams);
-
-        // ui
-        TabUtil.updateTextUI(view, t, mBackgroundColorsRadius, false, false);
-
-        // addView
-        addContainerText(view, t);
-    }
-
-    private <T extends TabModel> void addImage(@NonNull T t, int index, int count) {
-
-        if (null == t)
-            return;
-
-        TabImageView view = new TabImageView(getContext());
-        view.setWidthMin(mImageWidthMin);
-        view.setWidthMax(mImageWidthMax);
-        view.setHeight(mImageHeight);
-        view.setPadding(mImagePadding, 0, mImagePadding, 0);
-        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(0, getHeight());
-        if (index + 1 != count) {
-            layoutParams.rightMargin = mMargin;
-        }
-        view.setLayoutParams(layoutParams);
-
-        // ui
-        TabUtil.updateImageUI(view, t, mBackgroundColorsRadius, false, false);
-
-        // addView
-        addContainerImage(view, t);
-    }
-
-    /************************************/
-
-    /**
-     * 更新数据
-     *
-     * @param list 数据源
-     * @param <T>
-     */
     @Keep
     public <T extends TabModel> void update(@NonNull List<T> list) {
-
-        View container = getContainer();
-        if (null != container && container instanceof LinearLayout) {
-            ((LinearLayout) container).removeAllViews();
-        }
-
-        int size = list.size();
-        for (int i = 0; i < size; i++) {
-            T t = list.get(i);
-            if (null == t)
-                continue;
-            if (t.isImg()) {
-                addImage(t, i, size);
-            } else if (t.isTxt()) {
-                addText(t, i, size);
-            }
-        }
+        update(list, 0);
     }
 
-//    @Keep
-//    public void left() {
-//        left(1, false);
-//    }
-//
-//    @Keep
-//    public void left(boolean anim) {
-//        left(1, anim);
-//    }
-//
-//    @Keep
-//    public void left(@IntRange(from = 0, to = Integer.MAX_VALUE) int num) {
-//        left(num, false);
-//    }
-//
-//    @Keep
-//    public void left(@IntRange(from = 0, to = Integer.MAX_VALUE) int num, boolean anim) {
-//        int select = getIndex();
-//        if (select <= 0)
-//            return;
-//
-//        int index = select - num;
-//        if (index < 0) {
-//            index = 0;
-//        }
-//
-//        select(index, true, anim, false, false);
-//    }
-//
-//    @Keep
-//    public void right() {
-//        right(1, false);
-//    }
-//
-//    @Keep
-//    public void right(boolean anim) {
-//        right(1, anim);
-//    }
-//
-//    @Keep
-//    public void right(@IntRange(from = 0, to = Integer.MAX_VALUE) int num) {
-//        right(num, false);
-//    }
-//
-//    @Keep
-//    public void right(@IntRange(from = 0, to = Integer.MAX_VALUE) int num, boolean anim) {
-//        View container = getContainer();
-//        if (null == container || !(container instanceof LinearLayout))
-//            return;
-//
-//        int count = ((LinearLayout) container).getChildCount();
-//        int select = getIndex();
-//        if (select + 1 >= count)
-//            return;
-//
-//        int index = select + num;
-//        if (index >= count) {
-//            index = count - 1;
-//        }
-//
-//        select(index, true, anim, false, false);
-//    }
-//
-//    @Keep
-//    public boolean isSelect(@IntRange(from = 0, to = Integer.MAX_VALUE) int index) {
-//        int select = getIndex();
-//        return select == index;
-//    }
-
-//    @Keep
-//    public void select(@IntRange(from = 0, to = Integer.MAX_VALUE) int next) {
-//        select(next, true, false, false, true);
-//    }
-//
-//    @Keep
-//    public void select(@IntRange(from = 0, to = Integer.MAX_VALUE) int next, boolean ignore) {
-//        select(next, true, false, ignore, true);
-//    }
-//
-//    @Keep
-//    public void select(@IntRange(from = 0, to = Integer.MAX_VALUE) int next, boolean callback, boolean ignore) {
-//        select(next, callback, false, ignore, true);
-//    }
-//
-//    public boolean isInstanceofItem(@NonNull View view) {
-//        try {
-//            return view instanceof TabTextView || view instanceof TabImageView;
-//        } catch (Exception e) {
-//            return false;
-//        }
-//    }
-
-    /************************************/
-
-    public OnTabChangeListener mListener;
-
-    public void setOnTabChangeListener(@NonNull OnTabChangeListener listener) {
-        this.mListener = listener;
+    @Keep
+    public <T extends TabModel> void update(@NonNull List<T> list, int position) {
+        try {
+            LeanBackUtil.log("TabLayout => update =>");
+            int childCount = getChildCount();
+            if (childCount != 1) throw new Exception("childCount is not 1");
+            // 1
+            addAllItem(list);
+            // 2
+            scrollRequest(0x9999, position, position);
+        } catch (Exception e) {
+            LeanBackUtil.log("TabLayout => update => " + e.getMessage());
+        }
     }
-
-    /********/
 
     @Keep
     public int getCheckedIndex() {
         try {
             int childCount = getChildCount();
-            if (childCount != 1)
-                throw new Exception("childCount is not 1");
+            if (childCount != 1) throw new Exception("childCount is not 1");
             return ((TabLinearLayout) getChildAt(0)).getCheckedIndex();
         } catch (Exception e) {
             LeanBackUtil.log("TabLayout => getCheckedIndex => " + e.getMessage());
@@ -624,11 +252,48 @@ public final class TabLayout extends HorizontalScrollView {
     }
 
     @Keep
+    private boolean focusCurrentItem() {
+        try {
+            int childCount = getChildCount();
+            if (childCount != 1) throw new Exception("childCount is not 1");
+            int index = getCheckedIndex();
+            boolean b = ((TabLinearLayout) getChildAt(0)).focusItem(index);
+            if (b) {
+                if (null != mListener) {
+                    mListener.onRepeat(index);
+                }
+            }
+            return b;
+        } catch (Exception e) {
+            LeanBackUtil.log("TabLayout => focusCurrentItem => " + e.getMessage());
+            return false;
+        }
+    }
+
+    @Keep
+    private boolean checkedCurrentItem() {
+        try {
+            int childCount = getChildCount();
+            if (childCount != 1) throw new Exception("childCount is not 1");
+            int index = getCheckedIndex();
+            boolean b = ((TabLinearLayout) getChildAt(0)).checkItem(index);
+            if (b) {
+                if (null != mListener) {
+                    mListener.onLeave(index);
+                }
+            }
+            return b;
+        } catch (Exception e) {
+            LeanBackUtil.log("TabLayout => checkedCurrentItem => " + e.getMessage());
+            return false;
+        }
+    }
+
+    @Keep
     public int getItemCount() {
         try {
             int childCount = getChildCount();
-            if (childCount != 1)
-                throw new Exception("childCount is not 1");
+            if (childCount != 1) throw new Exception("childCount is not 1");
             return ((TabLinearLayout) getChildAt(0)).getChildCount();
         } catch (Exception e) {
             LeanBackUtil.log("TabLayout => getItemCount => " + e.getMessage());
@@ -656,11 +321,10 @@ public final class TabLayout extends HorizontalScrollView {
     }
 
     @Keep
-    public boolean requestNextFocus(int direction, int position) {
+    private int findNextPosition(int direction, int position) {
         try {
             int childCount = getChildCount();
-            if (childCount != 1)
-                throw new Exception("childCount is not 1");
+            if (childCount != 1) throw new Exception("childCount is not 1");
             int next = -1;
             if (direction == View.FOCUS_LEFT) {
                 if (position > 0) {
@@ -671,13 +335,195 @@ public final class TabLayout extends HorizontalScrollView {
                 if (position + 1 <= itemCount) {
                     next = position + 1;
                 }
+            } else if (direction == -1) {
+                next = 0;
             }
-            if (next == -1)
-                throw new Exception("next is -1");
-            return ((TabLinearLayout) getChildAt(0)).requestItem(position, next);
+            if (next == -1) throw new Exception("next is -1");
+            return next;
         } catch (Exception e) {
-            LeanBackUtil.log("TabLayout => requestNextFocus => " + e.getMessage());
+            LeanBackUtil.log("TabLayout => findNextPosition => " + e.getMessage());
+            return -1;
+        }
+    }
+
+    @Keep
+    private boolean scrollRequest(int direction, int position, int next) {
+        try {
+            int childCount = getChildCount();
+            if (childCount != 1) throw new Exception("childCount is not 1");
+
+            if (direction == View.FOCUS_RIGHT) {
+                LeanBackUtil.log("TabLayout => scrollRequest => right => position = " + position + ", next = " + next);
+                int width = getWidth();
+                int itemRight = ((TabLinearLayout) getChildAt(0)).getItemRight(next);
+                int itemWidth = ((TabLinearLayout) getChildAt(0)).getItemWidth(next);
+                int itemRectRight = ((TabLinearLayout) getChildAt(0)).getItemRectRight(next);
+                LeanBackUtil.log("TabLayout => scrollRequest => right => width = " + width + ", itemRight = " + itemRight + ", itemWidth = " + itemWidth + ", itemRectRight = " + itemRectRight);
+
+                if (itemRight == 0 && itemWidth == 0 && itemRectRight == 0) {
+                    int widthLength = getWidthLength();
+                    scrollTo(widthLength - width + mTextPadding, 0);
+                } else if (itemRight > width && itemWidth != 0 && itemRectRight != 0 && itemWidth != itemRectRight) {
+                    scrollTo(itemRight - width + mTextPadding, 0);
+                }
+
+                if (position != next) {
+                    ((TabLinearLayout) getChildAt(0)).resetItem(position);
+                }
+                ((TabLinearLayout) getChildAt(0)).focusItem(next);
+                if (null != mListener) {
+                    mListener.onChecked(next, position);
+                }
+
+            } else if (direction == View.FOCUS_LEFT) {
+                int scrollX = getScrollX();
+                int itemLeft = ((TabLinearLayout) getChildAt(0)).getItemLeft(next);
+                if (itemLeft < scrollX) {
+                    scrollTo(itemLeft, 0);
+                }
+
+                if (position != next) {
+                    ((TabLinearLayout) getChildAt(0)).resetItem(position);
+                }
+                ((TabLinearLayout) getChildAt(0)).focusItem(next);
+                if (null != mListener) {
+                    mListener.onChecked(next, position);
+                }
+            } else if (direction == 0x9999) {
+                ((TabLinearLayout) getChildAt(0)).focusItem(next);
+                if (null != mListener) {
+                    mListener.onChecked(next, position);
+                }
+            }
+            return true;
+        } catch (Exception e) {
+            LeanBackUtil.log("TabLayout => scrollRequest => " + e.getMessage());
             return false;
         }
     }
+
+    @Keep
+    public int getWidthLength() {
+        try {
+            int childCount = getChildCount();
+            if (childCount != 1) throw new Exception("childCount is not 1");
+            return ((TabLinearLayout) getChildAt(0)).getWidth();
+        } catch (Exception e) {
+            LeanBackUtil.log("TabLayout => getWidthLength => " + e.getMessage());
+            return 0;
+        }
+    }
+
+    @Keep
+    public void startAnim(boolean over) {
+        if (mScale <= 1f) return;
+        ViewCompat.animate(this).scaleX(over ? 1f : mScale).scaleY(over ? 1f : mScale).start();
+    }
+
+    private void removeAllItem() {
+        try {
+            int childCount = getChildCount();
+            if (childCount != 1) throw new Exception("childCount is not 1");
+            ((TabLinearLayout) getChildAt(0)).removeAllViews();
+        } catch (Exception e) {
+            LeanBackUtil.log("TabLayout => removeAllItem => " + e.getMessage());
+        }
+    }
+
+    private <T extends TabModel> void addAllItem(@NonNull List<T> list) {
+        try {
+            LeanBackUtil.log("TabLayout => addAllItem =>");
+            if (null == list || list.size() <= 0) throw new Exception("list is null");
+            int childCount = getChildCount();
+            if (childCount != 1) throw new Exception("childCount is not 1");
+            removeAllItem();
+            int size = list.size();
+            for (int i = 0; i < size; i++) {
+                T t = list.get(i);
+                if (null == t) continue;
+                if (t.isImg()) {
+                    addImage(t, i, size);
+                } else if (t.isTxt()) {
+                    addText(t, i, size);
+                }
+            }
+        } catch (Exception e) {
+            LeanBackUtil.log("TabLayout => addAllItem => " + e.getMessage());
+        }
+    }
+
+    private <T extends TabModel> void addText(@NonNull T t, int index, int count) {
+        try {
+            LeanBackUtil.log("TabLayout => addText =>");
+            if (null == t) throw new Exception("t error: " + t);
+            String text = t.getText();
+            if (null == text || text.length() == 0) throw new Exception("text error: " + text);
+            int childCount = getChildCount();
+            if (childCount != 1) throw new Exception("childCount is not 1");
+            // 1
+            TabTextView view = new TabTextView(getContext(), t);
+            view.setTextSize(TypedValue.COMPLEX_UNIT_PX, mTextSize);
+            view.setUnderline(mTextUnderline);
+            view.setUnderlineColor(mTextUnderlineColor);
+            view.setUnderlineWidth(mTextUnderlineWidth);
+            view.setUnderlineHeight(mTextUnderlineHeight);
+            view.setPadding(mTextPadding, 0, mTextPadding, 0);
+            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(0, getHeight());
+            if (index + 1 != count) {
+                layoutParams.rightMargin = mMargin;
+            }
+            view.setLayoutParams(layoutParams);
+            // 2
+            addItem(view);
+        } catch (Exception e) {
+            LeanBackUtil.log("TabLayout => addText => " + e.getMessage());
+        }
+    }
+
+    private <T extends TabModel> void addImage(@NonNull T t, int index, int count) {
+
+        try {
+            LeanBackUtil.log("TabLayout => addImage =>");
+            if (null == t) throw new Exception("t error: " + t);
+            int childCount = getChildCount();
+            if (childCount != 1) throw new Exception("childCount is not 1");
+            // 1
+            TabImageView view = new TabImageView(getContext(), t);
+            view.setWidthMin(mImageWidthMin);
+            view.setWidthMax(mImageWidthMax);
+            view.setHeight(mImageHeight);
+            view.setPadding(mImagePadding, 0, mImagePadding, 0);
+            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(0, getHeight());
+            if (index + 1 != count) {
+                layoutParams.rightMargin = mMargin;
+            }
+            view.setLayoutParams(layoutParams);
+            // 2
+            addItem(view);
+        } catch (Exception e) {
+            LeanBackUtil.log("TabLayout => addImage => " + e.getMessage());
+        }
+    }
+
+    private void addItem(@NonNull View view) {
+        try {
+            if (null == view) throw new Exception("view error: " + view);
+            int childCount = getChildCount();
+            if (childCount != 1) throw new Exception("childCount is not 1");
+            LeanBackUtil.log("TabLayout => addItem =>");
+            ((TabLinearLayout) getChildAt(0)).addView(view);
+        } catch (Exception e) {
+            LeanBackUtil.log("TabLayout => addItem => " + e.getMessage());
+        }
+    }
+
+    /************************************/
+
+    public OnTabChangeListener mListener;
+
+    public void setOnTabChangeListener(@NonNull OnTabChangeListener listener) {
+        this.mListener = listener;
+    }
+
+    /********/
 }
