@@ -161,6 +161,7 @@ public final class TabLayout extends HorizontalScrollView {
         else if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_DOWN) {
             LeanBackUtil.log("TabLayout => dispatchKeyEvent => down_action_down => focus = " + focus);
             View nextFocus = findNextFocus(View.FOCUS_DOWN);
+            LeanBackUtil.log("TabLayout => dispatchKeyEvent => down_action_down => nextFocus = " + nextFocus);
             if (null == nextFocus) {
                 return true;
             } else {
@@ -314,7 +315,7 @@ public final class TabLayout extends HorizontalScrollView {
             nextFocus = FocusFinder.getInstance().findNextFocus(rootView, this, View.FOCUS_UP);
         } else if (direction == View.FOCUS_DOWN) {
             ViewGroup rootView = ViewUtil.getRootView(getContext());
-            nextFocus = FocusFinder.getInstance().findNextFocus(rootView, this, View.FOCUS_RIGHT);
+            nextFocus = FocusFinder.getInstance().findNextFocus(rootView, this, View.FOCUS_DOWN);
         }
         return nextFocus;
     }
