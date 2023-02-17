@@ -27,6 +27,7 @@ import java.util.List;
 
 import lib.kalu.leanback.tab.listener.OnTabChangeListener;
 import lib.kalu.leanback.tab.model.TabModel;
+import lib.kalu.leanback.tags.TagsLayout;
 import lib.kalu.leanback.util.LeanBackUtil;
 import lib.kalu.leanback.util.ViewUtil;
 
@@ -90,7 +91,7 @@ public final class TabLayout extends HorizontalScrollView {
                 if (null == nextFocus) {
                     return true;
                 } else {
-                    checkedCurrentItem();
+                    checkedCurrentItem(View.FOCUS_LEFT);
                 }
             } else {
                 int next = findNextPosition(View.FOCUS_LEFT, index);
@@ -106,7 +107,7 @@ public final class TabLayout extends HorizontalScrollView {
         else if (event.getAction() == KeyEvent.ACTION_UP && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_LEFT) {
             LeanBackUtil.log("TabLayout => dispatchKeyEvent => left_action_up => focus = " + focus);
             if (null != focus && focus instanceof TabLayout) {
-                focusCurrentItem();
+                focusCurrentItem(View.FOCUS_LEFT);
             }
         }
         // right action_down
@@ -119,7 +120,7 @@ public final class TabLayout extends HorizontalScrollView {
                 if (null == nextFocus) {
                     return true;
                 } else {
-                    checkedCurrentItem();
+                    checkedCurrentItem(View.FOCUS_RIGHT);
                 }
             } else {
                 int next = findNextPosition(View.FOCUS_RIGHT, index);
@@ -137,24 +138,25 @@ public final class TabLayout extends HorizontalScrollView {
         else if (event.getAction() == KeyEvent.ACTION_UP && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_RIGHT) {
             LeanBackUtil.log("TabLayout => dispatchKeyEvent => right_action_up => focus = " + focus);
             if (null != focus && focus instanceof TabLayout) {
-                focusCurrentItem();
+                focusCurrentItem(View.FOCUS_RIGHT);
             }
         }
         // up action_down
         else if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_UP) {
             LeanBackUtil.log("TabLayout => dispatchKeyEvent => up_action_down => focus = " + focus);
             View nextFocus = findNextFocus(View.FOCUS_UP);
+            LeanBackUtil.log("TabLayout => dispatchKeyEvent => up_action_down => nextFocus = " + nextFocus);
             if (null == nextFocus) {
                 return true;
             } else {
-                checkedCurrentItem();
+                checkedCurrentItem(View.FOCUS_UP);
             }
         }
         // up action_up
         else if (event.getAction() == KeyEvent.ACTION_UP && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_UP) {
-            LeanBackUtil.log("TabLayout => dispatchKeyEvent => up_action_down => focus = " + focus);
+            LeanBackUtil.log("TabLayout => dispatchKeyEvent => up_action_up => focus = " + focus);
             if (null != focus && focus instanceof TabLayout) {
-                focusCurrentItem();
+                focusCurrentItem(View.FOCUS_UP);
             }
         }
         // down action_down
@@ -165,14 +167,14 @@ public final class TabLayout extends HorizontalScrollView {
             if (null == nextFocus) {
                 return true;
             } else {
-                checkedCurrentItem();
+                checkedCurrentItem(View.FOCUS_DOWN);
             }
         }
         // down action_up
         else if (event.getAction() == KeyEvent.ACTION_UP && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_DOWN) {
             LeanBackUtil.log("TabLayout => dispatchKeyEvent => down_action_up => focus = " + focus);
             if (null != focus && focus instanceof TabLayout) {
-                focusCurrentItem();
+                focusCurrentItem(View.FOCUS_DOWN);
             }
         }
         return super.dispatchKeyEvent(event);
@@ -252,7 +254,12 @@ public final class TabLayout extends HorizontalScrollView {
     }
 
     @Keep
-    private boolean focusCurrentItem() {
+    public boolean focusCurrentItem() {
+        return focusCurrentItem(0x8888);
+    }
+
+    @Keep
+    private boolean focusCurrentItem(int direction) {
         try {
             int childCount = getChildCount();
             if (childCount != 1) throw new Exception("childCount is not 1");
@@ -260,7 +267,15 @@ public final class TabLayout extends HorizontalScrollView {
             boolean b = ((TabLinearLayout) getChildAt(0)).focusItem(index);
             if (b) {
                 if (null != mListener) {
-                    mListener.onRepeat(index);
+                    if (direction == View.FOCUS_UP) {
+                        mListener.onRepeatUp(index);
+                    } else if (direction == View.FOCUS_DOWN) {
+                        mListener.onRepeatDown(index);
+                    } else if (direction == View.FOCUS_LEFT) {
+                        mListener.onRepeatLeft(index);
+                    } else if (direction == View.FOCUS_RIGHT) {
+                        mListener.onRepeatRight(index);
+                    }
                 }
             }
             return b;
@@ -271,7 +286,12 @@ public final class TabLayout extends HorizontalScrollView {
     }
 
     @Keep
-    private boolean checkedCurrentItem() {
+    public boolean checkedCurrentItem() {
+        return checkedCurrentItem(0x8888);
+    }
+
+    @Keep
+    private boolean checkedCurrentItem(int direction) {
         try {
             int childCount = getChildCount();
             if (childCount != 1) throw new Exception("childCount is not 1");
@@ -279,7 +299,15 @@ public final class TabLayout extends HorizontalScrollView {
             boolean b = ((TabLinearLayout) getChildAt(0)).checkItem(index);
             if (b) {
                 if (null != mListener) {
-                    mListener.onLeave(index);
+                    if (direction == View.FOCUS_UP) {
+                        mListener.onLeaveUp(index);
+                    } else if (direction == View.FOCUS_DOWN) {
+                        mListener.onLeaveDown(index);
+                    } else if (direction == View.FOCUS_LEFT) {
+                        mListener.onLeaveLeft(index);
+                    } else if (direction == View.FOCUS_RIGHT) {
+                        mListener.onLeaveRight(index);
+                    }
                 }
             }
             return b;
@@ -316,6 +344,9 @@ public final class TabLayout extends HorizontalScrollView {
         } else if (direction == View.FOCUS_DOWN) {
             ViewGroup rootView = ViewUtil.getRootView(getContext());
             nextFocus = FocusFinder.getInstance().findNextFocus(rootView, this, View.FOCUS_DOWN);
+        }
+        if (null != nextFocus && nextFocus instanceof TagsLayout) {
+            nextFocus = null;
         }
         return nextFocus;
     }
