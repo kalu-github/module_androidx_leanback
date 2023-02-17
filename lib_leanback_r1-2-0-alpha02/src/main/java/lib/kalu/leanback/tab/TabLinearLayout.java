@@ -20,8 +20,6 @@ final class TabLinearLayout extends LinearLayout {
     }
 
     private void init() {
-        setPadding(10, 10, 10, 10);
-        setBackgroundColor(Color.BLUE);
         setFocusable(false);
         setGravity(Gravity.CENTER);
         setOrientation(LinearLayout.HORIZONTAL);

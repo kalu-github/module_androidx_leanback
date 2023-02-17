@@ -184,7 +184,6 @@ public final class TabLayout extends HorizontalScrollView {
     }
 
     private void init(@Nullable AttributeSet attrs) {
-        setPadding(10, 10, 10, 10);
         setDescendantFocusability(ViewGroup.FOCUS_AFTER_DESCENDANTS);
         setSmoothScrollingEnabled(true);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -361,8 +360,8 @@ public final class TabLayout extends HorizontalScrollView {
                 LeanBackUtil.log("TabLayout => scrollRequest => right => width = " + width + ", itemRight = " + itemRight + ", itemWidth = " + itemWidth + ", itemRectRight = " + itemRectRight);
 
                 if (itemRight == 0 && itemWidth == 0 && itemRectRight == 0) {
-                    int widthLength = getWidthLength();
-                    scrollTo(widthLength - width + mTextPadding, 0);
+                    int containerWidth = getContainerWidth();
+                    scrollTo(containerWidth - width + mTextPadding, 0);
                 } else if (itemRight > width && itemWidth != 0 && itemRectRight != 0 && itemWidth != itemRectRight) {
                     scrollTo(itemRight - width + mTextPadding, 0);
                 }
@@ -403,13 +402,13 @@ public final class TabLayout extends HorizontalScrollView {
     }
 
     @Keep
-    public int getWidthLength() {
+    private int getContainerWidth() {
         try {
             int childCount = getChildCount();
             if (childCount != 1) throw new Exception("childCount is not 1");
             return ((TabLinearLayout) getChildAt(0)).getWidth();
         } catch (Exception e) {
-            LeanBackUtil.log("TabLayout => getWidthLength => " + e.getMessage());
+            LeanBackUtil.log("TabLayout => getContainerWidth => " + e.getMessage());
             return 0;
         }
     }
@@ -418,6 +417,40 @@ public final class TabLayout extends HorizontalScrollView {
     public void startAnim(boolean over) {
         if (mScale <= 1f) return;
         ViewCompat.animate(this).scaleX(over ? 1f : mScale).scaleY(over ? 1f : mScale).start();
+    }
+
+    @Keep
+    public boolean scrollLeft() {
+        try {
+            int itemCount = getItemCount();
+            if (itemCount <= 0)
+                throw new Exception("itemCount is :" + itemCount);
+            int index = getCheckedIndex();
+            if (index <= 0)
+                throw new Exception("index is :" + index);
+            int next = index - 1;
+            return scrollRequest(View.FOCUS_LEFT, index, next);
+        } catch (Exception e) {
+            LeanBackUtil.log("TabLayout => scrollLeft => " + e.getMessage());
+            return false;
+        }
+    }
+
+    @Keep
+    public boolean scrollRight() {
+        try {
+            int itemCount = getItemCount();
+            if (itemCount <= 0)
+                throw new Exception("itemCount is :" + itemCount);
+            int index = getCheckedIndex();
+            if (index < 0 || index + 1 >= itemCount)
+                throw new Exception("index is :" + index);
+            int next = index + 1;
+            return scrollRequest(View.FOCUS_RIGHT, index, next);
+        } catch (Exception e) {
+            LeanBackUtil.log("TabLayout => scrollRight => " + e.getMessage());
+            return false;
+        }
     }
 
     private void removeAllItem() {

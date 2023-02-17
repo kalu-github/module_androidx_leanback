@@ -1,9 +1,6 @@
 package lib.kalu.leanback.tab.model;
 
-import android.graphics.Color;
-
 import androidx.annotation.Keep;
-import androidx.leanback.R;
 
 @Keep
 public final class TabModelText extends TabModel {

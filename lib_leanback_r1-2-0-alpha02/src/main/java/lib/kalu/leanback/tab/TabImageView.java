@@ -22,6 +22,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -29,6 +30,7 @@ import java.net.URL;
 import java.security.MessageDigest;
 
 import lib.kalu.leanback.tab.model.TabModel;
+import lib.kalu.leanback.tab.ninepatch.NinePatchChunk;
 import lib.kalu.leanback.util.LeanBackUtil;
 
 @SuppressLint("AppCompatCustomView")
@@ -62,7 +64,7 @@ class TabImageView extends ImageView {
             Drawable drawable = getDrawable();
             int intrinsicWidth = drawable.getIntrinsicWidth();
             int intrinsicHeight = drawable.getIntrinsicHeight();
-//            TabUtil.logE("TabImageView => intrinsicWidth = " + intrinsicWidth + ", intrinsicHeight =" + intrinsicHeight);
+//            logE("TabImageView => intrinsicWidth = " + intrinsicWidth + ", intrinsicHeight =" + intrinsicHeight);
             width = height * intrinsicWidth / intrinsicHeight;
         } catch (Exception e) {
         }
@@ -73,7 +75,7 @@ class TabImageView extends ImageView {
             width = mWidthMax;
         }
 
-//        TabUtil.logE("TabImageView => width = " + width + ", height =" + height);
+//        logE("TabImageView => width = " + width + ", height =" + height);
         setMeasuredDimension(width, height);
     }
 
@@ -136,10 +138,10 @@ class TabImageView extends ImageView {
 //            // 4
 //            Bitmap bitmap = Bitmap.createBitmap((int) rectW, (int) rectH, Bitmap.Config.ARGB_8888);
 //            Canvas canvas = new Canvas(bitmap);
-////            TabUtil.logE("IMGsetImageDrawable => paddingLeft = " + paddingLeft + ", paddingRight =" + paddingRight);
-////            TabUtil.logE("IMGsetImageDrawable => imgW = " + imgW + ", imgH =" + imgH);
-////            TabUtil.logE("IMGsetImageDrawable => tabWidth = " + tabWidth + ", tabHeight =" + tabHeight);
-////            TabUtil.logE("IMGsetImageDrawable => canvasWidth = " + canvasWidth + ", canvasHeight =" + canvasHeight);
+////            logE("IMGsetImageDrawable => paddingLeft = " + paddingLeft + ", paddingRight =" + paddingRight);
+////            logE("IMGsetImageDrawable => imgW = " + imgW + ", imgH =" + imgH);
+////            logE("IMGsetImageDrawable => tabWidth = " + tabWidth + ", tabHeight =" + tabHeight);
+////            logE("IMGsetImageDrawable => canvasWidth = " + canvasWidth + ", canvasHeight =" + canvasHeight);
 //            Rect src = new Rect((int) ((rectW - imgW) / 2), (int) ((rectH - imgH) / 2), (int) imgW, (int) imgH);
 //            RectF dst = new RectF((rectW - bitmapW) / 2, (rectH - bitmapH) / 2, bitmapW, bitmapH);
 //            Bitmap temp = ((BitmapDrawable) drawable).getBitmap();
@@ -256,10 +258,10 @@ class TabImageView extends ImageView {
             if (null != s1 && s1.length() > 0) {
                 show(s1, true);
             } else if (null != s2 && s2.length() > 0) {
-                Drawable drawable = TabUtil.decodeDrawable(getContext(), s2, false);
+                Drawable drawable = decodeDrawable(getContext(), s2, false);
                 setBackground(drawable);
             } else if (null != s3 && s3.length() > 0) {
-                Drawable drawable = TabUtil.decodeDrawable(getContext(), s2, true);
+                Drawable drawable = decodeDrawable(getContext(), s2, true);
                 setBackground(drawable);
             } else if (i4 != 0) {
                 setBackgroundResource(i4);
@@ -277,7 +279,7 @@ class TabImageView extends ImageView {
         // file
         if (checkPath) {
             String path = getPath(url);
-            Drawable drawable = TabUtil.decodeDrawable(getContext(), path, false);
+            Drawable drawable = decodeDrawable(getContext(), path, false);
             if (isBg) {
                 setBackground(drawable);
             } else {
@@ -374,5 +376,43 @@ class TabImageView extends ImageView {
             LeanBackUtil.log("TabImageView => checkPath => " + e.getMessage());
             return false;
         }
+    }
+
+    private Drawable decodeDrawable(@NonNull Context context, @NonNull String absolutePath, boolean isAssets) {
+
+        Drawable drawable = null;
+        InputStream inputStream = null;
+
+        try {
+
+            if (null != absolutePath && absolutePath.length() > 0) {
+
+                if (isAssets) {
+                    inputStream = context.getResources().getAssets().open(absolutePath);
+                } else {
+                    inputStream = new FileInputStream(absolutePath);
+                }
+
+                // .9
+                if (absolutePath.endsWith(".9.png")) {
+                    drawable = NinePatchChunk.create9PatchDrawable(context, inputStream, null);
+                }
+                // not .9
+                else {
+                    Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+                    drawable = new BitmapDrawable(context.getResources(), bitmap);
+                }
+            }
+        } catch (Exception e) {
+//            logE("decodeDrawable[exception] => " + e.getMessage());
+        }
+
+        try {
+            if (null != inputStream) {
+                inputStream.close();
+            }
+        } catch (Exception e) {
+        }
+        return drawable;
     }
 }
