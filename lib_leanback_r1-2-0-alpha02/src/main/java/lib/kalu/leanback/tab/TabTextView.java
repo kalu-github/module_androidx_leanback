@@ -55,6 +55,10 @@ class TabTextView extends TextView {
         if (mUnderlineHeight <= 0f)
             return;
 
+        boolean focus = isFocus();
+        if (focus)
+            return;
+
         boolean checked = isChecked();
         if (!checked)
             return;
