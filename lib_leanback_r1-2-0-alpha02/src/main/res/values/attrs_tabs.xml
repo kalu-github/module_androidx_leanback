@@ -20,8 +20,6 @@
         <attr name="tab_text_padding" format="reference|dimension" />
         <!-- 文字大小 -->
         <attr name="tab_text_size" format="reference|dimension" />
-        <!-- 文字下划线 -->
-        <attr name="tab_text_underline" format="reference|boolean" />
         <!-- 文字下划线颜色 -->
         <attr name="tab_text_underline_color" format="reference|color" />
         <!-- 文字下划线宽度 -->

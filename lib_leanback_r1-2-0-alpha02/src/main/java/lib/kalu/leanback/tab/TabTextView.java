@@ -36,7 +36,6 @@ import lib.kalu.leanback.util.LeanBackUtil;
 @SuppressLint("AppCompatCustomView")
 class TabTextView extends TextView {
 
-    private boolean mUnderline = false;
     private int mUnderlineColor = Color.TRANSPARENT;
     private int mUnderlineHeight = 0;
     private int mUnderlineWidth = 0;
@@ -53,44 +52,49 @@ class TabTextView extends TextView {
         getPaint().setFakeBoldText(false);
         super.onDraw(canvas);
 
+        if (mUnderlineHeight <= 0f)
+            return;
+
+        boolean checked = isChecked();
+        if (!checked)
+            return;
+
         // 驻留文字下划线
-        if (mUnderline && mUnderlineHeight > 0f && String.valueOf(1).equals(getHint())) {
-            try {
-                TextPaint textPaint = getPaint();
-                Paint.FontMetrics fontMetrics = textPaint.getFontMetrics();
-                int measureTextHeight = (int) (fontMetrics.bottom - fontMetrics.top);
-                int paintColor = textPaint.getColor();
-                int strokeWidth = (int) textPaint.getStrokeWidth();
-                int width = getWidth();
-                int height = getHeight();
-                int startX;
-                int stopX;
-                if (mUnderlineWidth <= 0) {
-                    int measureTextWidth = (int) textPaint.measureText(String.valueOf(getText()));
-                    startX = width / 2 - measureTextWidth / 2;
-                    stopX = startX + measureTextWidth;
-                } else {
-                    startX = width / 2 - mUnderlineWidth / 2;
-                    stopX = startX + mUnderlineWidth;
-                }
-                int startY = height / 2 + measureTextHeight / 2 + mUnderlineHeight / 2;
-                if (startY >= height) {
-                    startY = height - mUnderlineHeight / 2;
-                }
-                int stopY = startY;
-                textPaint.setStrokeJoin(Paint.Join.ROUND);
-                textPaint.setStrokeCap(Paint.Cap.ROUND);
-                textPaint.setAntiAlias(true);
-                textPaint.setStrokeWidth(mUnderlineHeight);
-                if (mUnderlineColor == Color.TRANSPARENT) {
-                    mUnderlineColor = paintColor;
-                }
-                textPaint.setColor(mUnderlineColor);
-                canvas.drawLine(startX, startY, stopX, stopY, textPaint);
-                textPaint.setColor(paintColor);
-                textPaint.setStrokeWidth(strokeWidth);
-            } catch (Exception e) {
+        try {
+            TextPaint textPaint = getPaint();
+            Paint.FontMetrics fontMetrics = textPaint.getFontMetrics();
+            int measureTextHeight = (int) (fontMetrics.bottom - fontMetrics.top);
+            int paintColor = textPaint.getColor();
+            int strokeWidth = (int) textPaint.getStrokeWidth();
+            int width = getWidth();
+            int height = getHeight();
+            int startX;
+            int stopX;
+            if (mUnderlineWidth <= 0) {
+                int measureTextWidth = (int) textPaint.measureText(String.valueOf(getText()));
+                startX = width / 2 - measureTextWidth / 2;
+                stopX = startX + measureTextWidth;
+            } else {
+                startX = width / 2 - mUnderlineWidth / 2;
+                stopX = startX + mUnderlineWidth;
             }
+            int startY = height / 2 + measureTextHeight / 2 + mUnderlineHeight / 2;
+            if (startY >= height) {
+                startY = height - mUnderlineHeight / 2;
+            }
+            int stopY = startY;
+            textPaint.setStrokeJoin(Paint.Join.ROUND);
+            textPaint.setStrokeCap(Paint.Cap.ROUND);
+            textPaint.setAntiAlias(true);
+            textPaint.setStrokeWidth(mUnderlineHeight);
+            if (mUnderlineColor == Color.TRANSPARENT) {
+                mUnderlineColor = paintColor;
+            }
+            textPaint.setColor(mUnderlineColor);
+            canvas.drawLine(startX, startY, stopX, stopY, textPaint);
+            textPaint.setColor(paintColor);
+            textPaint.setStrokeWidth(strokeWidth);
+        } catch (Exception e) {
         }
     }
 
@@ -123,10 +127,6 @@ class TabTextView extends TextView {
         setLines(1);
         setMinEms(2);
         setGravity(Gravity.CENTER);
-    }
-
-    protected void setUnderline(boolean underline) {
-        this.mUnderline = underline;
     }
 
     protected void setUnderlineColor(int color) {
@@ -193,7 +193,7 @@ class TabTextView extends TextView {
                 setText(text);
             }
         } catch (Exception e) {
-            LeanBackUtil.log("TabTextView => refreshText => "+e.getMessage());
+            LeanBackUtil.log("TabTextView => refreshText => " + e.getMessage());
         }
     }
 
@@ -213,7 +213,7 @@ class TabTextView extends TextView {
                 }
             }
         } catch (Exception e) {
-            LeanBackUtil.log("TabTextView => refreshTextColor => "+e.getMessage());
+            LeanBackUtil.log("TabTextView => refreshTextColor => " + e.getMessage());
         }
     }
 
@@ -259,7 +259,7 @@ class TabTextView extends TextView {
                 setBackground(drawable);
             }
         } catch (Exception e) {
-            LeanBackUtil.log("TabTextView => refreshBackground => "+e.getMessage());
+            LeanBackUtil.log("TabTextView => refreshBackground => " + e.getMessage());
         }
     }
 
