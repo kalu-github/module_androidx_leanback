@@ -485,6 +485,22 @@ public final class TabLayout extends HorizontalScrollView {
         }
     }
 
+    @Keep
+    public boolean scrollToPosition(int index) {
+        try {
+            int itemCount = getItemCount();
+            if (itemCount <= 0)
+                throw new Exception("itemCount is :" + itemCount);
+            if (index < 0 || index + 1 >= itemCount)
+                throw new Exception("index is :" + index);
+            int next = index + 1;
+            return scrollRequest(0x9999, index, next);
+        } catch (Exception e) {
+            LeanBackUtil.log("TabLayout => scrollToPosition => " + e.getMessage());
+            return false;
+        }
+    }
+
     private void removeAllItem() {
         try {
             int childCount = getChildCount();
