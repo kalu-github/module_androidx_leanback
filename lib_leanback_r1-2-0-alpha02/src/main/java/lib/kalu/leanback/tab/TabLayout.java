@@ -420,6 +420,14 @@ public final class TabLayout extends HorizontalScrollView {
                 if (null != mListener) {
                     mListener.onChecked(next, position);
                 }
+            } else if (direction == 0x88888) {
+                if (position != next) {
+                    ((TabLinearLayout) getChildAt(0)).resetItem(position);
+                }
+                ((TabLinearLayout) getChildAt(0)).focusItem(next);
+                if (null != mListener) {
+                    mListener.onChecked(next, position);
+                }
             } else if (direction == 0x9999) {
                 ((TabLinearLayout) getChildAt(0)).focusItem(next);
                 if (null != mListener) {
@@ -486,15 +494,15 @@ public final class TabLayout extends HorizontalScrollView {
     }
 
     @Keep
-    public boolean scrollToPosition(int index) {
+    public boolean scrollToPosition(int position) {
         try {
             int itemCount = getItemCount();
             if (itemCount <= 0)
                 throw new Exception("itemCount is :" + itemCount);
-            if (index < 0 || index + 1 >= itemCount)
-                throw new Exception("index is :" + index);
-            int next = index + 1;
-            return scrollRequest(0x9999, index, next);
+            if (position < 0 || position + 1 >= itemCount)
+                throw new Exception("index is :" + position);
+            int index = getCheckedIndex();
+            return scrollRequest(0x88888, index, position);
         } catch (Exception e) {
             LeanBackUtil.log("TabLayout => scrollToPosition => " + e.getMessage());
             return false;
