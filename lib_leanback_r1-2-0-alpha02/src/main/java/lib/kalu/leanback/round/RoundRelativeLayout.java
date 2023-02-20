@@ -39,6 +39,14 @@ public class RoundRelativeLayout extends RelativeLayout {
         this.mRCHelper.init(context, attrs);
     }
 
+    protected void setRadius(int topLeft, int topRight, int bottomLeft, int bottomRight) {
+        this.mRCHelper.setRadius(topLeft, topRight, bottomLeft, bottomRight);
+    }
+
+    protected void setScale(float v) {
+        this.mRCHelper.setScale(v);
+    }
+
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         float rateW = mRCHelper.getRateW();

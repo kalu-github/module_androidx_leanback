@@ -325,7 +325,6 @@
         <attr name="rl_rate_height" format="reference|float" />
         <attr name="rl_clip_background" format="reference|boolean" />
         <attr name="rl_clip_circle" format="reference|boolean" />
-        <attr name="rl_focus" format="reference|boolean" />
         <attr name="rl_scale" format="reference|float" />
         <attr name="rl_duration" format="reference|integer" />
         <attr name="rl_corner_top_left" format="reference|dimension" />

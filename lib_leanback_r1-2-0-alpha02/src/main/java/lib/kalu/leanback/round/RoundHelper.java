@@ -34,7 +34,6 @@ public final class RoundHelper {
     public Path mClipPath;                 // 剪裁区域路径
     public boolean mClipBackground;        // 是否剪裁背景
     public boolean mClipCircle;        // 是否剪裁背景
-    public boolean mFocus = false;
     public float mScale = 1.05f;
     public int mDuration = 100;
     public Region mAreaRegion;             // 内容区域
@@ -53,7 +52,6 @@ public final class RoundHelper {
             mClip = typedArray.getBoolean(R.styleable.RoundLayout_rl_clip_path, false);
             mClipCircle = typedArray.getBoolean(R.styleable.RoundLayout_rl_clip_circle, false);
             mClipBackground = typedArray.getBoolean(R.styleable.RoundLayout_rl_clip_background, false);
-            mFocus = typedArray.getBoolean(R.styleable.RoundLayout_rl_focus, false);
             mScale = typedArray.getFloat(R.styleable.RoundLayout_rl_scale, 1.05f);
             mDuration = typedArray.getInt(R.styleable.RoundLayout_rl_duration, 100);
             int topLeft = typedArray.getDimensionPixelOffset(R.styleable.RoundLayout_rl_corner_top_left, 0);
@@ -172,7 +170,7 @@ public final class RoundHelper {
     }
 
     protected void onFocusChanged(@NonNull View view, boolean gainFocus) {
-        if (!mFocus)
+        if (mScale < 1F)
             return;
         ViewCompat.animate(view).scaleX(gainFocus ? mScale : 1f).scaleY(gainFocus ? mScale : 1f).setDuration(mDuration).start();
     }
@@ -223,5 +221,20 @@ public final class RoundHelper {
         mRadiiTemp[7] = 0;
         refreshRegion(view, false);
         view.invalidate();
+    }
+
+    protected void setRadius(int topLeft, int topRight, int bottomLeft, int bottomRight) {
+        mRadii[0] = topLeft;
+        mRadii[1] = topLeft;
+        mRadii[2] = topRight;
+        mRadii[3] = topRight;
+        mRadii[4] = bottomRight;
+        mRadii[5] = bottomRight;
+        mRadii[6] = bottomLeft;
+        mRadii[7] = bottomLeft;
+    }
+
+    protected void setScale(float v) {
+        mScale = v;
     }
 }
