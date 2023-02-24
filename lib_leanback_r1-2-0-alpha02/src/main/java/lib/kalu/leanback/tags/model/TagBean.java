@@ -13,11 +13,17 @@ public class TagBean implements Serializable {
     private int id;
     private String text;
     @ColorInt
-    private int textColorFocus;
+    private int textColorIntFocus;
     @ColorInt
-    private int textColorSelect;
+    private int textColorIntSelect;
     @ColorInt
-    private int textColorDetault;
+    private int textColorIntDetault;
+    @ColorInt
+    private int textColorResourceFocus;
+    @ColorInt
+    private int textColorResourceSelect;
+    @ColorInt
+    private int textColorResourceDetault;
     @DrawableRes
     private int backgroundResourceFocus;
     @DrawableRes
@@ -41,28 +47,52 @@ public class TagBean implements Serializable {
         this.text = text;
     }
 
-    public int getTextColorFocus() {
-        return textColorFocus;
+    public int getTextColorIntFocus() {
+        return textColorIntFocus;
     }
 
-    public void setTextColorFocus(int textColorFocus) {
-        this.textColorFocus = textColorFocus;
+    public void setTextColorIntFocus(int textColorIntFocus) {
+        this.textColorIntFocus = textColorIntFocus;
     }
 
-    public int getTextColorSelect() {
-        return textColorSelect;
+    public int getTextColorIntSelect() {
+        return textColorIntSelect;
     }
 
-    public void setTextColorSelect(int textColorSelect) {
-        this.textColorSelect = textColorSelect;
+    public void setTextColorIntSelect(int textColorIntSelect) {
+        this.textColorIntSelect = textColorIntSelect;
     }
 
-    public int getTextColorDetault() {
-        return textColorDetault;
+    public int getTextColorIntDetault() {
+        return textColorIntDetault;
     }
 
-    public void setTextColorDetault(int textColorDetault) {
-        this.textColorDetault = textColorDetault;
+    public void setTextColorIntDetault(int textColorIntDetault) {
+        this.textColorIntDetault = textColorIntDetault;
+    }
+
+    public int getTextColorResourceFocus() {
+        return textColorResourceFocus;
+    }
+
+    public void setTextColorResourceFocus(int textColorResourceFocus) {
+        this.textColorResourceFocus = textColorResourceFocus;
+    }
+
+    public int getTextColorResourceSelect() {
+        return textColorResourceSelect;
+    }
+
+    public void setTextColorResourceSelect(int textColorResourceSelect) {
+        this.textColorResourceSelect = textColorResourceSelect;
+    }
+
+    public int getTextColorResourceDetault() {
+        return textColorResourceDetault;
+    }
+
+    public void setTextColorResourceDetault(int textColorResourceDetault) {
+        this.textColorResourceDetault = textColorResourceDetault;
     }
 
     public int getBackgroundResourceFocus() {

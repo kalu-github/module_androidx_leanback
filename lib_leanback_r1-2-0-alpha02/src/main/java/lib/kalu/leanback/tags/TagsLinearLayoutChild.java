@@ -53,9 +53,29 @@ final class TagsLinearLayoutChild extends LinearLayout {
             child.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize);
             child.setPadding(paddingLeft, 0, paddingRight, 0);
 
-            child.setTextColorDefault(temp.getTextColorDetault());
-            child.setTextColorSelect(temp.getTextColorSelect());
-            child.setTextColorFocus(temp.getTextColorFocus());
+            int textColorResourceDetault = temp.getTextColorResourceDetault();
+            if (textColorResourceDetault != 0) {
+                int color = getResources().getColor(textColorResourceDetault);
+                child.setTextColorDefault(color);
+            } else {
+                child.setTextColorDefault(temp.getTextColorIntDetault());
+            }
+
+            int textColorResourceSelect = temp.getTextColorResourceSelect();
+            if (textColorResourceSelect != 0) {
+                int color = getResources().getColor(textColorResourceSelect);
+                child.setTextColorSelect(color);
+            } else {
+                child.setTextColorSelect(temp.getTextColorIntSelect());
+            }
+
+            int textColorResourceFocus = temp.getTextColorResourceFocus();
+            if (textColorResourceFocus != 0) {
+                int color = getResources().getColor(textColorResourceFocus);
+                child.setTextColorFocus(color);
+            } else {
+                child.setTextColorFocus(temp.getTextColorIntFocus());
+            }
 
             child.setBackgroundResourceDefault(temp.getBackgroundResourceDefault());
             child.setBackgroundResourceSelect(temp.getBackgroundResourceSelect());
