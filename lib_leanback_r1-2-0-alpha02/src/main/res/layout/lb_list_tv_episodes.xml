@@ -3,49 +3,42 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:clickable="false"
     android:clipChildren="false"
     android:clipToPadding="false"
     android:focusable="false"
-    android:focusableInTouchMode="false"
-    android:longClickable="false"
     android:orientation="vertical">
 
     <TextView
-        android:id="@+id/module_leanback_llrd_head"
+        android:id="@+id/lb_list_tv_episodes_head"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="50dp"
+        android:clickable="false"
         android:focusable="false"
+        android:focusableInTouchMode="false"
         android:gravity="center_vertical|left"
         android:longClickable="false"
-        android:textColor="#ffffff"
-        android:textSize="20sp"
+        android:textColor="@android:color/white"
+        android:textSize="18sp"
         android:visibility="gone" />
 
     <LinearLayout
-        android:id="@+id/module_leanback_llrd_top"
+        android:id="@+id/lb_list_tv_episodes_items"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:clickable="false"
         android:clipChildren="false"
         android:clipToPadding="false"
         android:focusable="false"
-        android:focusableInTouchMode="false"
-        android:longClickable="false"
         android:orientation="horizontal"
         app:focusOutEnd="true"
         app:focusOutFront="true" />
 
     <lib.kalu.leanback.list.RecyclerViewHorizontal
-        android:id="@+id/module_leanback_llrd_bottom"
+        android:id="@+id/lb_list_tv_episodes_ranges"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:clickable="false"
         android:clipChildren="false"
         android:clipToPadding="false"
         android:focusable="false"
-        android:focusableInTouchMode="false"
-        android:longClickable="false"
         app:focusOutEnd="true"
         app:focusOutFront="true" />
 

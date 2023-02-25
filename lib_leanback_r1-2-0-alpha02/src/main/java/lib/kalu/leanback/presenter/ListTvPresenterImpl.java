@@ -3,7 +3,6 @@ package lib.kalu.leanback.presenter;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Typeface;
-import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +14,7 @@ import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
 import androidx.leanback.widget.VerticalGridView;
 
-public interface PresenterImpl {
+public interface ListTvPresenterImpl {
 
     @ColorInt
     default int initHeadBackgroundColor(@NonNull Context context) {
@@ -50,7 +49,7 @@ public interface PresenterImpl {
         return 0;
     }
 
-    default void initStyle(@NonNull Context context, @NonNull ViewGroup parent, @NonNull View view, @IdRes int headId) {
+    default void initHead(@NonNull Context context, @NonNull View view, @IdRes int headId) {
         int magrinTop = initMagrinTop(context);
         int magrinBottom = initMagrinBottom(context);
         if (magrinTop > 0 || magrinBottom > 0) {

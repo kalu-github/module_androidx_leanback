@@ -21,6 +21,10 @@ public final class LeanBackUtil {
         log(mTAG, message, null);
     }
 
+    public static void log(@NonNull String message, @NonNull Throwable throwable) {
+        log(mTAG, message, throwable);
+    }
+
     public static void log(@NonNull String tag, @NonNull String message) {
         log(tag, message, null);
     }
