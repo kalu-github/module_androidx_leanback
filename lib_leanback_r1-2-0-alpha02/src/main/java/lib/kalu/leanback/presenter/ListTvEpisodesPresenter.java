@@ -27,6 +27,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import lib.kalu.leanback.list.LeanBackVerticalGridView;
 import lib.kalu.leanback.util.LeanBackUtil;
 
 public abstract class ListTvEpisodesPresenter<T extends ListTvEpisodesPresenter.ItemBean> extends Presenter implements ListTvPresenterImpl {
@@ -105,6 +106,9 @@ public abstract class ListTvEpisodesPresenter<T extends ListTvEpisodesPresenter.
                         } catch (Exception e) {
                         }
 
+                        LeanBackUtil.log("ListTvEpisodesPresenter => initAdapter1 => onKey => action = " + event.getAction());
+                        LeanBackUtil.log("ListTvEpisodesPresenter => initAdapter1 => onKey => code = " + keyCode);
+
                         // left
                         if (event.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
                             try {
@@ -115,9 +119,9 @@ public abstract class ListTvEpisodesPresenter<T extends ListTvEpisodesPresenter.
                                     boolean rangeFirst = isRangeFirst();
                                     if (!rangeFirst) {
                                         mEpisodeCheckedIndex = num - 1;
-                                        mRangeCheckedIndex -= 1;
+                                        mRangeCheckedIndex = mRangeCheckedIndex - 1;
                                         updateEpisodeAdapter(context, view);
-                                        requestEpisodeChild(view);
+                                        requestCheckedEpisode(view);
                                     }
                                     return true;
                                 }
@@ -138,7 +142,7 @@ public abstract class ListTvEpisodesPresenter<T extends ListTvEpisodesPresenter.
                                         mEpisodeCheckedIndex = 0;
                                         mRangeCheckedIndex += 1;
                                         updateEpisodeAdapter(context, view);
-                                        requestEpisodeChild(view);
+                                        requestCheckedEpisode(view);
                                     }
                                     return true;
                                 }
@@ -147,8 +151,9 @@ public abstract class ListTvEpisodesPresenter<T extends ListTvEpisodesPresenter.
                                 return true;
                             }
                         }
-                        // down
+                        // down2
                         else if (event.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_DPAD_DOWN) {
+                            LeanBackUtil.log("ListTvEpisodesPresenter => initAdapter1 => onKey => down2 =>");
                             mEpisodeCheckedIndex = findEpisodeIndexOf(v);
                             RecyclerView recyclerView = view.findViewById(R.id.lb_list_tv_episodes_ranges);
                             RecyclerView.ViewHolder viewHolder = recyclerView.findViewHolderForAdapterPosition(mRangeCheckedIndex);
@@ -221,7 +226,7 @@ public abstract class ListTvEpisodesPresenter<T extends ListTvEpisodesPresenter.
 
                                     // up
                                     if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_UP) {
-                                        requestEpisodeChild(view);
+                                        requestCheckedEpisode(view);
                                         return true;
                                     }
                                     return false;
@@ -345,18 +350,21 @@ public abstract class ListTvEpisodesPresenter<T extends ListTvEpisodesPresenter.
         }
     }
 
-    private void requestEpisodeChild(View view) {
+    public void requestCheckedEpisode(View view) {
         try {
             List<T> list = getCheckedEpisodeData();
             int size = list.size();
             if (mEpisodeCheckedIndex + 1 > size) {
                 mEpisodeCheckedIndex = size - 1;
             }
+            LeanBackUtil.log("ListTvEpisodesPresenter => requestCheckedEpisode => mEpisodeCheckedIndex = " + mEpisodeCheckedIndex);
             LinearLayout layout = view.findViewById(R.id.lb_list_tv_episodes_items);
+            LeanBackUtil.log("ListTvEpisodesPresenter => requestCheckedEpisode => layout = " + layout);
             View childAt = layout.getChildAt(mEpisodeCheckedIndex);
+            LeanBackUtil.log("ListTvEpisodesPresenter => requestCheckedEpisode => childAt = " + childAt);
             childAt.requestFocus();
         } catch (Exception e) {
-            LeanBackUtil.log("ListTvEpisodesPresenter => requestEpisodeChild => " + e.getMessage(), e);
+            LeanBackUtil.log("ListTvEpisodesPresenter => requestCheckedEpisode => " + e.getMessage(), e);
         }
     }
 
