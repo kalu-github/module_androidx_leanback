@@ -65,6 +65,7 @@ public abstract class ListTvEpisodesPresenter<T extends ListTvEpisodesPresenter.
             // 3
             int episodePadding = initEpisodePadding(context);
             // 2 剧集
+            boolean[] isVertical = new boolean[1];
             for (int i = 0; i < num; i++) {
                 View item = LayoutInflater.from(context).inflate(initEpisodeLayout(), layout, false);
                 layout.addView(item);
@@ -78,13 +79,19 @@ public abstract class ListTvEpisodesPresenter<T extends ListTvEpisodesPresenter.
                 item.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        clickEpisode(viewGroup, v);
+                        int index = findEpisodeIndexOfChild(v);
+                        if (index >= 0) {
+                            clickEpisode(viewGroup, v, index, isVertical[0]);
+                        }
                     }
                 });
                 item.setOnFocusChangeListener(new View.OnFocusChangeListener() {
                     @Override
                     public void onFocusChange(View v, boolean hasFocus) {
-                        callEpisode(v, hasFocus, false);
+                        int index = findEpisodeIndexOfChild(v);
+                        if (index >= 0) {
+                            notifyEpisode(v, index, hasFocus, false, isVertical[0]);
+                        }
                     }
                 });
                 item.setOnKeyListener(new View.OnKeyListener() {
@@ -99,9 +106,11 @@ public abstract class ListTvEpisodesPresenter<T extends ListTvEpisodesPresenter.
                             try {
                                 // 区间 - 显示第一个
                                 int checkedIndexRange = getCheckedIndexRange();
+                                LeanBackUtil.log("ListTvEpisodesPresenter => initAdapter1 => onKey => left => checkedIndexRange = " + checkedIndexRange);
                                 if (checkedIndexRange > 0) {
                                     // 剧集 - 显示第一个
                                     int checkedIndexEpisode = getCheckedIndexEpisode(checkedIndexRange);
+                                    LeanBackUtil.log("ListTvEpisodesPresenter => initAdapter1 => onKey => left => checkedIndexEpisode = " + checkedIndexEpisode);
                                     if (checkedIndexEpisode <= 0) {
                                         // 0
                                         cleanFocusChildOfEpisodeChecked(viewGroup);
@@ -136,7 +145,7 @@ public abstract class ListTvEpisodesPresenter<T extends ListTvEpisodesPresenter.
                                 // 区间 - 是否显示最后一个
                                 int rangeLength = getRangeLength();
                                 int checkedIndexRange = getCheckedIndexRange();
-                                if (checkedIndexRange + 1 < rangeLength) {
+                                if (checkedIndexRange + 1 <= rangeLength) {
                                     // 剧集 - 是否显示最后一个
                                     int size = getIndexOfEpisodeLength(checkedIndexRange);
                                     int episodeIndexOfChild = findEpisodeIndexOfChild(v);
@@ -227,7 +236,7 @@ public abstract class ListTvEpisodesPresenter<T extends ListTvEpisodesPresenter.
                                             updateRangeIndexChecked(viewGroup, checkedIndexRange, position);
                                             updateEpisodeAdapter(context, viewGroup);
                                         }
-                                        callRange(v, position, hasFocus, false, isVertical[0]);
+                                        notifyRange(viewGroup, position, hasFocus, false, isVertical[0]);
                                         isVertical[0] = false;
                                     } catch (Exception e) {
                                         LeanBackUtil.log("ListTvEpisodesPresenter => initAdapter2 => onCreateViewHolder => onFocusChange => " + e.getMessage(), e);
@@ -238,7 +247,6 @@ public abstract class ListTvEpisodesPresenter<T extends ListTvEpisodesPresenter.
                                 @Override
                                 public boolean onKey(View v, int keyCode, KeyEvent event) {
                                     LeanBackUtil.log("ListTvEpisodesPresenter => initAdapter2 => onKey => action = " + event.getAction() + ", code = " + event.getKeyCode());
-
                                     // up
                                     if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_UP) {
                                         isVertical[0] = true;
@@ -249,31 +257,14 @@ public abstract class ListTvEpisodesPresenter<T extends ListTvEpisodesPresenter.
                                     else if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_DOWN) {
                                         isVertical[0] = true;
                                     }
-//                                    // left
-//                                    else if (event.getAction() == KeyEvent.ACTION_UP && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_LEFT) {
-//                                        int checkedIndexRange = getCheckedIndexRange();
-//                                        LeanBackUtil.log("ListTvEpisodesPresenter => initAdapter2 => onKey => left => checkedIndexRange = " + checkedIndexRange);
-//                                        if (checkedIndexRange > 0) {
-//                                            // 1
-//                                            int newCheckedIndexRange = checkedIndexRange - 1;
-//                                            updateRangeIndexChecked(newCheckedIndexRange);
-//                                            // 2
-//                                            updateEpisodeAdapter(context, viewGroup);
-//                                        }
-//                                    }
-//                                    // right
-//                                    else if (event.getAction() == KeyEvent.ACTION_UP && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_RIGHT) {
-//                                        int checkedIndexRange = getCheckedIndexRange();
-//                                        int rangeLength = getRangeLength();
-//                                        LeanBackUtil.log("ListTvEpisodesPresenter => initAdapter2 => onKey => right => checkedIndexRange = " + checkedIndexRange + ", rangeLength = " + rangeLength);
-//                                        if (checkedIndexRange + 1 < rangeLength) {
-//                                            // 1
-//                                            int newCheckedIndexRange = checkedIndexRange + 1;
-//                                            updateRangeIndexChecked(newCheckedIndexRange);
-//                                            // 2
-//                                            updateEpisodeAdapter(context, viewGroup);
-//                                        }
-//                                    }
+                                    // right
+                                    else if (event.getAction() == KeyEvent.ACTION_UP && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_RIGHT) {
+                                        int checkedIndexRange = getCheckedIndexRange();
+                                        int rangeLength = getRangeLength();
+                                        if (checkedIndexRange + 1 >= rangeLength) {
+                                            return true;
+                                        }
+                                    }
                                     return false;
                                 }
                             });
@@ -690,20 +681,14 @@ public abstract class ListTvEpisodesPresenter<T extends ListTvEpisodesPresenter.
         }
     }
 
-    private final void callEpisode(View v, boolean hasFocus, boolean isClick) {
+    private final void notifyEpisode(View v, int index, boolean hasFocus, boolean isClick, boolean isVertical) {
         try {
-            int index;
-            if (isClick) {
-                index = getPlayingIndexEpisode();
-            } else {
-                index = findEpisodeIndexOfChild(v);
-            }
             int checkedIndexRange = getCheckedIndexRange();
             List<T> list = getIndexOfEpisodeData(checkedIndexRange);
             T t = list.get(index);
 
             boolean isChecked;
-            if (hasFocus) {
+            if (hasFocus || isVertical) {
                 isChecked = true;
             } else {
                 isChecked = isCheckedIndexOfEpisode(index);
@@ -717,15 +702,12 @@ public abstract class ListTvEpisodesPresenter<T extends ListTvEpisodesPresenter.
             View child = ((ViewGroup) v.getParent()).getChildAt(index);
             onBindViewHolderEpisode(child.getContext(), child, t, index, hasFocus, isPlaying, isChecked);
         } catch (Exception e) {
-            LeanBackUtil.log("ListTvEpisodesPresenter => callEpisode => " + e.getMessage(), e);
+            LeanBackUtil.log("ListTvEpisodesPresenter => notifyEpisode => " + e.getMessage(), e);
         }
     }
 
-    private final void callRange(@NonNull View v, int index, boolean hasFocus, boolean isClick, boolean isUp) {
+    private final void notifyRange(@NonNull LinearLayout viewGroup, int index, boolean hasFocus, boolean isClick, boolean isUp) {
         try {
-//            RecyclerViewHorizontal recyclerView = ((ViewGroup) v.getParent().getParent()).findViewById(R.id.lb_list_tv_episodes_ranges);
-//            recyclerView.scrollToPosition(index);
-//            RecyclerView.ViewHolder viewHolder = recyclerView.findViewHolderForAdapterPosition(index);
             boolean isPlaying;
             if (isClick) {
                 isPlaying = true;
@@ -733,17 +715,17 @@ public abstract class ListTvEpisodesPresenter<T extends ListTvEpisodesPresenter.
                 isPlaying = isPlayingIndexOfRange(index);
             }
             boolean isChecked;
-            if (hasFocus || isUp) {
+            if (hasFocus || isUp || isClick) {
                 isChecked = true;
             } else {
                 isChecked = false;
 //                isChecked = isCheckedIndexOfRange(index);
             }
-            LeanBackUtil.log("ListTvEpisodesPresenter => callRange => index = " + index + ", hasFocus" + hasFocus + ", isClick = " + isClick + ", isChecked = " + isChecked + ", isPlaying = " + isPlaying);
-            T t = getIndexOfRangeData(index);
-            onBindViewHolderRange(v.getContext(), v, t, index, hasFocus, isPlaying, isChecked);
+            LeanBackUtil.log("ListTvEpisodesPresenter => notifyRange => index = " + index + ", hasFocus" + hasFocus + ", isClick = " + isClick + ", isChecked = " + isChecked + ", isPlaying = " + isPlaying);
+            RecyclerViewHorizontal recyclerView = viewGroup.findViewById(R.id.lb_list_tv_episodes_ranges);
+            recyclerView.getAdapter().notifyItemRangeChanged(index, 1);
         } catch (Exception e) {
-            LeanBackUtil.log("ListTvEpisodesPresenter => callRange => " + e.getMessage(), e);
+            LeanBackUtil.log("ListTvEpisodesPresenter => notifyRange => " + e.getMessage(), e);
         }
     }
 
@@ -770,25 +752,25 @@ public abstract class ListTvEpisodesPresenter<T extends ListTvEpisodesPresenter.
         }
     }
 
-    private final void updateEpisodeIndexPlayingAndChecked(int index, int position) {
-        try {
-            List<T> list = getIndexOfEpisodeData(index);
-            if (null == list)
-                throw new Exception("list error: null");
-            int size = list.size();
-            if (size <= 0)
-                throw new Exception("size error: " + size);
-            for (int i = 0; i < size; i++) {
-                T t = list.get(i);
-                if (null == t)
-                    continue;
-                t.setChecked(position == i);
-                t.setPlaying(position == i);
-            }
-        } catch (Exception e) {
-            LeanBackUtil.log("ListTvEpisodesPresenter => updateEpisodeIndexPlayingAndChecked => " + e.getMessage(), e);
-        }
-    }
+//    private final void updateEpisodeIndexPlayingAndChecked(int index, int position) {
+//        try {
+//            List<T> list = getIndexOfEpisodeData(index);
+//            if (null == list)
+//                throw new Exception("list error: null");
+//            int size = list.size();
+//            if (size <= 0)
+//                throw new Exception("size error: " + size);
+//            for (int i = 0; i < size; i++) {
+//                T t = list.get(i);
+//                if (null == t)
+//                    continue;
+//                t.setChecked(position == i);
+//                t.setPlaying(position == i);
+//            }
+//        } catch (Exception e) {
+//            LeanBackUtil.log("ListTvEpisodesPresenter => updateEpisodeIndexPlayingAndChecked => " + e.getMessage(), e);
+//        }
+//    }
 
 //    private final void updateEpisodeIndexChecked(int position) {
 //        int checkedIndexRange = getCheckedIndexRange();
@@ -814,41 +796,40 @@ public abstract class ListTvEpisodesPresenter<T extends ListTvEpisodesPresenter.
         }
     }
 
-    private final void updateEpisodeClickIndex(int position) {
-        // checkRange
-        int checkedIndexRange = getCheckedIndexRange();
-        // playingRange
-        int playingIndexRange = getPlayingIndexRange();
-        if (checkedIndexRange != playingIndexRange) {
-            updateRangeIndexPlayingAndChecked(null, checkedIndexRange);
-        }
-        // checkEpisode
-        updateEpisodeIndexPlayingAndChecked(checkedIndexRange, position);
-    }
+//    private final void updateEpisodeClickIndex(int position) {
+//        // checkRange
+//        int checkedIndexRange = getCheckedIndexRange();
+//        // playingRange
+//        int playingIndexRange = getPlayingIndexRange();
+//        if (checkedIndexRange != playingIndexRange) {
+//            updateRangeIndexPlayingAndChecked(null, checkedIndexRange);
+//        }
+//        // checkEpisode
+//        updateEpisodeIndexPlayingAndChecked(checkedIndexRange, position);
+//    }
 
-    private final void clickEpisode(@NonNull LinearLayout viewGroup, View v) {
+    private final void clickEpisode(@NonNull LinearLayout viewGroup, View v, int index, boolean isVertical) {
 
-        int indexOfEpisode = findEpisodeIndexOfChild(v);
-        boolean playingIndexOfEpisode = isPlayingIndexOfEpisode(indexOfEpisode);
+        boolean playingIndexOfEpisode = isPlayingIndexOfEpisode(index);
         if (playingIndexOfEpisode)
             return;
 
-        // 1. 还原之前正在playing, range
-        // TODO: 2023/2/28
-        resetRangeIndexPlayingAndChecked(viewGroup);
-        // 2. 还原之前正在playing, episode
-        callEpisode(v, false, true);
-        // 3. 更新index
-        updateEpisodeClickIndex(indexOfEpisode);
+        int playingIndexEpisode = getPlayingIndexEpisode();
         int checkedIndexRange = getCheckedIndexRange();
-        updateRangeIndexPlayingAndChecked(viewGroup, checkedIndexRange);
-        // 4. 更新正在playing, episode
-        callEpisode(v, false, false);
-        // 5. listener
+        int playingIndexRange = getPlayingIndexRange();
+        // 1.重置index
+        resetPlayingIndex(checkedIndexRange, index);
+        // 2. 还原之前正在playing, episode
+        notifyEpisode(v, playingIndexEpisode, false, false, isVertical);
+        notifyEpisode(v, index, true, true, isVertical);
+        // 3. 还原之前正在playing, range
+        notifyRange(viewGroup, playingIndexRange, false, false, isVertical);
+        notifyRange(viewGroup, checkedIndexRange, false, true, isVertical);
+        // 4. listener
         try {
             List<T> list = getIndexOfEpisodeData(checkedIndexRange);
-            T t = list.get(indexOfEpisode);
-            onClickEpisode(v.getContext(), v, t, indexOfEpisode);
+            T t = list.get(index);
+            onClickEpisode(v.getContext(), v, t, index);
         } catch (Exception e) {
         }
     }
@@ -875,27 +856,30 @@ public abstract class ListTvEpisodesPresenter<T extends ListTvEpisodesPresenter.
         }
     }
 
-    private void resetRangeIndexPlayingAndChecked(LinearLayout viewGroup) {
+    private final void resetPlayingIndex(int playingIndexRange, int playingIndexEpisode) {
         try {
-            RecyclerViewHorizontal recyclerView = viewGroup.findViewById(R.id.lb_list_tv_episodes_ranges);
-            if (null == recyclerView)
-                throw new Exception("recyclerView error: null");
-            for (int i = 0; i <= 1; i++) {
-                int index;
-                if (i == 0) {
-                    index = getCheckedIndexRange();
-                } else {
-                    index = getPlayingIndexRange();
-                }
-                T t = getIndexOfRangeData(index);
+            int index = -1;
+            for (Map.Entry<T, List<T>> entry : mData.entrySet()) {
+                T t = entry.getKey();
                 if (null == t)
                     continue;
-                t.setChecked(false);
-                t.setPlaying(false);
-                recyclerView.getAdapter().notifyItemRangeChanged(index, 1);
+                index += 1;
+                t.setChecked(index == playingIndexRange);
+                t.setPlaying(index == playingIndexRange);
+                List<T> value = entry.getValue();
+                if (null == value)
+                    continue;
+                int size = value.size();
+                for (int i = 0; i < size; i++) {
+                    T t1 = value.get(i);
+                    if (null == t1)
+                        continue;
+                    t1.setChecked(index == playingIndexRange && i == playingIndexEpisode);
+                    t1.setPlaying(index == playingIndexRange && i == playingIndexEpisode);
+                }
             }
         } catch (Exception e) {
-            LeanBackUtil.log("ListTvEpisodesPresenter => resetRangeIndexPlayingAndChecked => " + e.getMessage(), e);
+            LeanBackUtil.log("ListTvEpisodesPresenter => resetPlayingIndex => " + e.getMessage(), e);
         }
     }
 
