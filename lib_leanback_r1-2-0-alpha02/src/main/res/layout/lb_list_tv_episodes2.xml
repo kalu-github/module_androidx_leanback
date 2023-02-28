@@ -28,22 +28,18 @@
         android:clipChildren="false"
         android:clipToPadding="false"
         android:focusable="false"
-        android:orientation="horizontal" />
+        android:orientation="horizontal"
+        app:focusOutEnd="true"
+        app:focusOutFront="true" />
 
-    <HorizontalScrollView
+    <lib.kalu.leanback.list.RecyclerViewHorizontal
+        android:id="@+id/lb_list_tv_episodes_ranges"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:clipChildren="false"
         android:clipToPadding="false"
-        android:fillViewport="true"
-        android:focusable="false">
-
-        <LinearLayout
-            android:id="@+id/lb_list_tv_episodes_ranges"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal" />
-
-    </HorizontalScrollView>
+        android:focusable="false"
+        app:focusOutEnd="true"
+        app:focusOutFront="true" />
 
 </LinearLayout>

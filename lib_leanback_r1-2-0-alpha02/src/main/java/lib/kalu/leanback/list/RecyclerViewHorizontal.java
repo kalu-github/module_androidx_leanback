@@ -130,6 +130,10 @@ public class RecyclerViewHorizontal extends RecyclerView {
     @Override
     public void scrollToPosition(int position) {
 //        super.scrollToPosition(position);
+        scrollToPosition(position, true);
+    }
+
+    public void scrollToPosition(int position, boolean hasFocus) {
 
         while (true) {
             try {
@@ -141,7 +145,9 @@ public class RecyclerViewHorizontal extends RecyclerView {
                 View focusedChild = getFocusedChild();
                 int fromPosition = findFocusedChildFromPosition(focusedChild);
                 if (fromPosition == position) {
-                    focusedChild.requestFocus();
+                    if(hasFocus){
+                        focusedChild.requestFocus();
+                    }
                     break;
                 }
                 // right
