@@ -65,7 +65,7 @@ public abstract class ListTvEpisodesPresenter<T extends ListTvEpisodesPresenter.
             // 3
             int episodePadding = initEpisodePadding(context);
             // 2 剧集
-            boolean[] isVertical = new boolean[1];
+            boolean[] isVertical = new boolean[]{false};
             for (int i = 0; i < num; i++) {
                 View item = LayoutInflater.from(context).inflate(initEpisodeLayout(), layout, false);
                 layout.addView(item);
@@ -82,6 +82,7 @@ public abstract class ListTvEpisodesPresenter<T extends ListTvEpisodesPresenter.
                         int index = findEpisodeIndexOfChild(v);
                         if (index >= 0) {
                             clickEpisode(viewGroup, v, index, isVertical[0]);
+                            isVertical[0] = false;
                         }
                     }
                 });
@@ -91,6 +92,7 @@ public abstract class ListTvEpisodesPresenter<T extends ListTvEpisodesPresenter.
                         int index = findEpisodeIndexOfChild(v);
                         if (index >= 0) {
                             notifyEpisode(v, index, hasFocus, false, isVertical[0]);
+                            isVertical[0] = false;
                         }
                     }
                 });
@@ -98,8 +100,7 @@ public abstract class ListTvEpisodesPresenter<T extends ListTvEpisodesPresenter.
                     @Override
                     public boolean onKey(View v, int keyCode, KeyEvent event) {
 
-                        LeanBackUtil.log("ListTvEpisodesPresenter => initAdapter1 => onKey => action = " + event.getAction());
-                        LeanBackUtil.log("ListTvEpisodesPresenter => initAdapter1 => onKey => code = " + keyCode);
+                        LeanBackUtil.log("ListTvEpisodesPresenter => initAdapter1 => onKey => action = " + event.getAction() + ", code = " + keyCode);
 
                         // left
                         if (event.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
@@ -176,9 +177,18 @@ public abstract class ListTvEpisodesPresenter<T extends ListTvEpisodesPresenter.
                         }
                         // down
                         else if (event.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_DPAD_DOWN) {
-                            LeanBackUtil.log("ListTvEpisodesPresenter => initAdapter1 => onKey => down =>");
+                            isVertical[0] = true;
+                            // 1
+                            v.clearFocus();
+                            // 2
                             focusDownEpisode(viewGroup);
                             return true;
+                        }
+                        // up
+                        else if (event.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_DPAD_UP) {
+                            isVertical[0] = true;
+//                            v.requestFocus();
+//                            return true;
                         }
                         return false;
                     }
@@ -214,7 +224,7 @@ public abstract class ListTvEpisodesPresenter<T extends ListTvEpisodesPresenter.
                     @Override
                     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
                         try {
-                            boolean[] isHorizontal = new boolean[]{false};
+                            boolean[] isVertical = new boolean[]{false};
                             Context context = parent.getContext();
                             View item = LayoutInflater.from(context).inflate(initRangeLayout(), parent, false);
                             RecyclerView.ViewHolder holder = new RecyclerView.ViewHolder(item) {
@@ -227,16 +237,16 @@ public abstract class ListTvEpisodesPresenter<T extends ListTvEpisodesPresenter.
                                         if (position >= 0) {
                                             if (hasFocus) {
                                                 int checkedIndexEpisode;
-                                                if (isHorizontal[0]) {
-                                                    checkedIndexEpisode = 0;
-                                                } else {
+                                                if (isVertical[0]) {
                                                     checkedIndexEpisode = getCheckedIndexEpisode();
+                                                } else {
+                                                    checkedIndexEpisode = 0;
                                                 }
                                                 resetCheckedIndex(position, checkedIndexEpisode);
                                                 notifyEpisodeAdapter(context, viewGroup, -1, -1);
                                             }
-                                            notifyRange(viewGroup, position, hasFocus, false, !isHorizontal[0]);
-                                            isHorizontal[0] = false;
+                                            notifyRange(viewGroup, position, hasFocus, false, isVertical[0]);
+                                            isVertical[0] = false;
                                         }
                                     } catch (Exception e) {
                                         LeanBackUtil.log("ListTvEpisodesPresenter => initAdapter2 => onCreateViewHolder => onFocusChange => " + e.getMessage(), e);
@@ -247,25 +257,33 @@ public abstract class ListTvEpisodesPresenter<T extends ListTvEpisodesPresenter.
                                 @Override
                                 public boolean onKey(View v, int keyCode, KeyEvent event) {
                                     LeanBackUtil.log("ListTvEpisodesPresenter => initAdapter2 => onKey => action = " + event.getAction() + ", code = " + event.getKeyCode());
+                                    // down
+                                    if (event.getAction() == KeyEvent.ACTION_UP && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_DOWN) {
+                                        isVertical[0] = true;
+//                                        v.requestFocus();
+//                                        return true;
+                                    }
                                     // up
-                                    if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_UP) {
+                                    else if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_UP) {
+                                        isVertical[0] = true;
+                                        // 1
+                                        v.clearFocus();
+                                        // 2
                                         focusUpRange(viewGroup);
                                         return true;
                                     }
                                     // right
-                                    else if (event.getAction() == KeyEvent.ACTION_UP && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_RIGHT) {
+                                    else if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_RIGHT) {
                                         int checkedIndexRange = getCheckedIndexRange();
                                         int rangeLength = getRangeLength();
                                         if (checkedIndexRange + 1 >= rangeLength)
                                             return true;
-                                        isHorizontal[0] = true;
                                     }
                                     // left
-                                    else if (event.getAction() == KeyEvent.ACTION_UP && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_RIGHT) {
+                                    else if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_LEFT) {
                                         int checkedIndexRange = getCheckedIndexRange();
                                         if (checkedIndexRange <= 0)
                                             return true;
-                                        isHorizontal[0] = true;
                                     }
                                     return false;
                                 }
