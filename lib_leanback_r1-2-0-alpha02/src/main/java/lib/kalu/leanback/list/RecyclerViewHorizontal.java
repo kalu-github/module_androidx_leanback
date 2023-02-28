@@ -5,6 +5,7 @@ import android.util.AttributeSet;
 import android.view.FocusFinder;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.ViewParent;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -124,5 +125,50 @@ public class RecyclerViewHorizontal extends RecyclerView {
             }
         }
         return false;
+    }
+
+    @Override
+    public void scrollToPosition(int position) {
+//        super.scrollToPosition(position);
+
+        while (true) {
+            try {
+                if (position < 0)
+                    throw new Exception("position error: " + position);
+                int itemCount = getAdapter().getItemCount();
+                if (position + 1 >= itemCount)
+                    throw new Exception("itemCount error: " + itemCount);
+                View focusedChild = getFocusedChild();
+                int fromPosition = findFocusedChildFromPosition(focusedChild);
+                if (fromPosition == position) {
+                    focusedChild.requestFocus();
+                    break;
+                }
+                // right
+                if (position > fromPosition) {
+                    scrollBy(0, focusedChild.getWidth());
+                }
+                // left
+                else {
+                    scrollBy(0, -focusedChild.getWidth());
+                }
+            } catch (Exception e) {
+                LeanBackUtil.log("RecyclerViewHorizontal => scrollToPosition => " + e.getMessage(), e);
+                break;
+            }
+        }
+    }
+
+    private int findFocusedChildFromPosition(View focusedChild) throws Exception {
+        while (true) {
+            if (null == focusedChild)
+                throw new Exception("focusedChild error: null");
+            ViewParent parent = focusedChild.getParent();
+            if (parent instanceof RecyclerViewHorizontal) {
+                return getChildAdapterPosition(focusedChild);
+            } else {
+                return findFocusedChildFromPosition((View) parent);
+            }
+        }
     }
 }
