@@ -36,7 +36,7 @@ public abstract class ListTvEpisodesPresenter3<T extends ListTvEpisodesPresenter
     public ViewHolder onCreateViewHolder(ViewGroup parent) {
         try {
             Context context = parent.getContext();
-            LinearLayout viewGroup = (LinearLayout) LayoutInflater.from(context).inflate(R.layout.lb_list_tv_episodes, parent, false);
+            LinearLayout viewGroup = (LinearLayout) LayoutInflater.from(context).inflate(R.layout.lb_list_tv_episodes2, parent, false);
             initHead(context, viewGroup, R.id.lb_list_tv_episodes_head);
             initAdapter1(context, viewGroup);
             initAdapter2(context, viewGroup);

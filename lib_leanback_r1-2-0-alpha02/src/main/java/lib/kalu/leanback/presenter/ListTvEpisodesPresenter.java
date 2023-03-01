@@ -7,9 +7,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
+import android.widget.FrameLayout;
 import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
+import android.widget.Space;
 import android.widget.TextView;
 
 import androidx.annotation.Keep;
@@ -62,7 +64,6 @@ public abstract class ListTvEpisodesPresenter<T extends ListTvEpisodesPresenter.
         notifyEpisodeAdapter(viewHolder.view.getContext(), (LinearLayout) viewHolder.view, -1, -1);
         // 剧集区间
         initLayoutRange(viewHolder.view.getContext(), (LinearLayout) viewHolder.view);
-        notifyRangeAdapter(viewHolder.view.getContext(), (LinearLayout) viewHolder.view);
     }
 
     private final void setHead(View view) {
@@ -219,20 +220,28 @@ public abstract class ListTvEpisodesPresenter<T extends ListTvEpisodesPresenter.
                 ((LinearLayout.LayoutParams) layout.getLayoutParams()).bottomMargin = episodeMarginBottom;
             }
             // 2
-            int num = initEpisodeNum();
-            layout.setWeightSum(num);
-            // 3
+            int episodeNum = initEpisodeNum();
             int episodePadding = initEpisodePadding(context);
-            // 2 剧集
-            for (int i = 0; i < num; i++) {
+            int episodeMargin = episodePadding * (episodeNum - 1) / episodeNum;
+            layout.setWeightSum(episodeNum);
+            // 3 剧集
+            for (int i = 0; i < episodeNum; i++) {
                 View item = LayoutInflater.from(context).inflate(initEpisodeLayout(), layout, false);
                 layout.addView(item);
                 if (null != item.getLayoutParams()) {
                     ((LinearLayout.LayoutParams) item.getLayoutParams()).weight = 1;
-                    ((LinearLayout.LayoutParams) item.getLayoutParams()).leftMargin = (i == 0 ? 0 : episodePadding);
-                    ((LinearLayout.LayoutParams) item.getLayoutParams()).rightMargin = (i + 1 == num ? 0 : episodePadding);
                     ((LinearLayout.LayoutParams) item.getLayoutParams()).bottomMargin = 0;
                     ((LinearLayout.LayoutParams) item.getLayoutParams()).topMargin = 0;
+                    if (i == 0) {
+                        ((LinearLayout.LayoutParams) item.getLayoutParams()).leftMargin = 0;
+                        ((LinearLayout.LayoutParams) item.getLayoutParams()).rightMargin = episodeMargin;
+                    } else if (i + 1 <= episodeNum) {
+                        ((LinearLayout.LayoutParams) item.getLayoutParams()).leftMargin = episodeMargin;
+                        ((LinearLayout.LayoutParams) item.getLayoutParams()).rightMargin = 0;
+                    } else {
+                        ((LinearLayout.LayoutParams) item.getLayoutParams()).leftMargin = episodeMargin / 2;
+                        ((LinearLayout.LayoutParams) item.getLayoutParams()).rightMargin = episodeMargin / 2;
+                    }
                 }
                 item.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -263,7 +272,7 @@ public abstract class ListTvEpisodesPresenter<T extends ListTvEpisodesPresenter.
                                     if (checkedIndexRange > 0) {
                                         // 1
                                         int newCheckedIndexRange = checkedIndexRange - 1;
-                                        int newCheckedIndexEpisode = num - 1;
+                                        int newCheckedIndexEpisode = episodeNum - 1;
                                         resetCheckedIndex(newCheckedIndexRange, newCheckedIndexEpisode);
                                         // 2
                                         notifyEpisodeAdapter(context, viewGroup, checkedIndexEpisode, newCheckedIndexEpisode);
@@ -356,12 +365,12 @@ public abstract class ListTvEpisodesPresenter<T extends ListTvEpisodesPresenter.
             // 1
             LinearLayout layout = viewGroup.findViewById(R.id.lb_list_tv_episodes_ranges);
             layout.removeAllViews();
-            if (null != layout.getLayoutParams()) {
-                int rangeMarginTop = initRangeMarginTop(context);
-                ((ScrollView.LayoutParams) layout.getLayoutParams()).leftMargin = 0;
-                ((ScrollView.LayoutParams) layout.getLayoutParams()).rightMargin = 0;
+            int rangeMarginTop = initRangeMarginTop(context);
+            if (rangeMarginTop > 0 && null != layout.getLayoutParams()) {
                 ((ScrollView.LayoutParams) layout.getLayoutParams()).topMargin = rangeMarginTop;
                 ((ScrollView.LayoutParams) layout.getLayoutParams()).bottomMargin = 0;
+                ((ScrollView.LayoutParams) layout.getLayoutParams()).leftMargin = 0;
+                ((ScrollView.LayoutParams) layout.getLayoutParams()).rightMargin = 0;
             }
             // 2
             int rangeLength = getRangeLength();
@@ -376,6 +385,12 @@ public abstract class ListTvEpisodesPresenter<T extends ListTvEpisodesPresenter.
                     ((LinearLayout.LayoutParams) item.getLayoutParams()).bottomMargin = 0;
                     ((LinearLayout.LayoutParams) item.getLayoutParams()).topMargin = 0;
                 }
+                T t = getIndexOfRangeData(i);
+                if (null != t) {
+                    boolean isChecked = isCheckedIndexOfRange(i);
+                    onBindViewHolderRange(context, item, t, i, false, false, isChecked);
+                }
+
                 item.setOnKeyListener(new View.OnKeyListener() {
                     @Override
                     public boolean onKey(View v, int keyCode, KeyEvent event) {
@@ -616,6 +631,7 @@ public abstract class ListTvEpisodesPresenter<T extends ListTvEpisodesPresenter.
         LeanBackUtil.log("ListTvEpisodesPresenter => isCheckedAndPlayingIndexOfEpisode => playingIndexRange = " + playingIndexRange);
         return index == checkedIndexEpisode && checkedIndexRange == playingIndexRange;
     }
+
     private final boolean isCheckedIndexOfEpisode(int index) {
         int checkedIndexRange = getCheckedIndexRange();
         int checkedIndexEpisode = getCheckedIndexEpisode(checkedIndexRange);
@@ -795,7 +811,7 @@ public abstract class ListTvEpisodesPresenter<T extends ListTvEpisodesPresenter.
 //                        continue;
                     LeanBackUtil.log("ListTvEpisodesPresenter => resetCheckedIndex => index = " + index + ", m = " + m);
                     t2.setChecked(index == checkedIndexRange && m == checkedIndexEpisode);
-                    LeanBackUtil.log("ListTvEpisodesPresenter => resetCheckedIndex => "+t2.toString());
+                    LeanBackUtil.log("ListTvEpisodesPresenter => resetCheckedIndex => " + t2.toString());
                 }
             }
         } catch (Exception e) {
@@ -838,21 +854,9 @@ public abstract class ListTvEpisodesPresenter<T extends ListTvEpisodesPresenter.
         }
     }
 
-    private final void notifyRangeAdapter(Context context, LinearLayout viewGroup) {
-        try {
-            int rangeLength = getRangeLength();
-            LinearLayout layout = viewGroup.findViewById(R.id.lb_list_tv_episodes_ranges);
-            for (int i = 0; i < rangeLength; i++) {
-                View child = layout.getChildAt(i);
-                if (null == child) continue;
-                T t = getIndexOfRangeData(i);
-                if (null == t) continue;
-                onBindViewHolderRange(context, child, t, i, false, false, false);
-            }
-        } catch (Exception e) {
-            LeanBackUtil.log("ListTvEpisodesPresenter => notifyRangeAdapter => " + e.getMessage(), e);
-        }
-    }
+//    private final void notifyRangeAdapter(Context context, LinearLayout viewGroup, boolean isInit) {
+//
+//    }
 
     private final void focusDownEpisode(@NonNull LinearLayout viewGroup, @NonNull View focusView) {
         try {

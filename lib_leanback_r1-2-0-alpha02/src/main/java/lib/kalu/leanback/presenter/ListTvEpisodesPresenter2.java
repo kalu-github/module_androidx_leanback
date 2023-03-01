@@ -42,7 +42,7 @@ public abstract class ListTvEpisodesPresenter2<T extends ListTvEpisodesPresenter
     public ViewHolder onCreateViewHolder(ViewGroup parent) {
         try {
             Context context = parent.getContext();
-            View inflate = LayoutInflater.from(context).inflate(R.layout.lb_list_tv_episodes, parent, false);
+            View inflate = LayoutInflater.from(context).inflate(R.layout.lb_list_tv_episodes2, parent, false);
             initHead(context, inflate, R.id.lb_list_tv_episodes_head);
             initAdapter1(context, inflate);
             initAdapter2(context, inflate);
