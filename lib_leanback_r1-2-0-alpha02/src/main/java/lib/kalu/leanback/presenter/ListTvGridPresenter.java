@@ -23,6 +23,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.List;
 
+import lib.kalu.leanback.util.LeanBackUtil;
+
 public abstract class ListTvGridPresenter<T extends ListTvGridPresenter.ListGridBean> extends Presenter implements ListTvPresenterImpl {
 
     @Override
@@ -34,7 +36,7 @@ public abstract class ListTvGridPresenter<T extends ListTvGridPresenter.ListGrid
             initHead(context, view, R.id.module_leanback_lgp_header);
             return new ViewHolder(view);
         } catch (Exception e) {
-            e.printStackTrace();
+            LeanBackUtil.log("ListTvGridPresenter => onCreateViewHolder => " + e.getMessage(), e);
             return null;
         }
     }
@@ -65,7 +67,7 @@ public abstract class ListTvGridPresenter<T extends ListTvGridPresenter.ListGrid
                 list.add(o);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LeanBackUtil.log("ListTvGridPresenter => onBindViewHolder => " + e.getMessage(), e);
         }
 
         if (col == -1)
@@ -92,7 +94,7 @@ public abstract class ListTvGridPresenter<T extends ListTvGridPresenter.ListGrid
                 textView.setVisibility(View.VISIBLE);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LeanBackUtil.log("ListTvGridPresenter => onBindViewHolder => " + e.getMessage(), e);
         }
 
         // list
@@ -101,7 +103,7 @@ public abstract class ListTvGridPresenter<T extends ListTvGridPresenter.ListGrid
             Context context = recyclerView.getContext();
             setAdapter(context, recyclerView, col, list);
         } catch (Exception e) {
-            e.printStackTrace();
+            LeanBackUtil.log("ListTvGridPresenter => onBindViewHolder => " + e.getMessage(), e);
         }
     }
 
@@ -160,7 +162,7 @@ public abstract class ListTvGridPresenter<T extends ListTvGridPresenter.ListGrid
                             onCreateHolder(context, holder, view, list, viewType);
                             return holder;
                         } catch (Exception e) {
-                            e.printStackTrace();
+                            LeanBackUtil.log("ListTvGridPresenter => setAdapter => onCreateViewHolder => " + e.getMessage(), e);
                             return null;
                         }
                     }
@@ -172,7 +174,7 @@ public abstract class ListTvGridPresenter<T extends ListTvGridPresenter.ListGrid
                             int viewType = holder.getItemViewType();
                             onBindHolder(holder.itemView, t, position, viewType);
                         } catch (Exception e) {
-                            e.printStackTrace();
+                            LeanBackUtil.log("ListTvGridPresenter => setAdapter => onBindViewHolder => " + e.getMessage(), e);
                         }
                     }
 
@@ -190,7 +192,7 @@ public abstract class ListTvGridPresenter<T extends ListTvGridPresenter.ListGrid
                 });
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LeanBackUtil.log("ListTvGridPresenter => setAdapter => " + e.getMessage(), e);
         }
     }
 
@@ -216,7 +218,7 @@ public abstract class ListTvGridPresenter<T extends ListTvGridPresenter.ListGrid
             View viewByPosition = recyclerView.getLayoutManager().findViewByPosition(position);
             viewByPosition.requestFocus();
         } catch (Exception e) {
-            e.printStackTrace();
+            LeanBackUtil.log("ListTvGridPresenter => requestFocus => " + e.getMessage(), e);
         }
     }
 
@@ -225,7 +227,7 @@ public abstract class ListTvGridPresenter<T extends ListTvGridPresenter.ListGrid
             RecyclerView recyclerView = findRecyclerView(v, true);
             recyclerView.getAdapter().notifyDataSetChanged();
         } catch (Exception e) {
-            e.printStackTrace();
+            LeanBackUtil.log("ListTvGridPresenter => notifyDataSetChanged => " + e.getMessage(), e);
         }
     }
 
@@ -234,7 +236,7 @@ public abstract class ListTvGridPresenter<T extends ListTvGridPresenter.ListGrid
             RecyclerView recyclerView = findRecyclerView(v, true);
             recyclerView.getAdapter().notifyItemRangeChanged(start, itemCount);
         } catch (Exception e) {
-            e.printStackTrace();
+            LeanBackUtil.log("ListTvGridPresenter => notifyItemRangeChanged => " + e.getMessage(), e);
         }
     }
 
