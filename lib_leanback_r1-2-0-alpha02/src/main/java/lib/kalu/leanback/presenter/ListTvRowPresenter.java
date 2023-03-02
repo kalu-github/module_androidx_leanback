@@ -1,19 +1,13 @@
 package lib.kalu.leanback.presenter;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
-import android.os.Build;
-import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import androidx.annotation.Keep;
 import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
 import androidx.leanback.R;
 import androidx.leanback.widget.Presenter;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -22,7 +16,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class ListTvRowPresenter<T extends ListTvRowPresenter.ListRowBean> extends Presenter implements ListTvPresenterImpl {
+import lib.kalu.leanback.presenter.bean.TvPresenterRowBean;
+import lib.kalu.leanback.util.LeanBackUtil;
+
+public abstract class ListTvRowPresenter<T extends TvPresenterRowBean> extends Presenter implements ListTvPresenterImpl {
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent) {
@@ -30,7 +27,7 @@ public abstract class ListTvRowPresenter<T extends ListTvRowPresenter.ListRowBea
             Context context = parent.getContext();
             onLife(context);
             View view = LayoutInflater.from(context).inflate(R.layout.lb_list_tv_row, parent, false);
-            initHead(context, view, R.id.module_leanback_llr_header);
+            initTitleStyle(context, view, R.id.module_leanback_llr_header);
             return new ViewHolder(view);
         } catch (Exception e) {
             e.printStackTrace();
@@ -58,28 +55,7 @@ public abstract class ListTvRowPresenter<T extends ListTvRowPresenter.ListRowBea
         }
 
         // header
-        try {
-            String head = null;
-            int size = list.size();
-            for (int i = 0; i < size; i++) {
-                T t = list.get(i);
-                if (null == t) {
-                    continue;
-                }
-                String str = t.getRowHead();
-                if (null != str && str.length() > 0) {
-                    head = str;
-                    break;
-                }
-            }
-            if (null != head && head.length() > 0) {
-                TextView textView = viewHolder.view.findViewById(R.id.module_leanback_llr_header);
-                textView.setText(head);
-                textView.setVisibility(View.VISIBLE);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        setRowTitle(viewHolder.view, list);
 
         // list
         try {
@@ -88,6 +64,30 @@ public abstract class ListTvRowPresenter<T extends ListTvRowPresenter.ListRowBea
             setAdapter(context, recyclerView, list);
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    private final void setRowTitle(View view, List<T> data) {
+
+        String rowTitle;
+        try {
+            rowTitle = data.get(0).getRowTitle();
+        } catch (Exception e) {
+            rowTitle = null;
+        }
+        try {
+            if (null == rowTitle || rowTitle.length() <= 0) {
+                rowTitle = initRowTitle(view.getContext());
+            }
+        } catch (Exception e) {
+        }
+
+        try {
+            TextView textView = view.findViewById(R.id.module_leanback_llr_header);
+            textView.setText(rowTitle);
+            textView.setVisibility(View.VISIBLE);
+        } catch (Exception e) {
+            LeanBackUtil.log("ListTvEpisodesPresenter => setHead => " + e.getMessage(), e);
         }
     }
 
@@ -187,6 +187,10 @@ public abstract class ListTvRowPresenter<T extends ListTvRowPresenter.ListRowBea
 //            }
     }
 
+    protected String initRowTitle(Context context) {
+        return null;
+    }
+
     protected RecyclerView.ItemDecoration initItemDecoration() {
         return null;
     }
@@ -204,11 +208,5 @@ public abstract class ListTvRowPresenter<T extends ListTvRowPresenter.ListRowBea
 
     protected boolean canScrollHorizontally(int count) {
         return true;
-    }
-
-    @Keep
-    public interface ListRowBean {
-        String getRowHead();
-
     }
 }

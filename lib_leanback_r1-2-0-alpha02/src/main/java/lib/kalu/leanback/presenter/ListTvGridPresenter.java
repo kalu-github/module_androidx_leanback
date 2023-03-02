@@ -23,9 +23,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.List;
 
+import lib.kalu.leanback.presenter.bean.TvPresenterRowBean;
 import lib.kalu.leanback.util.LeanBackUtil;
 
-public abstract class ListTvGridPresenter<T extends ListTvGridPresenter.ListGridBean> extends Presenter implements ListTvPresenterImpl {
+public abstract class ListTvGridPresenter<T extends TvPresenterRowBean> extends Presenter implements ListTvPresenterImpl {
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent) {
@@ -33,7 +34,7 @@ public abstract class ListTvGridPresenter<T extends ListTvGridPresenter.ListGrid
             Context context = parent.getContext();
             onLife(context);
             View view = LayoutInflater.from(context).inflate(R.layout.lb_list_tv_grid, parent, false);
-            initHead(context, view, R.id.module_leanback_lgp_header);
+            initTitleStyle(context, view, R.id.module_leanback_lgp_header);
             return new ViewHolder(view);
         } catch (Exception e) {
             LeanBackUtil.log("ListTvGridPresenter => onCreateViewHolder => " + e.getMessage(), e);
@@ -74,28 +75,7 @@ public abstract class ListTvGridPresenter<T extends ListTvGridPresenter.ListGrid
             return;
 
         // header
-        try {
-            String head = null;
-            int size = list.size();
-            for (int i = 0; i < size; i++) {
-                T t = list.get(i);
-                if (null == t) {
-                    continue;
-                }
-                String str = t.getGridHead();
-                if (null != str && str.length() > 0) {
-                    head = str;
-                    break;
-                }
-            }
-            if (null != head && head.length() > 0) {
-                TextView textView = viewHolder.view.findViewById(R.id.module_leanback_lgp_header);
-                textView.setText(head);
-                textView.setVisibility(View.VISIBLE);
-            }
-        } catch (Exception e) {
-            LeanBackUtil.log("ListTvGridPresenter => onBindViewHolder => " + e.getMessage(), e);
-        }
+        setRowTitle(viewHolder.view, list);
 
         // list
         try {
@@ -104,6 +84,30 @@ public abstract class ListTvGridPresenter<T extends ListTvGridPresenter.ListGrid
             setAdapter(context, recyclerView, col, list);
         } catch (Exception e) {
             LeanBackUtil.log("ListTvGridPresenter => onBindViewHolder => " + e.getMessage(), e);
+        }
+    }
+
+    private final void setRowTitle(View view, List<T> data) {
+
+        String rowTitle;
+        try {
+            rowTitle = data.get(0).getRowTitle();
+        } catch (Exception e) {
+            rowTitle = null;
+        }
+        try {
+            if (null == rowTitle || rowTitle.length() <= 0) {
+                rowTitle = initRowTitle(view.getContext());
+            }
+        } catch (Exception e) {
+        }
+
+        try {
+            TextView textView = view.findViewById(R.id.lb_list_tv_episodes_head);
+            textView.setText(rowTitle);
+            textView.setVisibility(View.VISIBLE);
+        } catch (Exception e) {
+            LeanBackUtil.log("ListTvEpisodesPresenter => setHead => " + e.getMessage(), e);
         }
     }
 
@@ -285,6 +289,10 @@ public abstract class ListTvGridPresenter<T extends ListTvGridPresenter.ListGrid
         return 1;
     }
 
+    protected String initRowTitle(Context context) {
+        return null;
+    }
+
     protected RecyclerView.ItemDecoration initItemDecoration() {
         return null;
     }
@@ -299,9 +307,4 @@ public abstract class ListTvGridPresenter<T extends ListTvGridPresenter.ListGrid
     protected abstract int initSpan();
 
     protected abstract int initMax();
-
-    @Keep
-    public interface ListGridBean {
-        String getGridHead();
-    }
 }

@@ -28,9 +28,10 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import lib.kalu.leanback.presenter.bean.TvEpisodesItemBean;
 import lib.kalu.leanback.util.LeanBackUtil;
 
-public abstract class ListTvEpisodesPresenter<T extends ListTvEpisodesPresenter.ItemBean> extends Presenter implements ListTvPresenterImpl {
+public abstract class ListTvEpisodesPresenter<T extends TvEpisodesItemBean> extends Presenter implements ListTvPresenterImpl {
 
     private final LinkedHashMap<T, List<T>> mData = new LinkedHashMap<>();
 
@@ -39,7 +40,7 @@ public abstract class ListTvEpisodesPresenter<T extends ListTvEpisodesPresenter.
         try {
             Context context = parent.getContext();
             LinearLayout viewGroup = (LinearLayout) LayoutInflater.from(context).inflate(R.layout.lb_list_tv_episodes, parent, false);
-            initHead(context, viewGroup, R.id.lb_list_tv_episodes_head);
+            initTitleStyle(context, viewGroup, R.id.lb_list_tv_episodes_head);
             initLayoutEpisode(context, viewGroup);
             return new ViewHolder(viewGroup);
         } catch (Exception e) {
@@ -58,7 +59,7 @@ public abstract class ListTvEpisodesPresenter<T extends ListTvEpisodesPresenter.
         printMap();
 
         // head
-        setHead(viewHolder.view);
+        setRowTitle(viewHolder.view);
 
         // 剧集
         notifyEpisodeAdapter(viewHolder.view.getContext(), (LinearLayout) viewHolder.view, -1, -1);
@@ -66,10 +67,10 @@ public abstract class ListTvEpisodesPresenter<T extends ListTvEpisodesPresenter.
         initLayoutRange(viewHolder.view.getContext(), (LinearLayout) viewHolder.view);
     }
 
-    private final void setHead(View view) {
+    private final void setRowTitle(View view) {
         try {
             TextView textView = view.findViewById(R.id.lb_list_tv_episodes_head);
-            textView.setText(initHead(view.getContext()));
+            textView.setText(initRowTitle(view.getContext()));
             textView.setVisibility(View.VISIBLE);
         } catch (Exception e) {
             LeanBackUtil.log("ListTvEpisodesPresenter => setHead => " + e.getMessage(), e);
@@ -120,7 +121,7 @@ public abstract class ListTvEpisodesPresenter<T extends ListTvEpisodesPresenter.
     public void onUnbindViewHolder(ViewHolder viewHolder) {
     }
 
-    protected String initHead(Context context) {
+    protected String initRowTitle(Context context) {
         return null;
     }
 
@@ -162,51 +163,6 @@ public abstract class ListTvEpisodesPresenter<T extends ListTvEpisodesPresenter.
     /**********/
 
     @Keep
-    public static class ItemBean {
-
-        public ItemBean() {
-        }
-
-        private int start;
-        private int end;
-        private boolean checked = false; // 是否正在选中
-        private boolean playing = false; // 是否正在播放
-
-        public boolean isChecked() {
-            return checked;
-        }
-
-        public void setChecked(boolean checked) {
-            this.checked = checked;
-        }
-
-        public boolean isPlaying() {
-            return playing;
-        }
-
-        public void setPlaying(boolean playing) {
-            this.playing = playing;
-        }
-
-        public int getStart() {
-            return start;
-        }
-
-        public void setStart(int start) {
-            this.start = start;
-        }
-
-        public int getEnd() {
-            return end;
-        }
-
-        public void setEnd(int end) {
-            this.end = end;
-        }
-    }
-
-    /**********/
-
     private final void initLayoutEpisode(@NonNull Context context, @NonNull LinearLayout viewGroup) {
         try {
             // 1
@@ -759,7 +715,9 @@ public abstract class ListTvEpisodesPresenter<T extends ListTvEpisodesPresenter.
         try {
             List<T> list = getIndexOfEpisodeData(checkedIndexRange);
             T t = list.get(index);
-            onClickEpisode(v.getContext(), v, t, index);
+            int episodeNum = initEpisodeNum();
+            int real = checkedIndexRange * episodeNum + index;
+            onClickEpisode(v.getContext(), v, t, real);
         } catch (Exception e) {
         }
     }
