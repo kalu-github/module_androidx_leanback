@@ -27,7 +27,7 @@ public abstract class ListTvRowPresenter<T extends TvPresenterRowBean> extends P
             Context context = parent.getContext();
             onLife(context);
             View view = LayoutInflater.from(context).inflate(R.layout.lb_list_tv_row, parent, false);
-            initTitleStyle(context, view, R.id.module_leanback_llr_header);
+            initTitleStyle(context, view, R.id.module_leanback_llr_title);
             return new ViewHolder(view);
         } catch (Exception e) {
             e.printStackTrace();
@@ -83,7 +83,7 @@ public abstract class ListTvRowPresenter<T extends TvPresenterRowBean> extends P
         }
 
         try {
-            TextView textView = view.findViewById(R.id.module_leanback_llr_header);
+            TextView textView = view.findViewById(R.id.module_leanback_llr_title);
             textView.setText(rowTitle);
             textView.setVisibility(View.VISIBLE);
         } catch (Exception e) {

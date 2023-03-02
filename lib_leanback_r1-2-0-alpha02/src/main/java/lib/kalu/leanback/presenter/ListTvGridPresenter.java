@@ -1,20 +1,14 @@
 package lib.kalu.leanback.presenter;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
-import android.os.Build;
-import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.widget.TextView;
 
-import androidx.annotation.Keep;
 import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
 import androidx.leanback.R;
 import androidx.leanback.widget.Presenter;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -34,7 +28,7 @@ public abstract class ListTvGridPresenter<T extends TvPresenterRowBean> extends 
             Context context = parent.getContext();
             onLife(context);
             View view = LayoutInflater.from(context).inflate(R.layout.lb_list_tv_grid, parent, false);
-            initTitleStyle(context, view, R.id.module_leanback_lgp_header);
+            initTitleStyle(context, view, R.id.module_leanback_lgp_title);
             return new ViewHolder(view);
         } catch (Exception e) {
             LeanBackUtil.log("ListTvGridPresenter => onCreateViewHolder => " + e.getMessage(), e);
@@ -91,19 +85,24 @@ public abstract class ListTvGridPresenter<T extends TvPresenterRowBean> extends 
 
         String rowTitle;
         try {
-            rowTitle = data.get(0).getRowTitle();
+            T t = data.get(0);
+            LeanBackUtil.log("ListTvGridPresenter => setRowTitle => t = " + t.toString());
+            rowTitle = t.getRowTitle();
         } catch (Exception e) {
             rowTitle = null;
         }
         try {
             if (null == rowTitle || rowTitle.length() <= 0) {
-                rowTitle = initRowTitle(view.getContext());
+                String s = initRowTitle(view.getContext());
+                LeanBackUtil.log("ListTvGridPresenter => setRowTitle => s = " + s);
+                rowTitle = s;
             }
         } catch (Exception e) {
         }
+        LeanBackUtil.log("ListTvGridPresenter => setRowTitle => rowTitle = " + rowTitle);
 
         try {
-            TextView textView = view.findViewById(R.id.lb_list_tv_episodes_head);
+            TextView textView = view.findViewById(R.id.module_leanback_lgp_title);
             textView.setText(rowTitle);
             textView.setVisibility(View.VISIBLE);
         } catch (Exception e) {

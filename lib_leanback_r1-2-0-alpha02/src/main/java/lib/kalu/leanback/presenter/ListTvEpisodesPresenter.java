@@ -40,7 +40,7 @@ public abstract class ListTvEpisodesPresenter<T extends TvEpisodesItemBean> exte
         try {
             Context context = parent.getContext();
             LinearLayout viewGroup = (LinearLayout) LayoutInflater.from(context).inflate(R.layout.lb_list_tv_episodes, parent, false);
-            initTitleStyle(context, viewGroup, R.id.lb_list_tv_episodes_head);
+            initTitleStyle(context, viewGroup, R.id.lb_list_tv_episodes_title);
             initLayoutEpisode(context, viewGroup);
             return new ViewHolder(viewGroup);
         } catch (Exception e) {
@@ -69,7 +69,7 @@ public abstract class ListTvEpisodesPresenter<T extends TvEpisodesItemBean> exte
 
     private final void setRowTitle(View view) {
         try {
-            TextView textView = view.findViewById(R.id.lb_list_tv_episodes_head);
+            TextView textView = view.findViewById(R.id.lb_list_tv_episodes_title);
             textView.setText(initRowTitle(view.getContext()));
             textView.setVisibility(View.VISIBLE);
         } catch (Exception e) {
