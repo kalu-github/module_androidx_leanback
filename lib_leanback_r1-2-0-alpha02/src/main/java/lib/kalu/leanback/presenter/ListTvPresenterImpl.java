@@ -49,7 +49,7 @@ public interface ListTvPresenterImpl {
         return 0;
     }
 
-    default void initTitleStyle(@NonNull Context context, @NonNull View view, @IdRes int headId) {
+    default void initTitle(@NonNull Context context, @NonNull View view, @IdRes int headId) {
         int magrinTop = initMagrinTop(context);
         int magrinBottom = initMagrinBottom(context);
         if (magrinTop > 0 || magrinBottom > 0) {

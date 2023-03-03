@@ -21,7 +21,7 @@ import java.util.List;
 import lib.kalu.leanback.presenter.bean.TvPresenterRowBean;
 import lib.kalu.leanback.util.LeanBackUtil;
 
-public abstract class ListTvRowPresenter<T extends TvPresenterRowBean> extends Presenter implements ListTvPresenterImpl {
+public abstract class ListTvFullPresenter<T extends TvPresenterRowBean> extends Presenter implements ListTvPresenterImpl {
 
     private final LinkedList<T> mData = new LinkedList<>();
 
@@ -30,8 +30,8 @@ public abstract class ListTvRowPresenter<T extends TvPresenterRowBean> extends P
         try {
             Context context = parent.getContext();
             onLife(context);
-            View inflate = LayoutInflater.from(context).inflate(R.layout.lb_list_tv_row, parent, false);
-            initTitle(context, inflate, R.id.module_leanback_llr_title);
+            View inflate = LayoutInflater.from(context).inflate(R.layout.lb_list_tv_full, parent, false);
+            initTitle(context, inflate, R.id.module_leanback_llf_title);
             initAdapter(context, inflate);
             return new ViewHolder(inflate);
         } catch (Exception e) {
@@ -57,6 +57,15 @@ public abstract class ListTvRowPresenter<T extends TvPresenterRowBean> extends P
     public void onUnbindViewHolder(ViewHolder viewHolder) {
     }
 
+    private final void updateAdapter(View view) {
+        try {
+            RecyclerView recyclerView = view.findViewById(R.id.module_leanback_llf_list);
+            recyclerView.getAdapter().notifyDataSetChanged();
+        } catch (Exception e) {
+            LeanBackUtil.log("ListTvFullPresenter => updateAdapter => " + e.getMessage(), e);
+        }
+    }
+
     private final void formatData(Object item) {
         try {
             int size = mData.size();
@@ -65,16 +74,7 @@ public abstract class ListTvRowPresenter<T extends TvPresenterRowBean> extends P
             mData.clear();
             mData.addAll((Collection<? extends T>) item);
         } catch (Exception e) {
-            LeanBackUtil.log("ListTvRowPresenter => formatData => " + e.getMessage(), e);
-        }
-    }
-
-    private final void updateAdapter(View view) {
-        try {
-            RecyclerView recyclerView = view.findViewById(R.id.module_leanback_llr_list);
-            recyclerView.getAdapter().notifyDataSetChanged();
-        } catch (Exception e) {
-            LeanBackUtil.log("ListTvRowPresenter => updateAdapter => " + e.getMessage(), e);
+            LeanBackUtil.log("ListTvFullPresenter => formatData => " + e.getMessage(), e);
         }
     }
 
@@ -95,11 +95,11 @@ public abstract class ListTvRowPresenter<T extends TvPresenterRowBean> extends P
         }
 
         try {
-            TextView textView = view.findViewById(R.id.module_leanback_llr_title);
+            TextView textView = view.findViewById(R.id.module_leanback_llf_title);
             textView.setText(rowTitle);
             textView.setVisibility(View.VISIBLE);
         } catch (Exception e) {
-            LeanBackUtil.log("ListTvRowPresenter => updateTitle => " + e.getMessage(), e);
+            LeanBackUtil.log("ListTvEpisodesPresenter => updateTitle => " + e.getMessage(), e);
         }
     }
 
@@ -107,14 +107,14 @@ public abstract class ListTvRowPresenter<T extends TvPresenterRowBean> extends P
         try {
 
             // 1
-            RecyclerView recyclerView = inflate.findViewById(R.id.module_leanback_llr_list);
+            RecyclerView recyclerView = inflate.findViewById(R.id.module_leanback_llf_list);
             RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
             if (null == layoutManager) {
                 LinearLayoutManager manager = new LinearLayoutManager(context) {
                     @Override
                     public boolean canScrollHorizontally() {
                         int size = mData.size();
-                        return ListTvRowPresenter.this.canScrollHorizontally(size);
+                        return ListTvFullPresenter.this.canScrollHorizontally(size);
                     }
 
                     @Override
@@ -176,7 +176,7 @@ public abstract class ListTvRowPresenter<T extends TvPresenterRowBean> extends P
                 });
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LeanBackUtil.log("ListTvEpisodesPresenter => initAdapter => " + e.getMessage(), e);
         }
     }
 

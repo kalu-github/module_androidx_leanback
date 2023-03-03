@@ -15,6 +15,8 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 
 import lib.kalu.leanback.presenter.bean.TvPresenterRowBean;
@@ -22,14 +24,17 @@ import lib.kalu.leanback.util.LeanBackUtil;
 
 public abstract class ListTvGridPresenter<T extends TvPresenterRowBean> extends Presenter implements ListTvPresenterImpl {
 
+    private final List<T> mData = new LinkedList<>();
+
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent) {
         try {
             Context context = parent.getContext();
             onLife(context);
-            View view = LayoutInflater.from(context).inflate(R.layout.lb_list_tv_grid, parent, false);
-            initTitleStyle(context, view, R.id.module_leanback_lgp_title);
-            return new ViewHolder(view);
+            View inflate = LayoutInflater.from(context).inflate(R.layout.lb_list_tv_grid, parent, false);
+            initTitle(context, inflate, R.id.module_leanback_lgp_title);
+            initAdapter(context, inflate);
+            return new ViewHolder(inflate);
         } catch (Exception e) {
             LeanBackUtil.log("ListTvGridPresenter => onCreateViewHolder => " + e.getMessage(), e);
             return null;
@@ -40,48 +45,40 @@ public abstract class ListTvGridPresenter<T extends TvPresenterRowBean> extends 
     public void onBindViewHolder(ViewHolder viewHolder, Object item) {
 
         // datas
-        int col = -1;
-        List<T> list = new ArrayList<>();
-        try {
-            List<T> t = (List<T>) item;
-            int max = initMax();
-            int span = initSpan();
-            int size = t.size();
-            int length = Math.min(max, size);
-            if (size <= span) {
-                col = span;
-            } else {
-                col = Math.min(span, size);
-            }
-
-            // 0
-            for (int i = 0; i < length; i++) {
-                T o = t.get(i);
-                if (null == o)
-                    continue;
-                list.add(o);
-            }
-        } catch (Exception e) {
-            LeanBackUtil.log("ListTvGridPresenter => onBindViewHolder => " + e.getMessage(), e);
-        }
-
-        if (col == -1)
-            return;
+        formatData(item);
 
         // header
-        setRowTitle(viewHolder.view, list);
+        updateTitle(viewHolder.view);
+
+        // layoutManager
+        initLayoutManager(viewHolder.view);
 
         // list
+        updateAdapter(viewHolder.view);
+    }
+
+    private final void updateAdapter(View view) {
         try {
-            RecyclerView recyclerView = viewHolder.view.findViewById(R.id.module_leanback_lgp_list);
-            Context context = recyclerView.getContext();
-            setAdapter(context, recyclerView, col, list);
+            RecyclerView recyclerView = view.findViewById(R.id.module_leanback_lgp_list);
+            recyclerView.getAdapter().notifyDataSetChanged();
         } catch (Exception e) {
-            LeanBackUtil.log("ListTvGridPresenter => onBindViewHolder => " + e.getMessage(), e);
+            LeanBackUtil.log("ListTvGridPresenter => updateAdapter => " + e.getMessage(), e);
         }
     }
 
-    private final void setRowTitle(View view, List<T> data) {
+    private final void formatData(Object item) {
+        try {
+            int size = mData.size();
+            if (size > 0)
+                throw new Exception("not empty");
+            mData.clear();
+            mData.addAll((Collection<? extends T>) item);
+        } catch (Exception e) {
+            LeanBackUtil.log("ListTvGridPresenter => formatData => " + e.getMessage(), e);
+        }
+    }
+
+    private final void updateTitle(View view) {
 
         String rowTitle;
         try {
@@ -91,7 +88,7 @@ public abstract class ListTvGridPresenter<T extends TvPresenterRowBean> extends 
         }
         try {
             if (null == rowTitle || rowTitle.length() <= 0) {
-                T t = data.get(0);
+                T t = mData.get(0);
                 rowTitle = t.getRowTitle();
             }
         } catch (Exception e) {
@@ -102,7 +99,7 @@ public abstract class ListTvGridPresenter<T extends TvPresenterRowBean> extends 
             textView.setText(rowTitle);
             textView.setVisibility(View.VISIBLE);
         } catch (Exception e) {
-            LeanBackUtil.log("ListTvEpisodesPresenter => setHead => " + e.getMessage(), e);
+            LeanBackUtil.log("ListTvGridPresenter => updateTitle => " + e.getMessage(), e);
         }
     }
 
@@ -110,13 +107,22 @@ public abstract class ListTvGridPresenter<T extends TvPresenterRowBean> extends 
     public void onUnbindViewHolder(ViewHolder viewHolder) {
     }
 
-    private final void setAdapter(@NonNull Context context, @NonNull RecyclerView recyclerView, @NonNull int col, @NonNull List<T> list) {
+    private final void initLayoutManager(@NonNull View inflate) {
         try {
-
-            // 1
+            RecyclerView recyclerView = inflate.findViewById(R.id.module_leanback_lgp_list);
             RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
             if (null == layoutManager) {
-                GridLayoutManager manager = new GridLayoutManager(context, col) {
+
+                int col;
+                int span = initSpan();
+                int size = mData.size();
+                if (size <= span) {
+                    col = span;
+                } else {
+                    col = Math.min(span, size);
+                }
+
+                GridLayoutManager manager = new GridLayoutManager(inflate.getContext(), col) {
                     @Override
                     public boolean canScrollHorizontally() {
                         return initScrollHorizontally();
@@ -140,14 +146,17 @@ public abstract class ListTvGridPresenter<T extends TvPresenterRowBean> extends 
                     recyclerView.addItemDecoration(itemDecoration);
                 }
                 recyclerView.setLayoutManager(manager);
-                recyclerView.setAnimation(null);
-                recyclerView.setItemAnimator(null);
             }
+        } catch (Exception e) {
+            LeanBackUtil.log("ListTvGridPresenter => initLayoutManager => " + e.getMessage(), e);
+        }
+    }
 
+    private final void initAdapter(@NonNull Context context, @NonNull View inflate) {
+        try {
+            RecyclerView recyclerView = inflate.findViewById(R.id.module_leanback_lgp_list);
             RecyclerView.Adapter adapter = recyclerView.getAdapter();
-            if (null != adapter) {
-                adapter.notifyDataSetChanged();
-            } else {
+            if (null == adapter) {
                 recyclerView.setAdapter(new RecyclerView.Adapter() {
                     @NonNull
                     @Override
@@ -158,7 +167,7 @@ public abstract class ListTvGridPresenter<T extends TvPresenterRowBean> extends 
                             View view = LayoutInflater.from(context).inflate(initLayout(viewType), parent, false);
                             RecyclerView.ViewHolder holder = new RecyclerView.ViewHolder(view) {
                             };
-                            onCreateHolder(context, holder, view, list, viewType);
+                            onCreateHolder(context, holder, view, mData, viewType);
                             return holder;
                         } catch (Exception e) {
                             LeanBackUtil.log("ListTvGridPresenter => setAdapter => onCreateViewHolder => " + e.getMessage(), e);
@@ -169,7 +178,7 @@ public abstract class ListTvGridPresenter<T extends TvPresenterRowBean> extends 
                     @Override
                     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
                         try {
-                            T t = list.get(position);
+                            T t = mData.get(position);
                             int viewType = holder.getItemViewType();
                             onBindHolder(holder.itemView, t, position, viewType);
                         } catch (Exception e) {
@@ -179,14 +188,14 @@ public abstract class ListTvGridPresenter<T extends TvPresenterRowBean> extends 
 
                     @Override
                     public int getItemViewType(int position) {
-                        T t = list.get(position);
+                        T t = mData.get(position);
                         int i = initItemViewType(position, t);
                         return i != -1 ? i : super.getItemViewType(position);
                     }
 
                     @Override
                     public int getItemCount() {
-                        return list.size();
+                        return mData.size();
                     }
                 });
             }
