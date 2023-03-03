@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.LayoutRes;
@@ -108,6 +109,21 @@ public abstract class ListTvFullPresenter<T extends TvPresenterRowBean> extends 
 
             // 1
             RecyclerView recyclerView = inflate.findViewById(R.id.module_leanback_llf_list);
+
+            int initMarginTop = initMarginTop(context);
+            if (initMarginTop > 0) {
+                if (null != recyclerView.getLayoutParams()) {
+                    ((RelativeLayout.LayoutParams) recyclerView.getLayoutParams()).topMargin = initMarginTop;
+                }
+            }
+
+            int initItemHeight = initItemHeight(context);
+            if (initItemHeight > 0) {
+                if (null != recyclerView.getLayoutParams()) {
+                    ((RelativeLayout.LayoutParams) recyclerView.getLayoutParams()).height = initItemHeight;
+                }
+            }
+
             RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
             if (null == layoutManager) {
                 LinearLayoutManager manager = new LinearLayoutManager(context) {
@@ -194,6 +210,14 @@ public abstract class ListTvFullPresenter<T extends TvPresenterRowBean> extends 
 //                    }
 //                });
 //            }
+    }
+
+    protected int initMarginTop(Context context) {
+        return 0;
+    }
+
+    protected int initItemHeight(Context context) {
+        return 0;
     }
 
     protected String initRowTitle(Context context) {
