@@ -85,21 +85,17 @@ public abstract class ListTvGridPresenter<T extends TvPresenterRowBean> extends 
 
         String rowTitle;
         try {
-            T t = data.get(0);
-            LeanBackUtil.log("ListTvGridPresenter => setRowTitle => t = " + t.toString());
-            rowTitle = t.getRowTitle();
+            rowTitle = initRowTitle(view.getContext());
         } catch (Exception e) {
             rowTitle = null;
         }
         try {
             if (null == rowTitle || rowTitle.length() <= 0) {
-                String s = initRowTitle(view.getContext());
-                LeanBackUtil.log("ListTvGridPresenter => setRowTitle => s = " + s);
-                rowTitle = s;
+                T t = data.get(0);
+                rowTitle = t.getRowTitle();
             }
         } catch (Exception e) {
         }
-        LeanBackUtil.log("ListTvGridPresenter => setRowTitle => rowTitle = " + rowTitle);
 
         try {
             TextView textView = view.findViewById(R.id.module_leanback_lgp_title);

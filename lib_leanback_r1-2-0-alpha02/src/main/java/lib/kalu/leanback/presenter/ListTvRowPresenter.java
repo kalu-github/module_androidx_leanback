@@ -71,13 +71,14 @@ public abstract class ListTvRowPresenter<T extends TvPresenterRowBean> extends P
 
         String rowTitle;
         try {
-            rowTitle = data.get(0).getRowTitle();
+            rowTitle = initRowTitle(view.getContext());
         } catch (Exception e) {
             rowTitle = null;
         }
         try {
             if (null == rowTitle || rowTitle.length() <= 0) {
-                rowTitle = initRowTitle(view.getContext());
+                T t = data.get(0);
+                rowTitle = t.getRowTitle();
             }
         } catch (Exception e) {
         }
