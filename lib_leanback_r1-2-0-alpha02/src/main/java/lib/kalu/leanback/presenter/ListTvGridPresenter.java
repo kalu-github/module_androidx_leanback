@@ -72,7 +72,19 @@ public abstract class ListTvGridPresenter<T extends TvPresenterRowBean> extends 
             if (size > 0)
                 throw new Exception("not empty");
             mData.clear();
-            mData.addAll((Collection<? extends T>) item);
+            int max = initMax();
+            if(max<=0){
+                mData.addAll((Collection<? extends T>) item);
+            }
+            else{
+                List<T> collection = (List<T>) item;
+                for(int i=0;i<max;i++){
+                    T t = collection.get(i);
+                    if(null == t)
+                        continue;
+                    mData.add(t);
+                }
+            }
         } catch (Exception e) {
             LeanBackUtil.log("ListTvGridPresenter => formatData => " + e.getMessage(), e);
         }
@@ -293,6 +305,10 @@ public abstract class ListTvGridPresenter<T extends TvPresenterRowBean> extends 
         return 1;
     }
 
+    protected int initMax(){
+        return 0;
+    }
+
     protected String initRowTitle(Context context) {
         return null;
     }
@@ -309,6 +325,4 @@ public abstract class ListTvGridPresenter<T extends TvPresenterRowBean> extends 
     protected abstract int initLayout(int viewType);
 
     protected abstract int initSpan();
-
-    protected abstract int initMax();
 }
