@@ -89,8 +89,7 @@ public final class HorizontalClassLayout extends ScrollView {
         // LbLogUtil.log("HorizontalClassLayout", "dispatchKeyEvent => action = " + event.getAction() + ", code = " + event.getKeyCode());
 
         boolean hasFocus = hasFocus();
-        if (!hasFocus)
-            return false;
+        if (!hasFocus) return false;
 
         // move => left
         if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_LEFT) {
@@ -266,8 +265,7 @@ public final class HorizontalClassLayout extends ScrollView {
             if (null == radioGroup)
                 throw new IllegalArgumentException("getCount => radioGroup null");
             int count = radioGroup.getChildCount();
-            if (count <= 0)
-                throw new IllegalArgumentException("getCount => child num is empty");
+            if (count <= 0) throw new IllegalArgumentException("getCount => child num is empty");
             return radioGroup.getChildCount();
         } catch (Exception e) {
             e.printStackTrace();
@@ -299,8 +297,7 @@ public final class HorizontalClassLayout extends ScrollView {
                 throw new IllegalArgumentException("getCheckedIndex => child num is empty");
             for (int i = 0; i < count; i++) {
                 RadioButton radioButton = (RadioButton) radioGroup.getChildAt(i);
-                if (null == radioButton)
-                    continue;
+                if (null == radioButton) continue;
                 boolean checked = radioButton.isChecked();
                 if (checked) {
                     index = i;
@@ -320,16 +317,14 @@ public final class HorizontalClassLayout extends ScrollView {
             if (childCount != 1)
                 throw new IllegalArgumentException("getCheckedIndex => child num only one");
             RadioGroup radioGroup = (RadioGroup) getChildAt(0);
-            if (null == radioGroup)
-                return;
+            if (null == radioGroup) return;
             int count = radioGroup.getChildCount();
             if (count <= 0)
                 throw new IllegalArgumentException("getCheckedIndex => child num is empty");
             for (int i = 0; i < count; i++) {
 //                LbLogUtil.log("HorizontalClassLayout", "setChecked => i = " + i + ", index = " + index);
                 RadioButton radioButton = (RadioButton) radioGroup.getChildAt(i);
-                if (null == radioButton)
-                    continue;
+                if (null == radioButton) continue;
                 radioButton.setChecked(false);
             }
             RadioButton radioButton = (RadioButton) radioGroup.getChildAt(index);
@@ -345,18 +340,15 @@ public final class HorizontalClassLayout extends ScrollView {
 //        LbLogUtil.log("HorizontalClassLayout", "updateBackground => index = " + index + ", highlight = " + highlight + ", checked = " + checked);
 
         int count = getChildCount();
-        if (count != 1)
-            return;
+        if (count != 1) return;
 
         RadioGroup radioGroup = (RadioGroup) getChildAt(0);
-        if (null == radioGroup)
-            return;
+        if (null == radioGroup) return;
 
         int size = radioGroup.getChildCount();
         for (int i = 0; i < size; i++) {
             RadioButton radioButton = (RadioButton) radioGroup.getChildAt(i);
-            if (null == radioButton)
-                continue;
+            if (null == radioButton) continue;
             if (mBackgroundResource != -1) {
                 radioButton.setBackgroundResource(mBackgroundResource);
             } else {
@@ -365,12 +357,9 @@ public final class HorizontalClassLayout extends ScrollView {
             radioButton.setTextColor(mColor);
         }
 
-        @ColorInt
-        int color = highlight ? mColorHighlight : (checked ? mColorChecked : mColor);
-        @ColorInt
-        int background = highlight ? mBackgroundColorHighlight : (checked ? mBackgroundColorChecked : mBackgroundColor);
-        @DrawableRes
-        int resource = highlight ? mBackgroundResourceHighlight : (checked ? mBackgroundResourceChecked : mBackgroundResource);
+        @ColorInt int color = highlight ? mColorHighlight : (checked ? mColorChecked : mColor);
+        @ColorInt int background = highlight ? mBackgroundColorHighlight : (checked ? mBackgroundColorChecked : mBackgroundColor);
+        @DrawableRes int resource = highlight ? mBackgroundResourceHighlight : (checked ? mBackgroundResourceChecked : mBackgroundResource);
         RadioButton radioButton = (RadioButton) radioGroup.getChildAt(index);
         radioButton.setTextColor(color);
         if (resource != -1) {
@@ -381,19 +370,15 @@ public final class HorizontalClassLayout extends ScrollView {
     }
 
     private void call() {
-        if (null == mListener)
-            return;
+        if (null == mListener) return;
         int count = getChildCount();
-        if (count != 1)
-            return;
+        if (count != 1) return;
         RadioGroup radioGroup = (RadioGroup) getChildAt(0);
-        if (null == radioGroup)
-            return;
+        if (null == radioGroup) return;
         int size = radioGroup.getChildCount();
         for (int i = 0; i < size; i++) {
             RadioButton radioButton = (RadioButton) radioGroup.getChildAt(i);
-            if (null == radioButton)
-                continue;
+            if (null == radioButton) continue;
             boolean checked = radioButton.isChecked();
             if (checked) {
                 CharSequence text = radioButton.getText();
@@ -407,24 +392,20 @@ public final class HorizontalClassLayout extends ScrollView {
     private void updateText(@NonNull boolean highlight) {
 
         int count = getChildCount();
-        if (count != 1)
-            return;
+        if (count != 1) return;
 
         RadioGroup radioGroup = (RadioGroup) getChildAt(0);
-        if (null == radioGroup)
-            return;
+        if (null == radioGroup) return;
         int size = radioGroup.getChildCount();
         for (int i = 0; i < size; i++) {
 
             RadioButton radioButton = (RadioButton) radioGroup.getChildAt(i);
-            if (null == radioButton)
-                continue;
+            if (null == radioButton) continue;
             // 1=>normal
             // 2=>highlight
             // 3=>checked
             Object tag = radioButton.getTag();
-            if (null == tag || !(tag instanceof ClassBean))
-                continue;
+            if (null == tag || !(tag instanceof ClassBean)) continue;
 
             boolean checked = radioButton.isChecked();
 
@@ -446,17 +427,14 @@ public final class HorizontalClassLayout extends ScrollView {
     @Nullable
     public final String getCheckedCode() {
         int count = getChildCount();
-        if (count != 1)
-            return null;
+        if (count != 1) return null;
         RadioGroup radioGroup = (RadioGroup) getChildAt(0);
-        if (null == radioGroup)
-            return null;
+        if (null == radioGroup) return null;
         String code = null;
         int size = radioGroup.getChildCount();
         for (int i = 0; i < size; i++) {
             RadioButton radioButton = (RadioButton) radioGroup.getChildAt(i);
-            if (null == radioButton)
-                continue;
+            if (null == radioButton) continue;
             boolean checked = radioButton.isChecked();
             if (checked) {
                 CharSequence hint = radioButton.getHint();
@@ -470,17 +448,14 @@ public final class HorizontalClassLayout extends ScrollView {
     @Nullable
     public final String getCheckedName() {
         int count = getChildCount();
-        if (count != 1)
-            return null;
+        if (count != 1) return null;
         RadioGroup radioGroup = (RadioGroup) getChildAt(0);
-        if (null == radioGroup)
-            return null;
+        if (null == radioGroup) return null;
         String name = null;
         int size = radioGroup.getChildCount();
         for (int i = 0; i < size; i++) {
             RadioButton radioButton = (RadioButton) radioGroup.getChildAt(i);
-            if (null == radioButton)
-                continue;
+            if (null == radioButton) continue;
             boolean checked = radioButton.isChecked();
             if (checked) {
                 CharSequence text = radioButton.getText();
@@ -492,19 +467,14 @@ public final class HorizontalClassLayout extends ScrollView {
     }
 
     public void setText(@NonNull int index, @NonNull String str) {
-        if (null == str || str.length() <= 0)
-            return;
-        if (index < 0)
-            return;
+        if (null == str || str.length() <= 0) return;
+        if (index < 0) return;
         int count = getChildCount();
-        if (count != 1)
-            return;
+        if (count != 1) return;
         RadioGroup radioGroup = (RadioGroup) getChildAt(0);
-        if (null == radioGroup)
-            return;
+        if (null == radioGroup) return;
         int size = radioGroup.getChildCount();
-        if (index + 1 > size)
-            return;
+        if (index + 1 > size) return;
         RadioButton radioButton = (RadioButton) radioGroup.getChildAt(index);
         radioButton.setText(str);
     }
@@ -515,23 +485,18 @@ public final class HorizontalClassLayout extends ScrollView {
 
     public void update(@NonNull List<? extends ClassBean> list, boolean highlight) {
 
-        if (null == list)
-            return;
+        if (null == list) return;
         int size = list.size();
-        if (size <= 0)
-            return;
+        if (size <= 0) return;
         int count = getChildCount();
-        if (count != 1)
-            return;
+        if (count != 1) return;
         int index = 0;
         Context context = getContext();
         RadioGroup radioGroup = (RadioGroup) getChildAt(0);
-        if (null == radioGroup)
-            return;
+        if (null == radioGroup) return;
         for (int i = 0; i < size; i++) {
             ClassBean api = list.get(i);
-            if (null == api)
-                continue;
+            if (null == api) continue;
             if (api.isChecked()) {
                 index = i;
             }
@@ -566,23 +531,18 @@ public final class HorizontalClassLayout extends ScrollView {
     }
 
     public void highlight(@NonNull int index) {
-        if (index < 0)
-            return;
+        if (index < 0) return;
         int count = getChildCount();
-        if (count != 1)
-            return;
+        if (count != 1) return;
         RadioGroup radioGroup = (RadioGroup) getChildAt(0);
-        if (null == radioGroup)
-            return;
+        if (null == radioGroup) return;
         int size = radioGroup.getChildCount();
-        if (index + 1 > size)
-            return;
+        if (index + 1 > size) return;
 
         // reset
         for (int i = 0; i < size; i++) {
             RadioButton radioButton = (RadioButton) radioGroup.getChildAt(i);
-            if (null == radioButton)
-                continue;
+            if (null == radioButton) continue;
             if (mBackgroundResource != -1) {
                 radioButton.setBackgroundResource(mBackgroundResource);
             } else {
@@ -607,23 +567,18 @@ public final class HorizontalClassLayout extends ScrollView {
     }
 
     public void checked(@NonNull int index) {
-        if (index < 0)
-            return;
+        if (index < 0) return;
         int count = getChildCount();
-        if (count != 1)
-            return;
+        if (count != 1) return;
         RadioGroup radioGroup = (RadioGroup) getChildAt(0);
-        if (null == radioGroup)
-            return;
+        if (null == radioGroup) return;
         int size = radioGroup.getChildCount();
-        if (index + 1 > size)
-            return;
+        if (index + 1 > size) return;
 
         // reset
         for (int i = 0; i < size; i++) {
             RadioButton radioButton = (RadioButton) radioGroup.getChildAt(i);
-            if (null == radioButton)
-                continue;
+            if (null == radioButton) continue;
             if (mBackgroundResource != -1) {
                 radioButton.setBackgroundResource(mBackgroundResource);
             } else {
@@ -657,33 +612,32 @@ public final class HorizontalClassLayout extends ScrollView {
         updateText(false);
     }
 
-    public void requestFocusTab() {
+    public void requestFocus(boolean call) {
         int index = getCheckedIndex();
-        requestFocusTab(index);
+        requestFocus(index, call);
     }
 
-    public void requestFocusTab(int index) {
+    public void requestFocus(int index, boolean call) {
         RadioButton radioButton = getTab(index);
-        if (null == radioButton)
-            return;
+        if (null == radioButton) return;
         setFocusable(true);
         requestFocus();
         updateBackground(index, true, false);
         updateText(true);
+        // listener
+        if (call) {
+            call();
+        }
     }
 
     public RadioButton getTab(int index) {
-        if (index < 0)
-            return null;
+        if (index < 0) return null;
         int count = getChildCount();
-        if (count != 1)
-            return null;
+        if (count != 1) return null;
         RadioGroup radioGroup = (RadioGroup) getChildAt(0);
-        if (null == radioGroup)
-            return null;
+        if (null == radioGroup) return null;
         int size = radioGroup.getChildCount();
-        if (index + 1 > size)
-            return null;
+        if (index + 1 > size) return null;
         return (RadioButton) radioGroup.getChildAt(index);
     }
 

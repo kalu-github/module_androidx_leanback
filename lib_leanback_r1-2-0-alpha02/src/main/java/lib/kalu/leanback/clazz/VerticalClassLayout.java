@@ -104,8 +104,7 @@ public final class VerticalClassLayout extends ScrollView {
                 } else {
                     View focus = findFocus();
                     View nextFocus = ViewUtil.findNextFocus(getContext(), focus, View.FOCUS_UP);
-                    if (null == nextFocus)
-                        return true;
+                    if (null == nextFocus) return true;
                 }
             }
             if (mDispatchTop) {
@@ -126,8 +125,7 @@ public final class VerticalClassLayout extends ScrollView {
                 } else {
                     View focus = findFocus();
                     View nextFocus = ViewUtil.findNextFocus(getContext(), focus, View.FOCUS_DOWN);
-                    if (null == nextFocus)
-                        return true;
+                    if (null == nextFocus) return true;
                 }
             }
             if (mDispatchBottom) {
@@ -247,8 +245,7 @@ public final class VerticalClassLayout extends ScrollView {
                 throw new IllegalArgumentException("getCount => child num only one");
             RadioGroup radioGroup = (RadioGroup) getChildAt(0);
             int count = radioGroup.getChildCount();
-            if (count <= 0)
-                throw new IllegalArgumentException("getCount => child num is empty");
+            if (count <= 0) throw new IllegalArgumentException("getCount => child num is empty");
             return count;
         } catch (Exception e) {
             e.printStackTrace();
@@ -307,8 +304,7 @@ public final class VerticalClassLayout extends ScrollView {
     private void updateBackground(@NonNull boolean up, @NonNull boolean down, @NonNull int index, boolean highlight, boolean checked) {
 
         int count = getChildCount();
-        if (count != 1)
-            return;
+        if (count != 1) return;
 
         try {
             RadioGroup radioGroup = (RadioGroup) getChildAt(0);
@@ -323,12 +319,9 @@ public final class VerticalClassLayout extends ScrollView {
                 radioButton.setTextColor(mColor);
             }
 
-            @ColorInt
-            int color = highlight ? mColorHighlight : (checked ? mColorChecked : mColor);
-            @ColorInt
-            int background = highlight ? mBackgroundColorHighlight : (checked ? mBackgroundColorChecked : mBackgroundColor);
-            @DrawableRes
-            int resource = highlight ? mBackgroundResourceHighlight : (checked ? mBackgroundResourceChecked : mBackgroundResource);
+            @ColorInt int color = highlight ? mColorHighlight : (checked ? mColorChecked : mColor);
+            @ColorInt int background = highlight ? mBackgroundColorHighlight : (checked ? mBackgroundColorChecked : mBackgroundColor);
+            @DrawableRes int resource = highlight ? mBackgroundResourceHighlight : (checked ? mBackgroundResourceChecked : mBackgroundResource);
             RadioButton radioButton = (RadioButton) radioGroup.getChildAt(index);
             radioButton.setTextColor(color);
             if (resource != -1) {
@@ -355,11 +348,9 @@ public final class VerticalClassLayout extends ScrollView {
     }
 
     private void call() {
-        if (null == mListener)
-            return;
+        if (null == mListener) return;
         int count = getChildCount();
-        if (count != 1)
-            return;
+        if (count != 1) return;
         RadioGroup radioGroup = (RadioGroup) getChildAt(0);
         int size = radioGroup.getChildCount();
         for (int i = 0; i < size; i++) {
@@ -377,8 +368,7 @@ public final class VerticalClassLayout extends ScrollView {
     private void updateText(@NonNull boolean highlight) {
 
         int count = getChildCount();
-        if (count != 1)
-            return;
+        if (count != 1) return;
 
         try {
             RadioGroup radioGroup = (RadioGroup) getChildAt(0);
@@ -390,8 +380,7 @@ public final class VerticalClassLayout extends ScrollView {
                 // 2=>highlight
                 // 3=>checked
                 Object tag = radioButton.getTag();
-                if (null == tag || !(tag instanceof ClassBean))
-                    continue;
+                if (null == tag || !(tag instanceof ClassBean)) continue;
 
                 boolean checked = radioButton.isChecked();
 
@@ -415,8 +404,7 @@ public final class VerticalClassLayout extends ScrollView {
     @Nullable
     public String getCheckedCode() {
         int count = getChildCount();
-        if (count != 1)
-            return null;
+        if (count != 1) return null;
         RadioGroup radioGroup = (RadioGroup) getChildAt(0);
         String code = null;
         int size = radioGroup.getChildCount();
@@ -435,8 +423,7 @@ public final class VerticalClassLayout extends ScrollView {
     @Nullable
     public String getCheckedName() {
         int count = getChildCount();
-        if (count != 1)
-            return null;
+        if (count != 1) return null;
         RadioGroup radioGroup = (RadioGroup) getChildAt(0);
         String name = null;
         int size = radioGroup.getChildCount();
@@ -453,17 +440,13 @@ public final class VerticalClassLayout extends ScrollView {
     }
 
     public void setText(@NonNull int index, @NonNull String str) {
-        if (null == str || str.length() <= 0)
-            return;
-        if (index < 0)
-            return;
+        if (null == str || str.length() <= 0) return;
+        if (index < 0) return;
         int count = getChildCount();
-        if (count != 1)
-            return;
+        if (count != 1) return;
         RadioGroup radioGroup = (RadioGroup) getChildAt(0);
         int size = radioGroup.getChildCount();
-        if (index + 1 > size)
-            return;
+        if (index + 1 > size) return;
         RadioButton radioButton = (RadioButton) radioGroup.getChildAt(index);
         radioButton.setText(str);
     }
@@ -474,22 +457,18 @@ public final class VerticalClassLayout extends ScrollView {
 
     public void update(@NonNull List<? extends ClassBean> list, boolean highlight) {
 
-        if (null == list)
-            return;
+        if (null == list) return;
         int size = list.size();
-        if (size <= 0)
-            return;
+        if (size <= 0) return;
         int count = getChildCount();
-        if (count != 1)
-            return;
+        if (count != 1) return;
         setFocusable(true);
         int index = 0;
         Context context = getContext();
         RadioGroup radioGroup = (RadioGroup) getChildAt(0);
         for (int i = 0; i < size; i++) {
             ClassBean api = list.get(i);
-            if (null == api)
-                continue;
+            if (null == api) continue;
             if (api.isChecked()) {
                 index = i;
             }
@@ -524,21 +503,17 @@ public final class VerticalClassLayout extends ScrollView {
     }
 
     public void highlight(@NonNull int index) {
-        if (index < 0)
-            return;
+        if (index < 0) return;
         int count = getChildCount();
-        if (count != 1)
-            return;
+        if (count != 1) return;
         RadioGroup radioGroup = (RadioGroup) getChildAt(0);
         int size = radioGroup.getChildCount();
-        if (index + 1 > size)
-            return;
+        if (index + 1 > size) return;
 
         // reset
         for (int i = 0; i < size; i++) {
             RadioButton radioButton = (RadioButton) radioGroup.getChildAt(i);
-            if (null == radioButton)
-                continue;
+            if (null == radioButton) continue;
             if (mBackgroundResource != -1) {
                 radioButton.setBackgroundResource(mBackgroundResource);
             } else {
@@ -563,21 +538,17 @@ public final class VerticalClassLayout extends ScrollView {
     }
 
     public void checked(@NonNull int index) {
-        if (index < 0)
-            return;
+        if (index < 0) return;
         int count = getChildCount();
-        if (count != 1)
-            return;
+        if (count != 1) return;
         RadioGroup radioGroup = (RadioGroup) getChildAt(0);
         int size = radioGroup.getChildCount();
-        if (index + 1 > size)
-            return;
+        if (index + 1 > size) return;
 
         // reset
         for (int i = 0; i < size; i++) {
             RadioButton radioButton = (RadioButton) radioGroup.getChildAt(i);
-            if (null == radioButton)
-                continue;
+            if (null == radioButton) continue;
             if (mBackgroundResource != -1) {
                 radioButton.setBackgroundResource(mBackgroundResource);
             } else {
@@ -620,33 +591,32 @@ public final class VerticalClassLayout extends ScrollView {
     }
 
 
-    public void requestFocusTab() {
+    public void requestFocus(boolean call) {
         int index = getCheckedIndex();
-        requestFocusTab(index);
+        requestFocus(index, call);
     }
 
-    public void requestFocusTab(int index) {
+    public void requestFocus(int index, boolean call) {
         RadioButton radioButton = getTab(index);
-        if (null == radioButton)
-            return;
+        if (null == radioButton) return;
         setFocusable(true);
         requestFocus();
         updateBackground(false, true, index, true, false);
         updateText(true);
+        // listener
+        if (call) {
+            call();
+        }
     }
 
     public RadioButton getTab(int index) {
-        if (index < 0)
-            return null;
+        if (index < 0) return null;
         int count = getChildCount();
-        if (count != 1)
-            return null;
+        if (count != 1) return null;
         RadioGroup radioGroup = (RadioGroup) getChildAt(0);
-        if (null == radioGroup)
-            return null;
+        if (null == radioGroup) return null;
         int size = radioGroup.getChildCount();
-        if (index + 1 > size)
-            return null;
+        if (index + 1 > size) return null;
         return (RadioButton) radioGroup.getChildAt(index);
     }
 

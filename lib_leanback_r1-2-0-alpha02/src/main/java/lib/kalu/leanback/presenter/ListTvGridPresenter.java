@@ -73,14 +73,13 @@ public abstract class ListTvGridPresenter<T extends TvPresenterRowBean> extends 
                 throw new Exception("not empty");
             mData.clear();
             int max = initMax();
-            if(max<=0){
+            if (max <= 0) {
                 mData.addAll((Collection<? extends T>) item);
-            }
-            else{
+            } else {
                 List<T> collection = (List<T>) item;
-                for(int i=0;i<max;i++){
+                for (int i = 0; i < max; i++) {
                     T t = collection.get(i);
-                    if(null == t)
+                    if (null == t)
                         continue;
                     mData.add(t);
                 }
@@ -305,7 +304,7 @@ public abstract class ListTvGridPresenter<T extends TvPresenterRowBean> extends 
         return 1;
     }
 
-    protected int initMax(){
+    protected int initMax() {
         return 0;
     }
 
