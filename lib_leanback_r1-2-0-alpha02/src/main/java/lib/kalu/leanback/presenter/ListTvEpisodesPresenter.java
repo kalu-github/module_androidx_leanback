@@ -2,6 +2,7 @@ package lib.kalu.leanback.presenter;
 
 import android.content.Context;
 import android.graphics.Rect;
+import android.view.FocusFinder;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,6 +22,7 @@ import androidx.leanback.R;
 import androidx.leanback.widget.BaseGridView;
 import androidx.leanback.widget.Presenter;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
@@ -95,16 +97,16 @@ public abstract class ListTvEpisodesPresenter<T extends TvEpisodesItemBean> exte
                 }
                 key.setStart(start);
                 key.setEnd(end);
-                key.setPlaying(i == 0);
-                key.setChecked(i == 0);
+                key.setPlaying(false);
+                key.setChecked(false);
 
                 // map-value
                 ArrayList<T> value = new ArrayList<>();
                 for (int m = start - 1; m <= (end - 1); m++) {
                     T t = list.get(m);
                     if (null == t) continue;
-                    t.setPlaying(i == 0 && m == 0);
-                    t.setChecked(i == 0 && m == 0);
+                    t.setPlaying(false);
+                    t.setChecked(false);
                     value.add(t);
                 }
 
@@ -886,49 +888,34 @@ public abstract class ListTvEpisodesPresenter<T extends TvEpisodesItemBean> exte
         }
     }
 
-//    public void startPosition(Context context, BaseGridView viewGroup, int index) {
-//
-//        int key = 0;
-//        int position = -1;
-//        int start = 0;
-//        for (Map.Entry<T, List<T>> entry : mData.entrySet()) {
-//            List<T> value = entry.getValue();
-//            if (null == value)
-//                continue;
-//            int size = value.size();
-//            if (size <= 0)
-//                continue;
-//            int end = start + size;
-//            if (index >= start && index < end) {
-//                position = index - start;
-//                break;
-//            }
-//            key += 1;
-//        }
-//
-//        if (key != -1) {
-//            updateRangeCheckedIndex(key);
-//            updateRangePlayingIndex();
-//            try {
-//                RecyclerViewHorizontal recyclerView = viewGroup.findViewById(R.id.lb_list_tv_episodes_ranges);
-//                recyclerView.scrollToPosition(mCheckedIndexRange);
-//                RecyclerView.ViewHolder viewHolder = recyclerView.findViewHolderForAdapterPosition(mCheckedIndexRange);
-//                T t = getCheckedRangeData();
-//                onFocusChangeRange(context, viewHolder.itemView, t, mCheckedIndexRange, false, true);
-//            } catch (Exception e) {
-//            }
-//        }
-//        if (position != -1) {
-//            updateEpisodeCheckedIndex(position);
-//            updateEpisodePlayingIndex(position);
-//            try {
-//                LinearLayout linearLayout = viewGroup.findViewById(R.id.lb_list_tv_episodes_items);
-//                View child = linearLayout.getChildAt(position);
-//                List<T> list = getCheckedEpisodeData();
-//                T t = list.get(index);
-//                onClickEpisode(child.getContext(), child, t, index);
-//            } catch (Exception e) {
-//            }
-//        }
-//    }
+    public final void startPosition(RecyclerView recyclerView, int position) {
+        try {
+            if (position >= 0) {
+                // 1
+                int episodeNum = initEpisodeNum();
+                int newRangeCheckedIndex = position / episodeNum;
+                int newCheckedIndexEpisode = position % episodeNum;
+                resetCheckedIndex(newRangeCheckedIndex, newCheckedIndexEpisode);
+                // 2
+                LinearLayout viewGroup = recyclerView.findViewById(R.id.lb_list_tv_episodes_items);
+                View childAt = viewGroup.getChildAt(newCheckedIndexEpisode);
+                clickEpisode(viewGroup, childAt, newCheckedIndexEpisode, true);
+            }
+
+        } catch (Exception e) {
+            LeanBackUtil.log("ListTvEpisodesPresenter => formatMap => " + e.getMessage(), e);
+        }
+    }
+
+    public final void startNext(RecyclerView recyclerView) {
+        try {
+            int checkedIndexRange = getCheckedIndexRange();
+            int indexEpisode = getCheckedIndexEpisode(checkedIndexRange);
+            LinearLayout viewGroup = recyclerView.findViewById(R.id.lb_list_tv_episodes_items);
+            View childAt = viewGroup.getChildAt(indexEpisode + 1);
+            childAt.performClick();
+        } catch (Exception e) {
+            LeanBackUtil.log("ListTvEpisodesPresenter => startNext => " + e.getMessage(), e);
+        }
+    }
 }
