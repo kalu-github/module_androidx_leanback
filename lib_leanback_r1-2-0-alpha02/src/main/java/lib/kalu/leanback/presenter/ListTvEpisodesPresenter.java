@@ -918,7 +918,7 @@ public abstract class ListTvEpisodesPresenter<T extends TvEpisodesItemBean> exte
             if (position < 0)
                 throw new Exception("position error: " + position);
             int episodeLength = getEpisodeLength();
-            if (position + 1 > episodeLength) {
+            if (position >= episodeLength) {
                 if (!isFromUser) {
                     new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
                         @Override
