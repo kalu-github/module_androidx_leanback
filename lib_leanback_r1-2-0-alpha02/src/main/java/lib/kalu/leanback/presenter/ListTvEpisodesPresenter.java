@@ -43,10 +43,18 @@ public abstract class ListTvEpisodesPresenter<T extends TvEpisodesItemBean> exte
     public ViewHolder onCreateViewHolder(ViewGroup parent) {
         try {
             Context context = parent.getContext();
-            LinearLayout viewGroup = (LinearLayout) LayoutInflater.from(context).inflate(R.layout.lb_list_tv_episodes, parent, false);
-            initTitle(context, viewGroup, R.id.lb_list_tv_episodes_title);
-            initLayoutEpisode(context, viewGroup);
-            return new ViewHolder(viewGroup);
+            LinearLayout inflate = (LinearLayout) LayoutInflater.from(context).inflate(R.layout.lb_list_tv_episodes, parent, false);
+            setPadding(context, inflate);
+            setBackgroundColor(context, inflate);
+            setContentBackgroundColor(context, inflate, R.id.lb_list_tv_episodes_items);
+            setContentBackgroundColor(context, inflate, R.id.lb_list_tv_episodes_ranges);
+            setTitlePadding(context, inflate, R.id.lb_list_tv_episodes_title);
+            setTitleTextColor(context, inflate, R.id.lb_list_tv_episodes_title);
+            setTitleTextSize(context, inflate, R.id.lb_list_tv_episodes_title);
+            setTitleAssetTTF(context, inflate, R.id.lb_list_tv_episodes_title);
+            setTitleBackgroundColor(context, inflate, R.id.lb_list_tv_episodes_title);
+            initLayoutEpisode(context, inflate);
+            return new ViewHolder(inflate);
         } catch (Exception e) {
             LeanBackUtil.log("ListTvEpisodesPresenter => onCreateViewHolder => " + e.getMessage());
             return null;
@@ -75,7 +83,7 @@ public abstract class ListTvEpisodesPresenter<T extends TvEpisodesItemBean> exte
 //        }
 
         // 标题
-        setRowTitle(viewHolder.view);
+        updateTitle(viewHolder.view, R.id.lb_list_tv_episodes_title);
 
         // 区间
         initLayoutRange(viewHolder.view.getContext(), (LinearLayout) viewHolder.view);
@@ -136,10 +144,6 @@ public abstract class ListTvEpisodesPresenter<T extends TvEpisodesItemBean> exte
 
     @Override
     public void onUnbindViewHolder(ViewHolder viewHolder) {
-    }
-
-    protected String initRowTitle(Context context) {
-        return null;
     }
 
     protected int initEpisodeNum() {

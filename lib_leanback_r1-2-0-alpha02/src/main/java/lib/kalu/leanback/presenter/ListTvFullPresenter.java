@@ -1,6 +1,7 @@
 package lib.kalu.leanback.presenter;
 
 import android.content.Context;
+import android.graphics.Rect;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,8 +32,15 @@ public abstract class ListTvFullPresenter<T extends TvPresenterRowBean> extends 
         try {
             Context context = parent.getContext();
             onLife(context);
-            View inflate = LayoutInflater.from(context).inflate(R.layout.lb_list_tv_full, parent, false);
-            initTitle(context, inflate, R.id.module_leanback_llf_title);
+            ViewGroup inflate = (ViewGroup) LayoutInflater.from(context).inflate(R.layout.lb_list_tv_full, parent, false);
+            setPadding(context, inflate);
+            setBackgroundColor(context, inflate);
+            setContentBackgroundColor(context, inflate, R.id.module_leanback_llf_list);
+            setTitlePadding(context, inflate, R.id.module_leanback_llf_title);
+            setTitleTextColor(context, inflate, R.id.module_leanback_llf_title);
+            setTitleTextSize(context, inflate, R.id.module_leanback_llf_title);
+            setTitleAssetTTF(context, inflate, R.id.module_leanback_llf_title);
+            setTitleBackgroundColor(context, inflate, R.id.module_leanback_llf_title);
             initAdapter(context, inflate);
             return new ViewHolder(inflate);
         } catch (Exception e) {
@@ -139,10 +147,12 @@ public abstract class ListTvFullPresenter<T extends TvPresenterRowBean> extends 
                     }
                 };
                 manager.setOrientation(LinearLayoutManager.HORIZONTAL);
-                RecyclerView.ItemDecoration itemDecoration = initItemDecoration();
-                if (null != itemDecoration) {
-                    recyclerView.addItemDecoration(itemDecoration);
-                }
+                recyclerView.addItemDecoration(new RecyclerView.ItemDecoration() {
+                    @Override
+                    public void getItemOffsets(@NonNull Rect outRect, @NonNull View view, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
+                        initItemOffsets(outRect, view, parent, state);
+                    }
+                });
                 recyclerView.setLayoutManager(manager);
             }
 
@@ -218,14 +228,6 @@ public abstract class ListTvFullPresenter<T extends TvPresenterRowBean> extends 
 
     protected int initItemHeight(Context context) {
         return 0;
-    }
-
-    protected String initRowTitle(Context context) {
-        return null;
-    }
-
-    protected RecyclerView.ItemDecoration initItemDecoration() {
-        return null;
     }
 
     protected abstract void onCreateHolder(@NonNull Context context, @NonNull RecyclerView.ViewHolder holder, @NonNull View view, @NonNull List<T> datas);
