@@ -330,7 +330,7 @@ public final class HorizontalClassLayout extends ScrollView {
             RadioButton radioButton = (RadioButton) radioGroup.getChildAt(index);
             radioButton.setChecked(true);
             // listener
-            call();
+            call(-1);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -369,22 +369,33 @@ public final class HorizontalClassLayout extends ScrollView {
         }
     }
 
-    private void call() {
+    private void call(int index) {
         if (null == mListener) return;
         int count = getChildCount();
         if (count != 1) return;
         RadioGroup radioGroup = (RadioGroup) getChildAt(0);
-        if (null == radioGroup) return;
-        int size = radioGroup.getChildCount();
-        for (int i = 0; i < size; i++) {
-            RadioButton radioButton = (RadioButton) radioGroup.getChildAt(i);
-            if (null == radioButton) continue;
-            boolean checked = radioButton.isChecked();
-            if (checked) {
-                CharSequence text = radioButton.getText();
-                CharSequence hint = radioButton.getHint();
-                mListener.onChecked(i, String.valueOf(text), String.valueOf(hint));
-                break;
+        if (null == radioGroup)
+            return;
+
+        if (index != -1) {
+            RadioButton radioButton = (RadioButton) radioGroup.getChildAt(index);
+            if (null == radioButton)
+                return;
+            CharSequence text = radioButton.getText();
+            CharSequence hint = radioButton.getHint();
+            mListener.onChecked(index, String.valueOf(text), String.valueOf(hint));
+        } else {
+            int size = radioGroup.getChildCount();
+            for (int i = 0; i < size; i++) {
+                RadioButton radioButton = (RadioButton) radioGroup.getChildAt(i);
+                if (null == radioButton) continue;
+                boolean checked = radioButton.isChecked();
+                if (checked) {
+                    CharSequence text = radioButton.getText();
+                    CharSequence hint = radioButton.getHint();
+                    mListener.onChecked(i, String.valueOf(text), String.valueOf(hint));
+                    break;
+                }
             }
         }
     }
@@ -527,7 +538,7 @@ public final class HorizontalClassLayout extends ScrollView {
         }
 
         // listener
-        call();
+        call(-1);
     }
 
     public void highlight(@NonNull int index) {
@@ -626,7 +637,7 @@ public final class HorizontalClassLayout extends ScrollView {
         updateText(true);
         // listener
         if (call) {
-            call();
+            call(index);
         }
     }
 
