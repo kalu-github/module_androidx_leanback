@@ -229,6 +229,8 @@ public final class VerticalClassLayout extends ScrollView {
 
         // 1
         setFillViewport(true);
+        setVerticalScrollBarEnabled(false);
+        setHorizontalScrollBarEnabled(false);
         // 2
         RadioGroup layout = new RadioGroup(context);
         ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);

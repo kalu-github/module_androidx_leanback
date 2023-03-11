@@ -247,6 +247,8 @@ public final class HorizontalClassLayout extends ScrollView {
         // afterDescendants：先遍历子 view，让子 view尝试获取焦点，若所有子 view（包括所有直接子 view和间接子 view）都没拿到焦点，才让ViewGroup尝试获取焦点。
 //        setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
         setFillViewport(true);
+        setVerticalScrollBarEnabled(false);
+        setHorizontalScrollBarEnabled(false);
         // 2
         RadioGroup layout = new RadioGroup(context);
         ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
