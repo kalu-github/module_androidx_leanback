@@ -22,6 +22,8 @@ final class TagsHorizontalScrollView extends HorizontalScrollView {
     private void init() {
         setFocusable(false);
         setFillViewport(true);
+        setVerticalScrollBarEnabled(false);
+        setHorizontalScrollBarEnabled(false);
     }
 
     /********************/
@@ -80,6 +82,7 @@ final class TagsHorizontalScrollView extends HorizontalScrollView {
             return -1;
         }
     }
+
     protected int findCheckedItemIndex() {
         try {
             int childCount = getChildCount();
