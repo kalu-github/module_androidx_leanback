@@ -1,0 +1,3 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <dimen name="module_poputextview_margin" tools:ignore="MissingDefaultResource">4dp</dimen>
+</resources>
