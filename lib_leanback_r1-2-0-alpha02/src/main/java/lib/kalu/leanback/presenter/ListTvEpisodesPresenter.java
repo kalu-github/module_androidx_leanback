@@ -1,20 +1,15 @@
 package lib.kalu.leanback.presenter;
 
 import android.content.Context;
-import android.graphics.Rect;
 import android.os.Handler;
 import android.os.Looper;
-import android.view.FocusFinder;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
-import android.widget.FrameLayout;
-import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
-import android.widget.Space;
 import android.widget.TextView;
 
 import androidx.annotation.Keep;
@@ -23,8 +18,6 @@ import androidx.annotation.NonNull;
 import androidx.leanback.R;
 import androidx.leanback.widget.BaseGridView;
 import androidx.leanback.widget.Presenter;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
@@ -212,12 +205,12 @@ public abstract class ListTvEpisodesPresenter<T extends TvEpisodesItemBean> exte
                     if (i == 0) {
                         ((LinearLayout.LayoutParams) item.getLayoutParams()).leftMargin = 0;
                         ((LinearLayout.LayoutParams) item.getLayoutParams()).rightMargin = episodeMargin;
-                    } else if (i + 1 <= episodeNum) {
+                    } else if (i + 1 >= episodeNum) {
                         ((LinearLayout.LayoutParams) item.getLayoutParams()).leftMargin = episodeMargin;
                         ((LinearLayout.LayoutParams) item.getLayoutParams()).rightMargin = 0;
                     } else {
-                        ((LinearLayout.LayoutParams) item.getLayoutParams()).leftMargin = episodeMargin / 2;
-                        ((LinearLayout.LayoutParams) item.getLayoutParams()).rightMargin = episodeMargin / 2;
+                        ((LinearLayout.LayoutParams) item.getLayoutParams()).leftMargin = episodeMargin;
+                        ((LinearLayout.LayoutParams) item.getLayoutParams()).rightMargin = episodeMargin;
                     }
                 }
                 item.setOnClickListener(new View.OnClickListener() {

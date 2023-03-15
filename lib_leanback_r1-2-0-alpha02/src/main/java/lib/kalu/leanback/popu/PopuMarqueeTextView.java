@@ -12,7 +12,6 @@ import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.util.AttributeSet;
-import android.widget.TextView;
 
 import androidx.annotation.ColorInt;
 import androidx.annotation.Nullable;
@@ -25,7 +24,7 @@ import lib.kalu.leanback.marquee.MarqueeTextView;
  * https://blog.csdn.net/ansondroider/article/details/124790843?spm=1001.2101.3001.6650.1&utm_medium=distribute.pc_relevant.none-task-blog-2%7Edefault%7ECTRLIST%7ERate-1-124790843-blog-101005004.pc_relevant_multi_platform_whitelistv4&depth_1-utm_source=distribute.pc_relevant.none-task-blog-2%7Edefault%7ECTRLIST%7ERate-1-124790843-blog-101005004.pc_relevant_multi_platform_whitelistv4&utm_relevant_index=2
  */
 @SuppressLint("AppCompatCustomView")
-public final class PopuTextView extends TextView {
+public final class PopuMarqueeTextView extends MarqueeTextView {
 
     private final Rect mRect = new Rect();
     private final RectF mRectF = new RectF();
@@ -36,23 +35,23 @@ public final class PopuTextView extends TextView {
     private int mMarginBottom = 0;
     private int mCorners = 0;
 
-    public PopuTextView(Context context) {
+    public PopuMarqueeTextView(Context context) {
         super(context);
         init(context, null);
     }
 
-    public PopuTextView(Context context, @Nullable AttributeSet attrs) {
+    public PopuMarqueeTextView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         init(context, attrs);
     }
 
-    public PopuTextView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+    public PopuMarqueeTextView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init(context, attrs);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-    public PopuTextView(Context context, @Nullable AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+    public PopuMarqueeTextView(Context context, @Nullable AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
         init(context, attrs);
     }
