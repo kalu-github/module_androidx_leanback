@@ -193,6 +193,8 @@ public class RecyclerViewGrid extends RecyclerView {
             LeanBackUtil.log("RecyclerView => scrollFocus => up => position = " + position + ", next = " + next + ", spanCount = " + spanCount + ", itemCount = " + itemCount);
             while (true) {
                 ViewHolder viewHolder = findViewHolderForAdapterPosition(next);
+                if (null == viewHolder)
+                    break;
                 LeanBackUtil.log("RecyclerView => scrollFocus => up => viewHolder = " + viewHolder);
                 if (null != viewHolder) {
                     View itemView = viewHolder.itemView;
@@ -211,6 +213,8 @@ public class RecyclerViewGrid extends RecyclerView {
             LeanBackUtil.log("RecyclerView => scrollFocus => down => position = " + position + ", next = " + next + ", spanCount = " + spanCount + ", itemCount = " + itemCount);
             while (true) {
                 ViewHolder viewHolder = findViewHolderForAdapterPosition(next);
+                if (null == viewHolder)
+                    break;
                 LeanBackUtil.log("RecyclerView => scrollFocus => down => viewHolder = " + viewHolder);
                 if (null != viewHolder) {
                     View itemView = viewHolder.itemView;

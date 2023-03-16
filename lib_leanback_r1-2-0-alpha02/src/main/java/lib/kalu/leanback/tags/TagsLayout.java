@@ -8,12 +8,10 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.util.AttributeSet;
-import android.view.FocusFinder;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 
 import androidx.annotation.ColorInt;
@@ -21,7 +19,6 @@ import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.leanback.R;
-import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -157,12 +154,27 @@ public final class TagsLayout extends LinearLayout {
             LeanBackUtil.log("TagsLayout => reqFocus => childCount = " + childCount);
             if (childCount <= 0)
                 throw new Exception("error: childCount is " + childCount);
-            if (row + 1 > childCount)
+            if (row >= childCount)
                 throw new Exception("error: childCount is " + childCount + ", row = " + row);
             return ((TagsHorizontalScrollView) getChildAt(row)).reqFocus(col, auto);
         } catch (Exception e) {
             LeanBackUtil.log("TagsLayout => reqFocus => " + e.getMessage());
             return false;
+        }
+    }
+
+    private void scrollNext(int direction, int row, int col) {
+        try {
+            LeanBackUtil.log("TagsLayout => scrollNext => row = " + row + ", col = " + col);
+            int childCount = getChildCount();
+            LeanBackUtil.log("TagsLayout => scrollNext => childCount = " + childCount);
+            if (childCount <= 0)
+                throw new Exception("error: childCount is " + childCount);
+            if (row >= childCount)
+                throw new Exception("error: childCount is " + childCount + ", row = " + row);
+            ((TagsHorizontalScrollView) getChildAt(row)).scrollNext(direction, col);
+        } catch (Exception e) {
+            LeanBackUtil.log("TagsLayout => scrollNext => " + e.getMessage());
         }
     }
 
@@ -239,6 +251,7 @@ public final class TagsLayout extends LinearLayout {
                         int next = before - 1;
                         delFocus(row, before, false);
                         reqFocus(row, next, false);
+                        scrollNext(View.FOCUS_LEFT, row, next);
                         return true;
                     }
                 } else {
@@ -305,6 +318,7 @@ public final class TagsLayout extends LinearLayout {
                         int next = before + 1;
                         delFocus(row, before, false);
                         reqFocus(row, next, false);
+                        scrollNext(View.FOCUS_RIGHT, row, next);
                         return true;
                     }
                 } else {

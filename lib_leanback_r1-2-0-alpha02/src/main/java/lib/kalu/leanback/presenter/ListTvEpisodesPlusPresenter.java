@@ -18,6 +18,7 @@ import androidx.annotation.NonNull;
 import androidx.leanback.R;
 import androidx.leanback.widget.BaseGridView;
 import androidx.leanback.widget.Presenter;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
@@ -25,10 +26,10 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import lib.kalu.leanback.presenter.bean.TvEpisodesItemBean;
+import lib.kalu.leanback.presenter.bean.TvEpisodesPlusItemBean;
 import lib.kalu.leanback.util.LeanBackUtil;
 
-public abstract class ListTvEpisodesPresenter<T extends TvEpisodesItemBean> extends Presenter implements ListTvPresenterImpl {
+public abstract class ListTvEpisodesPlusPresenter<T extends TvEpisodesPlusItemBean> extends Presenter implements ListTvPresenterImpl {
 
     private final LinkedHashMap<T, List<T>> mData = new LinkedHashMap<>();
 
@@ -36,7 +37,7 @@ public abstract class ListTvEpisodesPresenter<T extends TvEpisodesItemBean> exte
     public ViewHolder onCreateViewHolder(ViewGroup parent) {
         try {
             Context context = parent.getContext();
-            LinearLayout inflate = (LinearLayout) LayoutInflater.from(context).inflate(R.layout.lb_list_tv_episodes, parent, false);
+            LinearLayout inflate = (LinearLayout) LayoutInflater.from(context).inflate(R.layout.lb_list_tv_episodes_plus, parent, false);
             setPadding(context, inflate);
             setBackgroundColor(context, inflate);
             setContentBackgroundColor(context, inflate, R.id.lb_list_tv_episodes_items);
@@ -49,7 +50,7 @@ public abstract class ListTvEpisodesPresenter<T extends TvEpisodesItemBean> exte
             initLayoutEpisode(context, inflate);
             return new ViewHolder(inflate);
         } catch (Exception e) {
-            LeanBackUtil.log("ListTvEpisodesPresenter => onCreateViewHolder => " + e.getMessage());
+            LeanBackUtil.log("ListTvEpisodesPlusPresenter => onCreateViewHolder => " + e.getMessage());
             return null;
         }
     }
@@ -65,11 +66,11 @@ public abstract class ListTvEpisodesPresenter<T extends TvEpisodesItemBean> exte
 //            for (Map.Entry<T, List<T>> entry : mData.entrySet()) {
 //                T t = entry.getKey();
 //                if (null != t) {
-//                    LeanBackUtil.log("ListTvEpisodesPresenter => printMap => " + t.toString());
+//                    LeanBackUtil.log("ListTvEpisodesPlusPresenter => printMap => " + t.toString());
 //                }
 //                List<T> value = entry.getValue();
 //                if (null != t) {
-//                    LeanBackUtil.log("ListTvEpisodesPresenter => printMap => " + value.toString());
+//                    LeanBackUtil.log("ListTvEpisodesPlusPresenter => printMap => " + value.toString());
 //                }
 //            }
 //        } catch (Exception e) {
@@ -91,7 +92,7 @@ public abstract class ListTvEpisodesPresenter<T extends TvEpisodesItemBean> exte
             textView.setText(initRowTitle(view.getContext()));
             textView.setVisibility(View.VISIBLE);
         } catch (Exception e) {
-            LeanBackUtil.log("ListTvEpisodesPresenter => setHead => " + e.getMessage());
+            LeanBackUtil.log("ListTvEpisodesPlusPresenter => setHead => " + e.getMessage());
         }
     }
 
@@ -131,7 +132,7 @@ public abstract class ListTvEpisodesPresenter<T extends TvEpisodesItemBean> exte
             }
 
         } catch (Exception e) {
-            LeanBackUtil.log("ListTvEpisodesPresenter => formatMap => " + e.getMessage());
+            LeanBackUtil.log("ListTvEpisodesPlusPresenter => formatMap => " + e.getMessage());
         }
     }
 
@@ -226,7 +227,7 @@ public abstract class ListTvEpisodesPresenter<T extends TvEpisodesItemBean> exte
                     @Override
                     public boolean onKey(View v, int keyCode, KeyEvent event) {
 
-                        LeanBackUtil.log("ListTvEpisodesPresenter => initLayoutEpisode => onKey => action = " + event.getAction() + ", code = " + keyCode);
+                        LeanBackUtil.log("ListTvEpisodesPlusPresenter => initLayoutEpisode => onKey => action = " + event.getAction() + ", code = " + keyCode);
 
                         // left
                         if (event.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
@@ -234,7 +235,7 @@ public abstract class ListTvEpisodesPresenter<T extends TvEpisodesItemBean> exte
 
                                 int checkedIndexRange = getCheckedIndexRange();
                                 int checkedIndexEpisode = getCheckedIndexEpisode(checkedIndexRange);
-                                LeanBackUtil.log("ListTvEpisodesPresenter => initLayoutEpisode => onKey => left => checkedIndexEpisode = " + checkedIndexEpisode);
+                                LeanBackUtil.log("ListTvEpisodesPlusPresenter => initLayoutEpisode => onKey => left => checkedIndexEpisode = " + checkedIndexEpisode);
 
                                 // 剧集 - 显示第一个
                                 if (checkedIndexEpisode <= 0) {
@@ -253,7 +254,7 @@ public abstract class ListTvEpisodesPresenter<T extends TvEpisodesItemBean> exte
                                     return true;
                                 }
                             } catch (Exception e) {
-                                LeanBackUtil.log("ListTvEpisodesPresenter => initLayoutEpisode => onKey => left => " + e.getMessage());
+                                LeanBackUtil.log("ListTvEpisodesPlusPresenter => initLayoutEpisode => onKey => left => " + e.getMessage());
                                 return true;
                             }
 
@@ -294,7 +295,7 @@ public abstract class ListTvEpisodesPresenter<T extends TvEpisodesItemBean> exte
                                     return true;
                                 }
                             } catch (Exception e) {
-                                LeanBackUtil.log("ListTvEpisodesPresenter => initLayoutEpisode => onKey => right => " + e.getMessage());
+                                LeanBackUtil.log("ListTvEpisodesPlusPresenter => initLayoutEpisode => onKey => right => " + e.getMessage());
                                 return true;
                             }
 
@@ -326,7 +327,7 @@ public abstract class ListTvEpisodesPresenter<T extends TvEpisodesItemBean> exte
                 });
             }
         } catch (Exception e) {
-            LeanBackUtil.log("ListTvEpisodesPresenter => initLayoutEpisode => " + e.getMessage());
+            LeanBackUtil.log("ListTvEpisodesPlusPresenter => initLayoutEpisode => " + e.getMessage());
         }
     }
 
@@ -345,7 +346,7 @@ public abstract class ListTvEpisodesPresenter<T extends TvEpisodesItemBean> exte
             // 2
             int rangeLength = getRangeLength();
             int rangePadding = initRangePadding(context);
-            LeanBackUtil.log("ListTvEpisodesPresenter => initLayoutRange => rangeLength = " + rangeLength + ", rangePadding = " + rangePadding);
+            LeanBackUtil.log("ListTvEpisodesPlusPresenter => initLayoutRange => rangeLength = " + rangeLength + ", rangePadding = " + rangePadding);
             for (int i = 0; i < rangeLength; i++) {
                 View item = LayoutInflater.from(context).inflate(initRangeLayout(), layout, false);
                 layout.addView(item);
@@ -364,7 +365,7 @@ public abstract class ListTvEpisodesPresenter<T extends TvEpisodesItemBean> exte
                 item.setOnKeyListener(new View.OnKeyListener() {
                     @Override
                     public boolean onKey(View v, int keyCode, KeyEvent event) {
-                        LeanBackUtil.log("ListTvEpisodesPresenter => initLayoutRange => onKey => action = " + event.getAction() + ", code = " + keyCode);
+                        LeanBackUtil.log("ListTvEpisodesPlusPresenter => initLayoutRange => onKey => action = " + event.getAction() + ", code = " + keyCode);
                         // right
                         if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_RIGHT) {
                             int rangeLength = getRangeLength();
@@ -384,7 +385,7 @@ public abstract class ListTvEpisodesPresenter<T extends TvEpisodesItemBean> exte
                         // left
                         else if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_LEFT) {
                             int rangeIndexOfChild = findRangeIndexOfChild(v);
-                            LeanBackUtil.log("ListTvEpisodesPresenter => initLayoutRange => onKey => left => rangeIndexOfChild = " + rangeIndexOfChild);
+                            LeanBackUtil.log("ListTvEpisodesPlusPresenter => initLayoutRange => onKey => left => rangeIndexOfChild = " + rangeIndexOfChild);
                             if (rangeIndexOfChild <= 0)
                                 return true;
                             // 1
@@ -400,7 +401,7 @@ public abstract class ListTvEpisodesPresenter<T extends TvEpisodesItemBean> exte
                         // up
                         else if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_UP) {
                             int rangeIndexOfChild = findRangeIndexOfChild(v);
-                            LeanBackUtil.log("ListTvEpisodesPresenter => initLayoutRange => onKey => up => rangeIndexOfChild = " + rangeIndexOfChild);
+                            LeanBackUtil.log("ListTvEpisodesPlusPresenter => initLayoutRange => onKey => up => rangeIndexOfChild = " + rangeIndexOfChild);
                             // 1
                             notifyRange(viewGroup, rangeIndexOfChild, false, true, false, false);
                             // 2
@@ -412,7 +413,7 @@ public abstract class ListTvEpisodesPresenter<T extends TvEpisodesItemBean> exte
                 });
             }
         } catch (Exception e) {
-            LeanBackUtil.log("ListTvEpisodesPresenter => initLayoutRange => " + e.getMessage());
+            LeanBackUtil.log("ListTvEpisodesPlusPresenter => initLayoutRange => " + e.getMessage());
         }
     }
 
@@ -425,7 +426,7 @@ public abstract class ListTvEpisodesPresenter<T extends TvEpisodesItemBean> exte
             }
             throw new Exception("not find error: " + index);
         } catch (Exception e) {
-            LeanBackUtil.log("ListTvEpisodesPresenter => getIndexOfEpisodeData => " + e.getMessage());
+            LeanBackUtil.log("ListTvEpisodesPlusPresenter => getIndexOfEpisodeData => " + e.getMessage());
             throw e;
         }
     }
@@ -435,7 +436,7 @@ public abstract class ListTvEpisodesPresenter<T extends TvEpisodesItemBean> exte
             List<T> list = getIndexOfEpisodeData(index);
             return list.size();
         } catch (Exception e) {
-            LeanBackUtil.log("ListTvEpisodesPresenter => getIndexOfEpisodeLength => " + e.getMessage());
+            LeanBackUtil.log("ListTvEpisodesPlusPresenter => getIndexOfEpisodeLength => " + e.getMessage());
             return -1;
         }
     }
@@ -452,7 +453,7 @@ public abstract class ListTvEpisodesPresenter<T extends TvEpisodesItemBean> exte
                 throw new Exception("size error: " + size);
             for (int i = size - 1; i >= 0; i--) {
                 T t = list.get(i);
-                LeanBackUtil.log("ListTvEpisodesPresenter => getCheckedIndexEpisode => checkedIndexRange = " + checkedIndexRange + ", i = " + i + ", data = " + t.toString());
+                LeanBackUtil.log("ListTvEpisodesPlusPresenter => getCheckedIndexEpisode => checkedIndexRange = " + checkedIndexRange + ", i = " + i + ", data = " + t.toString());
                 if (null == t) continue;
                 boolean checked = t.isChecked();
                 if (checked)
@@ -460,7 +461,7 @@ public abstract class ListTvEpisodesPresenter<T extends TvEpisodesItemBean> exte
             }
             throw new Exception("not find getCheckedIndexEpisode: " + checkedIndexRange);
         } catch (Exception e) {
-            LeanBackUtil.log("ListTvEpisodesPresenter => getCheckedIndexEpisode => " + e.getMessage());
+            LeanBackUtil.log("ListTvEpisodesPlusPresenter => getCheckedIndexEpisode => " + e.getMessage());
             return -1;
         }
     }
@@ -476,7 +477,7 @@ public abstract class ListTvEpisodesPresenter<T extends TvEpisodesItemBean> exte
             if (size <= 0) throw new Exception("size error: " + size);
             for (int i = 0; i < size; i++) {
                 T t = list.get(i);
-                LeanBackUtil.log("ListTvEpisodesPresenter => getPlayingIndexEpisode => playingIndexRange = " + playingIndexRange + ", i = " + i + ", data = " + t.toString());
+                LeanBackUtil.log("ListTvEpisodesPlusPresenter => getPlayingIndexEpisode => playingIndexRange = " + playingIndexRange + ", i = " + i + ", data = " + t.toString());
                 if (null == t)
                     continue;
                 boolean playing = t.isPlaying();
@@ -485,7 +486,7 @@ public abstract class ListTvEpisodesPresenter<T extends TvEpisodesItemBean> exte
             }
             throw new Exception("not find getPlayingIndexEpisode: playingIndexRange = " + playingIndexRange);
         } catch (Exception e) {
-            LeanBackUtil.log("ListTvEpisodesPresenter => getPlayingIndexEpisode => " + e.getMessage());
+            LeanBackUtil.log("ListTvEpisodesPlusPresenter => getPlayingIndexEpisode => " + e.getMessage());
             return -1;
         }
     }
@@ -501,13 +502,13 @@ public abstract class ListTvEpisodesPresenter<T extends TvEpisodesItemBean> exte
                 index += 1;
                 boolean checked = t.isChecked();
                 if (checked) {
-                    LeanBackUtil.log("ListTvEpisodesPresenter => getCheckedIndexRange => index = " + index);
+                    LeanBackUtil.log("ListTvEpisodesPlusPresenter => getCheckedIndexRange => index = " + index);
                     return index;
                 }
             }
             throw new Exception("index error: " + index);
         } catch (Exception e) {
-            LeanBackUtil.log("ListTvEpisodesPresenter => getCheckedIndexRange => " + e.getMessage());
+            LeanBackUtil.log("ListTvEpisodesPlusPresenter => getCheckedIndexRange => " + e.getMessage());
             return -1;
         }
     }
@@ -522,13 +523,13 @@ public abstract class ListTvEpisodesPresenter<T extends TvEpisodesItemBean> exte
                 index += 1;
                 boolean playing = t.isPlaying();
                 if (playing) {
-                    LeanBackUtil.log("ListTvEpisodesPresenter => getPlayingIndexRange => index = " + index);
+                    LeanBackUtil.log("ListTvEpisodesPlusPresenter => getPlayingIndexRange => index = " + index);
                     return index;
                 }
             }
             throw new Exception("index error: " + index);
         } catch (Exception e) {
-            LeanBackUtil.log("ListTvEpisodesPresenter => getPlayingIndexRange => " + e.getMessage());
+            LeanBackUtil.log("ListTvEpisodesPlusPresenter => getPlayingIndexRange => " + e.getMessage());
             return -1;
         }
     }
@@ -569,10 +570,10 @@ public abstract class ListTvEpisodesPresenter<T extends TvEpisodesItemBean> exte
         int playingIndexEpisode = getPlayingIndexEpisode();
         int checkedIndexRange = getCheckedIndexRange();
         int playingIndexRange = getPlayingIndexRange();
-        LeanBackUtil.log("ListTvEpisodesPresenter => isPlayingIndexOfEpisode => index = " + index);
-        LeanBackUtil.log("ListTvEpisodesPresenter => isPlayingIndexOfEpisode => playingIndexEpisode = " + playingIndexEpisode);
-        LeanBackUtil.log("ListTvEpisodesPresenter => isPlayingIndexOfEpisode => checkedIndexRange = " + checkedIndexRange);
-        LeanBackUtil.log("ListTvEpisodesPresenter => isPlayingIndexOfEpisode => playingIndexRange = " + playingIndexRange);
+        LeanBackUtil.log("ListTvEpisodesPlusPresenter => isPlayingIndexOfEpisode => index = " + index);
+        LeanBackUtil.log("ListTvEpisodesPlusPresenter => isPlayingIndexOfEpisode => playingIndexEpisode = " + playingIndexEpisode);
+        LeanBackUtil.log("ListTvEpisodesPlusPresenter => isPlayingIndexOfEpisode => checkedIndexRange = " + checkedIndexRange);
+        LeanBackUtil.log("ListTvEpisodesPlusPresenter => isPlayingIndexOfEpisode => playingIndexRange = " + playingIndexRange);
         return index == playingIndexEpisode && checkedIndexRange == playingIndexRange;
     }
 
@@ -580,18 +581,18 @@ public abstract class ListTvEpisodesPresenter<T extends TvEpisodesItemBean> exte
         int checkedIndexRange = getCheckedIndexRange();
         int playingIndexRange = getPlayingIndexRange();
         int checkedIndexEpisode = getCheckedIndexEpisode(checkedIndexRange);
-        LeanBackUtil.log("ListTvEpisodesPresenter => isCheckedAndPlayingIndexOfEpisode => index = " + index);
-        LeanBackUtil.log("ListTvEpisodesPresenter => isCheckedAndPlayingIndexOfEpisode => checkedIndexEpisode = " + checkedIndexEpisode);
-        LeanBackUtil.log("ListTvEpisodesPresenter => isCheckedAndPlayingIndexOfEpisode => checkedIndexRange = " + checkedIndexRange);
-        LeanBackUtil.log("ListTvEpisodesPresenter => isCheckedAndPlayingIndexOfEpisode => playingIndexRange = " + playingIndexRange);
+        LeanBackUtil.log("ListTvEpisodesPlusPresenter => isCheckedAndPlayingIndexOfEpisode => index = " + index);
+        LeanBackUtil.log("ListTvEpisodesPlusPresenter => isCheckedAndPlayingIndexOfEpisode => checkedIndexEpisode = " + checkedIndexEpisode);
+        LeanBackUtil.log("ListTvEpisodesPlusPresenter => isCheckedAndPlayingIndexOfEpisode => checkedIndexRange = " + checkedIndexRange);
+        LeanBackUtil.log("ListTvEpisodesPlusPresenter => isCheckedAndPlayingIndexOfEpisode => playingIndexRange = " + playingIndexRange);
         return index == checkedIndexEpisode && checkedIndexRange == playingIndexRange;
     }
 
     private final boolean isCheckedIndexOfEpisode(int index) {
         int checkedIndexRange = getCheckedIndexRange();
         int checkedIndexEpisode = getCheckedIndexEpisode(checkedIndexRange);
-        LeanBackUtil.log("ListTvEpisodesPresenter => isCheckedIndexOfEpisode => index = " + index);
-        LeanBackUtil.log("ListTvEpisodesPresenter => isCheckedIndexOfEpisode => checkedIndexRange = " + checkedIndexRange);
+        LeanBackUtil.log("ListTvEpisodesPlusPresenter => isCheckedIndexOfEpisode => index = " + index);
+        LeanBackUtil.log("ListTvEpisodesPlusPresenter => isCheckedIndexOfEpisode => checkedIndexRange = " + checkedIndexRange);
         return index == checkedIndexEpisode;
     }
 
@@ -602,7 +603,7 @@ public abstract class ListTvEpisodesPresenter<T extends TvEpisodesItemBean> exte
 
     private final boolean isCheckedIndexOfRange(int index) {
         int checkedIndexRange = getCheckedIndexRange();
-        LeanBackUtil.log("ListTvEpisodesPresenter => isCheckedIndexOfRange => checkedIndexRange = " + checkedIndexRange + ", index = " + index);
+        LeanBackUtil.log("ListTvEpisodesPlusPresenter => isCheckedIndexOfRange => checkedIndexRange = " + checkedIndexRange + ", index = " + index);
         return index == checkedIndexRange;
     }
 
@@ -622,7 +623,7 @@ public abstract class ListTvEpisodesPresenter<T extends TvEpisodesItemBean> exte
                 throw new Exception("length error: " + length);
             return length;
         } catch (Exception e) {
-            LeanBackUtil.log("ListTvEpisodesPresenter => getEpisodeLength => " + e.getMessage());
+            LeanBackUtil.log("ListTvEpisodesPlusPresenter => getEpisodeLength => " + e.getMessage());
             return -1;
         }
     }
@@ -631,7 +632,7 @@ public abstract class ListTvEpisodesPresenter<T extends TvEpisodesItemBean> exte
         try {
             return mData.size();
         } catch (Exception e) {
-            LeanBackUtil.log("ListTvEpisodesPresenter => getRangeLength => " + e.getMessage());
+            LeanBackUtil.log("ListTvEpisodesPlusPresenter => getRangeLength => " + e.getMessage());
             return -1;
         }
     }
@@ -647,14 +648,14 @@ public abstract class ListTvEpisodesPresenter<T extends TvEpisodesItemBean> exte
             }
             throw new Exception("position error: " + position);
         } catch (Exception e) {
-            LeanBackUtil.log("ListTvEpisodesPresenter => getIndexOfRangeData => " + e.getMessage());
+            LeanBackUtil.log("ListTvEpisodesPlusPresenter => getIndexOfRangeData => " + e.getMessage());
             throw null;
         }
     }
 
     private final void notifyEpisode1(ViewGroup viewGroup, int index, boolean hasFocus, boolean isClick, boolean isVertical) {
         try {
-            LeanBackUtil.log("ListTvEpisodesPresenter => notifyEpisode => index = " + index + ", isVertical = " + isVertical);
+            LeanBackUtil.log("ListTvEpisodesPlusPresenter => notifyEpisode => index = " + index + ", isVertical = " + isVertical);
 
             int checkedIndexRange = getCheckedIndexRange();
             List<T> list = getIndexOfEpisodeData(checkedIndexRange);
@@ -678,7 +679,7 @@ public abstract class ListTvEpisodesPresenter<T extends TvEpisodesItemBean> exte
             View child = layoutRoot.getChildAt(index);
             onBindViewHolderEpisode(child.getContext(), child, t, index, hasFocus, isPlaying, isChecked);
         } catch (Exception e) {
-            LeanBackUtil.log("ListTvEpisodesPresenter => notifyEpisode => " + e.getMessage());
+            LeanBackUtil.log("ListTvEpisodesPlusPresenter => notifyEpisode => " + e.getMessage());
         }
     }
 
@@ -697,7 +698,7 @@ public abstract class ListTvEpisodesPresenter<T extends TvEpisodesItemBean> exte
                 isChecked = false;
 //                isChecked = isCheckedIndexOfRange(index);
             }
-            LeanBackUtil.log("ListTvEpisodesPresenter => notifyRange => index = " + index + ", hasFocus" + hasFocus + ", isClick = " + isClick + ", isChecked = " + isChecked + ", isPlaying = " + isPlaying);
+            LeanBackUtil.log("ListTvEpisodesPlusPresenter => notifyRange => index = " + index + ", hasFocus" + hasFocus + ", isClick = " + isClick + ", isChecked = " + isChecked + ", isPlaying = " + isPlaying);
 
             LinearLayout layout = viewGroup.findViewById(R.id.lb_list_tv_episodes_ranges);
             View childAt = layout.getChildAt(index);
@@ -708,19 +709,19 @@ public abstract class ListTvEpisodesPresenter<T extends TvEpisodesItemBean> exte
 //                scrollView.scrollTo(0, childAt.getRight());
             }
         } catch (Exception e) {
-            LeanBackUtil.log("ListTvEpisodesPresenter => notifyRange => " + e.getMessage());
+            LeanBackUtil.log("ListTvEpisodesPlusPresenter => notifyRange => " + e.getMessage());
         }
     }
 
     private final void callClickEpisode(@NonNull LinearLayout viewGroup, View v, int index, boolean isFromUser, boolean isPlaying, boolean isNext) {
 
-        LeanBackUtil.log("ListTvEpisodesPresenter => callClickEpisode => isFromUser = " + isFromUser);
-        LeanBackUtil.log("ListTvEpisodesPresenter => callClickEpisode => isPlaying = " + isPlaying);
-        LeanBackUtil.log("ListTvEpisodesPresenter => callClickEpisode => isNext = " + isNext);
+        LeanBackUtil.log("ListTvEpisodesPlusPresenter => callClickEpisode => isFromUser = " + isFromUser);
+        LeanBackUtil.log("ListTvEpisodesPlusPresenter => callClickEpisode => isPlaying = " + isPlaying);
+        LeanBackUtil.log("ListTvEpisodesPlusPresenter => callClickEpisode => isNext = " + isNext);
         // user click
         if (isFromUser) {
             boolean playingIndexOfEpisode = isPlayingIndexOfEpisode(index);
-            LeanBackUtil.log("ListTvEpisodesPresenter => callClickEpisode => playingIndexOfEpisode = " + playingIndexOfEpisode);
+            LeanBackUtil.log("ListTvEpisodesPlusPresenter => callClickEpisode => playingIndexOfEpisode = " + playingIndexOfEpisode);
             if (!playingIndexOfEpisode) {
                 int checkedIndexRange = getCheckedIndexRange();
                 int playingIndexRange = getPlayingIndexRange();
@@ -744,7 +745,7 @@ public abstract class ListTvEpisodesPresenter<T extends TvEpisodesItemBean> exte
                     int real = checkedIndexRange * episodeNum + index;
                     onClickEpisode(v.getContext(), v, t, real, isFromUser);
                 } catch (Exception e) {
-                    LeanBackUtil.log("ListTvEpisodesPresenter => callClickEpisode => " + e.getMessage());
+                    LeanBackUtil.log("ListTvEpisodesPlusPresenter => callClickEpisode => " + e.getMessage());
                 }
             }
         }
@@ -753,8 +754,8 @@ public abstract class ListTvEpisodesPresenter<T extends TvEpisodesItemBean> exte
 
             int checkedIndexRange = getCheckedIndexRange();
             int checkedIndexEpisode = getCheckedIndexEpisode(checkedIndexRange);
-            LeanBackUtil.log("ListTvEpisodesPresenter => callClickEpisode => checkedIndexRange = " + checkedIndexRange);
-            LeanBackUtil.log("ListTvEpisodesPresenter => callClickEpisode => checkedIndexEpisode = " + checkedIndexEpisode);
+            LeanBackUtil.log("ListTvEpisodesPlusPresenter => callClickEpisode => checkedIndexRange = " + checkedIndexRange);
+            LeanBackUtil.log("ListTvEpisodesPlusPresenter => callClickEpisode => checkedIndexEpisode = " + checkedIndexEpisode);
 
             if (isPlaying) {
                 try {
@@ -764,7 +765,7 @@ public abstract class ListTvEpisodesPresenter<T extends TvEpisodesItemBean> exte
                     int real = checkedIndexRange * episodeNum + index;
                     onClickEpisode(v.getContext(), v, t, real, false);
                 } catch (Exception e) {
-                    LeanBackUtil.log("ListTvEpisodesPresenter => callClickEpisode => " + e.getMessage());
+                    LeanBackUtil.log("ListTvEpisodesPlusPresenter => callClickEpisode => " + e.getMessage());
                 }
 
                 if (isNext) {
@@ -799,13 +800,13 @@ public abstract class ListTvEpisodesPresenter<T extends TvEpisodesItemBean> exte
                 }
             }
         } catch (Exception e) {
-            LeanBackUtil.log("ListTvEpisodesPresenter => resetPlayingIndex => " + e.getMessage());
+            LeanBackUtil.log("ListTvEpisodesPlusPresenter => resetPlayingIndex => " + e.getMessage());
         }
     }
 
     private final void resetCheckedIndex(int checkedIndexRange, int checkedIndexEpisode) {
         try {
-            LeanBackUtil.log("ListTvEpisodesPresenter => resetCheckedIndex => checkedIndexRange = " + checkedIndexRange + ", checkedIndexEpisode = " + checkedIndexEpisode);
+            LeanBackUtil.log("ListTvEpisodesPlusPresenter => resetCheckedIndex => checkedIndexRange = " + checkedIndexRange + ", checkedIndexEpisode = " + checkedIndexEpisode);
             int index = -1;
             for (Map.Entry<T, List<T>> entry : mData.entrySet()) {
                 T t1 = entry.getKey();
@@ -824,13 +825,13 @@ public abstract class ListTvEpisodesPresenter<T extends TvEpisodesItemBean> exte
 //                    boolean checked = t2.isChecked();
 //                    if (checked)
 //                        continue;
-                    LeanBackUtil.log("ListTvEpisodesPresenter => resetCheckedIndex => index = " + index + ", m = " + m);
+                    LeanBackUtil.log("ListTvEpisodesPlusPresenter => resetCheckedIndex => index = " + index + ", m = " + m);
                     t2.setChecked(index == checkedIndexRange && m == checkedIndexEpisode);
-                    LeanBackUtil.log("ListTvEpisodesPresenter => resetCheckedIndex => " + t2.toString());
+                    LeanBackUtil.log("ListTvEpisodesPlusPresenter => resetCheckedIndex => " + t2.toString());
                 }
             }
         } catch (Exception e) {
-            LeanBackUtil.log("ListTvEpisodesPresenter => resetPlayingIndex => " + e.getMessage());
+            LeanBackUtil.log("ListTvEpisodesPlusPresenter => resetPlayingIndex => " + e.getMessage());
         }
     }
 
@@ -842,20 +843,20 @@ public abstract class ListTvEpisodesPresenter<T extends TvEpisodesItemBean> exte
             }
             List<T> list = getIndexOfEpisodeData(checkedIndexRange);
             LinearLayout layout = viewGroup.findViewById(R.id.lb_list_tv_episodes_items);
-            LeanBackUtil.log("ListTvEpisodesPresenter => notifyEpisodeAdapter => layout = " + layout);
+            LeanBackUtil.log("ListTvEpisodesPlusPresenter => notifyEpisodeAdapter => layout = " + layout);
             int max = layout.getChildCount();
             int num = list.size();
-            LeanBackUtil.log("ListTvEpisodesPresenter => notifyEpisodeAdapter => checkedIndexRange = " + checkedIndexRange);
-            LeanBackUtil.log("ListTvEpisodesPresenter => notifyEpisodeAdapter => max = " + max);
-            LeanBackUtil.log("ListTvEpisodesPresenter => notifyEpisodeAdapter => num = " + num);
+            LeanBackUtil.log("ListTvEpisodesPlusPresenter => notifyEpisodeAdapter => checkedIndexRange = " + checkedIndexRange);
+            LeanBackUtil.log("ListTvEpisodesPlusPresenter => notifyEpisodeAdapter => max = " + max);
+            LeanBackUtil.log("ListTvEpisodesPlusPresenter => notifyEpisodeAdapter => num = " + num);
             for (int i = 0; i < max; i++) {
                 View child = layout.getChildAt(i);
-                LeanBackUtil.log("ListTvEpisodesPresenter => notifyEpisodeAdapter => i = " + i + ", child = " + child);
+                LeanBackUtil.log("ListTvEpisodesPlusPresenter => notifyEpisodeAdapter => i = " + i + ", child = " + child);
                 if (null == child) continue;
                 child.setVisibility(i + 1 <= num ? View.VISIBLE : View.INVISIBLE);
                 if (i + 1 > num) continue;
                 T t = list.get(i);
-                LeanBackUtil.log("ListTvEpisodesPresenter => notifyEpisodeAdapter => " + t.toString());
+                LeanBackUtil.log("ListTvEpisodesPlusPresenter => notifyEpisodeAdapter => " + t.toString());
                 if (null == t) continue;
 
                 if (i == cleanFocusIndex) {
@@ -868,7 +869,7 @@ public abstract class ListTvEpisodesPresenter<T extends TvEpisodesItemBean> exte
                 onBindViewHolderEpisode(context, child, t, i, i == requestFocusIndex, isPlaying, isChecked);
             }
         } catch (Exception e) {
-            LeanBackUtil.log("ListTvEpisodesPresenter => notifyEpisodeAdapter => " + e.getMessage());
+            LeanBackUtil.log("ListTvEpisodesPlusPresenter => notifyEpisodeAdapter => " + e.getMessage());
         }
     }
 
@@ -883,7 +884,7 @@ public abstract class ListTvEpisodesPresenter<T extends TvEpisodesItemBean> exte
             View childAt = layout.getChildAt(checkedIndexRange);
             childAt.requestFocus();
         } catch (Exception e) {
-            LeanBackUtil.log("ListTvEpisodesPresenter => focusDownEpisode => " + e.getMessage());
+            LeanBackUtil.log("ListTvEpisodesPlusPresenter => focusDownEpisode => " + e.getMessage());
         }
     }
 
@@ -894,7 +895,7 @@ public abstract class ListTvEpisodesPresenter<T extends TvEpisodesItemBean> exte
             int playingIndexRange = getPlayingIndexRange();
             int checkedIndexEpisode = getCheckedIndexEpisode(checkedIndexRange);
             int playingIndexEpisode = getPlayingIndexEpisode();
-            LeanBackUtil.log("ListTvEpisodesPresenter => focusUpRange => checkedIndexRange = " + checkedIndexRange + ", playingIndexRange = " + playingIndexRange + ", checkedIndexEpisode = " + checkedIndexEpisode + ", playingIndexEpisode = " + playingIndexEpisode);
+            LeanBackUtil.log("ListTvEpisodesPlusPresenter => focusUpRange => checkedIndexRange = " + checkedIndexRange + ", playingIndexRange = " + playingIndexRange + ", checkedIndexEpisode = " + checkedIndexEpisode + ", playingIndexEpisode = " + playingIndexEpisode);
 //            if (checkedIndexRange == playingIndexRange && playingIndexEpisode!= -1) {
 //                index = playingIndexEpisode;
 //            } else  {
@@ -905,7 +906,7 @@ public abstract class ListTvEpisodesPresenter<T extends TvEpisodesItemBean> exte
             childAt.requestFocus();
             notifyEpisode1(viewGroup, index, true, false, true);
         } catch (Exception e) {
-            LeanBackUtil.log("ListTvEpisodesPresenter => focusUpRange => " + e.getMessage());
+            LeanBackUtil.log("ListTvEpisodesPlusPresenter => focusUpRange => " + e.getMessage());
         }
     }
 
@@ -928,18 +929,18 @@ public abstract class ListTvEpisodesPresenter<T extends TvEpisodesItemBean> exte
             }
             // 1
             int oldPlayingIndexRange = getPlayingIndexRange();
-            LeanBackUtil.log("ListTvEpisodesPresenter => startEpisodePosition => oldPlayingIndexRange = " + oldPlayingIndexRange);
+            LeanBackUtil.log("ListTvEpisodesPlusPresenter => startEpisodePosition => oldPlayingIndexRange = " + oldPlayingIndexRange);
             int oldCheckedIndexRange = getCheckedIndexRange();
-            LeanBackUtil.log("ListTvEpisodesPresenter => startEpisodePosition => oldCheckedIndexRange = " + oldCheckedIndexRange);
+            LeanBackUtil.log("ListTvEpisodesPlusPresenter => startEpisodePosition => oldCheckedIndexRange = " + oldCheckedIndexRange);
             int oldPlayingIndexEpisode = getPlayingIndexEpisode();
-            LeanBackUtil.log("ListTvEpisodesPresenter => startEpisodePosition => oldPlayingIndexEpisode = " + oldPlayingIndexEpisode);
+            LeanBackUtil.log("ListTvEpisodesPlusPresenter => startEpisodePosition => oldPlayingIndexEpisode = " + oldPlayingIndexEpisode);
             int oldCheckedIndexEpisode = getCheckedIndexEpisode(oldCheckedIndexRange);
-            LeanBackUtil.log("ListTvEpisodesPresenter => startEpisodePosition => oldCheckedIndexEpisode = " + oldCheckedIndexEpisode);
+            LeanBackUtil.log("ListTvEpisodesPlusPresenter => startEpisodePosition => oldCheckedIndexEpisode = " + oldCheckedIndexEpisode);
             int episodeNum = initEpisodeNum();
             int newCheckedIndexRange = position / episodeNum;
-            LeanBackUtil.log("ListTvEpisodesPresenter => startEpisodePosition => newCheckedIndexRange = " + newCheckedIndexRange);
+            LeanBackUtil.log("ListTvEpisodesPlusPresenter => startEpisodePosition => newCheckedIndexRange = " + newCheckedIndexRange);
             int newCheckedIndexEpisode = position % episodeNum;
-            LeanBackUtil.log("ListTvEpisodesPresenter => startEpisodePosition => newCheckedIndexEpisode = " + newCheckedIndexEpisode);
+            LeanBackUtil.log("ListTvEpisodesPlusPresenter => startEpisodePosition => newCheckedIndexEpisode = " + newCheckedIndexEpisode);
             int index = -1;
             for (Map.Entry<T, List<T>> entry : mData.entrySet()) {
                 if (null == entry)
@@ -980,24 +981,27 @@ public abstract class ListTvEpisodesPresenter<T extends TvEpisodesItemBean> exte
             View childAt = layoutEpisode.getChildAt(newCheckedIndexEpisode);
             callClickEpisode(layoutRoot, childAt, newCheckedIndexEpisode, isFromUser, isPlaying, isNext);
         } catch (Exception e) {
-            LeanBackUtil.log("ListTvEpisodesPresenter => startEpisodePosition => " + e.getMessage());
+            LeanBackUtil.log("ListTvEpisodesPlusPresenter => startEpisodePosition => " + e.getMessage());
         }
     }
 
     /**************/
 
-    public final void requestFocusChildOfEpisodeChecked(BaseGridView viewGroup) {
+    public final boolean dispatchEventActionDown(BaseGridView viewGroup, int index) {
         try {
+            RecyclerView.ViewHolder viewHolder = viewGroup.findViewHolderForAdapterPosition(index);
+            LinearLayout layout = viewHolder.itemView.findViewById(R.id.lb_list_tv_episodes_items);
+
             int checkedIndexRange = getCheckedIndexRange();
             int checkedIndexEpisode = getCheckedIndexEpisode(checkedIndexRange);
-            // 1
-            LinearLayout layout = viewGroup.findViewById(R.id.lb_list_tv_episodes_items);
             View childAt = layout.getChildAt(checkedIndexEpisode);
             childAt.requestFocus();
-            // 2
+
             notifyEpisode1(viewGroup, checkedIndexEpisode, true, false, true);
+            return true;
         } catch (Exception e) {
-            LeanBackUtil.log("ListTvEpisodesPresenter => requestFocusChildOfEpisodeChecked => " + e.getMessage());
+            LeanBackUtil.log("ListTvEpisodesPlusPresenter => intoFromKeyEvent => " + e.getMessage());
+            return false;
         }
     }
 
@@ -1017,12 +1021,12 @@ public abstract class ListTvEpisodesPresenter<T extends TvEpisodesItemBean> exte
             // 1
             int position = getEpisodeCurrentPosition();
             int next = getEpisodeNextPosition();
-            LeanBackUtil.log("ListTvEpisodesPresenter => startEpisodeNext => position = " + position);
-            LeanBackUtil.log("ListTvEpisodesPresenter => startEpisodeNext => next = " + next);
+            LeanBackUtil.log("ListTvEpisodesPlusPresenter => startEpisodeNext => position = " + position);
+            LeanBackUtil.log("ListTvEpisodesPlusPresenter => startEpisodeNext => next = " + next);
             // 2
             startEpisodePosition(viewGroup, next, true, false, true);
         } catch (Exception e) {
-            LeanBackUtil.log("ListTvEpisodesPresenter => startEpisodeNext => " + e.getMessage());
+            LeanBackUtil.log("ListTvEpisodesPlusPresenter => startEpisodeNext => " + e.getMessage());
         }
     }
 
@@ -1033,7 +1037,7 @@ public abstract class ListTvEpisodesPresenter<T extends TvEpisodesItemBean> exte
             int episodeNum = initEpisodeNum();
             return episodeNum * playingIndexRange + playingIndexEpisode;
         } catch (Exception e) {
-            LeanBackUtil.log("ListTvEpisodesPresenter => getEpisodeCurrentPosition => " + e.getMessage());
+            LeanBackUtil.log("ListTvEpisodesPlusPresenter => getEpisodeCurrentPosition => " + e.getMessage());
             return -1;
         }
     }
@@ -1045,7 +1049,7 @@ public abstract class ListTvEpisodesPresenter<T extends TvEpisodesItemBean> exte
             int episodeNum = initEpisodeNum();
             return episodeNum * playingIndexRange + playingIndexEpisode + 1;
         } catch (Exception e) {
-            LeanBackUtil.log("ListTvEpisodesPresenter => getEpisodeNextPosition => " + e.getMessage());
+            LeanBackUtil.log("ListTvEpisodesPlusPresenter => getEpisodeNextPosition => " + e.getMessage());
             return -1;
         }
     }
@@ -1054,11 +1058,11 @@ public abstract class ListTvEpisodesPresenter<T extends TvEpisodesItemBean> exte
         try {
             int episodeLength = getEpisodeLength();
             int next = getEpisodeNextPosition();
-            LeanBackUtil.log("ListTvEpisodesPresenter => isEpisodeEnd => episodeLength = " + episodeLength);
-            LeanBackUtil.log("ListTvEpisodesPresenter => isEpisodeEnd => next = " + next);
+            LeanBackUtil.log("ListTvEpisodesPlusPresenter => isEpisodeEnd => episodeLength = " + episodeLength);
+            LeanBackUtil.log("ListTvEpisodesPlusPresenter => isEpisodeEnd => next = " + next);
             return next >= episodeLength;
         } catch (Exception e) {
-            LeanBackUtil.log("ListTvEpisodesPresenter => isEpisodeEnd => " + e.getMessage());
+            LeanBackUtil.log("ListTvEpisodesPlusPresenter => isEpisodeEnd => " + e.getMessage());
             return true;
         }
     }

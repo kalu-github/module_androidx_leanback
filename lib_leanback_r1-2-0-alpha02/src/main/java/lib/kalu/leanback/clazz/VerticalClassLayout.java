@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Color;
-import android.graphics.Rect;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.util.AttributeSet;
@@ -100,6 +99,7 @@ public final class VerticalClassLayout extends ScrollView {
                     setChecked(next);
                     updateBackground(true, false, next, true, false);
                     updateText(true);
+                    scrollNext(View.FOCUS_UP, next);
                     return true;
                 } else {
                     View focus = findFocus();
@@ -121,6 +121,7 @@ public final class VerticalClassLayout extends ScrollView {
                     setChecked(next);
                     updateBackground(false, true, next, true, false);
                     updateText(true);
+                    scrollNext(View.FOCUS_DOWN, next);
                     return true;
                 } else {
                     View focus = findFocus();
@@ -394,7 +395,6 @@ public final class VerticalClassLayout extends ScrollView {
                 } else {
                     str = ClassUtil.textNormal(getContext(), (ClassBean) tag);
                 }
-//            LbLogUtil.log("ClassLayout", "updateTextW => str = " + str);
                 if (null != str && str.length() > 0) {
                     radioButton.setText(str);
                 }
@@ -652,6 +652,81 @@ public final class VerticalClassLayout extends ScrollView {
             setTextSize(TypedValue.COMPLEX_UNIT_PX, mTextSize);
             setGravity(Gravity.CENTER);
             setButtonDrawable(new ColorDrawable(Color.TRANSPARENT));
+        }
+    }
+
+    /*************/
+
+    protected int getItemBottom(int position) {
+        try {
+            int count = getChildCount();
+            if (count != 1) throw new Exception("count != 1");
+            View child = getChildAt(0);
+            if (null == child) throw new Exception("child null");
+            if (!(child instanceof LinearLayout)) throw new Exception("is not LinearLayout");
+            int childCount = ((LinearLayout) child).getChildCount();
+            if (childCount <= 0)
+                throw new Exception("childCount == 0");
+            if (position < 0 || position >= childCount)
+                throw new Exception("position error: " + position);
+            View view = ((LinearLayout) child).getChildAt(position);
+            if (null == view) throw new Exception("view is null");
+            return view.getBottom();
+        } catch (Exception e) {
+            LeanBackUtil.log("VerticalClassLayout => getItemBottom => " + e.getMessage());
+            return 0;
+        }
+    }
+
+    private int getItemTop(int position) {
+        try {
+            int count = getChildCount();
+            if (count != 1) throw new Exception("count != 1");
+            View child = getChildAt(0);
+            if (null == child) throw new Exception("child null");
+            if (!(child instanceof LinearLayout)) throw new Exception("is not LinearLayout");
+            int childCount = ((LinearLayout) child).getChildCount();
+            if (childCount <= 0)
+                throw new Exception("childCount == 0");
+            if (position < 0 || position + 1 >= childCount)
+                throw new Exception("position error: " + position);
+            View view = ((LinearLayout) child).getChildAt(position);
+            if (null == view) throw new Exception("view is null");
+            return view.getTop();
+        } catch (Exception e) {
+            LeanBackUtil.log("VerticalClassLayout => getItemTop => " + e.getMessage());
+            return 0;
+        }
+    }
+
+    protected void scrollNext(int direction, int next) {
+        try {
+            int childCount = getChildCount();
+            if (childCount != 1)
+                throw new Exception("childCount is not 1");
+
+            if (direction == View.FOCUS_DOWN) {
+                int itemBottom = getItemBottom(next);
+                int scrollY = getScrollY();
+                int height = getHeight() - getPaddingTop() - getPaddingBottom();
+                LeanBackUtil.log("VerticalClassLayout => scrollNext => right => height = " + height + ", scrollY = " + scrollY + ", itemBottom = " + itemBottom);
+
+                // 不可见/部分不可见
+                if (itemBottom > height) {
+                    int y = itemBottom - scrollY - height;
+                    scrollBy(0, y);
+                }
+
+            } else if (direction == View.FOCUS_UP) {
+
+                int scrollY = getScrollY();
+                int itemTop = getItemTop(next);
+                if (itemTop < scrollY) {
+                    scrollTo(0, itemTop);
+                }
+            }
+        } catch (Exception e) {
+            LeanBackUtil.log("VerticalClassLayout => scrollNext => " + e.getMessage());
         }
     }
 

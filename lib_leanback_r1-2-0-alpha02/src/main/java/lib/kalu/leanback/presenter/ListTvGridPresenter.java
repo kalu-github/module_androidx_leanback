@@ -6,7 +6,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
-import android.widget.TextView;
 
 import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
@@ -15,7 +14,6 @@ import androidx.leanback.widget.Presenter;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
@@ -291,6 +289,16 @@ public abstract class ListTvGridPresenter<T extends TvPresenterRowBean> extends 
 
     protected int initMax() {
         return 0;
+    }
+
+    private void checkedPosition(RecyclerView viewGroup, int index, int position) {
+        try {
+            RecyclerView.ViewHolder viewHolder = viewGroup.findViewHolderForAdapterPosition(index);
+            RecyclerView recyclerView = viewHolder.itemView.findViewById(R.id.module_leanback_lgp_list);
+            recyclerView.getAdapter().notifyItemRangeChanged(position, 1);
+        } catch (Exception e) {
+            LeanBackUtil.log("ListTvGridPresenter => checkedPosition => " + e.getMessage(), e);
+        }
     }
 
     protected abstract void onCreateHolder(@NonNull Context context, @NonNull RecyclerView.ViewHolder holder, @NonNull View view, @NonNull List<T> datas, @NonNull int viewType);

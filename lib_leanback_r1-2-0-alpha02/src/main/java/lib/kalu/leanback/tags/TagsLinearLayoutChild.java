@@ -1,6 +1,7 @@
 package lib.kalu.leanback.tags;
 
 import android.content.Context;
+import android.graphics.Rect;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
@@ -269,6 +270,36 @@ final class TagsLinearLayoutChild extends LinearLayout {
         } catch (Exception e) {
             LeanBackUtil.log("TagsLinearLayoutChild => delFocus => " + e.getMessage());
             return false;
+        }
+    }
+
+    protected int getItemRight(int position) {
+        try {
+            int childCount = getChildCount();
+            if (childCount <= 0) throw new Exception("childCount <= 0");
+            if (position < 0 || position >= childCount)
+                throw new Exception("position error: " + position);
+            View view = getChildAt(position);
+            if (null == view) throw new Exception("view is null");
+            return view.getRight();
+        } catch (Exception e) {
+            LeanBackUtil.log("TagsLinearLayoutChild => getItemRight => " + e.getMessage());
+            return 0;
+        }
+    }
+
+    protected int getItemLeft(int position) {
+        try {
+            int childCount = getChildCount();
+            if (childCount <= 0) throw new Exception("childCount <= 0");
+            if (position < 0 || position + 1 >= childCount)
+                throw new Exception("position error: " + position);
+            View view = getChildAt(position);
+            if (null == view) throw new Exception("view is null");
+            return view.getLeft();
+        } catch (Exception e) {
+            LeanBackUtil.log("TagsLinearLayoutChild => getItemgetLeft => " + e.getMessage());
+            return 0;
         }
     }
 }

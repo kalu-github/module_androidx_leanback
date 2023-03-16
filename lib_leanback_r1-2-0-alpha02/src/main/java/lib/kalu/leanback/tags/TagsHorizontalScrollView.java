@@ -1,6 +1,7 @@
 package lib.kalu.leanback.tags;
 
 import android.content.Context;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.HorizontalScrollView;
 
@@ -124,10 +125,45 @@ final class TagsHorizontalScrollView extends HorizontalScrollView {
             int childCount = getChildCount();
             if (childCount != 1)
                 throw new Exception("error: childCount is " + childCount);
-            return ((TagsLinearLayoutChild) getChildAt(0)).reqFocus(index, auto);
+            boolean reqFocus = ((TagsLinearLayoutChild) getChildAt(0)).reqFocus(index, auto);
+            if (reqFocus) {
+
+            }
+            return true;
         } catch (Exception e) {
             LeanBackUtil.log("TagsHorizontalScrollView => reqFocus => " + e.getMessage());
             return false;
+        }
+    }
+
+    protected void scrollNext(int direction, int next) {
+        try {
+            int childCount = getChildCount();
+            if (childCount != 1)
+                throw new Exception("childCount is not 1");
+
+            if (direction == View.FOCUS_RIGHT) {
+                int itemRight = ((TagsLinearLayoutChild) getChildAt(0)).getItemRight(next);
+                int scrollX = getScrollX();
+                int width = getWidth() - getPaddingLeft() - getPaddingRight();
+                LeanBackUtil.log("TagsHorizontalScrollView => scrollNext => right => width = " + width + ", scrollX = " + scrollX + ", itemRight = " + itemRight);
+
+                // 不可见/部分不可见
+                if (itemRight > width) {
+                    int x = itemRight - scrollX - width;
+                    scrollBy(x, 0);
+                }
+
+            } else if (direction == View.FOCUS_LEFT) {
+
+                int scrollX = getScrollX();
+                int itemLeft = ((TagsLinearLayoutChild) getChildAt(0)).getItemLeft(next);
+                if (itemLeft < scrollX) {
+                    scrollTo(itemLeft, 0);
+                }
+            }
+        } catch (Exception e) {
+            LeanBackUtil.log("TagsHorizontalScrollView => scrollNext => " + e.getMessage());
         }
     }
 
