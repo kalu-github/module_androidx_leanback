@@ -221,7 +221,7 @@ public abstract class ListTvEpisodesGridPresenter<T extends TvEpisodesGridItemBe
                                     if (event.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_DPAD_UP) {
                                         int cur = holder.getAbsoluteAdapterPosition();
                                         LeanBackUtil.log("ListTvEpisodesGridPresenter => onKey => up-leave => cur = " + cur);
-                                        if (cur >= 0) {
+                                        if (cur >= 0 && cur % 2 == 0) {
                                             v.setTag(R.id.lb_listtvepisodesgridpresenter, true);
                                             T t = mData.get(cur);
                                             t.setChecked(true);
@@ -264,7 +264,7 @@ public abstract class ListTvEpisodesGridPresenter<T extends TvEpisodesGridItemBe
                                     else if (event.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_DPAD_DOWN) {
                                         int cur = holder.getAbsoluteAdapterPosition();
                                         LeanBackUtil.log("ListTvEpisodesGridPresenter => onKey => down-leave => cur = " + cur);
-                                        if (cur >= 0) {
+                                        if (cur >= 0 && cur % 2 == 1) {
                                             T t = mData.get(cur);
                                             t.setChecked(true);
                                             t.setFocus(false);
