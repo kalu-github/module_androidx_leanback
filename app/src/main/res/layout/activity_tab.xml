@@ -25,24 +25,22 @@
 
         <lib.kalu.leanback.tab.TabLayout
             android:id="@+id/tab_plus"
+            android:paddingLeft="40dp"
+            android:paddingRight="40dp"
             android:layout_width="match_parent"
             android:layout_height="60dp"
-            android:background="@android:color/holo_red_dark"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
+            android:background="@android:color/holo_red_dark"
+            android:focusable="true"
             app:tab_background_colors_radius="40dp"
             app:tab_image_height="60dp"
-            android:focusable="true"
             app:tab_image_width_max="80dp"
             app:tab_image_width_min="40dp"
             app:tab_margin="4dp"
             app:tab_scale="1.02"
             app:tab_text_padding="10dp"
-            app:tab_text_size="14sp"
-            app:tab_text_underline="true"
-            app:tab_text_underline_color="@android:color/holo_red_dark"
-            app:tab_text_underline_height="3dp"
-            app:tab_text_underline_width="14dp" />
+            app:tab_text_size="14sp" />
 
         <FrameLayout
             android:id="@+id/content"

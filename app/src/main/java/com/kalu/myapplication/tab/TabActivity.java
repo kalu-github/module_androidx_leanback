@@ -4,14 +4,12 @@ import android.app.Fragment;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.SystemClock;
-import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.kalu.myapplication.R;
 
 import java.util.ArrayList;
-import java.util.Random;
 
 import lib.kalu.leanback.tab.TabLayout;
 import lib.kalu.leanback.tab.listener.OnTabChangeListener;
@@ -28,7 +26,7 @@ public class TabActivity extends AppCompatActivity {
         setContentView(R.layout.activity_tab);
 
         // log
-        LeanBackUtil.setLogger(false);
+        LeanBackUtil.setLogger(true);
 
         init();
 //            findViewById(R.id.four).setOnClickListener(new View.OnClickListener() {
@@ -101,21 +99,9 @@ public class TabActivity extends AppCompatActivity {
                             list0.add(fragment);
                         }
 
-                        ArrayList<String> list1 = new ArrayList<>();
-                        for (int i = 0; i < 20; i++) {
-                            int nextInt1 = new Random().nextInt(10);
-                            int nextInt2 = new Random().nextInt(10);
-                            if (nextInt1 == nextInt2) {
-                                nextInt2 = nextInt2 + 1;
-                            }
-                            String substring = "哈哈世纪初开始了解从".substring(Math.min(nextInt1, nextInt2), Math.max(nextInt1, nextInt2));
-                            list1.add(substring);
-                        }
-
                         ArrayList<TabModel> list = new ArrayList<>();
-                        for (int i = 0; i < 20; i++) {
+                        for (int i = 1; i <= 20; i++) {
                             TabModel temp;
-                            String s = list1.get(i);
                             if (i == 4) {
                                 temp = new TabModelImage();
                                 temp.setImageUrlNormal("http://129.211.42.21:80/img/public/2021/e7cffa9ddf154e4b95092f8fdc84a798.png");
@@ -128,7 +114,7 @@ public class TabActivity extends AppCompatActivity {
 //                return new int[]{R.drawable.module_tablayout_ic_shape_background_normal, R.drawable.ic_test, R.drawable.module_tablayout_ic_shape_background_select};
                             } else {
                                 temp = new TabModelText();
-                                temp.setText(s);
+                                temp.setText("tab" + i);
                                 temp.setTextColorNormal(Color.parseColor("#000000"));
                                 temp.setTextColorFocus(Color.parseColor("#ffffff"));
                                 temp.setTextColorChecked(Color.parseColor("#999999"));
@@ -146,18 +132,7 @@ public class TabActivity extends AppCompatActivity {
                         tabLayout.setOnTabChangeListener(new OnTabChangeListener() {
                             @Override
                             public void onChecked(int position, int old) {
-                                Log.e("TabActivity", "onChecked => position = "+position+", old = "+old);
-                            }
 
-                            @Override
-                            public void onRepeat(int position) {
-                                Log.e("TabActivity", "onRepeat => position = "+position);
-                            }
-
-
-                            @Override
-                            public void onLeave(int position) {
-                                Log.e("TabActivity", "onLeave => position = "+position);
                             }
                         });
                     }

@@ -12,9 +12,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.HorizontalScrollView;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
@@ -87,7 +85,7 @@ public final class TabLayout extends HorizontalScrollView {
             int index = getCheckedIndex();
             if (index <= 0) {
                 View nextFocus = findNextFocus(View.FOCUS_LEFT);
-                if (null == nextFocus) {
+                if (null != nextFocus) {
                     return true;
                 } else {
                     checkedCurrentItem(View.FOCUS_LEFT);
@@ -96,10 +94,8 @@ public final class TabLayout extends HorizontalScrollView {
                 int next = findNextPosition(View.FOCUS_LEFT, index);
                 if (next != -1) {
                     boolean scrollRequest = scrollRequest(View.FOCUS_LEFT, index, next);
-                    if (scrollRequest) {
-                        return true;
-                    }
                 }
+                return true;
             }
         }
         // left action_up
@@ -114,22 +110,21 @@ public final class TabLayout extends HorizontalScrollView {
             int index = getCheckedIndex();
             int itemCount = getItemCount();
             LeanBackUtil.log("TabLayout => dispatchKeyEvent => right_action_down => index = " + index + ", itemCount = " + itemCount);
-            if (index + 1 >= itemCount) {
-                View nextFocus = findNextFocus(View.FOCUS_RIGHT);
-                if (null == nextFocus) {
-                    return true;
-                } else {
-                    checkedCurrentItem(View.FOCUS_RIGHT);
-                }
-            } else {
+            if (index + 1 < itemCount) {
                 int next = findNextPosition(View.FOCUS_RIGHT, index);
                 LeanBackUtil.log("TabLayout => dispatchKeyEvent => right_action_down => next = " + next);
                 if (next != -1) {
                     boolean scrollRequest = scrollRequest(View.FOCUS_RIGHT, index, next);
                     LeanBackUtil.log("TabLayout => dispatchKeyEvent => right_action_down => scrollRequest = " + scrollRequest);
-                    if (scrollRequest) {
-                        return true;
-                    }
+                }
+                return true;
+            } else {
+                View nextFocus = findNextFocus(View.FOCUS_RIGHT);
+                if (null != nextFocus) {
+                    return true;
+                } else {
+                    checkedCurrentItem(View.FOCUS_RIGHT);
+                    return false;
                 }
             }
         }
@@ -382,18 +377,15 @@ public final class TabLayout extends HorizontalScrollView {
             if (childCount != 1) throw new Exception("childCount is not 1");
 
             if (direction == View.FOCUS_RIGHT) {
-                LeanBackUtil.log("TabLayout => scrollRequest => right => position = " + position + ", next = " + next);
-                int width = getWidth();
                 int itemRight = ((TabLinearLayout) getChildAt(0)).getItemRight(next);
-                int itemWidth = ((TabLinearLayout) getChildAt(0)).getItemWidth(next);
-                int itemRectRight = ((TabLinearLayout) getChildAt(0)).getItemRectRight(next);
-                LeanBackUtil.log("TabLayout => scrollRequest => right => width = " + width + ", itemRight = " + itemRight + ", itemWidth = " + itemWidth + ", itemRectRight = " + itemRectRight);
+                int scrollX = getScrollX();
+                int width = getWidth() - getPaddingLeft() - getPaddingRight();
+                LeanBackUtil.log("TabLayout => scrollRequest => right => width = " + width + ", scrollX = " + scrollX + ", itemRight = " + itemRight);
 
-                if (itemRight == 0 && itemWidth == 0 && itemRectRight == 0) {
-                    int containerWidth = getContainerWidth();
-                    scrollTo(containerWidth - width + mTextPadding, 0);
-                } else if (itemRight > width && itemWidth != 0 && itemRectRight != 0 && itemWidth != itemRectRight) {
-                    scrollTo(itemRight - width + mTextPadding, 0);
+                // 不可见/部分不可见
+                if (itemRight > width) {
+                    int x = itemRight - scrollX - width;
+                    scrollBy(x, 0);
                 }
 
                 if (position != next) {
@@ -405,6 +397,7 @@ public final class TabLayout extends HorizontalScrollView {
                 }
 
             } else if (direction == View.FOCUS_LEFT) {
+
                 int scrollX = getScrollX();
                 int itemLeft = ((TabLinearLayout) getChildAt(0)).getItemLeft(next);
                 if (itemLeft < scrollX) {
