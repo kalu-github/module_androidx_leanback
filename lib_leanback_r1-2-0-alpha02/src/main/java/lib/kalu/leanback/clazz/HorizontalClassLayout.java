@@ -11,13 +11,11 @@ import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.KeyEvent;
-import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.ScrollView;
-import android.widget.Toast;
 
 import androidx.annotation.ColorInt;
 import androidx.annotation.Dimension;
@@ -28,6 +26,8 @@ import androidx.annotation.RequiresApi;
 import androidx.leanback.R;
 
 import java.util.List;
+
+import lib.kalu.leanback.util.LeanBackUtil;
 
 /**
  * 水平
@@ -86,16 +86,16 @@ public final class HorizontalClassLayout extends ScrollView {
 
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
-        // LbLogUtil.log("HorizontalClassLayout", "dispatchKeyEvent => action = " + event.getAction() + ", code = " + event.getKeyCode());
+        LeanBackUtil.log("HorizontalClassLayout", "dispatchKeyEvent => action = " + event.getAction() + ", code = " + event.getKeyCode());
 
         boolean hasFocus = hasFocus();
         if (!hasFocus) return false;
 
-        // move => left
+        // left-move
         if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_LEFT) {
             int count = getCount();
             int index = getCheckedIndex();
-//            LbLogUtil.log("HorizontalClassLayout", "left => count = " + count + ", index = " + index);
+            LeanBackUtil.log("HorizontalClassLayout", "left-move => count = " + count + ", index = " + index);
             if (count > 0 && index == 0) {
                 if (mDispatchLeft) {
                     return true;
@@ -109,6 +109,20 @@ public final class HorizontalClassLayout extends ScrollView {
                 setChecked(next);
                 updateBackground(next, true, false);
                 updateText(true);
+                return true;
+            } else {
+                return false;
+            }
+        }
+        // left-into
+        else if (event.getAction() == KeyEvent.ACTION_UP && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_LEFT) {
+            int count = getCount();
+            LeanBackUtil.log("HorizontalClassLayout", "left-into => count = " + count);
+            if (count > 0) {
+                int index = getCheckedIndex();
+                updateBackground(index, true, false);
+                updateText(true);
+                call(index);
                 return true;
             } else {
                 return false;
@@ -185,18 +199,6 @@ public final class HorizontalClassLayout extends ScrollView {
         }
         // into => right
         else if (event.getAction() == KeyEvent.ACTION_UP && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_RIGHT) {
-            int count = getCount();
-            if (count > 0) {
-                int index = getCheckedIndex();
-                updateBackground(index, true, false);
-                updateText(true);
-                return true;
-            } else {
-                return false;
-            }
-        }
-        // into => left
-        else if (event.getAction() == KeyEvent.ACTION_UP && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_LEFT) {
             int count = getCount();
             if (count > 0) {
                 int index = getCheckedIndex();

@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
+import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -40,13 +41,13 @@ public abstract class ListTvEpisodesPlusPresenter<T extends TvEpisodesPlusItemBe
             LinearLayout inflate = (LinearLayout) LayoutInflater.from(context).inflate(R.layout.lb_list_tv_episodes_plus, parent, false);
             setPadding(context, inflate);
             setBackgroundColor(context, inflate);
-            setContentBackgroundColor(context, inflate, R.id.lb_list_tv_episodes_items);
-            setContentBackgroundColor(context, inflate, R.id.lb_list_tv_episodes_ranges);
-            setTitlePadding(context, inflate, R.id.lb_list_tv_episodes_title);
-            setTitleTextColor(context, inflate, R.id.lb_list_tv_episodes_title);
-            setTitleTextSize(context, inflate, R.id.lb_list_tv_episodes_title);
-            setTitleAssetTTF(context, inflate, R.id.lb_list_tv_episodes_title);
-            setTitleBackgroundColor(context, inflate, R.id.lb_list_tv_episodes_title);
+            setContentBackgroundColor(context, inflate, R.id.lb_list_tv_episodes_plus_items);
+            setContentBackgroundColor(context, inflate, R.id.lb_list_tv_episodes_plus_ranges);
+            setTitlePadding(context, inflate, R.id.lb_list_tv_episodes_plus_title);
+            setTitleTextColor(context, inflate, R.id.lb_list_tv_episodes_plus_title);
+            setTitleTextSize(context, inflate, R.id.lb_list_tv_episodes_plus_title);
+            setTitleAssetTTF(context, inflate, R.id.lb_list_tv_episodes_plus_title);
+            setTitleBackgroundColor(context, inflate, R.id.lb_list_tv_episodes_plus_title);
             initLayoutEpisode(context, inflate);
             return new ViewHolder(inflate);
         } catch (Exception e) {
@@ -77,7 +78,7 @@ public abstract class ListTvEpisodesPlusPresenter<T extends TvEpisodesPlusItemBe
 //        }
 
         // 标题
-        updateTitle(viewHolder.view, R.id.lb_list_tv_episodes_title);
+        updateTitle(viewHolder.view, R.id.lb_list_tv_episodes_plus_title);
 
         // 区间
         initLayoutRange(viewHolder.view.getContext(), (LinearLayout) viewHolder.view);
@@ -88,7 +89,7 @@ public abstract class ListTvEpisodesPlusPresenter<T extends TvEpisodesPlusItemBe
 
     private final void setRowTitle(View view) {
         try {
-            TextView textView = view.findViewById(R.id.lb_list_tv_episodes_title);
+            TextView textView = view.findViewById(R.id.lb_list_tv_episodes_plus_title);
             textView.setText(initRowTitle(view.getContext()));
             textView.setVisibility(View.VISIBLE);
         } catch (Exception e) {
@@ -181,7 +182,7 @@ public abstract class ListTvEpisodesPlusPresenter<T extends TvEpisodesPlusItemBe
     private final void initLayoutEpisode(@NonNull Context context, @NonNull LinearLayout viewGroup) {
         try {
             // 1
-            LinearLayout layout = viewGroup.findViewById(R.id.lb_list_tv_episodes_items);
+            LinearLayout layout = viewGroup.findViewById(R.id.lb_list_tv_episodes_plus_items);
             layout.removeAllViews();
             if (null != layout.getLayoutParams()) {
                 int episodeMarginBottom = initEpisodeMarginBottom(context);
@@ -250,6 +251,8 @@ public abstract class ListTvEpisodesPlusPresenter<T extends TvEpisodesPlusItemBe
                                         // 3
                                         notifyRange(viewGroup, checkedIndexRange, false, false, false, false);
                                         notifyRange(viewGroup, newCheckedIndexRange, false, true, false, true);
+                                        // 4
+                                        scrollRange(viewGroup, newCheckedIndexRange, View.FOCUS_LEFT);
                                     }
                                     return true;
                                 }
@@ -291,6 +294,8 @@ public abstract class ListTvEpisodesPlusPresenter<T extends TvEpisodesPlusItemBe
                                         // 3
                                         notifyRange(viewGroup, checkedIndexRange, false, false, false, false);
                                         notifyRange(viewGroup, newCheckedIndexRange, false, true, false, true);
+                                        // 4
+                                        scrollRange(viewGroup, newCheckedIndexRange, View.FOCUS_RIGHT);
                                     }
                                     return true;
                                 }
@@ -331,10 +336,41 @@ public abstract class ListTvEpisodesPlusPresenter<T extends TvEpisodesPlusItemBe
         }
     }
 
+    private void scrollRange(LinearLayout viewGroup, int newCheckedIndexRange, int direction) {
+
+        try {
+            if (direction == View.FOCUS_RIGHT) {
+                LinearLayout linearLayout = viewGroup.findViewById(R.id.lb_list_tv_episodes_plus_ranges);
+                HorizontalScrollView scrollView = (HorizontalScrollView) linearLayout.getParent();
+                int itemRight = linearLayout.getChildAt(newCheckedIndexRange).getRight();
+                int scrollX = scrollView.getScrollX();
+                int width = scrollView.getWidth() - scrollView.getPaddingLeft() - scrollView.getPaddingRight();
+                LeanBackUtil.log("ListTvEpisodesPlusPresenter => scrollRange => right => width = " + width + ", scrollX = " + scrollX + ", itemRight = " + itemRight);
+
+                // 不可见/部分不可见
+                if (itemRight > width) {
+                    int x = itemRight - scrollX - width;
+                    scrollView.scrollBy(x, 0);
+                }
+
+            } else if (direction == View.FOCUS_LEFT) {
+                LinearLayout linearLayout = viewGroup.findViewById(R.id.lb_list_tv_episodes_plus_ranges);
+                HorizontalScrollView scrollView = (HorizontalScrollView) linearLayout.getParent();
+                int scrollX = scrollView.getScrollX();
+                int itemLeft = linearLayout.getChildAt(newCheckedIndexRange).getLeft();
+                if (itemLeft < scrollX) {
+                    scrollView.scrollTo(itemLeft, 0);
+                }
+            }
+        } catch (Exception e) {
+            LeanBackUtil.log("ListTvEpisodesPlusPresenter => scrollRange => " + e.getMessage());
+        }
+    }
+
     private final void initLayoutRange(@NonNull Context context, @NonNull LinearLayout viewGroup) {
         try {
             // 1
-            LinearLayout layout = viewGroup.findViewById(R.id.lb_list_tv_episodes_ranges);
+            LinearLayout layout = viewGroup.findViewById(R.id.lb_list_tv_episodes_plus_ranges);
             layout.removeAllViews();
             int rangeMarginTop = initRangeMarginTop(context);
             if (rangeMarginTop > 0 && null != layout.getLayoutParams()) {
@@ -541,7 +577,7 @@ public abstract class ListTvEpisodesPlusPresenter<T extends TvEpisodesPlusItemBe
             ViewParent parent = v.getParent();
             if (null == parent) break;
             int id = ((ViewGroup) parent).getId();
-            if (id == R.id.lb_list_tv_episodes_ranges) {
+            if (id == R.id.lb_list_tv_episodes_plus_ranges) {
                 index = ((ViewGroup) parent).indexOfChild(v);
                 break;
             }
@@ -557,7 +593,7 @@ public abstract class ListTvEpisodesPlusPresenter<T extends TvEpisodesPlusItemBe
             ViewParent parent = v.getParent();
             if (null == parent) break;
             int id = ((ViewGroup) parent).getId();
-            if (id == R.id.lb_list_tv_episodes_items) {
+            if (id == R.id.lb_list_tv_episodes_plus_items) {
                 index = ((ViewGroup) parent).indexOfChild(v);
                 break;
             }
@@ -675,7 +711,7 @@ public abstract class ListTvEpisodesPlusPresenter<T extends TvEpisodesPlusItemBe
                 isPlaying = isPlayingIndexOfEpisode(index);
             }
 //            View child = ((ViewGroup) v.getParent()).getChildAt(index);
-            LinearLayout layoutRoot = viewGroup.findViewById(R.id.lb_list_tv_episodes_items);
+            LinearLayout layoutRoot = viewGroup.findViewById(R.id.lb_list_tv_episodes_plus_items);
             View child = layoutRoot.getChildAt(index);
             onBindViewHolderEpisode(child.getContext(), child, t, index, hasFocus, isPlaying, isChecked);
         } catch (Exception e) {
@@ -700,7 +736,7 @@ public abstract class ListTvEpisodesPlusPresenter<T extends TvEpisodesPlusItemBe
             }
             LeanBackUtil.log("ListTvEpisodesPlusPresenter => notifyRange => index = " + index + ", hasFocus" + hasFocus + ", isClick = " + isClick + ", isChecked = " + isChecked + ", isPlaying = " + isPlaying);
 
-            LinearLayout layout = viewGroup.findViewById(R.id.lb_list_tv_episodes_ranges);
+            LinearLayout layout = viewGroup.findViewById(R.id.lb_list_tv_episodes_plus_ranges);
             View childAt = layout.getChildAt(index);
             T t = getIndexOfRangeData(index);
             onBindViewHolderRange(childAt.getContext(), childAt, t, index, hasFocus, isPlaying, isChecked);
@@ -842,7 +878,7 @@ public abstract class ListTvEpisodesPlusPresenter<T extends TvEpisodesPlusItemBe
                 checkedIndexRange = 0;
             }
             List<T> list = getIndexOfEpisodeData(checkedIndexRange);
-            LinearLayout layout = viewGroup.findViewById(R.id.lb_list_tv_episodes_items);
+            LinearLayout layout = viewGroup.findViewById(R.id.lb_list_tv_episodes_plus_items);
             LeanBackUtil.log("ListTvEpisodesPlusPresenter => notifyEpisodeAdapter => layout = " + layout);
             int max = layout.getChildCount();
             int num = list.size();
@@ -880,7 +916,7 @@ public abstract class ListTvEpisodesPlusPresenter<T extends TvEpisodesPlusItemBe
             // 1
             notifyEpisode1(viewGroup, checkedIndexEpisode, false, false, true);
             // 2
-            LinearLayout layout = viewGroup.findViewById(R.id.lb_list_tv_episodes_ranges);
+            LinearLayout layout = viewGroup.findViewById(R.id.lb_list_tv_episodes_plus_ranges);
             View childAt = layout.getChildAt(checkedIndexRange);
             childAt.requestFocus();
         } catch (Exception e) {
@@ -901,7 +937,7 @@ public abstract class ListTvEpisodesPlusPresenter<T extends TvEpisodesPlusItemBe
 //            } else  {
             index = checkedIndexEpisode;
 //            }
-            LinearLayout layout = viewGroup.findViewById(R.id.lb_list_tv_episodes_items);
+            LinearLayout layout = viewGroup.findViewById(R.id.lb_list_tv_episodes_plus_items);
             View childAt = layout.getChildAt(index);
             childAt.requestFocus();
             notifyEpisode1(viewGroup, index, true, false, true);
@@ -972,12 +1008,12 @@ public abstract class ListTvEpisodesPlusPresenter<T extends TvEpisodesPlusItemBe
             notifyEpisode1(viewGroup, oldPlayingIndexEpisode, false, false, false);
             notifyEpisode1(viewGroup, oldCheckedIndexEpisode, false, false, false);
             // 3
-            LinearLayout layoutRoot = viewGroup.findViewById(R.id.lb_list_tv_episodes_root);
+            LinearLayout layoutRoot = viewGroup.findViewById(R.id.lb_list_tv_episodes_plus_root);
             if (newCheckedIndexRange != oldCheckedIndexRange) {
                 notifyEpisodeAdapter(layoutRoot.getContext(), layoutRoot, -1, -1);
             }
             // 4
-            LinearLayout layoutEpisode = viewGroup.findViewById(R.id.lb_list_tv_episodes_items);
+            LinearLayout layoutEpisode = viewGroup.findViewById(R.id.lb_list_tv_episodes_plus_items);
             View childAt = layoutEpisode.getChildAt(newCheckedIndexEpisode);
             callClickEpisode(layoutRoot, childAt, newCheckedIndexEpisode, isFromUser, isPlaying, isNext);
         } catch (Exception e) {
@@ -986,24 +1022,6 @@ public abstract class ListTvEpisodesPlusPresenter<T extends TvEpisodesPlusItemBe
     }
 
     /**************/
-
-    public final boolean dispatchEventActionDown(BaseGridView viewGroup, int index) {
-        try {
-            RecyclerView.ViewHolder viewHolder = viewGroup.findViewHolderForAdapterPosition(index);
-            LinearLayout layout = viewHolder.itemView.findViewById(R.id.lb_list_tv_episodes_items);
-
-            int checkedIndexRange = getCheckedIndexRange();
-            int checkedIndexEpisode = getCheckedIndexEpisode(checkedIndexRange);
-            View childAt = layout.getChildAt(checkedIndexEpisode);
-            childAt.requestFocus();
-
-            notifyEpisode1(viewGroup, checkedIndexEpisode, true, false, true);
-            return true;
-        } catch (Exception e) {
-            LeanBackUtil.log("ListTvEpisodesPlusPresenter => intoFromKeyEvent => " + e.getMessage());
-            return false;
-        }
-    }
 
     public final void startEpisodePosition(ViewGroup viewGroup, int position) {
         startEpisodePosition(viewGroup, position, true, false, false);
@@ -1064,6 +1082,43 @@ public abstract class ListTvEpisodesPlusPresenter<T extends TvEpisodesPlusItemBe
         } catch (Exception e) {
             LeanBackUtil.log("ListTvEpisodesPlusPresenter => isEpisodeEnd => " + e.getMessage());
             return true;
+        }
+    }
+
+    public final boolean dispatchKeyEventCheckedPositionEpisode(BaseGridView viewGroup, int index) {
+        try {
+            RecyclerView.ViewHolder viewHolder = viewGroup.findViewHolderForAdapterPosition(index);
+            LinearLayout layout = viewHolder.itemView.findViewById(R.id.lb_list_tv_episodes_plus_items);
+
+            int checkedIndexRange = getCheckedIndexRange();
+            int checkedIndexEpisode = getCheckedIndexEpisode(checkedIndexRange);
+            View childAt = layout.getChildAt(checkedIndexEpisode);
+            childAt.requestFocus();
+
+            notifyEpisode1(viewGroup, checkedIndexEpisode, true, false, true);
+            return true;
+        } catch (Exception e) {
+            LeanBackUtil.log("ListTvEpisodesPlusPresenter => dispatchKeyEventCheckedPositionEpisode => " + e.getMessage());
+            return false;
+        }
+    }
+
+    public final boolean dispatchKeyEventCheckedPositionRange(BaseGridView viewGroup, int index) {
+        try {
+            RecyclerView.ViewHolder viewHolder = viewGroup.findViewHolderForAdapterPosition(index);
+            LinearLayout layout = viewHolder.itemView.findViewById(R.id.lb_list_tv_episodes_plus_ranges);
+
+            int checkedIndexRange = getCheckedIndexRange();
+            int checkedIndexEpisode = getCheckedIndexEpisode(checkedIndexRange);
+            // 1
+            notifyEpisode1(viewGroup, checkedIndexEpisode, false, false, true);
+            // 2
+            View childAt = layout.getChildAt(checkedIndexRange);
+            childAt.requestFocus();
+            return true;
+        } catch (Exception e) {
+            LeanBackUtil.log("ListTvEpisodesPlusPresenter => dispatchKeyEventCheckedPositionEpisode => " + e.getMessage());
+            return false;
         }
     }
 }
