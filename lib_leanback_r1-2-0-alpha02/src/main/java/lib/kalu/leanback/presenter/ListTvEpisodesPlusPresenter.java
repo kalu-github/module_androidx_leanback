@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 
 import lib.kalu.leanback.presenter.bean.TvEpisodesPlusItemBean;
+import lib.kalu.leanback.presenter.impl.ListTvPresenterImpl;
 import lib.kalu.leanback.util.LeanBackUtil;
 
 public abstract class ListTvEpisodesPlusPresenter<T extends TvEpisodesPlusItemBean> extends Presenter implements ListTvPresenterImpl {
@@ -113,6 +114,7 @@ public abstract class ListTvEpisodesPlusPresenter<T extends TvEpisodesPlusItemBe
                 }
                 key.setStart(start);
                 key.setEnd(end);
+                key.setFocus(false);
                 key.setPlaying(false);
                 key.setChecked(false);
 
@@ -121,6 +123,7 @@ public abstract class ListTvEpisodesPlusPresenter<T extends TvEpisodesPlusItemBe
                 for (int m = start - 1; m <= (end - 1); m++) {
                     T t = list.get(m);
                     if (null == t) continue;
+                    t.setFocus(false);
                     t.setPlaying(false);
                     t.setChecked(false);
                     value.add(t);
@@ -451,20 +454,6 @@ public abstract class ListTvEpisodesPlusPresenter<T extends TvEpisodesPlusItemBe
         }
     }
 
-    private final List<T> getIndexOfEpisodeData(int position) throws Exception {
-        try {
-            int index = 0;
-            for (Map.Entry<T, List<T>> entry : mData.entrySet()) {
-                if (index == position) return entry.getValue();
-                index += 1;
-            }
-            throw new Exception("not find error: " + index);
-        } catch (Exception e) {
-            LeanBackUtil.log("ListTvEpisodesPlusPresenter => getIndexOfEpisodeData => " + e.getMessage());
-            throw e;
-        }
-    }
-
     private final int getIndexOfEpisodeLength(int index) {
         try {
             List<T> list = getIndexOfEpisodeData(index);
@@ -684,6 +673,20 @@ public abstract class ListTvEpisodesPlusPresenter<T extends TvEpisodesPlusItemBe
         } catch (Exception e) {
             LeanBackUtil.log("ListTvEpisodesPlusPresenter => getIndexOfRangeData => " + e.getMessage());
             throw null;
+        }
+    }
+
+    private final List<T> getIndexOfEpisodeData(int position) throws Exception {
+        try {
+            int index = 0;
+            for (Map.Entry<T, List<T>> entry : mData.entrySet()) {
+                if (index == position) return entry.getValue();
+                index += 1;
+            }
+            throw new Exception("not find error: " + index);
+        } catch (Exception e) {
+            LeanBackUtil.log("ListTvEpisodesPlusPresenter => getIndexOfEpisodeData => " + e.getMessage());
+            throw e;
         }
     }
 

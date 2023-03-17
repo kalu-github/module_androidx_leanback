@@ -19,6 +19,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import lib.kalu.leanback.presenter.bean.TvPresenterRowBean;
+import lib.kalu.leanback.presenter.impl.ListTvPresenterImpl;
 import lib.kalu.leanback.util.LeanBackUtil;
 
 public abstract class ListTvRowPlusPresenter<T extends TvPresenterRowBean> extends Presenter implements ListTvPresenterImpl {
