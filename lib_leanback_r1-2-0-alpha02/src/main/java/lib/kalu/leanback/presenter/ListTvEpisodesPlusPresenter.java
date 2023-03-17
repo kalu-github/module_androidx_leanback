@@ -17,9 +17,7 @@ import androidx.annotation.Keep;
 import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.leanback.R;
-import androidx.leanback.widget.BaseGridView;
 import androidx.leanback.widget.Presenter;
-import androidx.recyclerview.widget.RecyclerView;
 
 import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
@@ -946,7 +944,7 @@ public abstract class ListTvEpisodesPlusPresenter<T extends TvEpisodesPlusItemBe
         }
     }
 
-    private final void startEpisodePosition(ViewGroup viewGroup, int position, boolean isPlaying, boolean isFromUser, boolean isNext) {
+    private final void checkedPositionEpisode(ViewGroup viewGroup, int position, boolean isPlaying, boolean isFromUser, boolean isNext) {
         try {
 
             if (position < 0)
@@ -957,7 +955,7 @@ public abstract class ListTvEpisodesPlusPresenter<T extends TvEpisodesPlusItemBe
                     new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            startEpisodePosition(viewGroup, position, isPlaying, isFromUser, isNext);
+                            checkedPositionEpisode(viewGroup, position, isPlaying, isFromUser, isNext);
                         }
                     }, 100);
                 }
@@ -965,18 +963,18 @@ public abstract class ListTvEpisodesPlusPresenter<T extends TvEpisodesPlusItemBe
             }
             // 1
             int oldPlayingIndexRange = getPlayingIndexRange();
-            LeanBackUtil.log("ListTvEpisodesPlusPresenter => startEpisodePosition => oldPlayingIndexRange = " + oldPlayingIndexRange);
+            LeanBackUtil.log("ListTvEpisodesPlusPresenter => checkedPositionEpisode => oldPlayingIndexRange = " + oldPlayingIndexRange);
             int oldCheckedIndexRange = getCheckedIndexRange();
-            LeanBackUtil.log("ListTvEpisodesPlusPresenter => startEpisodePosition => oldCheckedIndexRange = " + oldCheckedIndexRange);
+            LeanBackUtil.log("ListTvEpisodesPlusPresenter => checkedPositionEpisode => oldCheckedIndexRange = " + oldCheckedIndexRange);
             int oldPlayingIndexEpisode = getPlayingIndexEpisode();
-            LeanBackUtil.log("ListTvEpisodesPlusPresenter => startEpisodePosition => oldPlayingIndexEpisode = " + oldPlayingIndexEpisode);
+            LeanBackUtil.log("ListTvEpisodesPlusPresenter => checkedPositionEpisode => oldPlayingIndexEpisode = " + oldPlayingIndexEpisode);
             int oldCheckedIndexEpisode = getCheckedIndexEpisode(oldCheckedIndexRange);
-            LeanBackUtil.log("ListTvEpisodesPlusPresenter => startEpisodePosition => oldCheckedIndexEpisode = " + oldCheckedIndexEpisode);
+            LeanBackUtil.log("ListTvEpisodesPlusPresenter => checkedPositionEpisode => oldCheckedIndexEpisode = " + oldCheckedIndexEpisode);
             int episodeNum = initEpisodeNum();
             int newCheckedIndexRange = position / episodeNum;
-            LeanBackUtil.log("ListTvEpisodesPlusPresenter => startEpisodePosition => newCheckedIndexRange = " + newCheckedIndexRange);
+            LeanBackUtil.log("ListTvEpisodesPlusPresenter => checkedPositionEpisode => newCheckedIndexRange = " + newCheckedIndexRange);
             int newCheckedIndexEpisode = position % episodeNum;
-            LeanBackUtil.log("ListTvEpisodesPlusPresenter => startEpisodePosition => newCheckedIndexEpisode = " + newCheckedIndexEpisode);
+            LeanBackUtil.log("ListTvEpisodesPlusPresenter => checkedPositionEpisode => newCheckedIndexEpisode = " + newCheckedIndexEpisode);
             int index = -1;
             for (Map.Entry<T, List<T>> entry : mData.entrySet()) {
                 if (null == entry)
@@ -1017,21 +1015,21 @@ public abstract class ListTvEpisodesPlusPresenter<T extends TvEpisodesPlusItemBe
             View childAt = layoutEpisode.getChildAt(newCheckedIndexEpisode);
             callClickEpisode(layoutRoot, childAt, newCheckedIndexEpisode, isFromUser, isPlaying, isNext);
         } catch (Exception e) {
-            LeanBackUtil.log("ListTvEpisodesPlusPresenter => startEpisodePosition => " + e.getMessage());
+            LeanBackUtil.log("ListTvEpisodesPlusPresenter => checkedPositionEpisode => " + e.getMessage());
         }
     }
 
     /**************/
 
-    public final void startEpisodePosition(ViewGroup viewGroup, int position) {
-        startEpisodePosition(viewGroup, position, true, false, false);
+    public final void checkedPositionEpisode(ViewGroup viewGroup, int position) {
+        checkedPositionEpisode(viewGroup, position, true, false, false);
     }
 
-    public final void updateEpisodePosition(ViewGroup viewGroup, int position) {
-        startEpisodePosition(viewGroup, position, false, false, false);
+    public final void refreshPositionRange(ViewGroup viewGroup, int position) {
+        checkedPositionEpisode(viewGroup, position, false, false, false);
     }
 
-    public final void startEpisodeNext(ViewGroup viewGroup) {
+    public final void checkedPositionEpisodeNext(ViewGroup viewGroup) {
         try {
             boolean episodeEnd = isEpisodeEnd();
             if (episodeEnd)
@@ -1042,7 +1040,7 @@ public abstract class ListTvEpisodesPlusPresenter<T extends TvEpisodesPlusItemBe
             LeanBackUtil.log("ListTvEpisodesPlusPresenter => startEpisodeNext => position = " + position);
             LeanBackUtil.log("ListTvEpisodesPlusPresenter => startEpisodeNext => next = " + next);
             // 2
-            startEpisodePosition(viewGroup, next, true, false, true);
+            checkedPositionEpisode(viewGroup, next, true, false, true);
         } catch (Exception e) {
             LeanBackUtil.log("ListTvEpisodesPlusPresenter => startEpisodeNext => " + e.getMessage());
         }
@@ -1085,11 +1083,11 @@ public abstract class ListTvEpisodesPlusPresenter<T extends TvEpisodesPlusItemBe
         }
     }
 
-    public final boolean dispatchKeyEventCheckedPositionEpisode(BaseGridView viewGroup, int index) {
+    public final boolean dispatchKeyEventCheckedPositionEpisode(ViewGroup viewGroup) {
         try {
-            RecyclerView.ViewHolder viewHolder = viewGroup.findViewHolderForAdapterPosition(index);
-            LinearLayout layout = viewHolder.itemView.findViewById(R.id.lb_list_tv_episodes_plus_items);
-
+            LinearLayout layout = viewGroup.findViewById(R.id.lb_list_tv_episodes_plus_items);
+            if (null == layout)
+                throw new Exception("layout error: null");
             int checkedIndexRange = getCheckedIndexRange();
             int checkedIndexEpisode = getCheckedIndexEpisode(checkedIndexRange);
             View childAt = layout.getChildAt(checkedIndexEpisode);
@@ -1103,11 +1101,11 @@ public abstract class ListTvEpisodesPlusPresenter<T extends TvEpisodesPlusItemBe
         }
     }
 
-    public final boolean dispatchKeyEventCheckedPositionRange(BaseGridView viewGroup, int index) {
+    public final boolean dispatchKeyEventCheckedPositionRange(ViewGroup viewGroup) {
         try {
-            RecyclerView.ViewHolder viewHolder = viewGroup.findViewHolderForAdapterPosition(index);
-            LinearLayout layout = viewHolder.itemView.findViewById(R.id.lb_list_tv_episodes_plus_ranges);
-
+            LinearLayout layout = viewGroup.findViewById(R.id.lb_list_tv_episodes_plus_ranges);
+            if (null == layout)
+                throw new Exception("layout error: null");
             int checkedIndexRange = getCheckedIndexRange();
             int checkedIndexEpisode = getCheckedIndexEpisode(checkedIndexRange);
             // 1
