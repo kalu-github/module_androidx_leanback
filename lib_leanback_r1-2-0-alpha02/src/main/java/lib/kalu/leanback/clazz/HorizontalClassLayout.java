@@ -128,7 +128,7 @@ public final class HorizontalClassLayout extends ScrollView {
                 return false;
             }
         }
-        // move => right
+        // right-move
         else if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_RIGHT) {
             int count = getCount();
             int index = getCheckedIndex();
@@ -146,6 +146,19 @@ public final class HorizontalClassLayout extends ScrollView {
                 setChecked(next);
                 updateBackground(next, true, false);
                 updateText(true);
+                return true;
+            } else {
+                return false;
+            }
+        }
+        // right-into
+        else if (event.getAction() == KeyEvent.ACTION_UP && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_RIGHT) {
+            int count = getCount();
+            if (count > 0) {
+                int index = getCheckedIndex();
+                updateBackground(index, true, false);
+                updateText(true);
+                call(index);
                 return true;
             } else {
                 return false;
@@ -187,18 +200,6 @@ public final class HorizontalClassLayout extends ScrollView {
         }
         // into => down
         else if (event.getAction() == KeyEvent.ACTION_UP && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_DOWN) {
-            int count = getCount();
-            if (count > 0) {
-                int index = getCheckedIndex();
-                updateBackground(index, true, false);
-                updateText(true);
-                return true;
-            } else {
-                return false;
-            }
-        }
-        // into => right
-        else if (event.getAction() == KeyEvent.ACTION_UP && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_RIGHT) {
             int count = getCount();
             if (count > 0) {
                 int index = getCheckedIndex();
@@ -333,8 +334,6 @@ public final class HorizontalClassLayout extends ScrollView {
             }
             RadioButton radioButton = (RadioButton) radioGroup.getChildAt(index);
             radioButton.setChecked(true);
-            // listener
-            call(-1);
         } catch (Exception e) {
             e.printStackTrace();
         }
