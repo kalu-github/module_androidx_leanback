@@ -24,6 +24,7 @@ import androidx.leanback.R;
 
 import java.util.List;
 
+import lib.kalu.leanback.list.RecyclerView;
 import lib.kalu.leanback.util.LeanBackUtil;
 import lib.kalu.leanback.util.ViewUtil;
 
@@ -124,13 +125,6 @@ public final class ClassScrollView extends ScrollView implements ClassLayoutImpl
                 setCheckedRadioButton(next, true, true);
                 scrollNext(View.FOCUS_LEFT, next);
                 return true;
-            } else {
-                View nextFocus = ViewUtil.findNextFocus(getContext(), this, View.FOCUS_LEFT);
-                if (null == nextFocus) {
-                    return true;
-                } else {
-                    clearFocus();
-                }
             }
         }
         // right
@@ -142,34 +136,9 @@ public final class ClassScrollView extends ScrollView implements ClassLayoutImpl
                 setCheckedRadioButton(next, true, true);
                 scrollNext(View.FOCUS_RIGHT, next);
                 return true;
-            } else {
-                View nextFocus = ViewUtil.findNextFocus(getContext(), this, View.FOCUS_RIGHT);
-                if (null == nextFocus) {
-                    return true;
-                } else {
-                    clearFocus();
-                }
             }
         }
-        // up
-        else if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_UP) {
-            View nextFocus = ViewUtil.findNextFocus(getContext(), this, View.FOCUS_UP);
-            if (null == nextFocus) {
-                return true;
-            } else {
-                clearFocus();
-            }
-        }
-        // down
-        else if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_DOWN) {
-            View nextFocus = ViewUtil.findNextFocus(getContext(), this, View.FOCUS_DOWN);
-            if (null == nextFocus) {
-                return true;
-            } else {
-                clearFocus();
-            }
-        }
-        return super.dispatchKeyEvent(event);
+        return checkNextFocus(event) || super.dispatchKeyEvent(event);
     }
 
     private boolean dispatchEventVertical(KeyEvent event) {
@@ -182,13 +151,6 @@ public final class ClassScrollView extends ScrollView implements ClassLayoutImpl
                 setCheckedRadioButton(next, true, true);
                 scrollNext(View.FOCUS_UP, next);
                 return true;
-            } else {
-                View nextFocus = ViewUtil.findNextFocus(getContext(), this, View.FOCUS_UP);
-                if (null == nextFocus) {
-                    return true;
-                } else {
-                    clearFocus();
-                }
             }
         }
         // down
@@ -200,34 +162,55 @@ public final class ClassScrollView extends ScrollView implements ClassLayoutImpl
                 setCheckedRadioButton(next, true, true);
                 scrollNext(View.FOCUS_DOWN, next);
                 return true;
-            } else {
-                View nextFocus = ViewUtil.findNextFocus(getContext(), this, View.FOCUS_DOWN);
-                if (null == nextFocus) {
+            }
+        }
+        return checkNextFocus(event) || super.dispatchKeyEvent(event);
+    }
+
+    private boolean checkNextFocus(@NonNull KeyEvent event) {
+        try {
+
+            View nextFocus;
+
+            // left
+            if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_LEFT) {
+                nextFocus = ViewUtil.findNextFocus(getContext(), this, View.FOCUS_LEFT);
+            }
+            // right
+            else if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_RIGHT) {
+                nextFocus = ViewUtil.findNextFocus(getContext(), this, View.FOCUS_RIGHT);
+            }
+            // up
+            else if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_UP) {
+                nextFocus = ViewUtil.findNextFocus(getContext(), this, View.FOCUS_UP);
+            }
+            // down
+            else if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_DOWN) {
+                nextFocus = ViewUtil.findNextFocus(getContext(), this, View.FOCUS_DOWN);
+            }
+            // null
+            else {
+                nextFocus = null;
+            }
+
+            if (null == nextFocus) {
+                return true;
+            } else if (nextFocus instanceof RecyclerView) {
+                androidx.recyclerview.widget.RecyclerView.Adapter adapter = ((RecyclerView) nextFocus).getAdapter();
+                if (null == adapter) {
                     return true;
                 } else {
-                    clearFocus();
+                    int itemCount = adapter.getItemCount();
+                    if (itemCount <= 0) {
+                        return true;
+                    }
                 }
             }
+            throw new Exception("check error");
+        } catch (Exception e) {
+            LeanBackUtil.log("BaseScrollView => checkNextFocus => " + e.getMessage());
+            return false;
         }
-        // right
-        else if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_RIGHT) {
-            View nextFocus = ViewUtil.findNextFocus(getContext(), this, View.FOCUS_RIGHT);
-            if (null == nextFocus) {
-                return true;
-            } else {
-                clearFocus();
-            }
-        }
-        // left
-        else if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_LEFT) {
-            View nextFocus = ViewUtil.findNextFocus(getContext(), this, View.FOCUS_LEFT);
-            if (null == nextFocus) {
-                return true;
-            } else {
-                clearFocus();
-            }
-        }
-        return super.dispatchKeyEvent(event);
     }
 
     private void init(@NonNull Context context, @NonNull AttributeSet attrs) {
@@ -253,11 +236,11 @@ public final class ClassScrollView extends ScrollView implements ClassLayoutImpl
     }
 
     public void update(@NonNull List<? extends ClassBean> data) {
-        update(data, 0, false, mItemMargin,mItemWidth,  mItemHeight, mTextSize, mOrientation,  true);
+        update(data, 0, false, mItemMargin, mItemWidth, mItemHeight, mTextSize, mOrientation, true);
     }
 
     public void update(@NonNull List<? extends ClassBean> data, int checkedIndex) {
-        update(data, checkedIndex, false, mItemMargin, mItemWidth, mItemHeight, mTextSize, mOrientation,  true);
+        update(data, checkedIndex, false, mItemMargin, mItemWidth, mItemHeight, mTextSize, mOrientation, true);
     }
 
     @Override
