@@ -170,32 +170,33 @@ public final class ClassScrollView extends ScrollView implements ClassLayoutImpl
     private boolean checkNextFocus(@NonNull KeyEvent event) {
         try {
 
-            View nextFocus;
+            View nextFocus = null;
+            boolean checkNext = false;
 
             // left
             if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_LEFT) {
+                checkNext = true;
                 nextFocus = ViewUtil.findNextFocus(getContext(), this, View.FOCUS_LEFT);
             }
             // right
             else if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_RIGHT) {
+                checkNext = true;
                 nextFocus = ViewUtil.findNextFocus(getContext(), this, View.FOCUS_RIGHT);
             }
             // up
             else if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_UP) {
+                checkNext = true;
                 nextFocus = ViewUtil.findNextFocus(getContext(), this, View.FOCUS_UP);
             }
             // down
             else if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_DOWN) {
+                checkNext = true;
                 nextFocus = ViewUtil.findNextFocus(getContext(), this, View.FOCUS_DOWN);
             }
-            // null
-            else {
-                nextFocus = null;
-            }
 
-            if (null == nextFocus) {
+            if (checkNext && null == nextFocus) {
                 return true;
-            } else if (nextFocus instanceof RecyclerView) {
+            } else if (checkNext && nextFocus instanceof RecyclerView) {
                 androidx.recyclerview.widget.RecyclerView.Adapter adapter = ((RecyclerView) nextFocus).getAdapter();
                 if (null == adapter) {
                     return true;
