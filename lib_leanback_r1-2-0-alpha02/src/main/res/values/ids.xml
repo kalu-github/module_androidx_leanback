@@ -4,4 +4,5 @@
     <item name="lb_shadow_impl" type="id" />
     <item name="lb_listtvepisodesgridpresenter" type="id" />
     <item name="lb_listtvepisodespluspresenterimpl_data" type="id" />
+    <item name="lb_classlayoutimpl_data" type="id" />
 </resources>
