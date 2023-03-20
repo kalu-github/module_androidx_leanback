@@ -1,5 +1,7 @@
 package lib.kalu.leanback.clazz;
 
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
@@ -146,6 +148,7 @@ interface ClassLayoutImpl {
                                        boolean checkedIndexHasFocus,
                                        boolean callListener) {
         try {
+            LeanBackUtil.log("ClassLayoutImpl => setCheckedIndex => checkedIndex = " + checkedIndex + ", checkedIndexHasFocus = " + checkedIndexHasFocus + ", callListener = " + callListener);
             RadioGroup radioGroup = getRadioGroup(true);
             if (null == radioGroup)
                 throw new Exception("radioGroup error: null");
@@ -159,12 +162,14 @@ interface ClassLayoutImpl {
                 Object tag = radioButton.getTag(R.id.lb_classlayoutimpl_data);
                 if (null == tag || !(tag instanceof ClassBean))
                     continue;
+                LeanBackUtil.log("ClassLayoutImpl => setCheckedIndex => i = " + i + ", tag = " + tag.toString());
                 ((ClassBean) tag).setChecked(checkedIndex == i);
                 ((ClassBean) tag).setFocus(checkedIndexHasFocus && checkedIndex == i);
+                LeanBackUtil.log("ClassLayoutImpl => setCheckedIndex => i = " + i + ", tag = " + tag.toString());
                 // ui
+                radioButton.setText(((ClassBean) tag).getTextSpannableString(((View) this).getContext()));
                 radioButton.setTextColor(((ClassBean) tag).getTextColor());
                 radioButton.setBackgroundResource(((ClassBean) tag).getBackgroundRecource());
-                radioButton.setCompoundDrawablesWithIntrinsicBounds(((ClassBean) tag).getLeftDrawable(), 0, 0, 0);
             }
             if (!callListener)
                 throw new Exception("not callListener");
@@ -240,8 +245,10 @@ interface ClassLayoutImpl {
                         @NonNull int chechedIndex,
                         @NonNull boolean chechedIndexHasFocus,
                         @NonNull int itemMargin,
+                        @NonNull int itemWidth,
                         @NonNull int itemHeight,
                         @NonNull int textSize,
+                        @NonNull int orientation,
                         @NonNull boolean callListener) {
 
         try {
@@ -266,23 +273,32 @@ interface ClassLayoutImpl {
                 ClassBean o = data.get(i);
                 if (null == o)
                     continue;
-                ClassRadioButton view = new ClassRadioButton(((View) this).getContext());
-                RadioGroup.LayoutParams layoutParams = new RadioGroup.LayoutParams(RadioGroup.LayoutParams.MATCH_PARENT, itemHeight);
-                if (i > 0 && itemMargin > 0) {
-                    layoutParams.topMargin = itemMargin;
+                RadioButton radioButton = new RadioButton(((View) this).getContext());
+                RadioGroup.LayoutParams layoutParams;
+                if (orientation == 1) {
+                    layoutParams = new RadioGroup.LayoutParams(itemWidth, RadioGroup.LayoutParams.MATCH_PARENT);
+                } else {
+                    layoutParams = new RadioGroup.LayoutParams(RadioGroup.LayoutParams.MATCH_PARENT, itemHeight);
                 }
-                view.setLayoutParams(layoutParams);
-                view.setTag(R.id.lb_classlayoutimpl_data, o);
-                view.setSingleLine();
-                view.setFocusable(false);
-                view.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize);
-                view.setGravity(Gravity.CENTER);
-                radioGroup.addView(view);
+                if (i > 0 && itemMargin > 0) {
+                    if (orientation == 1) {
+                        layoutParams.leftMargin = itemMargin;
+                    } else {
+                        layoutParams.topMargin = itemMargin;
+                    }
+                }
+                radioButton.setLayoutParams(layoutParams);
+                radioButton.setTag(R.id.lb_classlayoutimpl_data, o);
+                radioButton.setSingleLine();
+                radioButton.setFocusable(false);
+                radioButton.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize);
+                radioButton.setGravity(Gravity.CENTER);
+                radioButton.setButtonDrawable(new ColorDrawable(Color.TRANSPARENT));
+                radioGroup.addView(radioButton);
                 // ui
-                view.setText(o.getText());
-                view.setTextColor(o.getTextColor());
-                view.setBackgroundResource(o.getBackgroundRecource());
-                view.setCompoundDrawablesWithIntrinsicBounds(o.getLeftDrawable(), 0, 0, 0);
+                radioButton.setText((o.getTextSpannableString(((View) this).getContext())));
+                radioButton.setTextColor(o.getTextColor());
+                radioButton.setBackgroundResource(o.getBackgroundRecource());
             }
             if (!callListener)
                 throw new Exception("not callListener");

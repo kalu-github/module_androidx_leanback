@@ -36,6 +36,8 @@ public final class ClassScrollView extends ScrollView implements ClassLayoutImpl
     @Dimension
     int mItemHeight;
     @Dimension
+    int mItemWidth;
+    @Dimension
     int mTextSize;
     @DrawableRes
     int mBackgroundResource;
@@ -74,11 +76,19 @@ public final class ClassScrollView extends ScrollView implements ClassLayoutImpl
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
+        LeanBackUtil.log("BaseScrollView => onFinishInflate => mOrientation = " + mOrientation);
+        // 1
+        setFillViewport(true);
+        setVerticalScrollBarEnabled(false);
+        setHorizontalScrollBarEnabled(false);
+        setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
+        // 2
         RadioGroup radioGroup = new RadioGroup(getContext());
         radioGroup.setFocusable(false);
         radioGroup.setOrientation(mOrientation == 1 ? LinearLayout.HORIZONTAL : LinearLayout.VERTICAL);
         ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         radioGroup.setLayoutParams(layoutParams);
+        removeAllViews();
         addView(radioGroup);
     }
 
@@ -221,14 +231,6 @@ public final class ClassScrollView extends ScrollView implements ClassLayoutImpl
     }
 
     private void init(@NonNull Context context, @NonNull AttributeSet attrs) {
-
-        // 1
-        setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
-        setFillViewport(true);
-        setVerticalScrollBarEnabled(false);
-        setHorizontalScrollBarEnabled(false);
-
-        // 2
         TypedArray typedArray = null;
         try {
             typedArray = context.obtainStyledAttributes(attrs, R.styleable.ClassLayout);
@@ -241,6 +243,7 @@ public final class ClassScrollView extends ScrollView implements ClassLayoutImpl
             mTextSize = typedArray.getDimensionPixelOffset(R.styleable.ClassLayout_cl_item_text_size, 20);
             mItemMargin = typedArray.getDimensionPixelOffset(R.styleable.ClassLayout_cl_item_margin, 0);
             mItemHeight = typedArray.getDimensionPixelOffset(R.styleable.ClassLayout_cl_item_height, 100);
+            mItemWidth = typedArray.getDimensionPixelOffset(R.styleable.ClassLayout_cl_item_width, 100);
             mOrientation = typedArray.getInt(R.styleable.ClassLayout_cl_orientation, 1);
         } catch (Exception e) {
         }
@@ -250,16 +253,15 @@ public final class ClassScrollView extends ScrollView implements ClassLayoutImpl
     }
 
     public void update(@NonNull List<? extends ClassBean> data) {
-        update(data, 0, false, mItemMargin, mItemHeight, mTextSize, true);
+        update(data, 0, false, mItemMargin,mItemWidth,  mItemHeight, mTextSize, mOrientation,  true);
     }
 
     public void update(@NonNull List<? extends ClassBean> data, int checkedIndex) {
-        update(data, checkedIndex, false, mItemMargin, mItemHeight, mTextSize, true);
+        update(data, checkedIndex, false, mItemMargin, mItemWidth, mItemHeight, mTextSize, mOrientation,  true);
     }
 
     @Override
-    public void update(@NonNull List<? extends ClassBean> data, @NonNull int chechedIndex, @NonNull boolean chechedIndexHasFocus, @NonNull int itemMargin, @NonNull int itemHeight, @NonNull int textSize, @NonNull boolean callListener) {
-
+    public void update(@NonNull List<? extends ClassBean> data, @NonNull int chechedIndex, @NonNull boolean chechedIndexHasFocus, @NonNull int itemMargin, @NonNull int itemWidth, @NonNull int itemHeight, @NonNull int textSize, @NonNull int orientation, @NonNull boolean callListener) {
         if (null != data) {
             for (ClassBean o : data) {
                 if (null == o) continue;
@@ -271,6 +273,6 @@ public final class ClassScrollView extends ScrollView implements ClassLayoutImpl
                 o.setBackgroundResourceFocus(mBackgroundResourceFocus);
             }
         }
-        ClassLayoutImpl.super.update(data, chechedIndex, chechedIndexHasFocus, itemMargin, itemHeight, textSize, callListener);
+        ClassLayoutImpl.super.update(data, chechedIndex, chechedIndexHasFocus, itemMargin, itemWidth, itemHeight, textSize, orientation, callListener);
     }
 }

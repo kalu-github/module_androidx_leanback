@@ -1,10 +1,15 @@
 package lib.kalu.leanback.clazz;
 
+import android.content.Context;
 import android.graphics.Color;
+import android.text.Spannable;
+import android.text.SpannableStringBuilder;
+import android.text.style.ImageSpan;
 
 import androidx.annotation.ColorInt;
 import androidx.annotation.DrawableRes;
 import androidx.annotation.Keep;
+import androidx.annotation.Nullable;
 
 import java.io.Serializable;
 
@@ -71,10 +76,6 @@ public class ClassBean implements Serializable {
         this.backgroundResourceChecked = backgroundResourceChecked;
     }
 
-    public String getText() {
-        return text;
-    }
-
     public void setText(String text) {
         this.text = text;
     }
@@ -114,6 +115,41 @@ public class ClassBean implements Serializable {
         }
     }
 
+    public String getText() {
+        return text;
+    }
+
+    @Nullable
+    public CharSequence getTextSpannableString(Context context) {
+        ImageSpan imageSpan;
+        if (focus) {
+            if (leftDrawableFocus != 0) {
+                imageSpan = new ImageSpan(context, leftDrawableFocus);
+            } else {
+                imageSpan = null;
+            }
+        } else if (checked) {
+            if (leftDrawableChecked != 0) {
+                imageSpan = new ImageSpan(context, leftDrawableChecked);
+            } else {
+                imageSpan = null;
+            }
+        } else {
+            if (leftDrawable != 0) {
+                imageSpan = new ImageSpan(context, leftDrawable);
+            } else {
+                imageSpan = null;
+            }
+        }
+        if (null == imageSpan) {
+            return getText();
+        } else {
+            SpannableStringBuilder builder = new SpannableStringBuilder("*" + text);
+            builder.setSpan(imageSpan, 0, 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            return builder;
+        }
+    }
+
     @DrawableRes
     public int getBackgroundRecource() {
         if (focus) {
@@ -134,5 +170,10 @@ public class ClassBean implements Serializable {
         } else {
             return leftDrawable;
         }
+    }
+
+    @Override
+    public String toString() {
+        return "ClassBean{" + "text='" + text + '\'' + ", code='" + code + '\'' + ", checked=" + checked + ", focus=" + focus + ", leftDrawable=" + leftDrawable + ", leftDrawableFocus=" + leftDrawableFocus + ", leftDrawableChecked=" + leftDrawableChecked + ", textColor=" + textColor + ", textColorFocus=" + textColorFocus + ", textColorChecked=" + textColorChecked + ", backgroundResource=" + backgroundResource + ", backgroundResourceFocus=" + backgroundResourceFocus + ", backgroundResourceChecked=" + backgroundResourceChecked + '}';
     }
 }
