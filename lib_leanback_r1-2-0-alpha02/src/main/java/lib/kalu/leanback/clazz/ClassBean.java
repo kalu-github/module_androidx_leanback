@@ -124,19 +124,19 @@ public class ClassBean implements Serializable {
         ImageSpan imageSpan;
         if (focus) {
             if (leftDrawableFocus != 0) {
-                imageSpan = new ImageSpan(context, leftDrawableFocus);
+                imageSpan = new ClassImageSpan(context, leftDrawableFocus);
             } else {
                 imageSpan = null;
             }
         } else if (checked) {
             if (leftDrawableChecked != 0) {
-                imageSpan = new ImageSpan(context, leftDrawableChecked);
+                imageSpan = new ClassImageSpan(context, leftDrawableChecked);
             } else {
                 imageSpan = null;
             }
         } else {
             if (leftDrawable != 0) {
-                imageSpan = new ImageSpan(context, leftDrawable);
+                imageSpan = new ClassImageSpan(context, leftDrawable);
             } else {
                 imageSpan = null;
             }
@@ -144,7 +144,7 @@ public class ClassBean implements Serializable {
         if (null == imageSpan) {
             return getText();
         } else {
-            SpannableStringBuilder builder = new SpannableStringBuilder("*" + text);
+            SpannableStringBuilder builder = new SpannableStringBuilder("  " + text);
             builder.setSpan(imageSpan, 0, 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
             return builder;
         }

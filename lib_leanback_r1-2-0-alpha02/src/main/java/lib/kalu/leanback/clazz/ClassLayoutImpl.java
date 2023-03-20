@@ -273,7 +273,7 @@ interface ClassLayoutImpl {
                 ClassBean o = data.get(i);
                 if (null == o)
                     continue;
-                RadioButton radioButton = new RadioButton(((View) this).getContext());
+                ClassRadioButton radioButton = new ClassRadioButton(((View) this).getContext());
                 RadioGroup.LayoutParams layoutParams;
                 if (orientation == 1) {
                     layoutParams = new RadioGroup.LayoutParams(itemWidth, RadioGroup.LayoutParams.MATCH_PARENT);
