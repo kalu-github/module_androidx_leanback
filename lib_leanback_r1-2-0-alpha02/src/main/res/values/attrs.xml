@@ -365,6 +365,10 @@
     </declare-styleable>
 
     <declare-styleable name="ClassLayout">
+        <attr name="cl_orientation" >
+            <enum name="horizontal" value="1"/>
+            <enum name="vertical" value="2"/>
+        </attr>
         <attr name="cl_item_margin" format="reference|dimension" />
         <attr name="cl_item_height" format="reference|dimension" />
         <attr name="cl_item_width" format="reference|dimension" />
