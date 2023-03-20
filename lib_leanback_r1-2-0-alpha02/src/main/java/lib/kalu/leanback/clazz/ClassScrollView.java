@@ -194,14 +194,18 @@ public final class ClassScrollView extends ScrollView implements ClassLayoutImpl
                 nextFocus = ViewUtil.findNextFocus(getContext(), this, View.FOCUS_DOWN);
             }
 
+            LeanBackUtil.log("BaseScrollView => checkNextFocus => checkNext = " + checkNext+", nextFocus = "+nextFocus);
+
             if (checkNext && null == nextFocus) {
                 return true;
             } else if (checkNext && nextFocus instanceof RecyclerView) {
                 androidx.recyclerview.widget.RecyclerView.Adapter adapter = ((RecyclerView) nextFocus).getAdapter();
+                LeanBackUtil.log("BaseScrollView => checkNextFocus => adapter = " + adapter);
                 if (null == adapter) {
                     return true;
                 } else {
                     int itemCount = adapter.getItemCount();
+                    LeanBackUtil.log("BaseScrollView => checkNextFocus => itemCount = " + itemCount);
                     if (itemCount <= 0) {
                         return true;
                     }
