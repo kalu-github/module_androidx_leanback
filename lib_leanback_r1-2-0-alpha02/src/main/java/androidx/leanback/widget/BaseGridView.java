@@ -1459,35 +1459,61 @@ public abstract class BaseGridView extends RecyclerView {
     /***********/
 
     public final <T extends Presenter> T getPresenter(Class<T> cls) {
-        T t = null;
         try {
+            String simpleName = cls.getSimpleName();
+            if (null == simpleName || simpleName.length() <= 0)
+                throw new Exception("simpleName error: " + simpleName);
             ItemBridgeAdapter itemBridgeAdapter = (ItemBridgeAdapter) getAdapter();
             ArrayObjectAdapter objectAdapter = (ArrayObjectAdapter) itemBridgeAdapter.getAdapter();
             Presenter[] presenters = objectAdapter.getPresenterSelector().getPresenters();
-            int size = presenters.length;
-            for (int i = 0; i < size; i++) {
-                Presenter p = presenters[i];
-                if (null == p)
+            if (null == presenters)
+                throw new Exception("presenters error: null");
+            for (Presenter o : presenters) {
+                if (null == o)
                     continue;
-                if (!p.getClass().getName().equals(cls.getName()))
-                    continue;
-                t = (T) p;
-                break;
+                if (simpleName.equals(o.getClass().getSimpleName())) {
+                    return (T) o;
+                }
             }
+            throw new Exception("not find");
         } catch (Exception e) {
+            LeanBackUtil.log("BaseGridView => getPresenter => " + e.getMessage());
+            return null;
         }
-        return t;
     }
 
-    public final <T extends Object> T getAdapter(int position) {
-        T t = null;
+    public final ViewHolder findViewHolderForAdapterObject(Class<?> cls) {
+        try {
+            String simpleName = cls.getSimpleName();
+            if (null == simpleName || simpleName.length() <= 0)
+                throw new Exception("simpleName error: " + simpleName);
+            ItemBridgeAdapter itemBridgeAdapter = (ItemBridgeAdapter) getAdapter();
+            ArrayObjectAdapter objectAdapter = (ArrayObjectAdapter) itemBridgeAdapter.getAdapter();
+            int size = objectAdapter.size();
+            for (int i = 0; i < size; i++) {
+                Object o = objectAdapter.get(i);
+                if (null == o)
+                    continue;
+                if (simpleName.equals(o.getClass().getSimpleName())) {
+                    return findViewHolderForAdapterPosition(i);
+                }
+            }
+            throw new Exception("not find");
+        } catch (Exception e) {
+            LeanBackUtil.log("BaseGridView => findViewHolderForAdapterObject => " + e.getMessage());
+            return null;
+        }
+    }
+
+    public final <T extends Object> T getAdapterObject(int position) {
         try {
             ItemBridgeAdapter itemBridgeAdapter = (ItemBridgeAdapter) getAdapter();
             ArrayObjectAdapter objectAdapter = (ArrayObjectAdapter) itemBridgeAdapter.getAdapter();
-            t = (T) objectAdapter.get(position);
+            return (T) objectAdapter.get(position);
         } catch (Exception e) {
+            LeanBackUtil.log("BaseGridView => getAdapterObject => " + e.getMessage());
+            return null;
         }
-        return t;
     }
 
     public final void notifyItemChanged(int position) {
@@ -1495,6 +1521,7 @@ public abstract class BaseGridView extends RecyclerView {
             ItemBridgeAdapter itemBridgeAdapter = (ItemBridgeAdapter) getAdapter();
             itemBridgeAdapter.notifyItemChanged(position);
         } catch (Exception e) {
+            LeanBackUtil.log("BaseGridView => notifyItemChanged => " + e.getMessage());
         }
     }
 }

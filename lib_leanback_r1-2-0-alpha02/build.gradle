@@ -3,6 +3,8 @@ plugins {
 }
 
 android {
+
+    namespace 'androidx.leanback'
     compileSdkVersion 31
     buildToolsVersion "31.0.0"
 
@@ -25,7 +27,14 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
-    namespace 'androidx.leanback'
+
+    libraryVariants.all { variant ->
+        variant.outputs.all {
+            def type = new String(buildType.name).toLowerCase()
+            def time = new Date().format("yyyyMMdd", TimeZone.getTimeZone("GMT+08"))
+            outputFileName = "lib_leanback_r1-2-0-alpha02_" + type + "_" + time + ".aar"
+        }
+    }
 }
 
 //repositories {
