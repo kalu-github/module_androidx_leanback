@@ -9,8 +9,6 @@ import android.widget.RadioButton;
 
 import androidx.annotation.RequiresApi;
 
-import lib.kalu.leanback.util.LeanBackUtil;
-
 @SuppressLint("AppCompatCustomView")
 class ClassRadioButton extends RadioButton {
     public ClassRadioButton(Context context) {
@@ -38,7 +36,7 @@ class ClassRadioButton extends RadioButton {
                 float width = getPaint().measureText(text.toString());
                 CharSequence subSequence = ((SpannableStringBuilder) text).subSequence(2, text.length());
                 float real = getPaint().measureText(subSequence.toString());
-                float padding = Math.abs(width - real);
+                float padding = Math.abs(width - real) / 5 * 4;
                 setPadding(0, 0, (int) padding, 0);
             } catch (Exception e) {
                 setPadding(0, 0, 0, 0);
