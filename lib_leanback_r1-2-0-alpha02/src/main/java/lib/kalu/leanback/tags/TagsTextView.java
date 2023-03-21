@@ -106,12 +106,14 @@ final class TagsTextView extends TextView {
         }
     }
 
-    protected boolean reqFocus() {
+    protected boolean reqFocus(boolean callListener) {
         setChecked(true);
         setFocus(true);
         try {
             // 1
-            ((TagsLinearLayoutChild) getParent()).callback(this);
+            if (callListener) {
+                ((TagsLinearLayoutChild) getParent()).callListener(this);
+            }
             // 2
             setTextColor(mTextColorFocus);
             setBackgroundResource(mBackgroundResourceFocus);

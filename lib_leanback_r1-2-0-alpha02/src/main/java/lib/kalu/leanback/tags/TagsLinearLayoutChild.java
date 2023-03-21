@@ -90,10 +90,10 @@ final class TagsLinearLayoutChild extends LinearLayout {
         LeanBackUtil.log("TagsLinearLayoutChild", "**********************");
     }
 
-    protected void callback(@NonNull TagsTextView view) {
+    protected void callListener(@NonNull TagsTextView view) {
         try {
             int index = indexOfChild(view);
-            ((TagsHorizontalScrollView) getParent()).callback(index);
+            ((TagsHorizontalScrollView) getParent()).callListener(index);
         } catch (Exception e) {
         }
     }
@@ -145,7 +145,7 @@ final class TagsLinearLayoutChild extends LinearLayout {
             int childCount = getChildCount();
             if (childCount <= 0)
                 throw new Exception("error: childCount is " + childCount);
-            ((TagsTextView) getChildAt(childCount - 1)).reqFocus();
+            ((TagsTextView) getChildAt(childCount - 1)).reqFocus(false);
             return true;
         } catch (Exception e) {
             LeanBackUtil.log("TagsLinearLayoutChild => requestLastItem => " + e.getMessage());
@@ -158,7 +158,7 @@ final class TagsLinearLayoutChild extends LinearLayout {
             int childCount = getChildCount();
             if (childCount <= 0)
                 throw new Exception("error: childCount is " + childCount);
-            ((TagsTextView) getChildAt(0)).reqFocus();
+            ((TagsTextView) getChildAt(0)).reqFocus(false);
             return true;
         } catch (Exception e) {
             LeanBackUtil.log("TagsLinearLayoutChild => focusFirst => " + e.getMessage());
@@ -234,7 +234,7 @@ final class TagsLinearLayoutChild extends LinearLayout {
         }
     }
 
-    protected boolean reqFocus(int index, boolean auto) {
+    protected boolean reqFocus(int index, boolean auto, boolean callListener) {
         try {
             LeanBackUtil.log("TagsLinearLayoutChild => reqFocus => index = " + index + ", auto = " + auto);
             int childCount = getChildCount();
@@ -245,11 +245,11 @@ final class TagsLinearLayoutChild extends LinearLayout {
                 if (index + 1 > childCount) {
                     index = childCount - 1;
                 }
-                ((TagsTextView) getChildAt(index)).reqFocus();
+                ((TagsTextView) getChildAt(index)).reqFocus(callListener);
             } else {
                 if (index + 1 > childCount)
                     throw new Exception("error: childCount is " + childCount + ", index = " + index);
-                ((TagsTextView) getChildAt(index)).reqFocus();
+                ((TagsTextView) getChildAt(index)).reqFocus(callListener);
             }
             return true;
         } catch (Exception e) {

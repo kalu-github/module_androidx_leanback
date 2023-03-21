@@ -41,9 +41,9 @@ final class TagsHorizontalScrollView extends HorizontalScrollView {
         addView(layout);
     }
 
-    protected void callback(@NonNull int index) {
+    protected void callListener(@NonNull int index) {
         try {
-            ((TagsLayout) getParent()).callback(index, this);
+            ((TagsLayout) getParent()).callListener(index, this);
         } catch (Exception e) {
         }
     }
@@ -120,12 +120,12 @@ final class TagsHorizontalScrollView extends HorizontalScrollView {
         }
     }
 
-    protected boolean reqFocus(int index, boolean auto) {
+    protected boolean reqFocus(int index, boolean auto, boolean callListener) {
         try {
             int childCount = getChildCount();
             if (childCount != 1)
                 throw new Exception("error: childCount is " + childCount);
-            boolean reqFocus = ((TagsLinearLayoutChild) getChildAt(0)).reqFocus(index, auto);
+            boolean reqFocus = ((TagsLinearLayoutChild) getChildAt(0)).reqFocus(index, auto, callListener);
             if (reqFocus) {
 
             }

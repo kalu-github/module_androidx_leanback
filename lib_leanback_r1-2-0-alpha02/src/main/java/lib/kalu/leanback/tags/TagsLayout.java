@@ -147,7 +147,7 @@ public final class TagsLayout extends LinearLayout {
         }
     }
 
-    private boolean reqFocus(int row, int col, boolean auto) {
+    private boolean reqFocus(int row, int col, boolean auto, boolean callListener) {
         try {
             LeanBackUtil.log("TagsLayout => reqFocus => row = " + row + ", col = " + col + ", auto = " + auto);
             int childCount = getChildCount();
@@ -156,7 +156,7 @@ public final class TagsLayout extends LinearLayout {
                 throw new Exception("error: childCount is " + childCount);
             if (row >= childCount)
                 throw new Exception("error: childCount is " + childCount + ", row = " + row);
-            return ((TagsHorizontalScrollView) getChildAt(row)).reqFocus(col, auto);
+            return ((TagsHorizontalScrollView) getChildAt(row)).reqFocus(col, auto, callListener);
         } catch (Exception e) {
             LeanBackUtil.log("TagsLayout => reqFocus => " + e.getMessage());
             return false;
@@ -203,7 +203,7 @@ public final class TagsLayout extends LinearLayout {
                 if (null == ints) {
                     int childCount = getChildCount();
                     if (childCount > 0) {
-                        reqFocus(0, 0, true);
+                        reqFocus(0, 0, true, false);
                         return true;
                     }
                 }
@@ -250,12 +250,12 @@ public final class TagsLayout extends LinearLayout {
                         int before = ints[1];
                         int next = before - 1;
                         delFocus(row, before, false);
-                        reqFocus(row, next, false);
+                        reqFocus(row, next, false, true);
                         scrollNext(View.FOCUS_LEFT, row, next);
                         return true;
                     }
                 } else {
-                    boolean reqFocus = reqFocus(0, 0, false);
+                    boolean reqFocus = reqFocus(0, 0, false, false);
                     LeanBackUtil.log("TagsLayout => dispatchKeyEvent => left_action_down => reqFocus = " + reqFocus);
                 }
             }
@@ -270,7 +270,7 @@ public final class TagsLayout extends LinearLayout {
                 if (null == ints) {
                     int childCount = getChildCount();
                     if (childCount > 0) {
-                        reqFocus(0, 0, true);
+                        reqFocus(0, 0, true, false);
                         return true;
                     }
                 }
@@ -317,12 +317,12 @@ public final class TagsLayout extends LinearLayout {
                         int before = ints[1];
                         int next = before + 1;
                         delFocus(row, before, false);
-                        reqFocus(row, next, false);
+                        reqFocus(row, next, false, true);
                         scrollNext(View.FOCUS_RIGHT, row, next);
                         return true;
                     }
                 } else {
-                    boolean reqFocus = reqFocus(0, 0, false);
+                    boolean reqFocus = reqFocus(0, 0, false, false);
                     LeanBackUtil.log("TagsLayout => dispatchKeyEvent => right_action_down => reqFocus = " + reqFocus);
                 }
             }
@@ -339,7 +339,7 @@ public final class TagsLayout extends LinearLayout {
                     if (childCount > 0) {
                         int row = childCount - 1;
                         int colUp = findCheckedItemIndex(row);
-                        reqFocus(row, colUp, true);
+                        reqFocus(row, colUp, true, false);
                         return true;
                     }
                 }
@@ -386,7 +386,7 @@ public final class TagsLayout extends LinearLayout {
                         delFocus(row, col, true);
                         int rowDown = row - 1;
                         int colDown = findCheckedItemIndex(rowDown);
-                        reqFocus(rowDown, colDown, true);
+                        reqFocus(rowDown, colDown, true, false);
                         return true;
                     }
                 } else {
@@ -410,7 +410,7 @@ public final class TagsLayout extends LinearLayout {
                     if (childCount > 0) {
                         int rowDown = 0;
                         int colDown = findCheckedItemIndex(rowDown);
-                        reqFocus(rowDown, colDown, true);
+                        reqFocus(rowDown, colDown, true, false);
                         return true;
                     }
                 }
@@ -459,7 +459,7 @@ public final class TagsLayout extends LinearLayout {
                         delFocus(row, col, true);
                         int rowUp = row + 1;
                         int colUp = findCheckedItemIndex(rowUp);
-                        reqFocus(rowUp, colUp, true);
+                        reqFocus(rowUp, colUp, true, false);
                         return true;
                     }
                 } else {
@@ -604,7 +604,7 @@ public final class TagsLayout extends LinearLayout {
         }
     }
 
-    protected void callback(@NonNull int row, @NonNull TagsHorizontalScrollView view) {
+    protected void callListener(@NonNull int row, @NonNull TagsHorizontalScrollView view) {
         if (null == onTagsChangeListener)
             return;
         int col;
