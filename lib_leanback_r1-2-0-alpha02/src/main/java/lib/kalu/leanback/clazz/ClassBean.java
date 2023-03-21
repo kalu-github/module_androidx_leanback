@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
+import android.text.style.ForegroundColorSpan;
 import android.text.style.ImageSpan;
 
 import androidx.annotation.ColorInt;
@@ -19,7 +20,6 @@ public class ClassBean implements Serializable {
     private String text;
     private String code;
     private boolean checked;
-    private boolean focus;
 
     @DrawableRes
     private int leftDrawable = 0;
@@ -96,17 +96,9 @@ public class ClassBean implements Serializable {
         this.checked = checked;
     }
 
-    public boolean isFocus() {
-        return focus;
-    }
-
-    public void setFocus(boolean focus) {
-        this.focus = focus;
-    }
-
     @ColorInt
-    public int getTextColor() {
-        if (focus) {
+    public int getTextColor(boolean hasFocus) {
+        if (hasFocus && checked) {
             return textColorFocus;
         } else if (checked) {
             return textColorChecked;
@@ -120,9 +112,9 @@ public class ClassBean implements Serializable {
     }
 
     @Nullable
-    public CharSequence getTextSpannableString(Context context) {
+    public CharSequence getTextSpannableString(Context context, boolean hasFocus) {
         ImageSpan imageSpan;
-        if (focus) {
+        if (hasFocus && checked) {
             if (leftDrawableFocus != 0) {
                 imageSpan = new ClassImageSpan(context, leftDrawableFocus);
             } else {
@@ -144,15 +136,17 @@ public class ClassBean implements Serializable {
         if (null == imageSpan) {
             return getText();
         } else {
-            SpannableStringBuilder builder = new SpannableStringBuilder("  " + text);
+            SpannableStringBuilder builder = new SpannableStringBuilder("虢 " + text);
             builder.setSpan(imageSpan, 0, 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            ForegroundColorSpan colorSpan = new ForegroundColorSpan(Color.TRANSPARENT);
+            builder.setSpan(colorSpan, 1, 2, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
             return builder;
         }
     }
 
     @DrawableRes
-    public int getBackgroundRecource() {
-        if (focus) {
+    public int getBackgroundRecource(boolean hasFocus) {
+        if (hasFocus && checked) {
             return backgroundResourceFocus;
         } else if (checked) {
             return backgroundResourceChecked;
@@ -162,18 +156,13 @@ public class ClassBean implements Serializable {
     }
 
     @DrawableRes
-    public int getLeftDrawable() {
-        if (focus) {
+    public int getLeftDrawable(boolean hasFocus) {
+        if (hasFocus && checked) {
             return leftDrawableFocus;
         } else if (checked) {
             return leftDrawableChecked;
         } else {
             return leftDrawable;
         }
-    }
-
-    @Override
-    public String toString() {
-        return "ClassBean{" + "text='" + text + '\'' + ", code='" + code + '\'' + ", checked=" + checked + ", focus=" + focus + ", leftDrawable=" + leftDrawable + ", leftDrawableFocus=" + leftDrawableFocus + ", leftDrawableChecked=" + leftDrawableChecked + ", textColor=" + textColor + ", textColorFocus=" + textColorFocus + ", textColorChecked=" + textColorChecked + ", backgroundResource=" + backgroundResource + ", backgroundResourceFocus=" + backgroundResourceFocus + ", backgroundResourceChecked=" + backgroundResourceChecked + '}';
     }
 }

@@ -82,7 +82,6 @@ public final class ClassScrollView extends ScrollView implements ClassLayoutImpl
         setFillViewport(true);
         setVerticalScrollBarEnabled(false);
         setHorizontalScrollBarEnabled(false);
-        setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
         // 2
         RadioGroup radioGroup = new RadioGroup(getContext());
         radioGroup.setFocusable(false);
@@ -97,11 +96,7 @@ public final class ClassScrollView extends ScrollView implements ClassLayoutImpl
     protected void onFocusChanged(boolean gainFocus, int direction, @Nullable Rect previouslyFocusedRect) {
         super.onFocusChanged(gainFocus, direction, previouslyFocusedRect);
         LeanBackUtil.log("BaseScrollView => onFocusChanged => gainFocus = " + gainFocus);
-        if (gainFocus) {
-            setCheckedRadioButton(true, false);
-        } else {
-            setCheckedRadioButton(false, false);
-        }
+        setCheckedRadioButton(gainFocus, false, false);
     }
 
     @Override
@@ -122,7 +117,7 @@ public final class ClassScrollView extends ScrollView implements ClassLayoutImpl
             int checkedIndex = getCheckedIndex();
             if (itemCount > 0 && checkedIndex > 0) {
                 int next = checkedIndex - 1;
-                setCheckedRadioButton(next, true, true);
+                setCheckedRadioButton(next, true, true, true);
                 scrollNext(View.FOCUS_LEFT, next);
                 return true;
             }
@@ -133,7 +128,7 @@ public final class ClassScrollView extends ScrollView implements ClassLayoutImpl
             int checkedIndex = getCheckedIndex();
             if (itemCount > 0 && checkedIndex < itemCount) {
                 int next = checkedIndex + 1;
-                setCheckedRadioButton(next, true, true);
+                setCheckedRadioButton(next, true, true, true);
                 scrollNext(View.FOCUS_RIGHT, next);
                 return true;
             }
@@ -148,7 +143,7 @@ public final class ClassScrollView extends ScrollView implements ClassLayoutImpl
             int checkedIndex = getCheckedIndex();
             if (itemCount > 0 && checkedIndex > 0) {
                 int next = checkedIndex - 1;
-                setCheckedRadioButton(next, true, true);
+                setCheckedRadioButton(next, true, true, true);
                 scrollNext(View.FOCUS_UP, next);
                 return true;
             }
@@ -159,7 +154,7 @@ public final class ClassScrollView extends ScrollView implements ClassLayoutImpl
             int checkedIndex = getCheckedIndex();
             if (itemCount > 0 && checkedIndex < itemCount) {
                 int next = checkedIndex + 1;
-                setCheckedRadioButton(next, true, true);
+                setCheckedRadioButton(next, true, true, true);
                 scrollNext(View.FOCUS_DOWN, next);
                 return true;
             }
@@ -194,7 +189,7 @@ public final class ClassScrollView extends ScrollView implements ClassLayoutImpl
                 nextFocus = ViewUtil.findNextFocus(getContext(), this, View.FOCUS_DOWN);
             }
 
-            LeanBackUtil.log("BaseScrollView => checkNextFocus => checkNext = " + checkNext+", nextFocus = "+nextFocus);
+            LeanBackUtil.log("BaseScrollView => checkNextFocus => checkNext = " + checkNext + ", nextFocus = " + nextFocus);
 
             if (checkNext && null == nextFocus) {
                 return true;
@@ -241,26 +236,10 @@ public final class ClassScrollView extends ScrollView implements ClassLayoutImpl
     }
 
     public void update(@NonNull List<? extends ClassBean> data) {
-        update(data, 0, false, mItemMargin, mItemWidth, mItemHeight, mTextSize, mOrientation, true);
+        update(data, 0, mItemMargin, mItemWidth, mItemHeight, mTextSize, mOrientation, mTextColor, mTextColorFocus, mTextColorChecked, mBackgroundResource, mBackgroundResourceFocus, mBackgroundResourceChecked, true);
     }
 
     public void update(@NonNull List<? extends ClassBean> data, int checkedIndex) {
-        update(data, checkedIndex, false, mItemMargin, mItemWidth, mItemHeight, mTextSize, mOrientation, true);
-    }
-
-    @Override
-    public void update(@NonNull List<? extends ClassBean> data, @NonNull int chechedIndex, @NonNull boolean chechedIndexHasFocus, @NonNull int itemMargin, @NonNull int itemWidth, @NonNull int itemHeight, @NonNull int textSize, @NonNull int orientation, @NonNull boolean callListener) {
-        if (null != data) {
-            for (ClassBean o : data) {
-                if (null == o) continue;
-                o.setTextColor(mTextColor);
-                o.setTextColorFocus(mTextColorFocus);
-                o.setTextColorChecked(mTextColorChecked);
-                o.setBackgroundResource(mBackgroundResource);
-                o.setBackgroundResourceChecked(mBackgroundResourceChecked);
-                o.setBackgroundResourceFocus(mBackgroundResourceFocus);
-            }
-        }
-        ClassLayoutImpl.super.update(data, chechedIndex, chechedIndexHasFocus, itemMargin, itemWidth, itemHeight, textSize, orientation, callListener);
+        update(data, checkedIndex, mItemMargin, mItemWidth, mItemHeight, mTextSize, mOrientation, mTextColor, mTextColorFocus, mTextColorChecked, mBackgroundResource, mBackgroundResourceFocus, mBackgroundResourceChecked, true);
     }
 }

@@ -9,6 +9,8 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.ScrollView;
 
+import androidx.annotation.ColorInt;
+import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.leanback.R;
@@ -26,10 +28,6 @@ interface ClassLayoutImpl {
     default void setOnCheckedChangeListener(@NonNull OnCheckedChangeListener listener) {
         this.mListener[0] = null;
         this.mListener[0] = listener;
-    }
-
-    interface OnCheckedChangeListener {
-        void onChecked(@NonNull int index, @NonNull String name, @NonNull String code);
     }
 
     /*************/
@@ -75,7 +73,7 @@ interface ClassLayoutImpl {
         }
     }
 
-    default void callListener() {
+    default void callListener(boolean isFromUser) {
         try {
             if (null == mListener[0])
                 throw new Exception("mListener error: null");
@@ -93,7 +91,7 @@ interface ClassLayoutImpl {
                 if (null == tag || !(tag instanceof ClassBean))
                     continue;
                 if (((ClassBean) tag).isChecked()) {
-                    mListener[0].onChecked(i, ((ClassBean) tag).getText(), ((ClassBean) tag).getCode());
+                    mListener[0].onChecked(isFromUser, i, ((ClassBean) tag).getText(), ((ClassBean) tag).getCode());
                     break;
                 }
             }
@@ -142,16 +140,19 @@ interface ClassLayoutImpl {
     }
 
 
-    default void setCheckedRadioButton(boolean checkedIndexHasFocus, boolean callListener) {
+    default void setCheckedRadioButton(@NonNull boolean hasFocus,
+                                       @NonNull boolean isFromUser,
+                                       @NonNull boolean callListener) {
         int checkedIndex = getCheckedIndex();
-        setCheckedRadioButton(checkedIndex, checkedIndexHasFocus, callListener);
+        setCheckedRadioButton(checkedIndex, hasFocus, isFromUser, callListener);
     }
 
     default void setCheckedRadioButton(@NonNull int checkedIndex,
-                                       boolean checkedIndexHasFocus,
-                                       boolean callListener) {
+                                       @NonNull boolean hasFocus,
+                                       @NonNull boolean isFromUser,
+                                       @NonNull boolean callListener) {
         try {
-            LeanBackUtil.log("ClassLayoutImpl => setCheckedIndex => checkedIndex = " + checkedIndex + ", checkedIndexHasFocus = " + checkedIndexHasFocus + ", callListener = " + callListener);
+            LeanBackUtil.log("ClassLayoutImpl => setCheckedIndex => checkedIndex = " + checkedIndex + ", hasFocus = " + hasFocus + ", callListener = " + callListener);
             RadioGroup radioGroup = getRadioGroup(true);
             if (null == radioGroup)
                 throw new Exception("radioGroup error: null");
@@ -167,16 +168,15 @@ interface ClassLayoutImpl {
                     continue;
                 LeanBackUtil.log("ClassLayoutImpl => setCheckedIndex => i = " + i + ", tag = " + tag.toString());
                 ((ClassBean) tag).setChecked(checkedIndex == i);
-                ((ClassBean) tag).setFocus(checkedIndexHasFocus && checkedIndex == i);
                 LeanBackUtil.log("ClassLayoutImpl => setCheckedIndex => i = " + i + ", tag = " + tag.toString());
                 // ui
-                radioButton.setText(((ClassBean) tag).getTextSpannableString(((View) this).getContext()));
-                radioButton.setTextColor(((ClassBean) tag).getTextColor());
-                radioButton.setBackgroundResource(((ClassBean) tag).getBackgroundRecource());
+                radioButton.setText(((ClassBean) tag).getTextSpannableString(((View) this).getContext(), hasFocus));
+                radioButton.setTextColor(((ClassBean) tag).getTextColor(hasFocus));
+                radioButton.setBackgroundResource(((ClassBean) tag).getBackgroundRecource(hasFocus));
             }
             if (!callListener)
                 throw new Exception("not callListener");
-            callListener();
+            callListener(isFromUser);
         } catch (Exception e) {
             LeanBackUtil.log("ClassLayoutImpl => setCheckedIndex => " + e.getMessage());
         }
@@ -246,12 +246,17 @@ interface ClassLayoutImpl {
 
     default void update(@NonNull List<? extends ClassBean> data,
                         @NonNull int chechedIndex,
-                        @NonNull boolean chechedIndexHasFocus,
                         @NonNull int itemMargin,
                         @NonNull int itemWidth,
                         @NonNull int itemHeight,
                         @NonNull int textSize,
                         @NonNull int orientation,
+                        @ColorInt int textColor,
+                        @ColorInt int textColorFocus,
+                        @ColorInt int textColorChecked,
+                        @DrawableRes int backgroundResource,
+                        @DrawableRes int backgroundResourceFocus,
+                        @DrawableRes int backgroundResourceChecked,
                         @NonNull boolean callListener) {
 
         try {
@@ -270,7 +275,13 @@ interface ClassLayoutImpl {
                 if (null == o)
                     continue;
                 o.setChecked(i == chechedIndex);
-                o.setFocus(chechedIndexHasFocus && i == chechedIndex);
+                o.setTextColor(textColor);
+                o.setTextColorFocus(textColorFocus);
+                o.setTextColorChecked(textColorChecked);
+                o.setBackgroundResource(backgroundResource);
+                o.setBackgroundResourceChecked(backgroundResourceChecked);
+                o.setBackgroundResourceFocus(backgroundResourceFocus);
+//                LeanBackUtil.log("ClassLayoutImpl => update => i = " + i + ", o = " + o);
             }
             for (int i = 0; i < size; i++) {
                 ClassBean o = data.get(i);
@@ -299,13 +310,13 @@ interface ClassLayoutImpl {
                 radioButton.setButtonDrawable(new ColorDrawable(Color.TRANSPARENT));
                 radioGroup.addView(radioButton);
                 // ui
-                radioButton.setText((o.getTextSpannableString(((View) this).getContext())));
-                radioButton.setTextColor(o.getTextColor());
-                radioButton.setBackgroundResource(o.getBackgroundRecource());
+                radioButton.setText((o.getTextSpannableString(((View) this).getContext(), false)));
+                radioButton.setTextColor(o.getTextColor(false));
+                radioButton.setBackgroundResource(o.getBackgroundRecource(false));
             }
             if (!callListener)
                 throw new Exception("not callListener");
-            callListener();
+            callListener(false);
         } catch (Exception e) {
             LeanBackUtil.log("ClassLayoutImpl => update => " + e.getMessage());
         }
