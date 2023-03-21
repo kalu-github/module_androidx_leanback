@@ -101,9 +101,10 @@ public final class ClassScrollView extends ScrollView implements ClassLayoutImpl
 
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
-        if (mOrientation == 1) {
+        View focus = findFocus();
+        if (null != focus && focus instanceof ClassScrollView && mOrientation == 1){
             return dispatchEventHorizontal(event);
-        } else if (mOrientation == 2) {
+        } else if (null != focus && focus instanceof ClassScrollView && mOrientation == 2) {
             return dispatchEventVertical(event);
         } else {
             return super.dispatchKeyEvent(event);

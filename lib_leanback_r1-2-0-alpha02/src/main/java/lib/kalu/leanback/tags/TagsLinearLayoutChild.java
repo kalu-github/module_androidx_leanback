@@ -1,14 +1,16 @@
 package lib.kalu.leanback.tags;
 
 import android.content.Context;
-import android.graphics.Rect;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
+import androidx.annotation.ColorInt;
+import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
+import androidx.leanback.R;
 
 import java.util.List;
 
@@ -25,251 +27,188 @@ final class TagsLinearLayoutChild extends LinearLayout {
     private void init() {
         setFocusable(false);
         setOrientation(LinearLayout.HORIZONTAL);
-        setGravity(Gravity.CENTER_VERTICAL);
+        setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
     }
 
     /*************/
 
-    protected void update(@NonNull String key, @NonNull List<TagBean> list, @NonNull int textSize, @NonNull int paddingLeft, @NonNull int paddingRight) {
+    protected void update(@NonNull String key,
+                          @NonNull List<TagBean> data,
+                          @NonNull int textSize,
+                          @NonNull int margin,
+                          @NonNull int paddingLeft,
+                          @NonNull int paddingRight,
+                          @ColorInt int textColor,
+                          @ColorInt int textColorFocus,
+                          @ColorInt int textColorChecked,
+                          @DrawableRes int backgroundResource,
+                          @DrawableRes int backgroundResourceFocus,
+                          @DrawableRes int backgroundResourceChecked) {
 
-        if (null == key || key.length() == 0 || null == list || list.size() == 0)
-            return;
 
-        LeanBackUtil.log("TagsLinearLayoutChild", "**********************");
-        int size = list.size();
-        for (int i = 0; i < size; i++) {
-
-            TagBean temp = list.get(i);
-            if (null == temp)
-                continue;
-
-            String initText = temp.getText();
-            LeanBackUtil.log("TagsLinearLayoutChild", "update => initText = " + initText);
-            if (null == initText || initText.length() == 0)
-                continue;
-
-            TagsTextView child = new TagsTextView(getContext());
-            child.setLayoutParams(new LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT));
-
-            child.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize);
-            child.setPadding(paddingLeft, 0, paddingRight, 0);
-
-            int textColorResourceDetault = temp.getTextColorResourceDetault();
-            if (textColorResourceDetault != 0) {
-                int color = getResources().getColor(textColorResourceDetault);
-                child.setTextColorDefault(color);
-            } else {
-                child.setTextColorDefault(temp.getTextColorIntDetault());
-            }
-
-            int textColorResourceSelect = temp.getTextColorResourceSelect();
-            if (textColorResourceSelect != 0) {
-                int color = getResources().getColor(textColorResourceSelect);
-                child.setTextColorSelect(color);
-            } else {
-                child.setTextColorSelect(temp.getTextColorIntSelect());
-            }
-
-            int textColorResourceFocus = temp.getTextColorResourceFocus();
-            if (textColorResourceFocus != 0) {
-                int color = getResources().getColor(textColorResourceFocus);
-                child.setTextColorFocus(color);
-            } else {
-                child.setTextColorFocus(temp.getTextColorIntFocus());
-            }
-
-            child.setBackgroundResourceDefault(temp.getBackgroundResourceDefault());
-            child.setBackgroundResourceSelect(temp.getBackgroundResourceSelect());
-            child.setBackgroundResourceFocus(temp.getBackgroundResourceFocus());
-
-            child.setSelected(false);
-            child.setText(initText, false, i == 0);
-            child.setHint(key);
-            addView(child);
-        }
-        LeanBackUtil.log("TagsLinearLayoutChild", "**********************");
-    }
-
-    protected void callListener(@NonNull TagsTextView view) {
         try {
-            int index = indexOfChild(view);
-            ((TagsHorizontalScrollView) getParent()).callListener(index);
+            if (null == key || key.length() <= 0)
+                throw new Exception("key error: " + key);
+            if (null == data)
+                throw new Exception("data error: null");
+            int size = data.size();
+            if (size <= 0)
+                throw new Exception("size error: " + size);
+            for (int i = 0; i < size; i++) {
+                TagBean o = data.get(i);
+                if (null == o)
+                    continue;
+                String text = o.getText();
+                if (null == text || text.length() <= 0)
+                    continue;
+                o.setChecked(i == 0);
+                o.setTextColor(textColor);
+                o.setTextColorFocus(textColorFocus);
+                o.setTextColorChecked(textColorChecked);
+                o.setBackgroundResource(backgroundResource);
+                o.setBackgroundResourceFocus(backgroundResourceFocus);
+                o.setBackgroundResourceChecked(backgroundResourceChecked);
+                TagsTextView view = new TagsTextView(getContext());
+                view.setTag(R.id.lb_tagslayout_key, key);
+                view.setTag(R.id.lb_tagslayout_data, o);
+                view.setText(text);
+                view.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize);
+                view.setPadding(paddingLeft, 0, paddingRight, 0);
+                LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT);
+                layoutParams.leftMargin = i == 0 ? 0 : margin;
+                view.setLayoutParams(layoutParams);
+                // ui
+                view.setTextColor(o.getTextColor(false));
+                view.setBackgroundResource(o.getBackgroundRecource(false));
+                // add
+                addView(view);
+            }
         } catch (Exception e) {
+            LeanBackUtil.log("TagsLinearLayoutChild => update => " + e.getMessage());
         }
     }
 
     /*****************/
 
-    protected int findIndex() {
+    protected boolean setCheckedIndex(int checkedIndex, boolean hasFocus) {
 
         try {
             int childCount = getChildCount();
             if (childCount <= 0)
-                throw new Exception("error : childCount is " + childCount);
+                throw new Exception("childCount error: " + childCount);
             for (int i = 0; i < childCount; i++) {
-                View child = getChildAt(i);
-                if (null == child)
+                View view = getChildAt(i);
+                if (null == view)
                     continue;
-                boolean focus = ((TagsTextView) child).isFocus();
-                if (focus) {
-                    return i;
-                } else {
-                    boolean checked = ((TagsTextView) child).isChecked();
-                    if (checked) {
-                        return i;
-                    }
-                }
+                Object tag = view.getTag(R.id.lb_tagslayout_data);
+                if (null == tag)
+                    continue;
+                if (!(tag instanceof TagBean))
+                    continue;
+                ((TagBean) tag).setChecked(i == checkedIndex);
+                // ui
+                ((TextView) view).setTextColor(((TagBean) tag).getTextColor(hasFocus));
+                view.setBackgroundResource(((TagBean) tag).getBackgroundRecource(hasFocus));
             }
             throw new Exception("not find");
         } catch (Exception e) {
-            LeanBackUtil.log("TagsLinearLayoutChild => findIndex => " + e.getMessage());
-            return -1;
-        }
-    }
-
-    protected String[] getData() {
-        try {
-            int index = findIndex();
-            TagsTextView child = (TagsTextView) getChildAt(index);
-            CharSequence hint = child.getHint();
-            CharSequence text = child.getText();
-            return new String[]{String.valueOf(hint), String.valueOf(text)};
-        } catch (Exception e) {
-            LeanBackUtil.log("TagsLinearLayoutChild => getData => " + e.getMessage());
-            return null;
-        }
-    }
-
-    protected boolean requestLastItem() {
-        try {
-            int childCount = getChildCount();
-            if (childCount <= 0)
-                throw new Exception("error: childCount is " + childCount);
-            ((TagsTextView) getChildAt(childCount - 1)).reqFocus(false);
-            return true;
-        } catch (Exception e) {
-            LeanBackUtil.log("TagsLinearLayoutChild => requestLastItem => " + e.getMessage());
+            LeanBackUtil.log("TagsLinearLayoutChild => setCheckedIndex => " + e.getMessage());
             return false;
         }
     }
 
-    protected boolean focusFirst() {
+    protected int getItemCount() {
         try {
-            int childCount = getChildCount();
-            if (childCount <= 0)
-                throw new Exception("error: childCount is " + childCount);
-            ((TagsTextView) getChildAt(0)).reqFocus(false);
-            return true;
+            return getChildCount();
         } catch (Exception e) {
-            LeanBackUtil.log("TagsLinearLayoutChild => focusFirst => " + e.getMessage());
-            return false;
-        }
-    }
-
-    protected int findFocusItemIndex() {
-        try {
-            int childCount = getChildCount();
-            if (childCount <= 0)
-                throw new Exception("error: childCount is " + childCount);
-            for (int i = 0; i < childCount; i++) {
-                boolean focus = ((TagsTextView) getChildAt(i)).isFocus();
-                if (focus) {
-                    return i;
-                }
-            }
-            throw new Exception("not find");
-        } catch (Exception e) {
-            LeanBackUtil.log("TagsLinearLayoutChild => findFocusItemIndex => " + e.getMessage());
-            return -1;
-        }
-    }
-
-    protected int findCheckedItemIndex() {
-        try {
-            int childCount = getChildCount();
-            if (childCount <= 0)
-                throw new Exception("error: childCount is " + childCount);
-            for (int i = 0; i < childCount; i++) {
-                boolean checked = ((TagsTextView) getChildAt(i)).isChecked();
-                if (checked) {
-                    return i;
-                }
-            }
-            throw new Exception("not find");
-        } catch (Exception e) {
-            LeanBackUtil.log("TagsLinearLayoutChild => findCheckedItemIndex => " + e.getMessage());
+            LeanBackUtil.log("TagsLinearLayoutChild => getItemCount => " + e.getMessage());
             return 0;
         }
     }
 
-    protected boolean isFocusItemIndexLast() {
-        try {
-            int childCount = getChildCount();
-            if (childCount <= 0)
-                throw new Exception("error: childCount is " + childCount);
-            boolean focus = ((TagsTextView) getChildAt(childCount - 1)).isFocus();
-            if (focus) {
-                return true;
-            }
-            throw new Exception("not find");
-        } catch (Exception e) {
-            LeanBackUtil.log("TagsLinearLayoutChild => isFocusItemIndexLast => " + e.getMessage());
-            return false;
-        }
-    }
+    protected int getCheckedIndex() {
 
-    protected boolean isFocusItemIndexFirst() {
         try {
             int childCount = getChildCount();
             if (childCount <= 0)
-                throw new Exception("error: childCount is " + childCount);
-            boolean focus = ((TagsTextView) getChildAt(0)).isFocus();
-            if (focus) {
-                return true;
-            }
-            throw new Exception("not find");
-        } catch (Exception e) {
-            LeanBackUtil.log("TagsLinearLayoutChild => isFocusItemIndexFirst => " + e.getMessage());
-            return false;
-        }
-    }
-
-    protected boolean reqFocus(int index, boolean auto, boolean callListener) {
-        try {
-            LeanBackUtil.log("TagsLinearLayoutChild => reqFocus => index = " + index + ", auto = " + auto);
-            int childCount = getChildCount();
-            LeanBackUtil.log("TagsLinearLayoutChild => reqFocus => childCount = " + childCount);
-            if (childCount <= 0)
-                throw new Exception("error: childCount is " + childCount);
-            if (auto) {
-                if (index + 1 > childCount) {
-                    index = childCount - 1;
+                throw new Exception("childCount error: " + childCount);
+            for (int i = 0; i < childCount; i++) {
+                View child = getChildAt(i);
+                if (null == child)
+                    continue;
+                Object tag = child.getTag(R.id.lb_tagslayout_data);
+                if (null == tag)
+                    continue;
+                if (!(tag instanceof TagBean))
+                    continue;
+                if (((TagBean) tag).isChecked()) {
+                    return i;
                 }
-                ((TagsTextView) getChildAt(index)).reqFocus(callListener);
-            } else {
-                if (index + 1 > childCount)
-                    throw new Exception("error: childCount is " + childCount + ", index = " + index);
-                ((TagsTextView) getChildAt(index)).reqFocus(callListener);
             }
-            return true;
+            throw new Exception("not find");
         } catch (Exception e) {
-            LeanBackUtil.log("TagsLinearLayoutChild => reqFocus => " + e.getMessage());
-            return false;
+            LeanBackUtil.log("TagsLinearLayoutChild => getCheckedIndex => " + e.getMessage());
+            return -1;
         }
     }
 
-    protected boolean delFocus(int index, boolean checked) {
+    protected String getCheckedIndexKey() {
         try {
-            int childCount = getChildCount();
-            if (childCount <= 0)
-                throw new Exception("error: childCount is " + childCount);
-            if (index + 1 > childCount)
-                throw new Exception("error: childCount is " + childCount + ", index = " + index);
-            ((TagsTextView) getChildAt(index)).delFocus(checked);
-            return true;
+            int checkedIndex = getCheckedIndex();
+            if (checkedIndex < 0)
+                throw new Exception("checkedIndex error: " + checkedIndex);
+            View view = getChildAt(checkedIndex);
+            if (null == view)
+                throw new Exception("view error: null");
+            Object tag = view.getTag(R.id.lb_tagslayout_key);
+            if (null == tag)
+                throw new Exception("tag error: null");
+            if (!(tag instanceof String))
+                throw new Exception("tag error: " + tag);
+            return (String) tag;
         } catch (Exception e) {
-            LeanBackUtil.log("TagsLinearLayoutChild => delFocus => " + e.getMessage());
-            return false;
+            LeanBackUtil.log("TagsLinearLayoutChild => getCheckedIndexKey => " + e.getMessage());
+            return null;
+        }
+    }
+
+    protected String getCheckedIndexName() {
+        try {
+            int checkedIndex = getCheckedIndex();
+            if (checkedIndex < 0)
+                throw new Exception("checkedIndex error: " + checkedIndex);
+            View view = getChildAt(checkedIndex);
+            if (null == view)
+                throw new Exception("view error: null");
+            Object tag = view.getTag(R.id.lb_tagslayout_data);
+            if (null == tag)
+                throw new Exception("tag error: null");
+            if (!(tag instanceof TagBean))
+                throw new Exception("tag error: " + tag);
+            return ((TagBean) tag).getText();
+        } catch (Exception e) {
+            LeanBackUtil.log("TagsLinearLayoutChild => getCheckedIndexName => " + e.getMessage());
+            return null;
+        }
+    }
+
+    protected int getCheckedIndexCode() {
+        try {
+            int checkedIndex = getCheckedIndex();
+            if (checkedIndex < 0)
+                throw new Exception("checkedIndex error: " + checkedIndex);
+            View view = getChildAt(checkedIndex);
+            if (null == view)
+                throw new Exception("view error: null");
+            Object tag = view.getTag(R.id.lb_tagslayout_data);
+            if (null == tag)
+                throw new Exception("tag error: null");
+            if (!(tag instanceof TagBean))
+                throw new Exception("tag error: " + tag);
+            return ((TagBean) tag).getCode();
+        } catch (Exception e) {
+            LeanBackUtil.log("TagsLinearLayoutChild => getCheckedIndexCode => " + e.getMessage());
+            return -1;
         }
     }
 

@@ -7,29 +7,14 @@ import android.graphics.Rect;
 import android.view.Gravity;
 import android.widget.TextView;
 
-import androidx.annotation.ColorInt;
-import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.leanback.R;
 
+import lib.kalu.leanback.tags.model.TagBean;
 import lib.kalu.leanback.util.LeanBackUtil;
 
 @SuppressLint("AppCompatCustomView")
 final class TagsTextView extends TextView {
-    @ColorInt
-    private int mTextColorFocus = Color.WHITE;
-    @ColorInt
-    private int mTextColorChecked = Color.RED;
-    @ColorInt
-    private int mTextColorDefault = Color.GRAY;
-
-    @DrawableRes
-    private int mBackgroundResourceFocus = R.drawable.module_tagslayout_ic_shape_background_focus;
-    @DrawableRes
-    private int mBackgroundResourceChecked = R.drawable.module_tagslayout_ic_shape_background_checked;
-    @DrawableRes
-    private int mBackgroundResourceDefault = R.drawable.module_tagslayout_ic_shape_background_normal;
-
     public TagsTextView(Context context) {
         super(context);
         init();
@@ -52,35 +37,28 @@ final class TagsTextView extends TextView {
     }
 
     private void init() {
-        setEnabled(false);
-        setSelected(false);
         setFocusable(false);
         setGravity(Gravity.CENTER);
-        setBackgroundColor(Color.TRANSPARENT);
     }
 
     /*************************/
 
-    protected void setChecked(boolean v) {
-        setSelected(v);
-    }
-
-    protected boolean isChecked() {
-        return isSelected();
-    }
-
-    protected void setFocus(boolean v) {
-        setEnabled(v);
-    }
-
-    protected boolean isFocus() {
-        return hasFocus();
-    }
-
-    @Override
-    public boolean hasFocus() {
-        return isEnabled();
-    }
+//    protected boolean isChecked() {
+//        try {
+//            Object tag = getTag(R.id.lb_tagslayout_data);
+//            if (null == tag)
+//                throw new Exception("tag error: null");
+//            if (!(tag instanceof TagBean))
+//                throw new Exception("tag error: " + tag);
+//            return ((TagBean)tag).isChecked();
+//        } catch (Exception e) {
+//            return false;
+//        }
+//    }
+//
+//    protected boolean isFocus() {
+//        return hasFocus();
+//    }
 
     @Override
     public boolean requestFocus(int direction, Rect previouslyFocusedRect) {
@@ -91,85 +69,50 @@ final class TagsTextView extends TextView {
     public void clearFocus() {
     }
 
-    protected void delFocus(boolean checked) {
-        setChecked(checked);
-        setFocus(false);
-        try {
-            if (checked) {
-                setTextColor(mTextColorChecked);
-                setBackgroundResource(mBackgroundResourceChecked);
-            } else {
-                setTextColor(mTextColorDefault);
-                setBackgroundResource(mBackgroundResourceDefault);
-            }
-        } catch (Exception e) {
-        }
-    }
-
-    protected boolean reqFocus(boolean callListener) {
-        setChecked(true);
-        setFocus(true);
-        try {
-            // 1
-            if (callListener) {
-                ((TagsLinearLayoutChild) getParent()).callListener(this);
-            }
-            // 2
-            setTextColor(mTextColorFocus);
-            setBackgroundResource(mBackgroundResourceFocus);
-            LeanBackUtil.log("TagsTextView => reqFocus => succ");
-            return true;
-        } catch (Exception e) {
-            LeanBackUtil.log("TagsTextView => reqFocus => " + e.getMessage());
-            return false;
-        }
-    }
-
-    protected void setText(@NonNull String text, boolean focus, boolean checked) {
-        super.setText(text);
-        setFocus(focus);
-        setChecked(checked);
-        if (focus) {
-            setTextColor(mTextColorFocus);
-        } else if (checked) {
-            setTextColor(mTextColorChecked);
-        } else {
-            setTextColor(mTextColorDefault);
-        }
-    }
-
-    //    public void hightlight() {
-////        setSelected(true);
-//        setTextColor(mTextColorChecked);
-//        setBackgroundResource(mBackgroundResourceChecked);
+//    protected void delFocus(boolean checked) {
+//        setChecked(checked);
+//        setFocus(false);
+//        try {
+//            if (checked) {
+//                setTextColor(mTextColorChecked);
+//                setBackgroundResource(mBackgroundResourceChecked);
+//            } else {
+//                setTextColor(mTextColorDefault);
+//                setBackgroundResource(mBackgroundResourceDefault);
+//            }
+//        } catch (Exception e) {
+//        }
 //    }
-//
-//    protected boolean isHightlight() {
-//        return hasFocus() || isSelected();
+
+//    protected boolean reqFocus(boolean callListener) {
+//        setChecked(true);
+//        setFocus(true);
+//        try {
+//            // 1
+//            if (callListener) {
+//                ((TagsLinearLayoutChild) getParent()).callListener(this);
+//            }
+//            // 2
+//            setTextColor(mTextColorFocus);
+//            setBackgroundResource(mBackgroundResourceFocus);
+//            LeanBackUtil.log("TagsTextView => reqFocus => succ");
+//            return true;
+//        } catch (Exception e) {
+//            LeanBackUtil.log("TagsTextView => reqFocus => " + e.getMessage());
+//            return false;
+//        }
 //    }
-//
-//
-    public void setTextColorFocus(int mTextColorFocus) {
-        this.mTextColorFocus = mTextColorFocus;
-    }
 
-    public void setTextColorSelect(int mTextColorChecked) {
-        this.mTextColorChecked = mTextColorChecked;
-    }
-
-    public void setTextColorDefault(int mTextColorDefault) {
-        this.mTextColorDefault = mTextColorDefault;
-    }
-
-    public void setBackgroundResourceFocus(int mBackgroundResourceFocus) {
-        this.mBackgroundResourceFocus = mBackgroundResourceFocus;
-    }
-
-    public void setBackgroundResourceSelect(int mBackgroundResourceChecked) {
-        this.mBackgroundResourceChecked = mBackgroundResourceChecked;
-    }
-
-    public void setBackgroundResourceDefault(int mBackgroundResourceDefault) {
-        this.mBackgroundResourceDefault = mBackgroundResourceDefault;
-    }
+//    protected void setText(@NonNull String text, boolean focus, boolean checked) {
+//        super.setText(text);
+//        setFocus(focus);
+//        setChecked(checked);
+//        if (focus) {
+//            setTextColor(mTextColorFocus);
+//        } else if (checked) {
+//            setTextColor(mTextColorChecked);
+//        } else {
+//            setTextColor(mTextColorDefault);
+//        }
+//    }
 }

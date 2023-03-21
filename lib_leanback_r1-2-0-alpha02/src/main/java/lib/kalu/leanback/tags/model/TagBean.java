@@ -10,33 +10,28 @@ import java.io.Serializable;
 @Keep
 public class TagBean implements Serializable {
 
-    private int id;
+    private int code;
     private String text;
+    private boolean checked;
     @ColorInt
-    private int textColorIntFocus;
+    private int textColor;
     @ColorInt
-    private int textColorIntSelect;
+    private int textColorFocus;
     @ColorInt
-    private int textColorIntDetault;
-    @ColorInt
-    private int textColorResourceFocus;
-    @ColorInt
-    private int textColorResourceSelect;
-    @ColorInt
-    private int textColorResourceDetault;
+    private int textColorChecked;
+    @DrawableRes
+    private int backgroundResource;
     @DrawableRes
     private int backgroundResourceFocus;
     @DrawableRes
-    private int backgroundResourceSelect;
-    @DrawableRes
-    private int backgroundResourceDefault;
+    private int backgroundResourceChecked;
 
-    public int getId() {
-        return id;
+    public int getCode() {
+        return code;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setCode(int code) {
+        this.code = code;
     }
 
     public String getText() {
@@ -47,75 +42,57 @@ public class TagBean implements Serializable {
         this.text = text;
     }
 
-    public int getTextColorIntFocus() {
-        return textColorIntFocus;
+    public boolean isChecked() {
+        return checked;
     }
 
-    public void setTextColorIntFocus(int textColorIntFocus) {
-        this.textColorIntFocus = textColorIntFocus;
+    public void setChecked(boolean checked) {
+        this.checked = checked;
     }
 
-    public int getTextColorIntSelect() {
-        return textColorIntSelect;
+    public void setTextColor(int textColor) {
+        this.textColor = textColor;
     }
 
-    public void setTextColorIntSelect(int textColorIntSelect) {
-        this.textColorIntSelect = textColorIntSelect;
+    public void setTextColorFocus(int textColorFocus) {
+        this.textColorFocus = textColorFocus;
     }
 
-    public int getTextColorIntDetault() {
-        return textColorIntDetault;
+    public void setTextColorChecked(int textColorChecked) {
+        this.textColorChecked = textColorChecked;
     }
 
-    public void setTextColorIntDetault(int textColorIntDetault) {
-        this.textColorIntDetault = textColorIntDetault;
-    }
-
-    public int getTextColorResourceFocus() {
-        return textColorResourceFocus;
-    }
-
-    public void setTextColorResourceFocus(int textColorResourceFocus) {
-        this.textColorResourceFocus = textColorResourceFocus;
-    }
-
-    public int getTextColorResourceSelect() {
-        return textColorResourceSelect;
-    }
-
-    public void setTextColorResourceSelect(int textColorResourceSelect) {
-        this.textColorResourceSelect = textColorResourceSelect;
-    }
-
-    public int getTextColorResourceDetault() {
-        return textColorResourceDetault;
-    }
-
-    public void setTextColorResourceDetault(int textColorResourceDetault) {
-        this.textColorResourceDetault = textColorResourceDetault;
-    }
-
-    public int getBackgroundResourceFocus() {
-        return backgroundResourceFocus;
+    public void setBackgroundResource(int backgroundResource) {
+        this.backgroundResource = backgroundResource;
     }
 
     public void setBackgroundResourceFocus(int backgroundResourceFocus) {
         this.backgroundResourceFocus = backgroundResourceFocus;
     }
 
-    public int getBackgroundResourceSelect() {
-        return backgroundResourceSelect;
+    public void setBackgroundResourceChecked(int backgroundResourceChecked) {
+        this.backgroundResourceChecked = backgroundResourceChecked;
     }
 
-    public void setBackgroundResourceSelect(int backgroundResourceSelect) {
-        this.backgroundResourceSelect = backgroundResourceSelect;
+    @ColorInt
+    public int getTextColor(boolean hasFocus) {
+        if (hasFocus && checked) {
+            return textColorFocus;
+        } else if (checked) {
+            return textColorChecked;
+        } else {
+            return textColor;
+        }
     }
 
-    public int getBackgroundResourceDefault() {
-        return backgroundResourceDefault;
-    }
-
-    public void setBackgroundResourceDefault(int backgroundResourceDefault) {
-        this.backgroundResourceDefault = backgroundResourceDefault;
+    @DrawableRes
+    public int getBackgroundRecource(boolean hasFocus) {
+        if (hasFocus && checked) {
+            return backgroundResourceFocus;
+        } else if (checked) {
+            return backgroundResourceChecked;
+        } else {
+            return backgroundResource;
+        }
     }
 }

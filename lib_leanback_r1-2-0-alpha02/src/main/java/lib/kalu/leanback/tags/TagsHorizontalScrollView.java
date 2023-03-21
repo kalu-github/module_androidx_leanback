@@ -5,6 +5,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.HorizontalScrollView;
 
+import androidx.annotation.ColorInt;
+import androidx.annotation.DrawableRes;
 import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
 
@@ -29,109 +31,115 @@ final class TagsHorizontalScrollView extends HorizontalScrollView {
 
     /********************/
 
-    protected void update(@NonNull String key, @NonNull List<TagBean> list, @NonNull int textSize, @NonNull int paddingLeft, @NonNull int paddingRight) {
+    protected void update(@NonNull String key,
+                          @NonNull List<TagBean> data,
+                          @NonNull int textSize,
+                          @NonNull int margin,
+                          @NonNull int paddingLeft,
+                          @NonNull int paddingRight,
+                          @ColorInt int textColor,
+                          @ColorInt int textColorFocus,
+                          @ColorInt int textColorChecked,
+                          @DrawableRes int backgroundResource,
+                          @DrawableRes int backgroundResourceFocus,
+                          @DrawableRes int backgroundResourceChecked) {
 
-        if (null == key || key.length() == 0 || null == list || list.size() == 0)
-            return;
-        TagsLinearLayoutChild layout = new TagsLinearLayoutChild(getContext());
-        LayoutParams params = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        layout.setLayoutParams(params);
-
-        layout.update(key, list, textSize, paddingLeft, paddingRight);
-        addView(layout);
-    }
-
-    protected void callListener(@NonNull int index) {
         try {
-            ((TagsLayout) getParent()).callListener(index, this);
+            if (null == key || key.length() <= 0)
+                throw new Exception("key error: " + key);
+            if (null == data)
+                throw new Exception("data error: null");
+            int size = data.size();
+            if (size <= 0)
+                throw new Exception("size error: " + size);
+            int childCount = getChildCount();
+            if (childCount <= 0) {
+                TagsLinearLayoutChild layout = new TagsLinearLayoutChild(getContext());
+                LayoutParams params = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                layout.setLayoutParams(params);
+                addView(layout);
+            }
+            TagsLinearLayoutChild tagsLinearLayoutChild = (TagsLinearLayoutChild) getChildAt(0);
+            tagsLinearLayoutChild.update(key, data, textSize, margin, paddingLeft, paddingRight, textColor, textColorFocus, textColorChecked, backgroundResource,backgroundResourceFocus, backgroundResourceChecked);
         } catch (Exception e) {
+            LeanBackUtil.log("TagsHorizontalScrollView => update => " + e.getMessage());
         }
     }
 
-    protected String[] getData() {
+    protected String getCheckedIndexKey() {
         try {
             int childCount = getChildCount();
             if (childCount != 1)
-                throw new Exception("error: childCount is " + childCount);
-            return ((TagsLinearLayoutChild) getChildAt(0)).getData();
+                throw new Exception("childCount error: " + childCount);
+            TagsLinearLayoutChild tagsLinearLayoutChild = (TagsLinearLayoutChild) getChildAt(0);
+            return tagsLinearLayoutChild.getCheckedIndexKey();
         } catch (Exception e) {
-            LeanBackUtil.log("TagsHorizontalScrollView => getData => " + e.getMessage());
+            LeanBackUtil.log("TagsHorizontalScrollView => getCheckedIndexKey => " + e.getMessage());
             return null;
         }
     }
 
-//    protected boolean requestLastItem() {
-//        try {
-//            int childCount = getChildCount();
-//            if (childCount != 1)
-//                throw new Exception("error: childCount is " + childCount);
-//            return ((TagsLinearLayoutChild) getChildAt(0)).requestLastItem();
-//        } catch (Exception e) {
-//            LeanBackUtil.log("TagsHorizontalScrollView => requestLastItem => " + e.getMessage());
-//            return false;
-//        }
-//    }
-
-    protected int findFocusItemIndex() {
+    protected String getCheckedIndexName() {
         try {
             int childCount = getChildCount();
             if (childCount != 1)
-                throw new Exception("error: childCount is " + childCount);
-            return ((TagsLinearLayoutChild) getChildAt(0)).findFocusItemIndex();
+                throw new Exception("childCount error: " + childCount);
+            TagsLinearLayoutChild tagsLinearLayoutChild = (TagsLinearLayoutChild) getChildAt(0);
+            return tagsLinearLayoutChild.getCheckedIndexName();
         } catch (Exception e) {
-            LeanBackUtil.log("TagsHorizontalScrollView => findFocusItemIndex => " + e.getMessage());
+            LeanBackUtil.log("TagsHorizontalScrollView => getCheckedIndexName => " + e.getMessage());
+            return null;
+        }
+    }
+
+    protected int getCheckedIndexCode() {
+        try {
+            int childCount = getChildCount();
+            if (childCount != 1)
+                throw new Exception("childCount error: " + childCount);
+            TagsLinearLayoutChild tagsLinearLayoutChild = (TagsLinearLayoutChild) getChildAt(0);
+            return tagsLinearLayoutChild.getCheckedIndexCode();
+        } catch (Exception e) {
+            LeanBackUtil.log("TagsHorizontalScrollView => getCheckedIndexCode => " + e.getMessage());
             return -1;
         }
     }
 
-    protected int findCheckedItemIndex() {
+    protected int getItemCount() {
         try {
             int childCount = getChildCount();
             if (childCount != 1)
-                throw new Exception("error: childCount is " + childCount);
-            return ((TagsLinearLayoutChild) getChildAt(0)).findCheckedItemIndex();
+                throw new Exception("childCount error: " + childCount);
+            TagsLinearLayoutChild tagsLinearLayoutChild = (TagsLinearLayoutChild) getChildAt(0);
+            return tagsLinearLayoutChild.getItemCount();
         } catch (Exception e) {
-            LeanBackUtil.log("TagsHorizontalScrollView => findCheckedItemIndex => " + e.getMessage());
+            LeanBackUtil.log("TagsHorizontalScrollView => getItemCount => " + e.getMessage());
             return 0;
         }
     }
 
-    protected boolean isFocusItemIndexLast() {
+    protected int getCheckedIndex() {
         try {
             int childCount = getChildCount();
             if (childCount != 1)
-                throw new Exception("error: childCount is " + childCount);
-            return ((TagsLinearLayoutChild) getChildAt(0)).isFocusItemIndexLast();
+                throw new Exception("childCount error: " + childCount);
+            TagsLinearLayoutChild tagsLinearLayoutChild = (TagsLinearLayoutChild) getChildAt(0);
+            return tagsLinearLayoutChild.getCheckedIndex();
         } catch (Exception e) {
-            LeanBackUtil.log("TagsHorizontalScrollView => isFocusItemIndexLast => " + e.getMessage());
-            return false;
+            LeanBackUtil.log("TagsHorizontalScrollView => getCheckedIndex => " + e.getMessage());
+            return -1;
         }
     }
 
-    protected boolean isFocusItemIndexFirst() {
+    protected boolean setCheckedIndex(int checkedIndex, boolean hasFocus) {
         try {
             int childCount = getChildCount();
             if (childCount != 1)
-                throw new Exception("error: childCount is " + childCount);
-            return ((TagsLinearLayoutChild) getChildAt(0)).isFocusItemIndexFirst();
+                throw new Exception("childCount error: " + childCount);
+            TagsLinearLayoutChild tagsLinearLayoutChild = (TagsLinearLayoutChild) getChildAt(0);
+            return tagsLinearLayoutChild.setCheckedIndex(checkedIndex, hasFocus);
         } catch (Exception e) {
-            LeanBackUtil.log("TagsHorizontalScrollView => isFocusItemIndexFirst => " + e.getMessage());
-            return false;
-        }
-    }
-
-    protected boolean reqFocus(int index, boolean auto, boolean callListener) {
-        try {
-            int childCount = getChildCount();
-            if (childCount != 1)
-                throw new Exception("error: childCount is " + childCount);
-            boolean reqFocus = ((TagsLinearLayoutChild) getChildAt(0)).reqFocus(index, auto, callListener);
-            if (reqFocus) {
-
-            }
-            return true;
-        } catch (Exception e) {
-            LeanBackUtil.log("TagsHorizontalScrollView => reqFocus => " + e.getMessage());
+            LeanBackUtil.log("TagsHorizontalScrollView => setCheckedIndex => " + e.getMessage());
             return false;
         }
     }
@@ -164,18 +172,6 @@ final class TagsHorizontalScrollView extends HorizontalScrollView {
             }
         } catch (Exception e) {
             LeanBackUtil.log("TagsHorizontalScrollView => scrollNext => " + e.getMessage());
-        }
-    }
-
-    protected boolean delFocus(int index, boolean checked) {
-        try {
-            int childCount = getChildCount();
-            if (childCount != 1)
-                throw new Exception("error: childCount is " + childCount);
-            return ((TagsLinearLayoutChild) getChildAt(0)).delFocus(index, checked);
-        } catch (Exception e) {
-            LeanBackUtil.log("TagsHorizontalScrollView => delFocus => " + e.getMessage());
-            return false;
         }
     }
 }
