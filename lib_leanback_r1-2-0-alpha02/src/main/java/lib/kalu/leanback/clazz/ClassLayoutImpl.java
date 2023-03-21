@@ -87,14 +87,17 @@ interface ClassLayoutImpl {
                 throw new Exception("itemCount error: " + itemCount);
             for (int i = 0; i < itemCount; i++) {
                 RadioButton radioButton = (RadioButton) radioGroup.getChildAt(i);
-                boolean checked = radioButton.isChecked();
-                if (checked) {
-                    CharSequence text = radioButton.getText();
-                    CharSequence hint = radioButton.getHint();
-                    mListener[0].onChecked(i, String.valueOf(text), String.valueOf(hint));
+                if (null == radioButton)
+                    continue;
+                Object tag = radioButton.getTag(R.id.lb_classlayoutimpl_data);
+                if (null == tag || !(tag instanceof ClassBean))
+                    continue;
+                if (((ClassBean) tag).isChecked()) {
+                    mListener[0].onChecked(i, ((ClassBean) tag).getText(), ((ClassBean) tag).getCode());
                     break;
                 }
             }
+            throw new Exception("not find");
         } catch (Exception e) {
             LeanBackUtil.log("ClassLayoutImpl => callListener => " + e.getMessage());
         }
