@@ -3,7 +3,8 @@
     <item name="lb_focus_animator" type="id" />
     <item name="lb_shadow_impl" type="id" />
     <item name="lb_listtvepisodesgridpresenter" type="id" />
-    <item name="lb_listtvepisodespluspresenterimpl_data" type="id" />
+    <item name="lb_presenter_episode" type="id" />
+    <item name="lb_presenter_range" type="id" />
     <item name="lb_classlayoutimpl_data" type="id" />
     <item name="lb_tagslayout_data" type="id" />
     <item name="lb_tagslayout_key" type="id" />

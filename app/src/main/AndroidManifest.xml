@@ -28,6 +28,10 @@
             android:name="com.kalu.myapplication.tag.TagActivity"
             android:exported="false"
             android:screenOrientation="landscape" />
+        <activity
+            android:name="com.kalu.myapplication.tv.TvEpisodesActivity"
+            android:exported="false"
+            android:screenOrientation="landscape" />
 
     </application>
 

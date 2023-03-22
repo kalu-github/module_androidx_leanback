@@ -112,8 +112,8 @@ public abstract class ListTvEpisodesPlusPresenter<T extends TvEpisodesPlusItemBe
                 if (end >= size) {
                     end = size;
                 }
-                key.setStart(start);
-                key.setEnd(end);
+                key.setRangeStart(start);
+                key.setRangeEnd(end);
                 key.setFocus(false);
                 key.setPlaying(false);
                 key.setChecked(false);

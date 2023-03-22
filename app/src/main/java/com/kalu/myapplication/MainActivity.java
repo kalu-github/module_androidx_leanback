@@ -8,11 +8,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.kalu.myapplication.tab.TabActivity;
 import com.kalu.myapplication.tag.TagActivity;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-
-import lib.kalu.leanback.util.LeanBackUtil;
+import com.kalu.myapplication.tv.TvEpisodesActivity;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -33,6 +29,13 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(), TabActivity.class);
+                startActivity(intent);
+            }
+        });
+        findViewById(R.id.button_tv).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), TvEpisodesActivity.class);
                 startActivity(intent);
             }
         });
