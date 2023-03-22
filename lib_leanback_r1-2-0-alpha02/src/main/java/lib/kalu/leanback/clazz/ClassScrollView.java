@@ -21,10 +21,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.leanback.R;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
-import lib.kalu.leanback.list.RecyclerView;
 import lib.kalu.leanback.util.LeanBackUtil;
 import lib.kalu.leanback.util.ViewUtil;
 

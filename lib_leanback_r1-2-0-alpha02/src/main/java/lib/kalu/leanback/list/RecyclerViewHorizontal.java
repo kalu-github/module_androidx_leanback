@@ -12,7 +12,7 @@ import androidx.annotation.Nullable;
 
 import lib.kalu.leanback.util.LeanBackUtil;
 
-public class RecyclerViewHorizontal extends RecyclerView {
+public class RecyclerViewHorizontal extends BaseRecyclerView {
 
     public RecyclerViewHorizontal(@NonNull Context context) {
         super(context);
@@ -28,103 +28,73 @@ public class RecyclerViewHorizontal extends RecyclerView {
 
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
-        // left or right
+        // left
         if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_LEFT) {
-            boolean reqFocus = reqFocus(KeyEvent.KEYCODE_DPAD_LEFT);
-            if (reqFocus) {
+            try {
+                LayoutManager layoutManager = getLayoutManager();
+                if(null == layoutManager)
+                    throw new Exception("layoutManager error: null");
+                int focusPosition = findFocusPosition();
+                if (focusPosition < 0)
+                    throw new Exception("focusPosition error: " + focusPosition);
+                View focusedChild = getFocusedChild();
+                if (null == focusedChild)
+                    throw new Exception("focusedChild error: null");
+                View nextFocus = FocusFinder.getInstance().findNextFocus(this, focusedChild, View.FOCUS_LEFT);
+                if (null != nextFocus)
+                    throw new Exception("nextFocus warning: " + nextFocus);
+                int width = focusedChild.getWidth();
+                if (width < 0)
+                    throw new Exception("width error: " + width);
+                LeanBackUtil.log("RecyclerViewHorizontal => dispatchKeyEvent => left => focusPosition = " + focusPosition + ", width = " + width);
+                scrollBy(-width, 0);
+                View nextFocusNews = FocusFinder.getInstance().findNextFocus(this, focusedChild, View.FOCUS_LEFT);
+                if (null == nextFocusNews)
+                    throw new Exception("nextFocusNews error: null");
+                nextFocusNews.requestFocus();
                 return true;
-            } else {
-                int position = findFocusPosition();
-                int itemCount = getItemCount();
-                boolean scrollFocus = scrollFocus(KeyEvent.KEYCODE_DPAD_LEFT, position, itemCount);
-                if (scrollFocus) {
-                    boolean reqFocus1 = reqFocus(KeyEvent.KEYCODE_DPAD_LEFT);
-                    if (reqFocus1) {
-                        return true;
-                    }
-                }
+            } catch (Exception e) {
+                LeanBackUtil.log("RecyclerViewHorizontal => dispatchKeyEvent => left => " + e.getMessage());
             }
         }
         // right
         else if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_RIGHT) {
-            boolean reqFocus = reqFocus(KeyEvent.KEYCODE_DPAD_RIGHT);
-            if (reqFocus) {
+            try {
+                LayoutManager layoutManager = getLayoutManager();
+                if(null == layoutManager)
+                    throw new Exception("layoutManager error: null");
+                Adapter adapter = getAdapter();
+                if (null == adapter)
+                    throw new Exception("adapter error: null");
+                int itemCount = adapter.getItemCount();
+                if (itemCount < 0)
+                    throw new Exception("itemCount error: " + itemCount);
+                int focusPosition = findFocusPosition();
+                if (focusPosition < 0)
+                    throw new Exception("focusPosition error: " + focusPosition);
+                if (focusPosition + 1 >= itemCount)
+                    throw new Exception("focusPosition warning: " + focusPosition + ", itemCount = " + itemCount);
+                View focusedChild = getFocusedChild();
+                if (null == focusedChild)
+                    throw new Exception("focusedChild error: null");
+                View nextFocus = FocusFinder.getInstance().findNextFocus(this, focusedChild, View.FOCUS_RIGHT);
+                if (null != nextFocus)
+                    throw new Exception("nextFocus warning: " + nextFocus);
+                int width = focusedChild.getWidth();
+                if (width < 0)
+                    throw new Exception("width error: " + width);
+                LeanBackUtil.log("RecyclerViewHorizontal => dispatchKeyEvent => right => focusPosition = " + focusPosition + ", itemCount = " + itemCount + ", width = " + width);
+                scrollBy(width, 0);
+                View nextFocusNews = FocusFinder.getInstance().findNextFocus(this, focusedChild, View.FOCUS_RIGHT);
+                if (null == nextFocusNews)
+                    throw new Exception("nextFocusNews error: null");
+                nextFocusNews.requestFocus();
                 return true;
-            } else {
-                int position = findFocusPosition();
-                int itemCount = getItemCount();
-                boolean scrollFocus = scrollFocus(KeyEvent.KEYCODE_DPAD_RIGHT, position, itemCount);
-                if (scrollFocus) {
-                    boolean reqFocus1 = reqFocus(KeyEvent.KEYCODE_DPAD_RIGHT);
-                    if (reqFocus1) {
-                        return true;
-                    }
-                }
+            } catch (Exception e) {
+                LeanBackUtil.log("RecyclerViewHorizontal => dispatchKeyEvent => right => " + e.getMessage());
             }
         }
         return super.dispatchKeyEvent(event);
-    }
-
-    private final boolean reqFocus(int keyCode) {
-        View focusedView = getFocusedChild();
-        View nextFocus = null;
-        // left
-        if (keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
-            nextFocus = FocusFinder.getInstance().findNextFocus(this, focusedView, View.FOCUS_LEFT);
-        }
-        // right
-        else if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT) {
-            nextFocus = FocusFinder.getInstance().findNextFocus(this, focusedView, View.FOCUS_RIGHT);
-        }
-        if (null != nextFocus) {
-            nextFocus.requestFocus();
-            return true;
-        }
-        return false;
-    }
-
-    private final boolean scrollFocus(int keyCode, int position, int itemCount) {
-        // left
-        if (keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
-            if (position <= 0)
-                return false;
-            int next = position - 1;
-            LeanBackUtil.log("RecyclerViewHorizontal => scrollFocus => left => position = " + position + ", next = " + next + ", itemCount = " + itemCount);
-            while (true) {
-                ViewHolder viewHolder = findViewHolderForAdapterPosition(next);
-                LeanBackUtil.log("RecyclerViewHorizontal => scrollFocus => left => viewHolder = " + viewHolder);
-                if (null != viewHolder) {
-                    View itemView = viewHolder.itemView;
-                    if (null != itemView) {
-                        int width = itemView.getWidth();
-                        scrollBy(-width, 0);
-                    }
-                    return true;
-                }
-                scrollBy(-1, 0);
-            }
-        }
-        // right
-        else if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT) {
-            int next = position + 1;
-            if (next >= itemCount)
-                return false;
-            LeanBackUtil.log("RecyclerViewHorizontal => scrollFocus => right => position = " + position + ", next = " + next + ", itemCount = " + itemCount);
-            while (true) {
-                ViewHolder viewHolder = findViewHolderForAdapterPosition(next);
-                LeanBackUtil.log("RecyclerViewHorizontal => scrollFocus => right => viewHolder = " + viewHolder);
-                if (null != viewHolder) {
-                    View itemView = viewHolder.itemView;
-                    if (null != itemView) {
-                        int width = itemView.getWidth();
-                        scrollBy(width, 0);
-                    }
-                    return true;
-                }
-                scrollBy(1, 0);
-            }
-        }
-        return false;
     }
 
     @Override
@@ -145,7 +115,7 @@ public class RecyclerViewHorizontal extends RecyclerView {
                 View focusedChild = getFocusedChild();
                 int fromPosition = findFocusedChildFromPosition(focusedChild);
                 if (fromPosition == position) {
-                    if(hasFocus){
+                    if (hasFocus) {
                         focusedChild.requestFocus();
                     }
                     break;
