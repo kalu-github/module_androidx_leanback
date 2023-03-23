@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
 import androidx.leanback.R;
 import androidx.leanback.widget.Presenter;
 
@@ -27,7 +28,7 @@ public abstract class ListTvEpisodesPlusPresenter2<T extends TvEpisodesPlusItemB
             setTitleTextSize(context, viewGroup, R.id.module_leanback_lep_title);
             setTitleAssetTTF(context, viewGroup, R.id.module_leanback_lep_title);
             setTitleBackgroundColor(context, viewGroup, R.id.module_leanback_lep_title);
-            initLayoutEpisode(context, viewGroup,R.id.module_leanback_lep_ranges, R.id.module_leanback_lep_episodes);
+            initLayoutEpisode(context, viewGroup, R.id.module_leanback_lep_ranges, R.id.module_leanback_lep_episodes);
             initLayoutRange(context, viewGroup, R.id.module_leanback_lep_ranges, R.id.module_leanback_lep_episodes);
             return new ViewHolder(viewGroup);
         } catch (Exception e) {
@@ -46,27 +47,5 @@ public abstract class ListTvEpisodesPlusPresenter2<T extends TvEpisodesPlusItemB
 
     @Override
     public void onUnbindViewHolder(ViewHolder viewHolder) {
-    }
-
-    public final void showData(ViewGroup viewGroup, int checkedEpisodePosition) {
-        try {
-            if (checkedEpisodePosition < 0)
-                throw new Exception("checkedEpisodePosition error: " + checkedEpisodePosition);
-            int episodeLength = getEpisodeLength();
-            if (checkedEpisodePosition + 1 >= episodeLength)
-                throw new Exception("checkedEpisodePosition error: " + checkedEpisodePosition + ", episodeLength = " + episodeLength);
-            int rangeNum = initRangeNum();
-            int startIndex = checkedEpisodePosition / rangeNum;
-            int rangeLength = getRangeLength();
-            if (rangeLength - startIndex < rangeNum) {
-                startIndex = rangeLength - rangeNum - 1;
-            }
-            cleanDataRange(viewGroup, R.id.module_leanback_lep_ranges);
-            cleanDataEpisode(viewGroup, R.id.module_leanback_lep_episodes);
-            setDataRange(viewGroup, R.id.module_leanback_lep_ranges, startIndex, startIndex);
-            setDataEepisode(viewGroup, R.id.module_leanback_lep_episodes, startIndex);
-        } catch (Exception e) {
-            LeanBackUtil.log("ListTvEpisodesPlusPresenter2 => showData => " + e.getMessage());
-        }
     }
 }

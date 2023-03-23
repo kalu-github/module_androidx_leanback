@@ -1,6 +1,7 @@
 package com.kalu.myapplication.tv;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -9,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -96,14 +98,17 @@ public class TvEpisodesActivity extends AppCompatActivity {
             ((TextView) v).setText(item.getRangeStart() + "-" + item.getRangeEnd());
             // focus
             if (item.isFocus()) {
+                ((TextView) v).setTextColor(Color.WHITE);
                 ((TextView) v).setBackgroundResource(R.drawable.bg_focus);
             }
             // checked
             else if (item.isChecked()) {
-                ((TextView) v).setBackgroundResource(R.drawable.bg_checked);
+                ((TextView) v).setTextColor(Color.RED);
+                ((TextView) v).setBackgroundResource(R.drawable.bg);
             }
             // normal
             else {
+                ((TextView) v).setTextColor(Color.BLACK);
                 ((TextView) v).setBackgroundResource(R.drawable.bg);
             }
         }
@@ -114,14 +119,17 @@ public class TvEpisodesActivity extends AppCompatActivity {
             ((TextView) v).setText(item.getEpisodeIndex() + "-" + item.getEpisodeMax());
             // focus
             if (item.isFocus()) {
+                ((TextView) v).setTextColor(Color.WHITE);
                 ((TextView) v).setBackgroundResource(R.drawable.bg_focus);
             }
             // checked
             else if (item.isChecked()) {
-                ((TextView) v).setBackgroundResource(R.drawable.bg_checked);
+                ((TextView) v).setTextColor(Color.RED);
+                ((TextView) v).setBackgroundResource(R.drawable.bg);
             }
             // normal
             else {
+                ((TextView) v).setTextColor(Color.BLACK);
                 ((TextView) v).setBackgroundResource(R.drawable.bg);
             }
         }
