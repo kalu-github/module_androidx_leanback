@@ -4,21 +4,20 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
-import androidx.annotation.NonNull;
 import androidx.leanback.R;
 import androidx.leanback.widget.Presenter;
 
 import lib.kalu.leanback.presenter.bean.TvEpisodesPlusItemBean;
-import lib.kalu.leanback.presenter.impl.ListTvEpisodesPlusPresenterImpl;
+import lib.kalu.leanback.presenter.impl.ListTvEpisodesDoubleLinearLayoutPresenterImpl;
 import lib.kalu.leanback.util.LeanBackUtil;
 
-public abstract class ListTvEpisodesPlusPresenter2<T extends TvEpisodesPlusItemBean> extends Presenter implements ListTvEpisodesPlusPresenterImpl {
+public abstract class ListTvEpisodesDoubleLinearLayoutPresenter<T extends TvEpisodesPlusItemBean> extends Presenter implements ListTvEpisodesDoubleLinearLayoutPresenterImpl {
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent) {
         try {
             Context context = parent.getContext();
-            ViewGroup viewGroup = (ViewGroup) LayoutInflater.from(context).inflate(R.layout.lb_list_tv_episodes_plus2, parent, false);
+            ViewGroup viewGroup = (ViewGroup) LayoutInflater.from(context).inflate(R.layout.lb_list_tv_episodes_double_linear, parent, false);
             setPadding(context, viewGroup);
             setBackgroundColor(context, viewGroup);
             setContentBackgroundColor(context, viewGroup, R.id.module_leanback_lep_episodes);

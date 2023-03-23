@@ -24,7 +24,7 @@ import lib.kalu.leanback.presenter.bean.TvEpisodesGridItemBean;
 import lib.kalu.leanback.presenter.impl.ListTvPresenterImpl;
 import lib.kalu.leanback.util.LeanBackUtil;
 
-public abstract class ListTvEpisodesGridPresenter<T extends TvEpisodesGridItemBean> extends Presenter implements ListTvPresenterImpl {
+public abstract class ListTvEpisodesSingleGridPresenter<T extends TvEpisodesGridItemBean> extends Presenter implements ListTvPresenterImpl {
 
     private final List<T> mData = new LinkedList<>();
 
@@ -33,7 +33,7 @@ public abstract class ListTvEpisodesGridPresenter<T extends TvEpisodesGridItemBe
         try {
             Context context = parent.getContext();
             onLife(context);
-            ViewGroup inflate = (ViewGroup) LayoutInflater.from(context).inflate(R.layout.lb_list_tv_episodes_grid, parent, false);
+            ViewGroup inflate = (ViewGroup) LayoutInflater.from(context).inflate(R.layout.lb_list_tv_episodes_single_grid, parent, false);
             setPadding(context, inflate);
             setBackgroundColor(context, inflate);
             setContentBackgroundColor(context, inflate, R.id.module_leanback_legp_list);

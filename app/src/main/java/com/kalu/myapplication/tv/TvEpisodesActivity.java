@@ -10,7 +10,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -26,7 +25,7 @@ import com.kalu.myapplication.R;
 import java.util.LinkedList;
 
 import lib.kalu.leanback.list.LeanBackVerticalGridView;
-import lib.kalu.leanback.presenter.ListTvEpisodesPlusPresenter2;
+import lib.kalu.leanback.presenter.ListTvEpisodesDoubleLinearLayoutPresenter;
 import lib.kalu.leanback.presenter.bean.TvEpisodesPlusItemBean;
 import lib.kalu.leanback.util.LeanBackUtil;
 
@@ -90,7 +89,7 @@ public class TvEpisodesActivity extends AppCompatActivity {
         }
     }
 
-    static class TestPresenter extends ListTvEpisodesPlusPresenter2<TvEpisodesPlusItemBean> {
+    static class TestPresenter extends ListTvEpisodesDoubleLinearLayoutPresenter<TvEpisodesPlusItemBean> {
 
         @Override
         public void onBindHolderRange(@NonNull Context context, @NonNull View v, @NonNull TvEpisodesPlusItemBean item, @NonNull int position) {

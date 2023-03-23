@@ -29,7 +29,7 @@ import lib.kalu.leanback.presenter.bean.TvEpisodesPlusItemBean;
 import lib.kalu.leanback.presenter.impl.ListTvPresenterImpl;
 import lib.kalu.leanback.util.LeanBackUtil;
 
-public abstract class ListTvEpisodesPlusPresenter<T extends TvEpisodesPlusItemBean> extends Presenter implements ListTvPresenterImpl {
+public abstract class ListTvEpisodesDoubleScrollViewPresenter<T extends TvEpisodesPlusItemBean> extends Presenter implements ListTvPresenterImpl {
 
     private final LinkedHashMap<T, List<T>> mData = new LinkedHashMap<>();
 
@@ -37,7 +37,7 @@ public abstract class ListTvEpisodesPlusPresenter<T extends TvEpisodesPlusItemBe
     public ViewHolder onCreateViewHolder(ViewGroup parent) {
         try {
             Context context = parent.getContext();
-            LinearLayout inflate = (LinearLayout) LayoutInflater.from(context).inflate(R.layout.lb_list_tv_episodes_plus, parent, false);
+            LinearLayout inflate = (LinearLayout) LayoutInflater.from(context).inflate(R.layout.lb_list_tv_episodes_double_scroll, parent, false);
             setPadding(context, inflate);
             setBackgroundColor(context, inflate);
             setContentBackgroundColor(context, inflate, R.id.lb_list_tv_episodes_plus_items);

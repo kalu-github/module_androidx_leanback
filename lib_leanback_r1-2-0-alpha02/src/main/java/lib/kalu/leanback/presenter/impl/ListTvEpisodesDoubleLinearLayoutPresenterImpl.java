@@ -25,7 +25,7 @@ import java.util.Map;
 import lib.kalu.leanback.presenter.bean.TvEpisodesPlusItemBean;
 import lib.kalu.leanback.util.LeanBackUtil;
 
-public interface ListTvEpisodesPlusPresenterImpl<T extends TvEpisodesPlusItemBean> extends ListTvPresenterImpl {
+public interface ListTvEpisodesDoubleLinearLayoutPresenterImpl<T extends TvEpisodesPlusItemBean> extends ListTvPresenterImpl {
 
     LinkedHashMap<TvEpisodesPlusItemBean, List<TvEpisodesPlusItemBean>> mData = new LinkedHashMap<>();
 
