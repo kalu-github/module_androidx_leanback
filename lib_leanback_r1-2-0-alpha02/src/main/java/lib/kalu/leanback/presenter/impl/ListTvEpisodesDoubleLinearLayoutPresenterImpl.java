@@ -1032,16 +1032,22 @@ public interface ListTvEpisodesDoubleLinearLayoutPresenterImpl<T extends TvEpiso
                     setDataRange(viewGroup, rangeGroupId, startRangeIndex, nextRangeIndex);
                     setDataEpisode(viewGroup, episodeGroupId, nextRangeIndex, 0, true);
                 } else {
-                    View vRangeCur = rangeGroup.getChildAt(rangeIndex);
-                    T tRangeCur = (T) vRangeCur.getTag(R.id.lb_presenter_range);
-                    tRangeCur.setFocus(false);
-                    tRangeCur.setChecked(false);
-                    onBindHolderRange(vRangeCur.getContext(), vRangeCur, tRangeCur, rangeIndex);
-                    View vRangeNext = rangeGroup.getChildAt(nextRangeIndex);
-                    T tRangeNext = (T) vRangeNext.getTag(R.id.lb_presenter_range);
-                    tRangeNext.setFocus(false);
-                    tRangeNext.setChecked(true);
-                    onBindHolderRange(vRangeNext.getContext(), vRangeNext, tRangeNext, nextRangeIndex);
+                    int rangeNum = initRangeNum();
+                    for (int i = 0; i < rangeNum; i++) {
+                        View child = rangeGroup.getChildAt(i);
+                        if (null == child)
+                            continue;
+                        T o = (T) child.getTag(R.id.lb_presenter_range);
+                        if (null == o)
+                            continue;
+                        int index = o.getRangeIndex();
+                        LeanBackUtil.log("ListTvEpisodesPresenterImpl => scrollEpisodesRight => index = " + index + ", nextRangeIndex = " + nextRangeIndex);
+                        if (index == rangeIndex || index == nextRangeIndex) {
+                            o.setFocus(false);
+                            o.setChecked(index == nextRangeIndex);
+                            onBindHolderRange(child.getContext(), child, o, i);
+                        }
+                    }
                     setDataEpisode(viewGroup, episodeGroupId, nextRangeIndex, 0, true);
                 }
                 requestFocusEpisodeChild(viewGroup, episodeGroupId, 0);
