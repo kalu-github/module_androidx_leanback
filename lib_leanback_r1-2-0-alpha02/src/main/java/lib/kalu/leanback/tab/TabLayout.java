@@ -3,6 +3,8 @@ package lib.kalu.leanback.tab;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.util.AttributeSet;
 import android.util.TypedValue;
@@ -20,6 +22,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.core.view.ViewCompat;
 import androidx.leanback.R;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
@@ -161,7 +164,19 @@ public final class TabLayout extends HorizontalScrollView {
             if (null == nextFocus) {
                 return true;
             } else {
-                checkedCurrentItem(View.FOCUS_DOWN);
+                try {
+                    if (nextFocus instanceof androidx.recyclerview.widget.RecyclerView) {
+                        int itemCount = ((RecyclerView) nextFocus).getAdapter().getItemCount();
+                        if (itemCount <= 0) {
+                            return true;
+                        } else {
+                            throw new Exception();
+                        }
+                    }
+                    throw new Exception();
+                } catch (Exception e) {
+                    checkedCurrentItem(View.FOCUS_DOWN);
+                }
             }
         }
         // down action_up
@@ -180,8 +195,12 @@ public final class TabLayout extends HorizontalScrollView {
         return false;
     }
 
+    @Override
+    public void setBackground(Drawable background) {
+    }
+
     private void init(@Nullable AttributeSet attrs) {
-        setDescendantFocusability(ViewGroup.FOCUS_AFTER_DESCENDANTS);
+        super.setBackground(new ColorDrawable(Color.TRANSPARENT));
         setSmoothScrollingEnabled(true);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             setNestedScrollingEnabled(true);
