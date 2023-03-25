@@ -16,13 +16,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.Collection;
 import java.util.LinkedList;
-import java.util.List;
 
 import lib.kalu.leanback.presenter.bean.TvPresenterRowBean;
 import lib.kalu.leanback.presenter.impl.ListTvPresenterImpl;
 import lib.kalu.leanback.util.LeanBackUtil;
 
-public abstract class ListTvRowPlusPresenter<T extends TvPresenterRowBean> extends Presenter implements ListTvPresenterImpl {
+public abstract class ListTvRowHeadPresenter<T extends TvPresenterRowBean> extends Presenter implements ListTvPresenterImpl {
 
     private final LinkedList<T> mData = new LinkedList<>();
 
@@ -31,15 +30,15 @@ public abstract class ListTvRowPlusPresenter<T extends TvPresenterRowBean> exten
         try {
             Context context = parent.getContext();
             onLife(context);
-            ViewGroup inflate = (ViewGroup) LayoutInflater.from(context).inflate(R.layout.lb_list_tv_row_plus, parent, false);
+            ViewGroup inflate = (ViewGroup) LayoutInflater.from(context).inflate(R.layout.lb_list_tv_row_head, parent, false);
             setPadding(context, inflate);
             setBackgroundColor(context, inflate);
-            setContentBackgroundColor(context, inflate, R.id.module_leanback_llr_plus_list);
-            setTitlePadding(context, inflate, R.id.module_leanback_llr_plus_title);
-            setTitleTextColor(context, inflate, R.id.module_leanback_llr_plus_title);
-            setTitleTextSize(context, inflate, R.id.module_leanback_llr_plus_title);
-            setTitleAssetTTF(context, inflate, R.id.module_leanback_llr_plus_title);
-            setTitleBackgroundColor(context, inflate, R.id.module_leanback_llr_plus_title);
+            setContentBackgroundColor(context, inflate, R.id.module_leanback_llr_head_list);
+            setTitlePadding(context, inflate, R.id.module_leanback_llr_head_title);
+            setTitleTextColor(context, inflate, R.id.module_leanback_llr_head_title);
+            setTitleTextSize(context, inflate, R.id.module_leanback_llr_head_title);
+            setTitleAssetTTF(context, inflate, R.id.module_leanback_llr_head_title);
+            setTitleBackgroundColor(context, inflate, R.id.module_leanback_llr_head_title);
             initContent(context, inflate);
             initAdapter(context, inflate);
             return new ViewHolder(inflate);
@@ -56,7 +55,7 @@ public abstract class ListTvRowPlusPresenter<T extends TvPresenterRowBean> exten
         formatData(item);
 
         // title
-        updateTitle(mData, viewHolder.view, R.id.module_leanback_llr_plus_title);
+        updateTitle(mData, viewHolder.view, R.id.module_leanback_llr_head_title);
 
         // list
         updateAdapter(viewHolder.view);
@@ -80,7 +79,7 @@ public abstract class ListTvRowPlusPresenter<T extends TvPresenterRowBean> exten
 
     private final void updateAdapter(View view) {
         try {
-            RecyclerView recyclerView = view.findViewById(R.id.module_leanback_llr_plus_list);
+            RecyclerView recyclerView = view.findViewById(R.id.module_leanback_llr_head_list);
             recyclerView.getAdapter().notifyDataSetChanged();
         } catch (Exception e) {
             LeanBackUtil.log("ListTvRowPresenter => updateAdapter => " + e.getMessage(), e);
@@ -89,7 +88,7 @@ public abstract class ListTvRowPlusPresenter<T extends TvPresenterRowBean> exten
 
     private final void initContent(@NonNull Context context, @NonNull View inflate) {
         try {
-            RelativeLayout relativeLayout = inflate.findViewById(R.id.module_leanback_llr_plus_content);
+            RelativeLayout relativeLayout = inflate.findViewById(R.id.module_leanback_llr_head_content);
             int childCount = relativeLayout.getChildCount();
             if (childCount > 0)
                 throw new Exception("constance child");
@@ -107,18 +106,18 @@ public abstract class ListTvRowPlusPresenter<T extends TvPresenterRowBean> exten
         }
     }
 
-    private final void initAdapter(@NonNull Context context, @NonNull View inflate) {
+    private final void initAdapter(@NonNull Context context, @NonNull ViewGroup viewGroup) {
         try {
 
             // 1
-            RecyclerView recyclerView = inflate.findViewById(R.id.module_leanback_llr_plus_list);
+            RecyclerView recyclerView = viewGroup.findViewById(R.id.module_leanback_llr_head_list);
             RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
             if (null == layoutManager) {
                 LinearLayoutManager manager = new LinearLayoutManager(context) {
                     @Override
                     public boolean canScrollHorizontally() {
                         int size = mData.size();
-                        return ListTvRowPlusPresenter.this.canScrollHorizontally(size);
+                        return ListTvRowHeadPresenter.this.canScrollHorizontally(size);
                     }
 
                     @Override
@@ -147,11 +146,43 @@ public abstract class ListTvRowPlusPresenter<T extends TvPresenterRowBean> exten
                         try {
                             Context context = parent.getContext();
                             onLife(context);
-                            View view = LayoutInflater.from(context).inflate(initLayout(viewType), parent, false);
+                            View view = LayoutInflater.from(context).inflate(initLayout(), parent, false);
                             RecyclerView.ViewHolder holder = new RecyclerView.ViewHolder(view) {
                             };
-                            RelativeLayout relativeLayout = inflate.findViewById(R.id.module_leanback_llr_plus_content);
-                            onCreateHolder(context, holder, relativeLayout, view, mData);
+                            // onClick
+                            try {
+                                view.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        int position = holder.getAbsoluteAdapterPosition();
+                                        if (position >= 0) {
+                                            T t = mData.get(position);
+                                            onClickItemHolder(v.getContext(), v, t, position);
+                                        }
+                                    }
+                                });
+                            } catch (Exception e) {
+                            }
+                            // onFocus
+                            try {
+                                view.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+                                    @Override
+                                    public void onFocusChange(View v, boolean b) {
+                                        int position = holder.getAbsoluteAdapterPosition();
+                                        if (position >= 0) {
+                                            // 1
+                                            T t = mData.get(position);
+                                            onFocusItemHolder(v.getContext(), v, t, position, b);
+                                            // 2
+                                            if (b) {
+                                                ViewGroup groupLayout = viewGroup.findViewById(R.id.module_leanback_llr_head_content);
+                                                onBindHeadHolder(groupLayout.getContext(), groupLayout, t, position);
+                                            }
+                                        }
+                                    }
+                                });
+                            } catch (Exception e) {
+                            }
                             return holder;
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -163,18 +194,21 @@ public abstract class ListTvRowPlusPresenter<T extends TvPresenterRowBean> exten
                     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
                         try {
                             T t = mData.get(position);
-                            int itemViewType = holder.getItemViewType();
-                            RelativeLayout relativeLayout = inflate.findViewById(R.id.module_leanback_llr_plus_content);
-                            onBindHolder(relativeLayout, holder.itemView, t, position, itemViewType);
+                            onBindItemHolder(holder.itemView.getContext(), holder.itemView, t, position);
                         } catch (Exception e) {
-                            e.printStackTrace();
                         }
-                    }
-
-                    @Override
-                    public int getItemViewType(int position) {
-                        T t = mData.get(position);
-                        return initItemViewType(position, t);
+                        try {
+                            if (position > 0)
+                                throw new Exception();
+                            ViewGroup groupLayout = viewGroup.findViewById(R.id.module_leanback_llr_head_content);
+                            Object tag = groupLayout.getTag(R.id.module_leanback_llr_head_content);
+                            if (null != tag)
+                                throw new Exception();
+                            groupLayout.setTag(R.id.module_leanback_llr_head_content, 1);
+                            T t = mData.get(position);
+                            onBindHeadHolder(groupLayout.getContext(), groupLayout, t, position);
+                        } catch (Exception e) {
+                        }
                     }
 
                     @Override
@@ -204,22 +238,22 @@ public abstract class ListTvRowPlusPresenter<T extends TvPresenterRowBean> exten
 //            }
     }
 
-    protected abstract void onCreateHolder(@NonNull Context context, @NonNull RecyclerView.ViewHolder holder, @NonNull View contentView, @NonNull View itemView, @NonNull List<T> datas);
+    protected abstract void onFocusItemHolder(@NonNull Context context, @NonNull View view, @NonNull T item, @NonNull int position, boolean hasFocus);
 
-    protected abstract void onBindHolder(@NonNull View contentView, @NonNull View itemView, @NonNull T item, @NonNull int position, @NonNull int viewType);
+    protected abstract void onClickItemHolder(@NonNull Context context, @NonNull View view, @NonNull T item, @NonNull int position);
+
+    protected abstract void onBindItemHolder(@NonNull Context context, @NonNull View view, @NonNull T item, @NonNull int position);
+
+    protected abstract void onBindHeadHolder(@NonNull Context context, @NonNull View view, @NonNull T item, @NonNull int position);
 
     @LayoutRes
-    protected abstract int initLayout(int viewType);
+    protected abstract int initLayout();
 
     @LayoutRes
     protected abstract int initContent();
 
     protected int initContentMarginBottom(Context context) {
         return 0;
-    }
-
-    protected int initItemViewType(int position, T t) {
-        return 1;
     }
 
     protected boolean canScrollHorizontally(int count) {
