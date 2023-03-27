@@ -206,7 +206,7 @@ interface ClassLayoutImpl {
     }
 
     @Nullable
-    default CharSequence getCheckedName() {
+    default String getCheckedName() {
         try {
             RadioGroup radioGroup = getRadioGroup(true);
             if (null == radioGroup)
@@ -241,6 +241,17 @@ interface ClassLayoutImpl {
             radioButton.setText(s);
         } catch (Exception e) {
             LeanBackUtil.log("ClassLayoutImpl => setRadioButtonText => " + e.getMessage());
+        }
+    }
+
+    default void update(@NonNull int index, String name) {
+        try {
+            RadioButton radioButton = getRadioButton(index);
+            if (null == radioButton)
+                throw new Exception("radioButton error: null");
+            radioButton.setText(name);
+        } catch (Exception e) {
+            LeanBackUtil.log("ClassLayoutImpl => update => " + e.getMessage());
         }
     }
 

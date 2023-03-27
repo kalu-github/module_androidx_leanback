@@ -10,6 +10,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.ScrollView;
 
@@ -102,7 +103,7 @@ public final class ClassScrollView extends ScrollView implements ClassLayoutImpl
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
         View focus = findFocus();
-        if (null != focus && focus instanceof ClassScrollView && mOrientation == 1){
+        if (null != focus && focus instanceof ClassScrollView && mOrientation == 1) {
             return dispatchEventHorizontal(event);
         } else if (null != focus && focus instanceof ClassScrollView && mOrientation == 2) {
             return dispatchEventVertical(event);
