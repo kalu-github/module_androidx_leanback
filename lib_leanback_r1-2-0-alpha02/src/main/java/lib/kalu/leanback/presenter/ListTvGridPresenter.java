@@ -92,7 +92,7 @@ public abstract class ListTvGridPresenter<T extends TvPresenterRowBean> extends 
                 }
             }
         } catch (Exception e) {
-            LeanBackUtil.log("ListTvGridPresenter => formatData => " + e.getMessage(), e);
+            LeanBackUtil.log("ListTvGridPresenter => formatData => " + e.getMessage());
         }
     }
 

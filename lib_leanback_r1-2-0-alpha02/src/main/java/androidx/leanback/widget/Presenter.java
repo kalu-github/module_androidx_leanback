@@ -17,7 +17,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.collection.ArrayMap;
-import androidx.leanback.widget.FacetProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
@@ -237,5 +236,9 @@ public abstract class Presenter implements FacetProvider {
             mFacets = new ArrayMap<>();
         }
         mFacets.put(facetClass, facetImpl);
+    }
+
+    public boolean isRecyclerEnable() {
+        return true;
     }
 }
