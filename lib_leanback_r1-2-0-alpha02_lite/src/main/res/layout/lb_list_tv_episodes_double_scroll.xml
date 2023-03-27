@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/lb_list_tv_episodes_plus_root"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:clipChildren="false"
+    android:clipToPadding="false"
+    android:focusable="false"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/lb_list_tv_episodes_plus_title"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:clickable="false"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:gravity="center_vertical|left"
+        android:longClickable="false"
+        android:textColor="@android:color/white"
+        android:textSize="18sp"
+        android:visibility="gone" />
+
+    <LinearLayout
+        android:id="@+id/lb_list_tv_episodes_plus_items"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        android:focusable="false"
+        android:orientation="horizontal" />
+
+    <!--    <Space-->
+    <!--        android:id="@+id/lb_list_tv_episodes_plus_space"-->
+    <!--        android:layout_width="match_parent"-->
+    <!--        android:layout_height="0dp"/>-->
+
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        android:fillViewport="true"
+        android:focusable="false"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:id="@+id/lb_list_tv_episodes_plus_ranges"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clipChildren="false"
+            android:clipToPadding="false"
+            android:orientation="horizontal" />
+
+    </HorizontalScrollView>
+
+</LinearLayout>
