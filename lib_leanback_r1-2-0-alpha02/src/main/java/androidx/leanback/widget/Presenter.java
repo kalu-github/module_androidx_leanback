@@ -237,8 +237,4 @@ public abstract class Presenter implements FacetProvider {
         }
         mFacets.put(facetClass, facetImpl);
     }
-
-    public boolean isRecyclerEnable() {
-        return true;
-    }
 }

@@ -429,16 +429,12 @@ public class ItemBridgeAdapter extends RecyclerView.Adapter implements FacetProv
     @Override
     public final void onViewRecycled(RecyclerView.ViewHolder holder) {
         ViewHolder viewHolder = (ViewHolder) holder;
-        boolean recyclerEnable = viewHolder.mPresenter.isRecyclerEnable();
-        LeanBackUtil.log("ItemBridgeAdapter => onViewRecycled => recyclerEnable = " + recyclerEnable);
-        if (recyclerEnable) {
-            viewHolder.mPresenter.onUnbindViewHolder(viewHolder.mHolder);
-            onUnbind(viewHolder);
-            if (mAdapterListener != null) {
-                mAdapterListener.onUnbind(viewHolder);
-            }
-            viewHolder.mItem = null;
+        viewHolder.mPresenter.onUnbindViewHolder(viewHolder.mHolder);
+        onUnbind(viewHolder);
+        if (mAdapterListener != null) {
+            mAdapterListener.onUnbind(viewHolder);
         }
+        viewHolder.mItem = null;
     }
 
     @Override
