@@ -8,10 +8,6 @@ import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.StaggeredGridLayoutManager;
-
-import lib.kalu.leanback.util.LeanBackUtil;
 
 class BaseRecyclerView extends androidx.recyclerview.widget.RecyclerView {
     public BaseRecyclerView(@NonNull Context context) {

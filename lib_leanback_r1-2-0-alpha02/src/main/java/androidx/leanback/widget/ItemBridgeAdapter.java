@@ -197,13 +197,16 @@ public class ItemBridgeAdapter extends RecyclerView.Adapter implements FacetProv
     public ItemBridgeAdapter(ObjectAdapter adapter, PresenterSelector presenterSelector) {
         setAdapter(adapter);
         mPresenterSelector = presenterSelector;
+        setHasStableIds(true);
     }
 
     public ItemBridgeAdapter(ObjectAdapter adapter) {
         this(adapter, null);
+        setHasStableIds(true);
     }
 
     public ItemBridgeAdapter() {
+        setHasStableIds(true);
     }
 
     public ObjectAdapter getAdapter() {
@@ -467,7 +470,8 @@ public class ItemBridgeAdapter extends RecyclerView.Adapter implements FacetProv
 
     @Override
     public long getItemId(int position) {
-        return mAdapter.getId(position);
+//        return mAdapter.getId(position);
+        return position;
     }
 
     @Override
