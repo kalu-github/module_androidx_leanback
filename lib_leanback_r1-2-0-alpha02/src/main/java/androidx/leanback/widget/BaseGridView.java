@@ -272,6 +272,13 @@ public abstract class BaseGridView extends RecyclerView {
 
     BaseGridView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
+        setViewCacheExtension(new ViewCacheExtension() {
+            @Nullable
+            @Override
+            public View getViewForPositionAndType(@NonNull Recycler recycler, int position, int type) {
+                return null;
+            }
+        });
         mLayoutManager = new GridLayoutManager(this);
         setLayoutManager(mLayoutManager);
         // leanback LayoutManager already restores focus inside onLayoutChildren().

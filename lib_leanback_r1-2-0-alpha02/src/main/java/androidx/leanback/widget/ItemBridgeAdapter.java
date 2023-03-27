@@ -363,6 +363,7 @@ public class ItemBridgeAdapter extends RecyclerView.Adapter implements FacetProv
             view = presenterVh.view;
         }
         ViewHolder viewHolder = new ViewHolder(presenter, view, presenterVh);
+        viewHolder.setIsRecyclable(presenter.isRecyclable());
         onCreate(viewHolder);
         if (mAdapterListener != null) {
             mAdapterListener.onCreate(viewHolder);
