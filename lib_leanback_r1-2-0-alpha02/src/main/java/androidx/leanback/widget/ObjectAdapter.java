@@ -340,7 +340,8 @@ public abstract class ObjectAdapter {
      * Returns the id for the given position.
      */
     public long getId(int position) {
-        return NO_ID;
+        return position;
+//        return NO_ID;
     }
 
     /**

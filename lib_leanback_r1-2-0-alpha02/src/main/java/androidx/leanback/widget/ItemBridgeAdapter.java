@@ -470,8 +470,7 @@ public class ItemBridgeAdapter extends RecyclerView.Adapter implements FacetProv
 
     @Override
     public long getItemId(int position) {
-//        return mAdapter.getId(position);
-        return position;
+        return mAdapter.getId(position);
     }
 
     @Override
