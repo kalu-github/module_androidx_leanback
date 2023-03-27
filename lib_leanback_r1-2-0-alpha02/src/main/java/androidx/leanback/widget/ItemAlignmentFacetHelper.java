@@ -19,6 +19,7 @@ import static androidx.leanback.widget.ItemAlignmentFacet.ITEM_ALIGN_OFFSET_PERC
 import static androidx.recyclerview.widget.RecyclerView.HORIZONTAL;
 
 import android.graphics.Rect;
+import android.os.Build;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -46,41 +47,43 @@ class ItemAlignmentFacetHelper {
         }
         int alignPos = facet.mOffset;
         if (orientation == HORIZONTAL) {
-            if (itemView.getLayoutDirection() == View.LAYOUT_DIRECTION_RTL) {
-                alignPos = (view == itemView ? p.getOpticalWidth(view)
-                        : view.getWidth()) - alignPos;
-                if (facet.mOffsetWithPadding) {
-                    if (facet.mOffsetPercent == 0f) {
-                        alignPos -= view.getPaddingRight();
-                    } else if (facet.mOffsetPercent == 100f) {
-                        alignPos += view.getPaddingLeft();
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                if (itemView.getLayoutDirection() == View.LAYOUT_DIRECTION_RTL) {
+                    alignPos = (view == itemView ? p.getOpticalWidth(view)
+                            : view.getWidth()) - alignPos;
+                    if (facet.mOffsetWithPadding) {
+                        if (facet.mOffsetPercent == 0f) {
+                            alignPos -= view.getPaddingRight();
+                        } else if (facet.mOffsetPercent == 100f) {
+                            alignPos += view.getPaddingLeft();
+                        }
                     }
-                }
-                if (facet.mOffsetPercent != ITEM_ALIGN_OFFSET_PERCENT_DISABLED) {
-                    alignPos -= (int) (((view == itemView ? p.getOpticalWidth(view)
-                            : view.getWidth()) * facet.mOffsetPercent) / 100f);
-                }
-                if (itemView != view) {
-                    sRect.right = alignPos;
-                    ((ViewGroup) itemView).offsetDescendantRectToMyCoords(view, sRect);
-                    alignPos = sRect.right + p.getOpticalRightInset();
-                }
-            } else {
-                if (facet.mOffsetWithPadding) {
-                    if (facet.mOffsetPercent == 0f) {
-                        alignPos += view.getPaddingLeft();
-                    } else if (facet.mOffsetPercent == 100f) {
-                        alignPos -= view.getPaddingRight();
+                    if (facet.mOffsetPercent != ITEM_ALIGN_OFFSET_PERCENT_DISABLED) {
+                        alignPos -= (int) (((view == itemView ? p.getOpticalWidth(view)
+                                : view.getWidth()) * facet.mOffsetPercent) / 100f);
                     }
-                }
-                if (facet.mOffsetPercent != ITEM_ALIGN_OFFSET_PERCENT_DISABLED) {
-                    alignPos += (int) (((view == itemView ? p.getOpticalWidth(view)
-                            : view.getWidth()) * facet.mOffsetPercent) / 100f);
-                }
-                if (itemView != view) {
-                    sRect.left = alignPos;
-                    ((ViewGroup) itemView).offsetDescendantRectToMyCoords(view, sRect);
-                    alignPos = sRect.left - p.getOpticalLeftInset();
+                    if (itemView != view) {
+                        sRect.right = alignPos;
+                        ((ViewGroup) itemView).offsetDescendantRectToMyCoords(view, sRect);
+                        alignPos = sRect.right + p.getOpticalRightInset();
+                    }
+                } else {
+                    if (facet.mOffsetWithPadding) {
+                        if (facet.mOffsetPercent == 0f) {
+                            alignPos += view.getPaddingLeft();
+                        } else if (facet.mOffsetPercent == 100f) {
+                            alignPos -= view.getPaddingRight();
+                        }
+                    }
+                    if (facet.mOffsetPercent != ITEM_ALIGN_OFFSET_PERCENT_DISABLED) {
+                        alignPos += (int) (((view == itemView ? p.getOpticalWidth(view)
+                                : view.getWidth()) * facet.mOffsetPercent) / 100f);
+                    }
+                    if (itemView != view) {
+                        sRect.left = alignPos;
+                        ((ViewGroup) itemView).offsetDescendantRectToMyCoords(view, sRect);
+                        alignPos = sRect.left - p.getOpticalLeftInset();
+                    }
                 }
             }
         } else {

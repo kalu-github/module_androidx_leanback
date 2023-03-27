@@ -39,12 +39,9 @@ import lib.kalu.leanback.util.LeanBackUtil;
  * ListRowPresenter disables {@link RowPresenter}'s default full row dimming effect and draws
  * a dim overlay on each child individually.  A subclass may disable the overlay on each child
  * by overriding {@link #isUsingDefaultListSelectEffect()} to return false and write its own child
- * dim effect in {@link #applySelectLevelToChild(ViewHolder, View)}.
  *
  * <h3>Shadow</h3>
  * ListRowPresenter applies a default shadow to each child view.  Call
- * {@link #setShadowEnabled(boolean)} to disable shadows.  A subclass may override and return
- * false in {@link #isUsingDefaultShadow()} and replace with its own shadow implementation.
  */
 public class ListRowPresenter extends RowPresenter {
 
@@ -417,13 +414,6 @@ public class ListRowPresenter extends RowPresenter {
                 mFocusZoomFactor, mUseFocusDimmer);
         // TODO: 2022/7/28
 //        rowViewHolder.mGridView.setFocusDrawingOrderEnabled(false);
-        rowViewHolder.mGridView.setOnChildSelectedListener(
-                new OnChildSelectedListener() {
-            @Override
-            public void onChildSelected(ViewGroup parent, View view, int position, long id) {
-                selectChildView(rowViewHolder, view, true);
-            }
-        });
         rowViewHolder.mGridView.setOnUnhandledKeyListener(
                 new BaseGridView.OnUnhandledKeyListener() {
                 @Override
@@ -659,8 +649,6 @@ public class ListRowPresenter extends RowPresenter {
     /**
      * Returns true so that default select effect is applied to each individual
      * child of {@link HorizontalGridView}.  Subclass may return false to disable
-     * the default implementation and implement {@link #applySelectLevelToChild(ViewHolder, View)}.
-     * @see #applySelectLevelToChild(ViewHolder, View)
      * @see #onSelectLevelChanged(RowPresenter.ViewHolder)
      */
     public boolean isUsingDefaultListSelectEffect() {
@@ -779,11 +767,9 @@ public class ListRowPresenter extends RowPresenter {
      * select effect other than header and HorizontalGridView.
      * To override the default color dim over each child of {@link HorizontalGridView},
      * app should override {@link #isUsingDefaultListSelectEffect()} to
-     * return false and override {@link #applySelectLevelToChild(ViewHolder, View)}.
      * </p>
      * @see #isUsingDefaultListSelectEffect()
      * @see RowPresenter.ViewHolder#getSelectLevel()
-     * @see #applySelectLevelToChild(ViewHolder, View)
      */
     @Override
     protected void onSelectLevelChanged(RowPresenter.ViewHolder holder) {
@@ -804,9 +790,6 @@ public class ListRowPresenter extends RowPresenter {
      * {@link #isUsingDefaultListSelectEffect()} to return false and deal with the individual item
      * select level by itself.
      * </p>
-     * @param rowViewHolder The ViewHolder of the Row
-     * @param childView The child of {@link HorizontalGridView} to apply select level.
-     *
      * @see #isUsingDefaultListSelectEffect()
      * @see RowPresenter.ViewHolder#getSelectLevel()
      * @see #onSelectLevelChanged(RowPresenter.ViewHolder)

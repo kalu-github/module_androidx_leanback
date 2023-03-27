@@ -561,9 +561,6 @@ public final class GridLayoutManager extends RecyclerView.LayoutManager {
             | PF_FOCUS_OUT_SIDE_START | PF_FOCUS_OUT_SIDE_END
             | PF_PRUNE_CHILD | PF_SCROLL_ENABLED;
 
-    @SuppressWarnings("deprecation")
-    private OnChildSelectedListener mChildSelectedListener = null;
-
     private ArrayList<OnChildViewHolderSelectedListener> mChildViewHolderSelectedListeners = null;
 
     @VisibleForTesting
@@ -903,11 +900,6 @@ public final class GridLayoutManager extends RecyclerView.LayoutManager {
         return mGrid != null;
     }
 
-    @SuppressWarnings("deprecation")
-    void setOnChildSelectedListener(OnChildSelectedListener listener) {
-        mChildSelectedListener = listener;
-    }
-
     void setOnChildViewHolderSelectedListener(OnChildViewHolderSelectedListener listener) {
         if (listener == null) {
             mChildViewHolderSelectedListeners = null;
@@ -1021,7 +1013,7 @@ public final class GridLayoutManager extends RecyclerView.LayoutManager {
     }
 
     void dispatchChildSelected() {
-        if (mChildSelectedListener == null && !hasOnChildViewHolderSelectedListener()) {
+        if (!hasOnChildViewHolderSelectedListener()) {
             return;
         }
 
@@ -1029,15 +1021,8 @@ public final class GridLayoutManager extends RecyclerView.LayoutManager {
         View view = mFocusPosition == NO_POSITION ? null : findViewByPosition(mFocusPosition);
         if (view != null) {
             RecyclerView.ViewHolder vh = mBaseGridView.getChildViewHolder(view);
-            if (mChildSelectedListener != null) {
-                mChildSelectedListener.onChildSelected(mBaseGridView, view, mFocusPosition,
-                        vh == null ? NO_ID : vh.getItemId());
-            }
             fireOnChildViewHolderSelected(mBaseGridView, vh, mFocusPosition, mSubFocusPosition);
         } else {
-            if (mChildSelectedListener != null) {
-                mChildSelectedListener.onChildSelected(mBaseGridView, null, NO_POSITION, NO_ID);
-            }
             fireOnChildViewHolderSelected(mBaseGridView, null, NO_POSITION, 0);
         }
         if (TRACE) TraceCompat.endSection();
@@ -1075,9 +1060,6 @@ public final class GridLayoutManager extends RecyclerView.LayoutManager {
             fireOnChildViewHolderSelectedAndPositioned(mBaseGridView, vh, mFocusPosition,
                     mSubFocusPosition);
         } else {
-            if (mChildSelectedListener != null) {
-                mChildSelectedListener.onChildSelected(mBaseGridView, null, NO_POSITION, NO_ID);
-            }
             fireOnChildViewHolderSelectedAndPositioned(mBaseGridView, null, NO_POSITION, 0);
         }
         if (TRACE) TraceCompat.endSection();

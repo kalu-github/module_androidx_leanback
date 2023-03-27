@@ -264,14 +264,6 @@ public class VerticalGridPresenter extends Presenter {
 //        vh.getGridView().setFocusDrawingOrderEnabled(false);
         FocusHighlightHelper.setupBrowseItemFocusHighlight(vh.mItemBridgeAdapter,
                 mFocusZoomFactor, mUseFocusDimmer);
-
-        final ViewHolder gridViewHolder = vh;
-        vh.getGridView().setOnChildSelectedListener(new OnChildSelectedListener() {
-            @Override
-            public void onChildSelected(ViewGroup parent, View view, int position, long id) {
-                selectChildView(gridViewHolder, view);
-            }
-        });
     }
 
     /**
