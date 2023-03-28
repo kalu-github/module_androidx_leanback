@@ -1,10 +1,10 @@
-package com.kalu.myapplication.tag;
+package com.kalu.leanback.tag;
 
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.kalu.myapplication.R;
+import com.kalu.leanback.R;
 
 import java.util.ArrayList;
 import java.util.HashMap;

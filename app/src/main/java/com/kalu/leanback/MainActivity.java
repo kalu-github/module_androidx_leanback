@@ -1,4 +1,4 @@
-package com.kalu.myapplication;
+package com.kalu.leanback;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -6,9 +6,9 @@ import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.kalu.myapplication.tab.TabActivity;
-import com.kalu.myapplication.tag.TagActivity;
-import com.kalu.myapplication.tv.TvEpisodesActivity;
+import com.kalu.leanback.tab.TabActivity;
+import com.kalu.leanback.tag.TagActivity;
+import com.kalu.leanback.tv.TvEpisodesActivity;
 
 public class MainActivity extends AppCompatActivity {
 

@@ -1,4 +1,4 @@
-package com.kalu.myapplication.tab;
+package com.kalu.leanback.tab;
 
 import android.app.Fragment;
 import android.os.Bundle;
@@ -10,7 +10,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.kalu.myapplication.R;
+import com.kalu.leanback.R;
 
 public class TabFragment extends Fragment {
 

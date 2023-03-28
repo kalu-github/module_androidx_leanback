@@ -10,7 +10,7 @@
         android:theme="@style/Theme.MyApplication">
 
         <activity
-            android:name="com.kalu.myapplication.MainActivity"
+            android:name="com.kalu.leanback.MainActivity"
             android:exported="true"
             android:screenOrientation="landscape">
             <intent-filter>
@@ -20,16 +20,16 @@
         </activity>
 
         <activity
-            android:name="com.kalu.myapplication.tab.TabActivity"
+            android:name="com.kalu.leanback.tab.TabActivity"
             android:exported="false"
             android:screenOrientation="landscape" />
 
         <activity
-            android:name="com.kalu.myapplication.tag.TagActivity"
+            android:name="com.kalu.leanback.tag.TagActivity"
             android:exported="false"
             android:screenOrientation="landscape" />
         <activity
-            android:name="com.kalu.myapplication.tv.TvEpisodesActivity"
+            android:name="com.kalu.leanback.tv.TvEpisodesActivity"
             android:exported="false"
             android:screenOrientation="landscape" />
 

@@ -3,11 +3,13 @@ plugins {
 }
 
 android {
+
+    namespace 'com.kalu.leanback'
     compileSdkVersion 33
     buildToolsVersion "33.0.1"
 
     defaultConfig {
-        applicationId "com.kalu.myapplication"
+        applicationId "com.kalu.leanback"
         minSdkVersion 16
         targetSdkVersion 33
         versionCode 1
@@ -24,7 +26,6 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
-    namespace 'com.kalu.myapplication'
 }
 
 dependencies {

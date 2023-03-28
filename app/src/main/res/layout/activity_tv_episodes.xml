@@ -2,32 +2,34 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:gravity="center"
     android:orientation="vertical">
 
-<!--    <TextView-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="40dp"-->
-<!--        android:background="@drawable/bg_selector"-->
-<!--        android:focusable="true"-->
-<!--        android:gravity="center"-->
-<!--        android:text="title"-->
-<!--        android:textColor="#000000" />-->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:focusable="true"
+        android:gravity="center"
+        android:background="@drawable/bg_selector"
+        android:text="top"
+        android:textColor="#000000" />
 
     <lib.kalu.leanback.list.LeanBackVerticalGridView
         android:id="@+id/list_content"
         android:layout_width="match_parent"
-        android:layout_height="400dp"
+        android:layout_height="100dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
         android:background="@android:color/holo_green_light"
         android:focusable="false" />
 
-<!--    <TextView-->
-<!--        android:id="@+id/show"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="40dp"-->
-<!--        android:background="@drawable/bg_selector"-->
-<!--        android:focusable="true"-->
-<!--        android:gravity="center"-->
-<!--        android:text="show"-->
-<!--        android:textColor="#000000" />-->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:focusable="true"
+        android:gravity="center"
+        android:text="bottom"
+        android:background="@drawable/bg_selector"
+        android:textColor="#000000" />
 
 </LinearLayout>

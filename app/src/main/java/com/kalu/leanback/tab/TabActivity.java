@@ -1,4 +1,4 @@
-package com.kalu.myapplication.tab;
+package com.kalu.leanback.tab;
 
 import android.app.Fragment;
 import android.graphics.Color;
@@ -7,7 +7,7 @@ import android.os.SystemClock;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.kalu.myapplication.R;
+import com.kalu.leanback.R;
 
 import java.util.ArrayList;
 

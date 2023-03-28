@@ -1,4 +1,4 @@
-package com.kalu.myapplication.tv;
+package com.kalu.leanback.tv;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -20,7 +20,7 @@ import androidx.leanback.widget.VerticalGridView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.gson.Gson;
-import com.kalu.myapplication.R;
+import com.kalu.leanback.R;
 
 import java.util.LinkedList;
 
@@ -45,13 +45,6 @@ public class TvEpisodesActivity extends AppCompatActivity {
                 showData1();
             }
         }, 100);
-
-//        findViewById(R.id.show).setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                showData1();
-//            }
-//        });
     }
 
     private final void setAdapter1() {
@@ -64,7 +57,7 @@ public class TvEpisodesActivity extends AppCompatActivity {
 
     private final void setData1() {
         TestPresenter.TestData data = new TestPresenter.TestData();
-        for (int i = 0; i < 111; i++) {
+        for (int i = 0; i < 2000; i++) {
             TvEpisodesPlusItemBean bean = new TvEpisodesPlusItemBean();
             data.add(bean);
         }
@@ -115,7 +108,17 @@ public class TvEpisodesActivity extends AppCompatActivity {
         @Override
         public void onBindHolderEpisode(@NonNull Context context, @NonNull View v, @NonNull TvEpisodesPlusItemBean item, @NonNull int position) {
             Log.e("TvEpisodesActivity", "onBindHolderEpisode => position = " + position + ", t = " + new Gson().toJson(item));
-            ((TextView) v).setText(item.getEpisodeIndex() + "-" + item.getEpisodeMax());
+//            ((TextView) v).setText(item.getEpisodeIndex() + "-" + item.getEpisodeMax());
+
+            // playing
+            if (item.isPlaying()) {
+                ((TextView) v).setText("playing");
+            }
+            // sample
+            else {
+                ((TextView) v).setText(item.getEpisodeIndex() + "");
+            }
+
             // focus
             if (item.isFocus()) {
                 ((TextView) v).setTextColor(Color.WHITE);
