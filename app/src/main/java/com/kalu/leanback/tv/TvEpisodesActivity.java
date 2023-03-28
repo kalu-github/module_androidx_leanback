@@ -58,7 +58,7 @@ public class TvEpisodesActivity extends AppCompatActivity {
         VerticalGridView verticalGridView = findViewById(R.id.list_content);
         TestPresenter presenter = verticalGridView.getPresenter(TestPresenter.class);
         RecyclerView.ViewHolder holder = verticalGridView.findViewHolderForAdapterObject(TestPresenter.TestData.class);
-        presenter.checkedPositionEpisode((ViewGroup) holder.itemView, 0, true);
+        presenter.checkedPositionEpisode((ViewGroup) holder.itemView, 18, true);
     }
 
     private final void setAdapter1() {

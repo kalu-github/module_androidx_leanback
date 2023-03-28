@@ -393,7 +393,7 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
                                       @IdRes int groupId,
                                       @NonNull int checkedIndexRange,
                                       @NonNull int checkedIndexEspisode,
-                                      @NonNull boolean hasFocus) {
+                                      @NonNull boolean isPlaying) {
         try {
             if (checkedIndexRange < 0)
                 throw new Exception("checkedIndexRange error: " + checkedIndexRange);
@@ -418,9 +418,10 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
                     } else {
                         child.setVisibility(View.VISIBLE);
                         child.setTag(R.id.lb_presenter_episode, t);
-                        t.setFocus(hasFocus && i == checkedIndexEspisode);
+                        t.setPlaying(isPlaying && i == checkedIndexEspisode);
+                        t.setFocus(isPlaying && i == checkedIndexEspisode);
                         t.setChecked(i == checkedIndexEspisode);
-                        if (hasFocus && i == checkedIndexEspisode) {
+                        if (isPlaying && i == checkedIndexEspisode) {
                             child.post(new Runnable() {
                                 @Override
                                 public void run() {
@@ -1102,7 +1103,6 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
                     }
                     setDataEpisode(viewGroup, episodeGroupId, nextRangeIndex, episodeNum - 1, true);
                 }
-//                requestFocusEpisodeViewIndex(viewGroup, episodeGroupId, episodeNum - 1);
             }
             return false;
         } catch (Exception e) {
@@ -1193,7 +1193,6 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
                     }
                     setDataEpisode(viewGroup, episodeGroupId, nextRangeIndex, 0, true);
                 }
-//                requestFocusEpisodeViewIndex(viewGroup, episodeGroupId, 0);
             }
             return false;
         } catch (Exception e) {
@@ -1204,7 +1203,7 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
 
     /*********************/
 
-    public final boolean isEpisodeEnd(ViewGroup viewGroup) {
+    public final boolean isPlayingEnd(ViewGroup viewGroup) {
         try {
             if (null == viewGroup)
                 throw new Exception("viewGroup error: null");
@@ -1232,12 +1231,12 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
             }
             throw new Exception("nit find");
         } catch (Exception e) {
-            LeanBackUtil.log("ListTvEpisodesGridPresenter => isEpisodeEnd => " + e.getMessage());
+            LeanBackUtil.log("ListTvEpisodesGridPresenter => isPlayingEnd => " + e.getMessage());
             return false;
         }
     }
 
-    public final int getEpisodeNextPosition(ViewGroup viewGroup) {
+    public final int getPlayingPositionNext(ViewGroup viewGroup) {
         try {
             if (null == viewGroup)
                 throw new Exception("viewGroup error: null");
@@ -1266,19 +1265,19 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
             }
             throw new Exception("nit find");
         } catch (Exception e) {
-            LeanBackUtil.log("ListTvEpisodesGridPresenter => getEpisodeNextPosition => " + e.getMessage());
+            LeanBackUtil.log("ListTvEpisodesGridPresenter => getPlayingPositionNext => " + e.getMessage());
             return -1;
         }
     }
 
-    public final void checkedPositionEpisode(@NonNull ViewGroup viewGroup,
-                                             @NonNull int checkedEpisodePosition) {
-        checkedPositionEpisode(viewGroup, checkedEpisodePosition, false);
+    public final void startPlayingPosition(@NonNull ViewGroup viewGroup,
+                                           @NonNull int checkedEpisodePosition) {
+        startPlayingPosition(viewGroup, checkedEpisodePosition, false);
     }
 
-    public final void checkedPositionEpisode(@NonNull ViewGroup viewGroup,
-                                             @NonNull int checkedEpisodePosition,
-                                             @NonNull boolean hasFocus) {
+    public final void startPlayingPosition(@NonNull ViewGroup viewGroup,
+                                           @NonNull int checkedEpisodePosition,
+                                           @NonNull boolean hasFocus) {
         try {
             if (checkedEpisodePosition < 0)
                 throw new Exception("checkedEpisodePosition error: " + checkedEpisodePosition);
@@ -1287,30 +1286,37 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
                 throw new Exception("checkedEpisodePosition error: " + checkedEpisodePosition + ", episodeLength = " + episodeLength);
             int episodeNum = initEpisodeNum();
             int checkedEpisodeIndex = checkedEpisodePosition % episodeNum;
-            int rangeStartIndex = checkedEpisodePosition / episodeNum;
+            int rangeCheckedIndex = checkedEpisodePosition / episodeNum;
+            int rangeStartIndex;
             int rangeNum = initRangeNum();
             int rangeLength = getRangeLength();
-            if (rangeLength > rangeNum && rangeLength - rangeStartIndex < rangeNum) {
-                rangeStartIndex = rangeLength - rangeNum - 1;
+            if (rangeLength > rangeNum) {
+                if (rangeLength - rangeCheckedIndex < rangeNum) {
+                    rangeStartIndex = rangeLength - rangeNum - 1;
+                } else {
+                    rangeStartIndex = rangeCheckedIndex;
+                }
+            } else {
+                rangeStartIndex = 0;
             }
             cleanDataRange(viewGroup, R.id.module_leanback_lep_ranges);
             cleanDataEpisode(viewGroup, R.id.module_leanback_lep_episodes);
-            setDataRange(viewGroup, R.id.module_leanback_lep_ranges, rangeStartIndex, rangeStartIndex);
-            setDataEpisode(viewGroup, R.id.module_leanback_lep_episodes, rangeStartIndex, checkedEpisodeIndex, hasFocus);
+            setDataRange(viewGroup, R.id.module_leanback_lep_ranges, rangeStartIndex, rangeCheckedIndex);
+            setDataEpisode(viewGroup, R.id.module_leanback_lep_episodes, rangeCheckedIndex, checkedEpisodeIndex, hasFocus);
         } catch (Exception e) {
-            LeanBackUtil.log("ListTvEpisodesPresenterImpl => checkedPositionEpisode => " + e.getMessage());
+            LeanBackUtil.log("ListTvEpisodesPresenterImpl => startPlayingPosition => " + e.getMessage());
         }
     }
 
-    public final boolean checkedPositionEpisodeNext(@NonNull ViewGroup viewGroup) {
+    public final boolean startPlayingNext(@NonNull ViewGroup viewGroup) {
         try {
-            int episodeNextPosition = getEpisodeNextPosition(viewGroup);
+            int episodeNextPosition = getPlayingPositionNext(viewGroup);
             if (episodeNextPosition < 0)
                 throw new Exception("episodeNextPosition error: " + episodeNextPosition);
-            checkedPositionEpisode(viewGroup, episodeNextPosition);
+            startPlayingPosition(viewGroup, episodeNextPosition);
             return true;
         } catch (Exception e) {
-            LeanBackUtil.log("ListTvEpisodesPresenterImpl => checkedPositionEpisodeNext => " + e.getMessage());
+            LeanBackUtil.log("ListTvEpisodesPresenterImpl => startPlayingNext => " + e.getMessage());
             return false;
         }
     }
