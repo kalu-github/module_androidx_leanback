@@ -318,20 +318,29 @@ public interface ListTvEpisodesDoubleLinearLayoutPresenterImpl<T extends TvEpiso
                 throw new Exception("layoutGroup error: null");
             int count = layoutGroup.getChildCount();
             List<T> list = getDataIndexOfEpisode(checkedIndexRange);
+            int size = list.size();
             for (int i = 0; i < count; i++) {
-                View v = layoutGroup.getChildAt(i);
-                if (null == v)
+                View child = layoutGroup.getChildAt(i);
+                if (null == child)
                     continue;
-                try {
+                if (i >= size) {
+                    child.setVisibility(View.INVISIBLE);
+                    child.setTag(R.id.lb_presenter_episode, null);
+                } else {
                     T t = list.get(i);
-                    t.setFocus(hasFocus && i == checkedIndexEspisode);
-                    t.setChecked(i == checkedIndexEspisode);
-                    v.setTag(R.id.lb_presenter_episode, t);
-                    v.setVisibility(View.VISIBLE);
-                    onBindHolderEpisode(v.getContext(), v, t, i);
-                } catch (Exception e) {
-                    v.setTag(R.id.lb_presenter_episode, null);
-                    v.setVisibility(View.INVISIBLE);
+                    if (null == t) {
+                        child.setVisibility(View.INVISIBLE);
+                        child.setTag(R.id.lb_presenter_episode, null);
+                    } else {
+                        child.setVisibility(View.VISIBLE);
+                        child.setTag(R.id.lb_presenter_episode, t);
+                        if (hasFocus && i == checkedIndexEspisode) {
+                            child.requestFocus();
+                        }
+                        t.setFocus(hasFocus && i == checkedIndexEspisode);
+                        t.setChecked(i == checkedIndexEspisode);
+                        onBindHolderEpisode(child.getContext(), child, t, i);
+                    }
                 }
             }
         } catch (Exception e) {
@@ -432,6 +441,21 @@ public interface ListTvEpisodesDoubleLinearLayoutPresenterImpl<T extends TvEpiso
                 if (null == t)
                     continue;
                 if (t.isChecked()) {
+                    v.requestFocus();
+                    t.setFocus(true);
+                    t.setChecked(true);
+                    onBindHolderEpisode(v.getContext(), v, t, i);
+                    return;
+                }
+            }
+            for (int i = 0; i < childCount; i++) {
+                View v = groupLayout.getChildAt(i);
+                if (null == v)
+                    continue;
+                T t = (T) v.getTag(R.id.lb_presenter_episode);
+                if (null == t)
+                    continue;
+                if (t.isPlaying()) {
                     v.requestFocus();
                     t.setFocus(true);
                     t.setChecked(true);
@@ -647,10 +671,16 @@ public interface ListTvEpisodesDoubleLinearLayoutPresenterImpl<T extends TvEpiso
                         else if (event.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_DPAD_UP) {
                             cleanFocusCheckedRange(viewGroup, rangeGroupId);
                             requestFocusEpisodeView(viewGroup, episodeGroupId);
+                            return true;
                         }
                         // into-from-up
                         else if (event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_DPAD_UP) {
                             requestFocusRangeView(viewGroup, rangeGroupId);
+                            return true;
+                        }
+                        // up
+                        else if (event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_DPAD_DOWN) {
+                            return true;
                         }
                         return false;
                     }
@@ -787,6 +817,7 @@ public interface ListTvEpisodesDoubleLinearLayoutPresenterImpl<T extends TvEpiso
                         else if (event.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_DPAD_DOWN) {
                             cleanFocusEpisodeView(viewGroup, episodeGroupId);
                             requestFocusRangeView(viewGroup, rangeGroupId);
+                            return true;
                         }
                         // up
                         else if (event.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_DPAD_UP) {
@@ -796,6 +827,7 @@ public interface ListTvEpisodesDoubleLinearLayoutPresenterImpl<T extends TvEpiso
                         // into-from-down
                         else if (event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_DPAD_DOWN) {
                             requestFocusEpisodeView(viewGroup, episodeGroupId);
+                            return true;
                         }
                         return false;
                     }
@@ -1113,8 +1145,8 @@ public interface ListTvEpisodesDoubleLinearLayoutPresenterImpl<T extends TvEpiso
                 throw new Exception("checkedEpisodePosition error: " + checkedEpisodePosition + ", episodeLength = " + episodeLength);
             int episodeNum = initEpisodeNum();
             int checkedEpisodeIndex = checkedEpisodePosition % episodeNum;
+            int rangeStartIndex = checkedEpisodePosition / episodeNum;
             int rangeNum = initRangeNum();
-            int rangeStartIndex = checkedEpisodePosition / rangeNum;
             int rangeLength = getRangeLength();
             if (rangeLength - rangeStartIndex < rangeNum) {
                 rangeStartIndex = rangeLength - rangeNum - 1;

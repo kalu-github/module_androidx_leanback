@@ -42,9 +42,19 @@ public class TvEpisodesActivity extends AppCompatActivity {
         new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
             @Override
             public void run() {
-                showData1();
+                VerticalGridView verticalGridView = findViewById(R.id.list_content);
+                TestPresenter presenter = verticalGridView.getPresenter(TestPresenter.class);
+                RecyclerView.ViewHolder holder = verticalGridView.findViewHolderForAdapterObject(TestPresenter.TestData.class);
+                presenter.showData((ViewGroup) holder.itemView, 998, true);
             }
         }, 100);
+
+//        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                findViewById(R.id.top).requestFocus();
+//            }
+//        }, 400);
     }
 
     private final void setAdapter1() {
@@ -65,13 +75,6 @@ public class TvEpisodesActivity extends AppCompatActivity {
         RecyclerView.Adapter adapter = verticalGridView.getAdapter();
         ObjectAdapter objectAdapter = ((ItemBridgeAdapter) adapter).getAdapter();
         ((ArrayObjectAdapter) objectAdapter).add(data);
-    }
-
-    private final void showData1() {
-        VerticalGridView verticalGridView = findViewById(R.id.list_content);
-        TestPresenter presenter = verticalGridView.getPresenter(TestPresenter.class);
-        RecyclerView.ViewHolder holder = verticalGridView.findViewHolderForAdapterObject(TestPresenter.TestData.class);
-        presenter.showData((ViewGroup) holder.itemView, 0);
     }
 
     private class SelectorPresenter extends lib.kalu.leanback.selector.BasePresenterSelector {
