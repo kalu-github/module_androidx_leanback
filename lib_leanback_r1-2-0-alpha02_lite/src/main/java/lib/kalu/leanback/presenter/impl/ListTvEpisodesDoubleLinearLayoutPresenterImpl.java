@@ -357,7 +357,6 @@ public interface ListTvEpisodesDoubleLinearLayoutPresenterImpl<T extends TvEpiso
                     continue;
                 if (t.isPlaying() || t.isChecked() || t.isFocus()) {
                     t.setChecked(false);
-                    t.setPlaying(false);
                     t.setFocus(false);
                     onBindHolderRange(v.getContext(), v, t, i);
                 }
@@ -385,7 +384,6 @@ public interface ListTvEpisodesDoubleLinearLayoutPresenterImpl<T extends TvEpiso
                     continue;
                 if (t.isPlaying() || t.isChecked() || t.isFocus()) {
                     t.setChecked(false);
-                    t.setPlaying(false);
                     t.setFocus(false);
                     onBindHolderRange(v.getContext(), v, t, i);
                 }
@@ -394,73 +392,6 @@ public interface ListTvEpisodesDoubleLinearLayoutPresenterImpl<T extends TvEpiso
             LeanBackUtil.log("ListTvEpisodesPlusPresenterImpl => cleanDataEpisode => " + e.getMessage(), e);
         }
     }
-
-//    default void checkedRangeLayoutStatus(@NonNull ViewGroup viewGroup,
-//                                          @IdRes int rangeGroupId,
-//                                          int episodePosition) {
-//        try {
-//            ViewGroup groupLayout = viewGroup.findViewById(rangeGroupId);
-//            if (null == groupLayout)
-//                throw new Exception("groupLayout error: null");
-//            int count = groupLayout.getChildCount();
-//            if (count <= 0)
-//                throw new Exception("count error: " + count);
-//            int episodeNum = initEpisodeNum();
-//            int checkedIndexRange = episodePosition / episodeNum;
-//            int rangeNum = initRangeNum();
-//            int endRange;
-//            if (checkedIndexRange >= rangeNum) {
-//                endRange = checkedIndexRange;
-//            } else {
-//                endRange = rangeNum - 1;
-//            }
-//            int startRange = endRange - 9;
-//            for (int i = 0; i < count; i++) {
-//                View v = groupLayout.getChildAt(i);
-//                if (null == v)
-//                    continue;
-//                int rangeIndex = startRange + i;
-//                T t = getDataIndexOfRange(rangeIndex);
-//                if (null == t)
-//                    continue;
-//                t.setFocus(false);
-//                t.setChecked(rangeIndex == checkedIndexRange);
-//                t.setPlaying(rangeIndex == checkedIndexRange);
-//            }
-//        } catch (Exception e) {
-//            LeanBackUtil.log("ListTvEpisodesPlusPresenterImpl => checkedRangeLayoutStatus => " + e.getMessage(), e);
-//        }
-//    }
-
-//    default void checkedEpisodeLayoutStatus(@NonNull ViewGroup viewGroup,
-//                                            @IdRes int rangeGroupId,
-//                                            int episodePosition) {
-//        try {
-//            ViewGroup groupLayout = viewGroup.findViewById(rangeGroupId);
-//            if (null == groupLayout)
-//                throw new Exception("groupLayout error: null");
-//            int count = groupLayout.getChildCount();
-//            if (count <= 0)
-//                throw new Exception("count error: " + count);
-//            int episodeNum = initEpisodeNum();
-//            int checkedIndexRange = episodePosition / episodeNum;
-//            int episodeIndex = episodePosition % episodeNum;
-//            List<T> list = getDataIndexOfEpisode(checkedIndexRange);
-//            for (int i = 0; i < count; i++) {
-//                View v = groupLayout.getChildAt(i);
-//                if (null == v)
-//                    continue;
-//                T t = list.get(i);
-//                if (null == t)
-//                    continue;
-//                t.setFocus(false);
-//                t.setChecked(i == episodeIndex);
-//                t.setPlaying(i == checkedIndexRange);
-//            }
-//        } catch (Exception e) {
-//            LeanBackUtil.log("ListTvEpisodesPlusPresenterImpl => checkedEpisodeLayoutStatus => " + e.getMessage(), e);
-//        }
-//    }
 
     default void refreshDataRange(@NonNull ViewGroup viewGroup,
                                   @NonNull int startRangeIndex,
@@ -483,7 +414,7 @@ public interface ListTvEpisodesDoubleLinearLayoutPresenterImpl<T extends TvEpiso
         }
     }
 
-    default void requestFocusCheckedEpisode(ViewGroup viewGroup, int groupId) {
+    default void requestFocusEpisodeView(ViewGroup viewGroup, int groupId) {
         try {
             if (null == viewGroup)
                 throw new Exception("viewGroup error: null");
@@ -501,6 +432,7 @@ public interface ListTvEpisodesDoubleLinearLayoutPresenterImpl<T extends TvEpiso
                 if (null == t)
                     continue;
                 if (t.isChecked()) {
+                    v.requestFocus();
                     t.setFocus(true);
                     t.setChecked(true);
                     onBindHolderEpisode(v.getContext(), v, t, i);
@@ -511,6 +443,7 @@ public interface ListTvEpisodesDoubleLinearLayoutPresenterImpl<T extends TvEpiso
             T t = (T) v.getTag(R.id.lb_presenter_episode);
             if (null == t)
                 throw new Exception("t error: null");
+            v.requestFocus();
             t.setFocus(true);
             t.setChecked(true);
             onBindHolderEpisode(v.getContext(), v, t, 0);
@@ -519,7 +452,7 @@ public interface ListTvEpisodesDoubleLinearLayoutPresenterImpl<T extends TvEpiso
         }
     }
 
-    default void cleanFocusCheckedEpisode(ViewGroup viewGroup, int groupId) {
+    default void cleanFocusEpisodeView(ViewGroup viewGroup, int groupId) {
         try {
             if (null == viewGroup)
                 throw new Exception("viewGroup error: null");
@@ -537,6 +470,7 @@ public interface ListTvEpisodesDoubleLinearLayoutPresenterImpl<T extends TvEpiso
                 if (null == t)
                     continue;
                 if (t.isFocus()) {
+                    v.clearFocus();
                     t.setFocus(false);
                     t.setChecked(true);
                     onBindHolderEpisode(v.getContext(), v, t, i);
@@ -547,6 +481,7 @@ public interface ListTvEpisodesDoubleLinearLayoutPresenterImpl<T extends TvEpiso
             T t = (T) v.getTag(R.id.lb_presenter_episode);
             if (null == t)
                 throw new Exception("t error: null");
+            v.clearFocus();
             t.setFocus(true);
             t.setChecked(true);
             onBindHolderEpisode(v.getContext(), v, t, 0);
@@ -555,7 +490,7 @@ public interface ListTvEpisodesDoubleLinearLayoutPresenterImpl<T extends TvEpiso
         }
     }
 
-    default void requestFocusCheckedRange(ViewGroup viewGroup, int groupId) {
+    default void requestFocusRangeView(ViewGroup viewGroup, int groupId) {
         try {
             if (null == viewGroup)
                 throw new Exception("viewGroup error: null");
@@ -573,6 +508,7 @@ public interface ListTvEpisodesDoubleLinearLayoutPresenterImpl<T extends TvEpiso
                 if (null == t)
                     continue;
                 if (t.isChecked()) {
+                    v.requestFocus();
                     t.setFocus(true);
                     t.setChecked(true);
                     onBindHolderRange(v.getContext(), v, t, i);
@@ -583,6 +519,7 @@ public interface ListTvEpisodesDoubleLinearLayoutPresenterImpl<T extends TvEpiso
             T t = (T) v.getTag(R.id.lb_presenter_range);
             if (null == t)
                 throw new Exception("t error: null");
+            v.requestFocus();
             t.setFocus(true);
             t.setChecked(true);
             onBindHolderRange(v.getContext(), v, t, 0);
@@ -609,6 +546,7 @@ public interface ListTvEpisodesDoubleLinearLayoutPresenterImpl<T extends TvEpiso
                 if (null == t)
                     continue;
                 if (t.isFocus()) {
+                    v.clearFocus();
                     t.setFocus(false);
                     t.setChecked(true);
                     onBindHolderRange(v.getContext(), v, t, i);
@@ -619,6 +557,7 @@ public interface ListTvEpisodesDoubleLinearLayoutPresenterImpl<T extends TvEpiso
             T t = (T) v.getTag(R.id.lb_presenter_range);
             if (null == t)
                 throw new Exception("t error: null");
+            v.clearFocus();
             t.setFocus(false);
             t.setChecked(true);
             onBindHolderRange(v.getContext(), v, t, 0);
@@ -690,97 +629,28 @@ public interface ListTvEpisodesDoubleLinearLayoutPresenterImpl<T extends TvEpiso
                 item.setOnKeyListener(new View.OnKeyListener() {
                     @Override
                     public boolean onKey(View v, int keyCode, KeyEvent event) {
-                        LeanBackUtil.log("ListTvEpisodesPresenterImpl => onKey => action = " + event.getAction() + ", code = " + keyCode);
+                        LeanBackUtil.log("ListTvEpisodesDoubleLinearLayoutPresenterImpl => onKey2 => action = " + event.getAction() + ", keyCode = " + keyCode);
                         // left
                         if (event.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
-                            try {
-                                T t = (T) v.getTag(R.id.lb_presenter_range);
-                                if (null == t)
-                                    throw new Exception("t error: null");
-                                int rangeIndex = t.getRangeIndex();
-                                LeanBackUtil.log("ListTvEpisodesPresenterImpl => onKey => left => rangeIndex = " + rangeIndex);
-                                if (rangeIndex <= 0)
-                                    throw new Exception("rangeIndex warning: " + rangeIndex);
-                                int indexOfChild = layoutGroup.indexOfChild(v);
-                                LeanBackUtil.log("ListTvEpisodesPresenterImpl => onKey => left => indexOfChild = " + indexOfChild);
-                                if (indexOfChild < 0)
-                                    throw new Exception("indexOfChild warning: " + indexOfChild);
-                                int startIndex = rangeIndex - 1;
-                                if (indexOfChild > 0) {
-                                    // 1
-                                    t.setFocus(false);
-                                    t.setChecked(false);
-                                    onBindHolderRange(v.getContext(), v, t, indexOfChild);
-                                    // 2
-                                    View nextFocus = FocusFinder.getInstance().findNextFocus(viewGroup, v, View.FOCUS_LEFT);
-                                    T t1 = (T) nextFocus.getTag(R.id.lb_presenter_range);
-                                    t1.setFocus(true);
-                                    t1.setChecked(true);
-                                    onBindHolderRange(nextFocus.getContext(), nextFocus, t1, indexOfChild - 1);
-                                    // 3
-                                    setDataEpisode(viewGroup, episodeGroupId, startIndex, -1, false);
-                                } else {
-                                    LeanBackUtil.log("ListTvEpisodesPresenterImpl => onKey => left => startIndex = " + startIndex);
-                                    refreshDataRange(viewGroup, startIndex, startIndex, episodeGroupId, rangeGroupId, false);
-                                }
-                            } catch (Exception e) {
-                                LeanBackUtil.log("ListTvEpisodesPresenterImpl => onKey => left => " + e.getMessage());
-                            }
+                            return dispatchEventRangeLeft(viewGroup, v, rangeGroupId, episodeGroupId);
                         }
                         // right
                         else if (event.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_DPAD_RIGHT) {
-                            try {
-                                T t = (T) v.getTag(R.id.lb_presenter_range);
-                                if (null == t)
-                                    throw new Exception("t error: null");
-                                int rangeIndex = t.getRangeIndex();
-                                int rangeMax = t.getRangeMax();
-                                LeanBackUtil.log("ListTvEpisodesPresenterImpl => onKey => right => rangeIndex = " + rangeIndex + ", rangeMax = " + rangeMax);
-                                if (rangeIndex + 1 >= rangeMax)
-                                    throw new Exception("rangeIndex warning: " + rangeIndex);
-                                int indexOfChild = layoutGroup.indexOfChild(v);
-                                LeanBackUtil.log("ListTvEpisodesPresenterImpl => onKey => right => indexOfChild = " + indexOfChild);
-                                if (indexOfChild < 0)
-                                    throw new Exception("indexOfChild warning: " + indexOfChild);
-                                int childCount = layoutGroup.getChildCount();
-                                LeanBackUtil.log("ListTvEpisodesPresenterImpl => onKey => right => childCount = " + childCount);
-                                if (childCount <= 0)
-                                    throw new Exception("childCount warning: " + childCount);
-                                int checkedIndex = rangeIndex + 1;
-                                LeanBackUtil.log("ListTvEpisodesPresenterImpl => onKey => right => checkedIndex = " + checkedIndex);
-                                if (indexOfChild + 1 < childCount) {
-                                    // 1
-                                    t.setFocus(false);
-                                    t.setChecked(false);
-                                    onBindHolderRange(v.getContext(), v, t, indexOfChild);
-                                    // 2
-                                    View nextFocus = FocusFinder.getInstance().findNextFocus(viewGroup, v, View.FOCUS_RIGHT);
-                                    T t1 = (T) nextFocus.getTag(R.id.lb_presenter_range);
-                                    t1.setFocus(true);
-                                    t1.setChecked(true);
-                                    onBindHolderRange(nextFocus.getContext(), nextFocus, t1, indexOfChild + 1);
-                                    // 3
-                                    setDataEpisode(viewGroup, episodeGroupId, checkedIndex, -1, false);
-                                } else {
-                                    int startIndex = checkedIndex - (initRangeNum() - 1);
-                                    LeanBackUtil.log("ListTvEpisodesPresenterImpl => onKey => right => startIndex = " + startIndex);
-                                    refreshDataRange(viewGroup, startIndex, checkedIndex, episodeGroupId, rangeGroupId, false);
-                                }
-                            } catch (Exception e) {
-                                LeanBackUtil.log("ListTvEpisodesPresenterImpl => onKey => right => " + e.getMessage());
-                            }
+                            return dispatchEventRangeRight(viewGroup, v, rangeGroupId, episodeGroupId);
                         }
-                        // down1
-                        else if (event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_DPAD_DOWN) {
-                            requestFocusCheckedRange(viewGroup, rangeGroupId);
-                        }
-                        // down2
+                        // down
                         else if (event.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_DPAD_DOWN) {
                             cleanFocusCheckedRange(viewGroup, rangeGroupId);
+                            return true;
                         }
                         // up
                         else if (event.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_DPAD_UP) {
                             cleanFocusCheckedRange(viewGroup, rangeGroupId);
+                            requestFocusEpisodeView(viewGroup, episodeGroupId);
+                        }
+                        // into-from-up
+                        else if (event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_DPAD_UP) {
+                            requestFocusRangeView(viewGroup, rangeGroupId);
                         }
                         return false;
                     }
@@ -788,6 +658,65 @@ public interface ListTvEpisodesDoubleLinearLayoutPresenterImpl<T extends TvEpiso
             }
         } catch (Exception e) {
             LeanBackUtil.log("ListTvEpisodesPresenterImpl => initLayoutRange => " + e.getMessage());
+        }
+    }
+
+    @Keep
+    default void setDataEpisodePlaying(@NonNull View v) {
+        try {
+            if (null == v)
+                throw new Exception("v error: null");
+            ViewGroup episodeGroup = (ViewGroup) v.getParent();
+            if (null == episodeGroup)
+                throw new Exception("episodeGroup error: null");
+            if (!(episodeGroup instanceof LinearLayout))
+                throw new Exception("episodeGroup error: not instanceof LinearLayout");
+            int indexOfChild = episodeGroup.indexOfChild(v);
+            if (indexOfChild < 0)
+                throw new Exception("indexOfChild error: " + indexOfChild);
+            T t = (T) v.getTag(R.id.lb_presenter_episode);
+            if (null == t)
+                throw new Exception("t error: null");
+            t.setPlaying(true);
+            t.setChecked(true);
+            v.setTag(R.id.lb_presenter_episode_playing, t);
+            onBindHolderEpisode(v.getContext(), v, t, indexOfChild);
+            onClickEpisode(v.getContext(), v, t, indexOfChild, true);
+        } catch (Exception e) {
+            LeanBackUtil.log("ListTvEpisodesDoubleLinearLayoutPresenterImpl => setDataEpisodePlaying => " + e.getMessage());
+        }
+    }
+
+    @Keep
+    default void cleanDataEpisodePlaying(@NonNull ViewGroup viewGroup,
+                                         @IdRes int episodeGroupId) {
+        // olds
+        try {
+            if (null == viewGroup)
+                throw new Exception("viewGroup error: null");
+            ViewGroup episodeGroup = viewGroup.findViewById(episodeGroupId);
+            if (null == episodeGroup)
+                throw new Exception("episodeGroup error: null");
+            if (!(episodeGroup instanceof LinearLayout))
+                throw new Exception("episodeGroup error: not instanceof LinearLayout");
+            int episodeChildCount = episodeGroup.getChildCount();
+            if (episodeChildCount <= 0)
+                throw new Exception("episodeChildCount error: " + episodeChildCount);
+            for (int i = 0; i < episodeChildCount; i++) {
+                View child = episodeGroup.getChildAt(i);
+                if (null == child)
+                    continue;
+                T t = (T) child.getTag(R.id.lb_presenter_episode_playing);
+                if (null == t)
+                    continue;
+                t.setPlaying(false);
+                t.setChecked(false);
+                child.setTag(R.id.lb_presenter_episode_playing, null);
+                onBindHolderEpisode(child.getContext(), child, t, i);
+                break;
+            }
+        } catch (Exception e) {
+            LeanBackUtil.log("ListTvEpisodesDoubleLinearLayoutPresenterImpl => cleanDataEpisodePlaying => " + e.getMessage());
         }
     }
 
@@ -836,46 +765,37 @@ public interface ListTvEpisodesDoubleLinearLayoutPresenterImpl<T extends TvEpiso
                 item.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        try {
-                            int indexOfChild = layoutGroup.indexOfChild(v);
-                            if (indexOfChild < 0)
-                                throw new Exception("indexOfChild error: " + indexOfChild);
-                            T t = (T) v.getTag(R.id.lb_presenter_episode);
-                            if (null == t)
-                                throw new Exception("t error: null");
-                            onClickEpisode(v.getContext(), v, t, indexOfChild, true);
-                        } catch (Exception e) {
-                            LeanBackUtil.log("ListTvEpisodesPresenterImpl => onClick => " + e.getMessage());
-                        }
+                        // olds
+                        cleanDataEpisodePlaying(viewGroup, episodeGroupId);
+                        // news
+                        setDataEpisodePlaying(v);
                     }
                 });
                 item.setOnKeyListener(new View.OnKeyListener() {
                     @Override
                     public boolean onKey(View v, int keyCode, KeyEvent event) {
-                        LeanBackUtil.log("ListTvEpisodesPresenterImpl => onKey => action = " + event.getAction() + ", code = " + keyCode);
+                        LeanBackUtil.log("ListTvEpisodesDoubleLinearLayoutPresenterImpl => onKey1 => action = " + event.getAction() + ", keyCode = " + keyCode);
                         // left
                         if (event.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
-                            scrollEpisodesLeft(viewGroup, v, rangeGroupId, episodeGroupId);
+                            return dispatchEventEpisodesLeft(viewGroup, v, rangeGroupId, episodeGroupId);
                         }
                         // right
                         else if (event.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_DPAD_RIGHT) {
-                            scrollEpisodesRight(viewGroup, v, rangeGroupId, episodeGroupId);
+                            return dispatchEventEpisodesRight(viewGroup, v, rangeGroupId, episodeGroupId);
                         }
-                        // down1
-                        else if (event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_DPAD_DOWN) {
-                            requestFocusCheckedEpisode(viewGroup, episodeGroupId);
-                        }
-                        // down2
+                        // down
                         else if (event.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_DPAD_DOWN) {
-                            cleanFocusCheckedEpisode(viewGroup, episodeGroupId);
+                            cleanFocusEpisodeView(viewGroup, episodeGroupId);
+                            requestFocusRangeView(viewGroup, rangeGroupId);
                         }
-                        // up1
-                        else if (event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_DPAD_UP) {
-                            requestFocusCheckedEpisode(viewGroup, episodeGroupId);
-                        }
-                        // up2
+                        // up
                         else if (event.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_DPAD_UP) {
-                            cleanFocusCheckedEpisode(viewGroup, episodeGroupId);
+                            cleanFocusEpisodeView(viewGroup, episodeGroupId);
+                            return true;
+                        }
+                        // into-from-down
+                        else if (event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_DPAD_DOWN) {
+                            requestFocusEpisodeView(viewGroup, episodeGroupId);
                         }
                         return false;
                     }
@@ -886,27 +806,130 @@ public interface ListTvEpisodesDoubleLinearLayoutPresenterImpl<T extends TvEpiso
         }
     }
 
-    default void scrollEpisodesLeft(@NonNull ViewGroup viewGroup,
-                                    @NonNull View v,
-                                    @IdRes int rangeGroupId,
-                                    @IdRes int episodeGroupId) {
+    default boolean dispatchEventRangeLeft(@NonNull ViewGroup viewGroup,
+                                           @NonNull View v,
+                                           @IdRes int rangeGroupId,
+                                           @IdRes int episodeGroupId) {
+
+        try {
+            if (null == v)
+                throw new Exception("v error: null");
+            ViewGroup rangeGroup = (ViewGroup) v.getParent();
+            if (null == rangeGroup)
+                throw new Exception("rangeGroup error: null");
+            if (!(rangeGroup instanceof LinearLayout))
+                throw new Exception("rangeGroup error: not instanceof LinearLayout");
+            T t = (T) v.getTag(R.id.lb_presenter_range);
+            if (null == t)
+                throw new Exception("t error: null");
+            int rangeIndex = t.getRangeIndex();
+            if (rangeIndex <= 0)
+                throw new Exception("rangeIndexOfChild warning: " + rangeIndex);
+            int rangeIndexOfChild = rangeGroup.indexOfChild(v);
+            if (rangeIndexOfChild < 0)
+                throw new Exception("rangeIndexOfChild warning: " + rangeIndexOfChild);
+            int rangeStartIndex = rangeIndex - 1;
+            if (rangeIndexOfChild > 0) {
+                // 1
+                t.setFocus(false);
+                t.setChecked(false);
+                onBindHolderRange(v.getContext(), v, t, rangeIndexOfChild);
+                // 2
+                View nextFocus = FocusFinder.getInstance().findNextFocus(rangeGroup, v, View.FOCUS_LEFT);
+                T t1 = (T) nextFocus.getTag(R.id.lb_presenter_range);
+                t1.setFocus(true);
+                t1.setChecked(true);
+                onBindHolderRange(nextFocus.getContext(), nextFocus, t1, rangeIndexOfChild - 1);
+                // 3
+                setDataEpisode(viewGroup, episodeGroupId, rangeStartIndex, -1, false);
+            } else {
+                refreshDataRange(viewGroup, rangeStartIndex, rangeStartIndex, episodeGroupId, rangeGroupId, false);
+            }
+            return false;
+        } catch (Exception e) {
+            LeanBackUtil.log("ListTvEpisodesPresenterImpl => dispatchEventRangeLeft => " + e.getMessage());
+            return true;
+        }
+    }
+
+    default boolean dispatchEventRangeRight(@NonNull ViewGroup viewGroup,
+                                            @NonNull View v,
+                                            @IdRes int rangeGroupId,
+                                            @IdRes int episodeGroupId) {
+
+        try {
+            if (null == v)
+                throw new Exception("v error: null");
+            ViewGroup rangeGroup = (ViewGroup) v.getParent();
+            if (null == rangeGroup)
+                throw new Exception("rangeGroup error: null");
+            if (!(rangeGroup instanceof LinearLayout))
+                throw new Exception("rangeGroup error: not instanceof LinearLayout");
+            T t = (T) v.getTag(R.id.lb_presenter_range);
+            if (null == t)
+                throw new Exception("t error: null");
+            int rangeIndex = t.getRangeIndex();
+            int rangeMax = t.getRangeMax();
+            if (rangeIndex + 1 >= rangeMax)
+                throw new Exception("rangeIndex warning: " + rangeIndex);
+            int indexOfChild = rangeGroup.indexOfChild(v);
+            if (indexOfChild < 0)
+                throw new Exception("indexOfChild warning: " + indexOfChild);
+            int childCount = rangeGroup.getChildCount();
+            if (childCount <= 0)
+                throw new Exception("childCount warning: " + childCount);
+            int checkedIndex = rangeIndex + 1;
+            if (indexOfChild + 1 < childCount) {
+                // 1
+                t.setFocus(false);
+                t.setChecked(false);
+                onBindHolderRange(v.getContext(), v, t, indexOfChild);
+                // 2
+                View nextFocus = FocusFinder.getInstance().findNextFocus(viewGroup, v, View.FOCUS_RIGHT);
+                T t1 = (T) nextFocus.getTag(R.id.lb_presenter_range);
+                t1.setFocus(true);
+                t1.setChecked(true);
+                onBindHolderRange(nextFocus.getContext(), nextFocus, t1, indexOfChild + 1);
+                // 3
+                setDataEpisode(viewGroup, episodeGroupId, checkedIndex, -1, false);
+            } else {
+                int startIndex = checkedIndex - (initRangeNum() - 1);
+                refreshDataRange(viewGroup, startIndex, checkedIndex, episodeGroupId, rangeGroupId, false);
+            }
+            return false;
+        } catch (Exception e) {
+            LeanBackUtil.log("ListTvEpisodesPresenterImpl => dispatchEventRangeRight => " + e.getMessage());
+            return true;
+        }
+    }
+
+    default boolean dispatchEventEpisodesLeft(@NonNull ViewGroup viewGroup,
+                                              @NonNull View v,
+                                              @IdRes int rangeGroupId,
+                                              @IdRes int episodeGroupId) {
         try {
             int episodeNum = initEpisodeNum();
             if (episodeNum < 0)
                 throw new Exception("episodeNum error: " + episodeNum);
-            LinearLayout episodeGroup = viewGroup.findViewById(episodeGroupId);
+            if (null == v)
+                throw new Exception("v error: null");
+            ViewGroup episodeGroup = (ViewGroup) v.getParent();
             if (null == episodeGroup)
                 throw new Exception("episodeGroup error: null");
+            if (!(episodeGroup instanceof LinearLayout))
+                throw new Exception("episodeGroup error: not instanceof LinearLayout");
             int episodeChildCount = episodeGroup.getChildCount();
             if (episodeChildCount <= 0)
                 throw new Exception("episodeChildCount error: " + episodeChildCount);
             int episodeIndexOfChild = episodeGroup.indexOfChild(v);
-            LeanBackUtil.log("ListTvEpisodesPresenterImpl => scrollEpisodesLeft => episodeIndexOfChild = " + episodeIndexOfChild);
             if (episodeIndexOfChild < 0)
                 throw new Exception("episodeIndexOfChild warning: " + episodeIndexOfChild);
             T t = (T) v.getTag(R.id.lb_presenter_episode);
             if (null == t)
                 throw new Exception("t error: null");
+            int episodeIndex = t.getEpisodeIndex();
+            if (episodeIndex <= 0)
+                throw new Exception("episodeIndex warning: " + episodeIndex);
             if (episodeIndexOfChild > 0) {
                 // 1
                 t.setFocus(false);
@@ -920,12 +943,7 @@ public interface ListTvEpisodesDoubleLinearLayoutPresenterImpl<T extends TvEpiso
                 tNext.setChecked(true);
                 onBindHolderEpisode(vNext.getContext(), vNext, tNext, nextepisodeIndex);
             } else {
-                int episodeIndex = t.getEpisodeIndex();
-                LeanBackUtil.log("ListTvEpisodesPresenterImpl => scrollEpisodesLeft => episodeIndex = " + episodeIndex);
-                if (episodeIndex <= 0)
-                    throw new Exception("episodeIndex warning: " + episodeIndex);
                 int rangeIndex = t.getRangeIndex();
-                LeanBackUtil.log("ListTvEpisodesPresenterImpl => scrollEpisodesLeft => rangeIndex = " + rangeIndex);
                 if (rangeIndex < 0)
                     throw new Exception("rangeIndex error: " + rangeIndex);
                 // 1
@@ -936,16 +954,9 @@ public interface ListTvEpisodesDoubleLinearLayoutPresenterImpl<T extends TvEpiso
                 T tRangeFirst = (T) vRangeFirst.getTag(R.id.lb_presenter_range);
                 int firstRangeIndex = tRangeFirst.getRangeIndex();
                 int nextRangeIndex = rangeIndex - 1;
-                LeanBackUtil.log("ListTvEpisodesPresenterImpl => scrollEpisodesLeft => nextRangeIndex = " + nextRangeIndex + ", firstRangeIndex = " + firstRangeIndex);
                 if (nextRangeIndex <= firstRangeIndex) {
-                    int checkedRangeIndex;
-                    if (episodeIndex <= episodeNum) {
-                        checkedRangeIndex = nextRangeIndex;
-                    } else {
-                        checkedRangeIndex = nextRangeIndex + initRangeNum() - 1;
-                    }
                     cleanDataRange(viewGroup, rangeGroupId);
-                    setDataRange(viewGroup, rangeGroupId, nextRangeIndex, checkedRangeIndex);
+                    setDataRange(viewGroup, rangeGroupId, nextRangeIndex, nextRangeIndex);
                     setDataEpisode(viewGroup, episodeGroupId, nextRangeIndex, episodeNum - 1, true);
                 } else {
                     int rangeNum = initRangeNum();
@@ -957,7 +968,6 @@ public interface ListTvEpisodesDoubleLinearLayoutPresenterImpl<T extends TvEpiso
                         if (null == o)
                             continue;
                         int index = o.getRangeIndex();
-                        LeanBackUtil.log("ListTvEpisodesPresenterImpl => scrollEpisodesLeft => index = " + index + ", nextRangeIndex = " + nextRangeIndex);
                         if (index == rangeIndex || index == nextRangeIndex) {
                             o.setFocus(false);
                             o.setChecked(index == nextRangeIndex);
@@ -966,31 +976,42 @@ public interface ListTvEpisodesDoubleLinearLayoutPresenterImpl<T extends TvEpiso
                     }
                     setDataEpisode(viewGroup, episodeGroupId, nextRangeIndex, episodeNum - 1, true);
                 }
-                requestFocusEpisodeChild(viewGroup, episodeGroupId, episodeNum - 1);
+                requestFocusEpisodeViewIndex(viewGroup, episodeGroupId, episodeNum - 1);
             }
+            return false;
         } catch (Exception e) {
-            LeanBackUtil.log("ListTvEpisodesPresenterImpl => scrollEpisodesLeft => " + e.getMessage());
+            LeanBackUtil.log("ListTvEpisodesPresenterImpl => dispatchEventEpisodesLeft => " + e.getMessage());
+            return true;
         }
     }
 
-    default void scrollEpisodesRight(@NonNull ViewGroup viewGroup,
-                                     @NonNull View v,
-                                     @IdRes int rangeGroupId,
-                                     @IdRes int episodeGroupId) {
+    default boolean dispatchEventEpisodesRight(@NonNull ViewGroup viewGroup,
+                                               @NonNull View v,
+                                               @IdRes int rangeGroupId,
+                                               @IdRes int episodeGroupId) {
         try {
-            LinearLayout episodeGroup = viewGroup.findViewById(episodeGroupId);
+            if (null == v)
+                throw new Exception("v error: null");
+            ViewGroup episodeGroup = (ViewGroup) v.getParent();
             if (null == episodeGroup)
                 throw new Exception("episodeGroup error: null");
+            if (!(episodeGroup instanceof LinearLayout))
+                throw new Exception("episodeGroup error: not instanceof LinearLayout");
             int episodeChildCount = episodeGroup.getChildCount();
             if (episodeChildCount <= 0)
                 throw new Exception("episodeChildCount error: " + episodeChildCount);
             int episodeIndexOfChild = episodeGroup.indexOfChild(v);
-            LeanBackUtil.log("ListTvEpisodesPresenterImpl => scrollEpisodesRight => episodeIndexOfChild = " + episodeIndexOfChild);
             if (episodeIndexOfChild < 0)
                 throw new Exception("episodeIndexOfChild warning: " + episodeIndexOfChild);
             T t = (T) v.getTag(R.id.lb_presenter_episode);
             if (null == t)
                 throw new Exception("t error: null");
+            int episodeMax = t.getEpisodeMax();
+            if (episodeMax <= 0)
+                throw new Exception("episodeMax error: " + episodeMax);
+            int episodeIndex = t.getEpisodeIndex();
+            if (episodeIndex + 1 >= episodeMax)
+                throw new Exception("episodeIndex warning: " + episodeIndex + ", episodeMax = " + episodeMax);
             if (episodeIndexOfChild + 1 < episodeChildCount) {
                 // 1
                 t.setFocus(false);
@@ -1004,16 +1025,7 @@ public interface ListTvEpisodesDoubleLinearLayoutPresenterImpl<T extends TvEpiso
                 nextT.setChecked(true);
                 onBindHolderEpisode(nextFocus.getContext(), nextFocus, nextT, nextepisodeIndex);
             } else {
-                int episodeMax = t.getEpisodeMax();
-                LeanBackUtil.log("ListTvEpisodesPresenterImpl => scrollEpisodesRight => episodeMax = " + episodeMax);
-                if (episodeMax <= 0)
-                    throw new Exception("episodeMax error: " + episodeMax);
-                int episodeIndex = t.getEpisodeIndex();
-                LeanBackUtil.log("ListTvEpisodesPresenterImpl => scrollEpisodesRight => episodeIndex = " + episodeIndex);
-                if (episodeIndex + 1 >= episodeMax)
-                    throw new Exception("episodeIndex warning: " + episodeIndex + ", episodeMax = " + episodeMax);
                 int rangeIndex = t.getRangeIndex();
-                LeanBackUtil.log("ListTvEpisodesPresenterImpl => scrollEpisodesRight => rangeIndex = " + rangeIndex);
                 if (rangeIndex < 0)
                     throw new Exception("rangeIndex error: " + rangeIndex);
                 // 1
@@ -1025,7 +1037,6 @@ public interface ListTvEpisodesDoubleLinearLayoutPresenterImpl<T extends TvEpiso
                 T tRangeLast = (T) vRangeLast.getTag(R.id.lb_presenter_range);
                 int lastRangeIndex = tRangeLast.getRangeIndex();
                 int nextRangeIndex = rangeIndex + 1;
-                LeanBackUtil.log("ListTvEpisodesPresenterImpl => scrollEpisodesRight => nextRangeIndex = " + nextRangeIndex + ", lastRangeIndex = " + lastRangeIndex);
                 if (nextRangeIndex >= lastRangeIndex) {
                     int startRangeIndex = nextRangeIndex - initRangeNum() + 1;
                     cleanDataRange(viewGroup, rangeGroupId);
@@ -1041,7 +1052,6 @@ public interface ListTvEpisodesDoubleLinearLayoutPresenterImpl<T extends TvEpiso
                         if (null == o)
                             continue;
                         int index = o.getRangeIndex();
-                        LeanBackUtil.log("ListTvEpisodesPresenterImpl => scrollEpisodesRight => index = " + index + ", nextRangeIndex = " + nextRangeIndex);
                         if (index == rangeIndex || index == nextRangeIndex) {
                             o.setFocus(false);
                             o.setChecked(index == nextRangeIndex);
@@ -1050,14 +1060,16 @@ public interface ListTvEpisodesDoubleLinearLayoutPresenterImpl<T extends TvEpiso
                     }
                     setDataEpisode(viewGroup, episodeGroupId, nextRangeIndex, 0, true);
                 }
-                requestFocusEpisodeChild(viewGroup, episodeGroupId, 0);
+                requestFocusEpisodeViewIndex(viewGroup, episodeGroupId, 0);
             }
+            return false;
         } catch (Exception e) {
-            LeanBackUtil.log("ListTvEpisodesPresenterImpl => scrollEpisodesRight => " + e.getMessage());
+            LeanBackUtil.log("ListTvEpisodesPresenterImpl => dispatchEventEpisodesRight => " + e.getMessage());
+            return true;
         }
     }
 
-    default void requestFocusEpisodeChild(ViewGroup viewGroup, int episodeGroupId, int index) {
+    default void requestFocusEpisodeViewIndex(ViewGroup viewGroup, int episodeGroupId, int index) {
         new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -1077,7 +1089,7 @@ public interface ListTvEpisodesDoubleLinearLayoutPresenterImpl<T extends TvEpiso
                         throw new Exception("child error: null");
                     child.requestFocus();
                 } catch (Exception e) {
-                    LeanBackUtil.log("ListTvEpisodesPresenterImpl => requestFocusEpisodeChild => " + e.getMessage());
+                    LeanBackUtil.log("ListTvEpisodesPresenterImpl => requestFocusEpisodeViewIndex => " + e.getMessage());
                 }
             }
         }, 10);

@@ -1,4 +1,4 @@
-package lib.kalu.leanback.focus;
+package lib.kalu.leanback.scale;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -20,7 +20,7 @@ import androidx.leanback.R;
 import lib.kalu.leanback.util.LeanBackUtil;
 
 @SuppressLint("AppCompatCustomView")
-public class FocusTextView extends TextView {
+public class ScaleTextView extends TextView {
 
     @DrawableRes
     int mBgResNormal = -1;
@@ -38,23 +38,23 @@ public class FocusTextView extends TextView {
     private float mScale = 1.05f;
     private int mDuration = 100;
 
-    public FocusTextView(Context context) {
+    public ScaleTextView(Context context) {
         super(context);
         init(context, null);
     }
 
-    public FocusTextView(Context context, AttributeSet attrs) {
+    public ScaleTextView(Context context, AttributeSet attrs) {
         super(context, attrs);
         init(context, attrs);
     }
 
-    public FocusTextView(Context context, AttributeSet attrs, int defStyleAttr) {
+    public ScaleTextView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init(context, attrs);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-    public FocusTextView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+    public ScaleTextView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
         init(context, attrs);
     }

@@ -87,7 +87,7 @@ interface ClassLayoutImpl {
                 RadioButton radioButton = (RadioButton) radioGroup.getChildAt(i);
                 if (null == radioButton)
                     continue;
-                Object tag = radioButton.getTag(R.id.lb_classlayoutimpl_data);
+                Object tag = radioButton.getTag(R.id.lb_classlayout_data);
                 if (null == tag || !(tag instanceof ClassBean))
                     continue;
                 if (((ClassBean) tag).isChecked()) {
@@ -126,7 +126,7 @@ interface ClassLayoutImpl {
                 RadioButton radioButton = (RadioButton) radioGroup.getChildAt(i);
                 if (null == radioButton)
                     continue;
-                Object tag = radioButton.getTag(R.id.lb_classlayoutimpl_data);
+                Object tag = radioButton.getTag(R.id.lb_classlayout_data);
                 if (null == tag || !(tag instanceof ClassBean))
                     continue;
                 if (((ClassBean) tag).isChecked())
@@ -163,7 +163,7 @@ interface ClassLayoutImpl {
                 RadioButton radioButton = (RadioButton) radioGroup.getChildAt(i);
                 if (null == radioButton)
                     continue;
-                Object tag = radioButton.getTag(R.id.lb_classlayoutimpl_data);
+                Object tag = radioButton.getTag(R.id.lb_classlayout_data);
                 if (null == tag || !(tag instanceof ClassBean))
                     continue;
                 LeanBackUtil.log("ClassLayoutImpl => setCheckedIndex => i = " + i + ", tag = " + tag.toString());
@@ -192,7 +192,7 @@ interface ClassLayoutImpl {
                 RadioButton radioButton = (RadioButton) radioGroup.getChildAt(i);
                 if (null == radioButton)
                     continue;
-                Object tag = radioButton.getTag(R.id.lb_classlayoutimpl_data);
+                Object tag = radioButton.getTag(R.id.lb_classlayout_data);
                 if (null == tag || !(tag instanceof ClassBean))
                     continue;
                 if (((ClassBean) tag).isChecked())
@@ -216,7 +216,7 @@ interface ClassLayoutImpl {
                 RadioButton radioButton = (RadioButton) radioGroup.getChildAt(i);
                 if (null == radioButton)
                     continue;
-                Object tag = radioButton.getTag(R.id.lb_classlayoutimpl_data);
+                Object tag = radioButton.getTag(R.id.lb_classlayout_data);
                 if (null == tag || !(tag instanceof ClassBean))
                     continue;
                 if (((ClassBean) tag).isChecked())
@@ -313,7 +313,7 @@ interface ClassLayoutImpl {
                     }
                 }
                 radioButton.setLayoutParams(layoutParams);
-                radioButton.setTag(R.id.lb_classlayoutimpl_data, o);
+                radioButton.setTag(R.id.lb_classlayout_data, o);
                 radioButton.setSingleLine();
                 radioButton.setFocusable(false);
                 radioButton.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize);

@@ -1,12 +1,11 @@
-package lib.kalu.leanback.focus;
+package lib.kalu.leanback.scale;
 
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Rect;
 import android.os.Build;
 import android.util.AttributeSet;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
+import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -14,27 +13,27 @@ import androidx.annotation.RequiresApi;
 import androidx.core.view.ViewCompat;
 import androidx.leanback.R;
 
-public class FocusLinearLayout extends LinearLayout {
+public class ScaleFrameLayout extends FrameLayout {
 
     public float mScale = 1.05f;
     public int mDuration = 100;
 
-    public FocusLinearLayout(Context context) {
+    public ScaleFrameLayout(Context context) {
         super(context);
     }
 
-    public FocusLinearLayout(Context context, AttributeSet attrs) {
+    public ScaleFrameLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
         init(context, attrs);
     }
 
-    public FocusLinearLayout(Context context, AttributeSet attrs, int defStyleAttr) {
+    public ScaleFrameLayout(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init(context, attrs);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-    public FocusLinearLayout(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+    public ScaleFrameLayout(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
         init(context, attrs);
     }

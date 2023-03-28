@@ -30,7 +30,6 @@ import androidx.leanback.R;
 
 @SuppressLint("AppCompatCustomView")
 public class RoundImageView extends ImageView {
-
     private int mRadius = 0;
     public boolean mFocus = false;
     public float mScale = 1.05f;

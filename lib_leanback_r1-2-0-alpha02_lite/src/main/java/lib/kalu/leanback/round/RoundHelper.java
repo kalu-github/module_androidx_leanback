@@ -9,7 +9,6 @@ import android.graphics.Path;
 import android.graphics.PointF;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
-import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Region;
 import android.os.Build;
@@ -17,18 +16,11 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
 
-import androidx.annotation.ColorInt;
-import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.core.view.ViewCompat;
 import androidx.leanback.R;
 
-import lib.kalu.leanback.auto.AutoImageView;
-import lib.kalu.leanback.auto.AutoTextView;
-import lib.kalu.leanback.focus.FocusTextView;
-
-public final class RoundHelper {
+final class RoundHelper {
     public float[] mRadii = new float[8];   // top-left, top-right, bottom-right, bottom-left
     public float[] mRadiiTemp = new float[8];   // top-left, top-right, bottom-right, bottom-left
     public Path mClipPath;                 // 剪裁区域路径
@@ -173,20 +165,6 @@ public final class RoundHelper {
         if (mScale < 1F)
             return;
         ViewCompat.animate(view).scaleX(gainFocus ? mScale : 1f).scaleY(gainFocus ? mScale : 1f).setDuration(mDuration).start();
-    }
-
-    protected void onFocusCall(@NonNull ViewGroup viewGroup, boolean gainFocus) {
-        int count = viewGroup.getChildCount();
-        for (int i = 0; i < count; i++) {
-            View view = viewGroup.getChildAt(i);
-            if (null == view)
-                continue;
-            if (view instanceof AutoTextView) {
-                ((AutoTextView) view).onFocusCall(gainFocus);
-            } else if (view instanceof AutoImageView) {
-                view.setVisibility(gainFocus ? View.VISIBLE : View.INVISIBLE);
-            }
-        }
     }
 
     protected float getRateW() {

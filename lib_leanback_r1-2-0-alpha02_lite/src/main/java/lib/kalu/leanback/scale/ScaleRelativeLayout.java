@@ -1,4 +1,4 @@
-package lib.kalu.leanback.focus;
+package lib.kalu.leanback.scale;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -13,27 +13,27 @@ import androidx.annotation.RequiresApi;
 import androidx.core.view.ViewCompat;
 import androidx.leanback.R;
 
-public class FocusRelativeLayout extends RelativeLayout {
+public class ScaleRelativeLayout extends RelativeLayout {
 
     public float mScale = 1.05f;
     public int mDuration = 100;
 
-    public FocusRelativeLayout(Context context) {
+    public ScaleRelativeLayout(Context context) {
         super(context);
     }
 
-    public FocusRelativeLayout(Context context, AttributeSet attrs) {
+    public ScaleRelativeLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
         init(context, attrs);
     }
 
-    public FocusRelativeLayout(Context context, AttributeSet attrs, int defStyleAttr) {
+    public ScaleRelativeLayout(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init(context, attrs);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-    public FocusRelativeLayout(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+    public ScaleRelativeLayout(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
         init(context, attrs);
     }

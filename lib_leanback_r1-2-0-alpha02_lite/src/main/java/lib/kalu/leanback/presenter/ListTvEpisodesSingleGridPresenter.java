@@ -204,9 +204,9 @@ public abstract class ListTvEpisodesSingleGridPresenter<T extends TvEpisodesGrid
                                         if (hasFocus) {
                                             t.setChecked(true);
                                         } else {
-                                            Object tag = v.getTag(R.id.lb_listtvepisodesgridpresenter);
+                                            Object tag = v.getTag(R.id.lb_presenter_episodes_grid);
                                             if (null != tag) {
-                                                v.setTag(R.id.lb_listtvepisodesgridpresenter, null);
+                                                v.setTag(R.id.lb_presenter_episodes_grid, null);
                                             } else {
                                                 t.setChecked(false);
                                             }
@@ -225,7 +225,7 @@ public abstract class ListTvEpisodesSingleGridPresenter<T extends TvEpisodesGrid
                                         int cur = holder.getAbsoluteAdapterPosition();
                                         LeanBackUtil.log("ListTvEpisodesGridPresenter => onKey => up-leave => cur = " + cur);
                                         if (cur >= 0 && cur % 2 == 0) {
-                                            v.setTag(R.id.lb_listtvepisodesgridpresenter, true);
+                                            v.setTag(R.id.lb_presenter_episodes_grid, true);
                                             T t = mData.get(cur);
                                             t.setChecked(true);
                                             t.setFocus(false);
@@ -271,7 +271,7 @@ public abstract class ListTvEpisodesSingleGridPresenter<T extends TvEpisodesGrid
                                             T t = mData.get(cur);
                                             t.setChecked(true);
                                             t.setFocus(false);
-                                            v.setTag(R.id.lb_listtvepisodesgridpresenter, true);
+                                            v.setTag(R.id.lb_presenter_episodes_grid, true);
                                         }
                                     }
                                     // down-into down-move
