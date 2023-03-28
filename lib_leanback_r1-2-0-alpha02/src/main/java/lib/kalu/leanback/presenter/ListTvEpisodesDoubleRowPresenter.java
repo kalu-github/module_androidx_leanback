@@ -1,8 +1,6 @@
 package lib.kalu.leanback.presenter;
 
 import android.content.Context;
-import android.os.Handler;
-import android.os.Looper;
 import android.view.FocusFinder;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -161,7 +159,7 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
                 throw new Exception("length error: " + length);
             return length;
         } catch (Exception e) {
-            LeanBackUtil.log("ListTvEpisodesPlusPresenterImpl => getEpisodeLength => " + e.getMessage());
+            LeanBackUtil.log("ListTvEpisodesDoubleRowPresenter => getEpisodeLength => " + e.getMessage());
             return -1;
         }
     }
@@ -170,7 +168,7 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
         try {
             return mData.size();
         } catch (Exception e) {
-            LeanBackUtil.log("ListTvEpisodesPlusPresenterImpl => getRangeLength => " + e.getMessage());
+            LeanBackUtil.log("ListTvEpisodesDoubleRowPresenter => getRangeLength => " + e.getMessage());
             return 0;
         }
     }
@@ -232,7 +230,7 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
             }
 
         } catch (Exception e) {
-            LeanBackUtil.log("ListTvEpisodesPlusPresenterImpl => formatData => " + e.getMessage());
+            LeanBackUtil.log("ListTvEpisodesDoubleRowPresenter => formatData => " + e.getMessage());
         }
     }
 
@@ -247,7 +245,7 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
             }
             throw new Exception("position error: " + position);
         } catch (Exception e) {
-            LeanBackUtil.log("ListTvEpisodesPlusPresenterImpl => getDataIndexOfRange => " + e.getMessage());
+            LeanBackUtil.log("ListTvEpisodesDoubleRowPresenter => getDataIndexOfRange => " + e.getMessage());
             throw null;
         }
     }
@@ -262,7 +260,7 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
             }
             throw new Exception("not find error: " + index);
         } catch (Exception e) {
-            LeanBackUtil.log("ListTvEpisodesPlusPresenterImpl => getDataIndexOfEpisode => " + e.getMessage());
+            LeanBackUtil.log("ListTvEpisodesDoubleRowPresenter => getDataIndexOfEpisode => " + e.getMessage());
             return null;
         }
     }
@@ -283,7 +281,7 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
             }
             throw new Exception("index error: " + index);
         } catch (Exception e) {
-            LeanBackUtil.log("ListTvEpisodesPlusPresenterImpl => getPlayingIndexOfRange => " + e.getMessage());
+            LeanBackUtil.log("ListTvEpisodesDoubleRowPresenter => getPlayingIndexOfRange => " + e.getMessage());
             return -1;
         }
     }
@@ -304,7 +302,7 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
             }
             throw new Exception("index error: " + index);
         } catch (Exception e) {
-            LeanBackUtil.log("ListTvEpisodesPlusPresenterImpl => getCheckedIndexOfRange => " + e.getMessage());
+            LeanBackUtil.log("ListTvEpisodesDoubleRowPresenter => getCheckedIndexOfRange => " + e.getMessage());
             return -1;
         }
     }
@@ -327,7 +325,7 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
             }
             throw new Exception("not find");
         } catch (Exception e) {
-            LeanBackUtil.log("ListTvEpisodesPlusPresenterImpl => getPlayingIndexOfEpisode => " + e.getMessage());
+            LeanBackUtil.log("ListTvEpisodesDoubleRowPresenter => getPlayingIndexOfEpisode => " + e.getMessage());
             return -1;
         }
     }
@@ -350,7 +348,7 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
             }
             throw new Exception("not find");
         } catch (Exception e) {
-            LeanBackUtil.log("ListTvEpisodesPlusPresenterImpl => getCheckedIndexOfEpisode => " + e.getMessage());
+            LeanBackUtil.log("ListTvEpisodesDoubleRowPresenter => getCheckedIndexOfEpisode => " + e.getMessage());
             return -1;
         }
     }
@@ -364,26 +362,30 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
                 throw new Exception("checkedIndex error: " + checkedIndex);
             if (startIndex < 0)
                 throw new Exception("startIndex error: " + startIndex);
-            LinearLayout layoutGroup = viewGroup.findViewById(groupId);
-            if (null == layoutGroup)
+            LinearLayout rangeGroup = viewGroup.findViewById(groupId);
+            if (null == rangeGroup)
                 throw new Exception("layoutGroup error: null");
-            int count = layoutGroup.getChildCount();
-            for (int i = 0; i < count; i++) {
-                View v = layoutGroup.getChildAt(i);
-                if (null == v)
+            int rangeChildCount = rangeGroup.getChildCount();
+            int rangeLength = getRangeLength();
+            for (int i = 0; i < rangeChildCount; i++) {
+                View child = rangeGroup.getChildAt(i);
+                if (null == child)
                     continue;
-                int real = startIndex + i;
-                T t = getDataIndexOfRange(real);
-                t.setFocus(v.hasFocus() && real == checkedIndex);
-                t.setChecked(real == checkedIndex);
-                v.setVisibility(null == t ? View.GONE : View.VISIBLE);
-                v.setTag(R.id.lb_presenter_range, t);
+                child.setTag(R.id.lb_presenter_range, null);
+                child.setVisibility(i >= rangeLength ? View.INVISIBLE : View.VISIBLE);
+                if (i >= rangeChildCount)
+                    continue;
+                int rangeIndex = startIndex + i;
+                T t = getDataIndexOfRange(rangeIndex);
                 if (null == t)
                     continue;
-                ((ListTvEpisodesDoubleRowPresenter) this).onBindHolderRange(v.getContext(), v, t, i);
+                t.setFocus(child.hasFocus() && rangeIndex == checkedIndex);
+                t.setChecked(rangeIndex == checkedIndex);
+                child.setTag(R.id.lb_presenter_range, t);
+                onBindHolderRange(child.getContext(), child, t, i);
             }
         } catch (Exception e) {
-            LeanBackUtil.log("ListTvEpisodesPlusPresenterImpl => setDataRange => " + e.getMessage());
+            LeanBackUtil.log("ListTvEpisodesDoubleRowPresenter => setDataRange => " + e.getMessage());
         }
     }
 
@@ -419,17 +421,22 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
                         t.setFocus(hasFocus && i == checkedIndexEspisode);
                         t.setChecked(i == checkedIndexEspisode);
                         if (hasFocus && i == checkedIndexEspisode) {
-                            child.requestFocus();
+                            child.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    child.requestFocus();
+                                }
+                            });
                         }
                         if (i == checkedIndexEspisode) {
-                            ((ListTvEpisodesDoubleRowPresenter) this).onClickEpisode(child.getContext(), child, t, i, false);
+                            onClickEpisode(child.getContext(), child, t, i, false);
                         }
-                        ((ListTvEpisodesDoubleRowPresenter) this).onBindHolderEpisode(child.getContext(), child, t, i);
+                        onBindHolderEpisode(child.getContext(), child, t, i);
                     }
                 }
             }
         } catch (Exception e) {
-            LeanBackUtil.log("ListTvEpisodesPlusPresenterImpl => setDataEpisode => " + e.getMessage());
+            LeanBackUtil.log("ListTvEpisodesDoubleRowPresenter => setDataEpisode => " + e.getMessage());
         }
     }
 
@@ -452,11 +459,11 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
                 if (t.isPlaying() || t.isChecked() || t.isFocus()) {
                     t.setChecked(false);
                     t.setFocus(false);
-                    ((ListTvEpisodesDoubleRowPresenter) this).onBindHolderRange(v.getContext(), v, t, i);
+                    onBindHolderRange(v.getContext(), v, t, i);
                 }
             }
         } catch (Exception e) {
-            LeanBackUtil.log("ListTvEpisodesPlusPresenterImpl => cleanDataRange => " + e.getMessage(), e);
+            LeanBackUtil.log("ListTvEpisodesDoubleRowPresenter => cleanDataRange => " + e.getMessage(), e);
         }
     }
 
@@ -479,11 +486,11 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
                 if (t.isPlaying() || t.isChecked() || t.isFocus()) {
                     t.setChecked(false);
                     t.setFocus(false);
-                    ((ListTvEpisodesDoubleRowPresenter) this).onBindHolderRange(v.getContext(), v, t, i);
+                    onBindHolderRange(v.getContext(), v, t, i);
                 }
             }
         } catch (Exception e) {
-            LeanBackUtil.log("ListTvEpisodesPlusPresenterImpl => cleanDataEpisode => " + e.getMessage(), e);
+            LeanBackUtil.log("ListTvEpisodesDoubleRowPresenter => cleanDataEpisode => " + e.getMessage(), e);
         }
     }
 
@@ -504,7 +511,7 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
             cleanDataEpisode(viewGroup, episodeGroupId);
             setDataEpisode(viewGroup, episodeGroupId, checkedRangeIndex, -1, false);
         } catch (Exception e) {
-            LeanBackUtil.log("ListTvEpisodesPlusPresenterImpl => refreshDataRange => " + e.getMessage(), e);
+            LeanBackUtil.log("ListTvEpisodesDoubleRowPresenter => refreshDataRange => " + e.getMessage(), e);
         }
     }
 
@@ -529,7 +536,7 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
                     v.requestFocus();
                     t.setFocus(true);
                     t.setChecked(true);
-                    ((ListTvEpisodesDoubleRowPresenter) this).onBindHolderEpisode(v.getContext(), v, t, i);
+                    onBindHolderEpisode(v.getContext(), v, t, i);
                     return;
                 }
             }
@@ -544,7 +551,7 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
                     v.requestFocus();
                     t.setFocus(true);
                     t.setChecked(true);
-                    ((ListTvEpisodesDoubleRowPresenter) this).onBindHolderEpisode(v.getContext(), v, t, i);
+                    onBindHolderEpisode(v.getContext(), v, t, i);
                     return;
                 }
             }
@@ -555,7 +562,7 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
             v.requestFocus();
             t.setFocus(true);
             t.setChecked(true);
-            ((ListTvEpisodesDoubleRowPresenter) this).onBindHolderEpisode(v.getContext(), v, t, 0);
+            onBindHolderEpisode(v.getContext(), v, t, 0);
         } catch (Exception e) {
             LeanBackUtil.log("ListTvEpisodesPresenterImpl => requestFocusCheckedEpisode => " + e.getMessage());
         }
@@ -582,7 +589,7 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
                     v.clearFocus();
                     t.setFocus(false);
                     t.setChecked(true);
-                    ((ListTvEpisodesDoubleRowPresenter) this).onBindHolderEpisode(v.getContext(), v, t, i);
+                    onBindHolderEpisode(v.getContext(), v, t, i);
                     return;
                 }
             }
@@ -593,7 +600,7 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
             v.clearFocus();
             t.setFocus(true);
             t.setChecked(true);
-            ((ListTvEpisodesDoubleRowPresenter) this).onBindHolderEpisode(v.getContext(), v, t, 0);
+            onBindHolderEpisode(v.getContext(), v, t, 0);
         } catch (Exception e) {
             LeanBackUtil.log("ListTvEpisodesPresenterImpl => cleanFocusCheckedEpisode => " + e.getMessage());
         }
@@ -620,7 +627,7 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
                     v.requestFocus();
                     t.setFocus(true);
                     t.setChecked(true);
-                    ((ListTvEpisodesDoubleRowPresenter) this).onBindHolderRange(v.getContext(), v, t, i);
+                    onBindHolderRange(v.getContext(), v, t, i);
                     return;
                 }
             }
@@ -631,7 +638,7 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
             v.requestFocus();
             t.setFocus(true);
             t.setChecked(true);
-            ((ListTvEpisodesDoubleRowPresenter) this).onBindHolderRange(v.getContext(), v, t, 0);
+            onBindHolderRange(v.getContext(), v, t, 0);
         } catch (Exception e) {
             LeanBackUtil.log("ListTvEpisodesPresenterImpl => requestFocusCheckedRange => " + e.getMessage());
         }
@@ -658,7 +665,7 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
                     v.clearFocus();
                     t.setFocus(false);
                     t.setChecked(true);
-                    ((ListTvEpisodesDoubleRowPresenter) this).onBindHolderRange(v.getContext(), v, t, i);
+                    onBindHolderRange(v.getContext(), v, t, i);
                     return;
                 }
             }
@@ -669,7 +676,7 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
             v.clearFocus();
             t.setFocus(false);
             t.setChecked(true);
-            ((ListTvEpisodesDoubleRowPresenter) this).onBindHolderRange(v.getContext(), v, t, 0);
+            onBindHolderRange(v.getContext(), v, t, 0);
         } catch (Exception e) {
             LeanBackUtil.log("ListTvEpisodesPresenterImpl => cleanFocusCheckedRange => " + e.getMessage());
         }
@@ -702,7 +709,7 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
             layoutGroup.setWeightSum(rangeNum);
             // 3
             for (int i = 0; i < rangeNum; i++) {
-                int rangeLayout = ((ListTvEpisodesDoubleRowPresenter) this).initRangeLayout();
+                int rangeLayout = initRangeLayout();
                 View item = LayoutInflater.from(context).inflate(rangeLayout, layoutGroup, false);
                 layoutGroup.addView(item);
                 if (null != item.getLayoutParams()) {
@@ -796,8 +803,8 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
             t.setPlaying(true);
             t.setChecked(true);
             v.setTag(R.id.lb_presenter_episode_playing, t);
-            ((ListTvEpisodesDoubleRowPresenter) this).onBindHolderEpisode(v.getContext(), v, t, indexOfChild);
-            ((ListTvEpisodesDoubleRowPresenter) this).onClickEpisode(v.getContext(), v, t, indexOfChild, true);
+            onBindHolderEpisode(v.getContext(), v, t, indexOfChild);
+            onClickEpisode(v.getContext(), v, t, indexOfChild, true);
         } catch (Exception e) {
             LeanBackUtil.log("ListTvEpisodesDoubleLinearLayoutPresenterImpl => setDataEpisodePlaying => " + e.getMessage());
         }
@@ -828,7 +835,7 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
                 t.setPlaying(false);
                 t.setChecked(false);
                 child.setTag(R.id.lb_presenter_episode_playing, null);
-                ((ListTvEpisodesDoubleRowPresenter) this).onBindHolderEpisode(child.getContext(), child, t, i);
+                onBindHolderEpisode(child.getContext(), child, t, i);
                 break;
             }
         } catch (Exception e) {
@@ -861,7 +868,7 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
             layoutGroup.setWeightSum(episodeNum);
             // 3
             for (int i = 0; i < episodeNum; i++) {
-                int episodeLayout = ((ListTvEpisodesDoubleRowPresenter) this).initEpisodeLayout();
+                int episodeLayout = initEpisodeLayout();
                 View item = LayoutInflater.from(context).inflate(episodeLayout, layoutGroup, false);
                 layoutGroup.addView(item);
                 if (null != item.getLayoutParams()) {
@@ -952,13 +959,13 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
                 // 1
                 t.setFocus(false);
                 t.setChecked(false);
-                ((ListTvEpisodesDoubleRowPresenter) this).onBindHolderRange(v.getContext(), v, t, rangeIndexOfChild);
+                onBindHolderRange(v.getContext(), v, t, rangeIndexOfChild);
                 // 2
                 View nextFocus = FocusFinder.getInstance().findNextFocus(rangeGroup, v, View.FOCUS_LEFT);
                 T t1 = (T) nextFocus.getTag(R.id.lb_presenter_range);
                 t1.setFocus(true);
                 t1.setChecked(true);
-                ((ListTvEpisodesDoubleRowPresenter) this).onBindHolderRange(nextFocus.getContext(), nextFocus, t1, rangeIndexOfChild - 1);
+                onBindHolderRange(nextFocus.getContext(), nextFocus, t1, rangeIndexOfChild - 1);
                 // 3
                 setDataEpisode(viewGroup, episodeGroupId, rangeStartIndex, -1, false);
             } else {
@@ -1002,13 +1009,13 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
                 // 1
                 t.setFocus(false);
                 t.setChecked(false);
-                ((ListTvEpisodesDoubleRowPresenter) this).onBindHolderRange(v.getContext(), v, t, indexOfChild);
+                onBindHolderRange(v.getContext(), v, t, indexOfChild);
                 // 2
                 View nextFocus = FocusFinder.getInstance().findNextFocus(viewGroup, v, View.FOCUS_RIGHT);
                 T t1 = (T) nextFocus.getTag(R.id.lb_presenter_range);
                 t1.setFocus(true);
                 t1.setChecked(true);
-                ((ListTvEpisodesDoubleRowPresenter) this).onBindHolderRange(nextFocus.getContext(), nextFocus, t1, indexOfChild + 1);
+                onBindHolderRange(nextFocus.getContext(), nextFocus, t1, indexOfChild + 1);
                 // 3
                 setDataEpisode(viewGroup, episodeGroupId, checkedIndex, -1, false);
             } else {
@@ -1053,14 +1060,14 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
                 // 1
                 t.setFocus(false);
                 t.setChecked(false);
-                ((ListTvEpisodesDoubleRowPresenter) this).onBindHolderEpisode(v.getContext(), v, t, episodeIndexOfChild);
+                onBindHolderEpisode(v.getContext(), v, t, episodeIndexOfChild);
                 // 2
                 int nextepisodeIndex = episodeIndexOfChild - 1;
                 View vNext = episodeGroup.getChildAt(nextepisodeIndex);
                 T tNext = (T) vNext.getTag(R.id.lb_presenter_episode);
                 tNext.setFocus(true);
                 tNext.setChecked(true);
-                ((ListTvEpisodesDoubleRowPresenter) this).onBindHolderEpisode(vNext.getContext(), vNext, tNext, nextepisodeIndex);
+                onBindHolderEpisode(vNext.getContext(), vNext, tNext, nextepisodeIndex);
             } else {
                 int rangeIndex = t.getRangeIndex();
                 if (rangeIndex < 0)
@@ -1090,12 +1097,12 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
                         if (index == rangeIndex || index == nextRangeIndex) {
                             o.setFocus(false);
                             o.setChecked(index == nextRangeIndex);
-                            ((ListTvEpisodesDoubleRowPresenter) this).onBindHolderRange(child.getContext(), child, o, i);
+                            onBindHolderRange(child.getContext(), child, o, i);
                         }
                     }
                     setDataEpisode(viewGroup, episodeGroupId, nextRangeIndex, episodeNum - 1, true);
                 }
-                requestFocusEpisodeViewIndex(viewGroup, episodeGroupId, episodeNum - 1);
+//                requestFocusEpisodeViewIndex(viewGroup, episodeGroupId, episodeNum - 1);
             }
             return false;
         } catch (Exception e) {
@@ -1135,14 +1142,14 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
                 // 1
                 t.setFocus(false);
                 t.setChecked(false);
-                ((ListTvEpisodesDoubleRowPresenter) this).onBindHolderEpisode(v.getContext(), v, t, episodeIndexOfChild);
+                onBindHolderEpisode(v.getContext(), v, t, episodeIndexOfChild);
                 // 2
                 int nextepisodeIndex = episodeIndexOfChild + 1;
                 View nextFocus = episodeGroup.getChildAt(nextepisodeIndex);
                 T nextT = (T) nextFocus.getTag(R.id.lb_presenter_episode);
                 nextT.setFocus(true);
                 nextT.setChecked(true);
-                ((ListTvEpisodesDoubleRowPresenter) this).onBindHolderEpisode(nextFocus.getContext(), nextFocus, nextT, nextepisodeIndex);
+                onBindHolderEpisode(nextFocus.getContext(), nextFocus, nextT, nextepisodeIndex);
             } else {
                 int rangeIndex = t.getRangeIndex();
                 if (rangeIndex < 0)
@@ -1152,12 +1159,19 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
                 // 2
                 ViewGroup rangeGroup = viewGroup.findViewById(rangeGroupId);
                 int rangeChildCount = rangeGroup.getChildCount();
-                View vRangeLast = rangeGroup.getChildAt(rangeChildCount - 1);
+                int rangeLength = getRangeLength();
+                int realLastIndex = Math.min(rangeLength, rangeChildCount);
+                View vRangeLast = rangeGroup.getChildAt(realLastIndex - 1);
                 T tRangeLast = (T) vRangeLast.getTag(R.id.lb_presenter_range);
                 int lastRangeIndex = tRangeLast.getRangeIndex();
                 int nextRangeIndex = rangeIndex + 1;
                 if (nextRangeIndex >= lastRangeIndex) {
-                    int startRangeIndex = nextRangeIndex - initRangeNum() + 1;
+                    int startRangeIndex;
+                    if (rangeLength > rangeChildCount) {
+                        startRangeIndex = nextRangeIndex - initRangeNum() + 1;
+                    } else {
+                        startRangeIndex = 0;
+                    }
                     cleanDataRange(viewGroup, rangeGroupId);
                     setDataRange(viewGroup, rangeGroupId, startRangeIndex, nextRangeIndex);
                     setDataEpisode(viewGroup, episodeGroupId, nextRangeIndex, 0, true);
@@ -1174,44 +1188,18 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
                         if (index == rangeIndex || index == nextRangeIndex) {
                             o.setFocus(false);
                             o.setChecked(index == nextRangeIndex);
-                            ((ListTvEpisodesDoubleRowPresenter) this).onBindHolderRange(child.getContext(), child, o, i);
+                            onBindHolderRange(child.getContext(), child, o, i);
                         }
                     }
                     setDataEpisode(viewGroup, episodeGroupId, nextRangeIndex, 0, true);
                 }
-                requestFocusEpisodeViewIndex(viewGroup, episodeGroupId, 0);
+//                requestFocusEpisodeViewIndex(viewGroup, episodeGroupId, 0);
             }
             return false;
         } catch (Exception e) {
             LeanBackUtil.log("ListTvEpisodesPresenterImpl => dispatchEventEpisodesRight => " + e.getMessage());
             return true;
         }
-    }
-
-    private final void requestFocusEpisodeViewIndex(ViewGroup viewGroup, int episodeGroupId, int index) {
-        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    if (index < 0)
-                        throw new Exception("index error: " + index);
-                    ViewGroup episodeGroup = viewGroup.findViewById(episodeGroupId);
-                    if (null == episodeGroup)
-                        throw new Exception("episodeGroup error: null");
-                    int episodeChildCount = episodeGroup.getChildCount();
-                    if (episodeChildCount <= 0)
-                        throw new Exception("episodeChildCount error: " + episodeChildCount);
-                    if (index >= episodeChildCount)
-                        throw new Exception("index error: " + index + ", episodeChildCount = " + episodeChildCount);
-                    View child = episodeGroup.getChildAt(index);
-                    if (null == child)
-                        throw new Exception("child error: null");
-                    child.requestFocus();
-                } catch (Exception e) {
-                    LeanBackUtil.log("ListTvEpisodesPresenterImpl => requestFocusEpisodeViewIndex => " + e.getMessage());
-                }
-            }
-        }, 10);
     }
 
     /*********************/

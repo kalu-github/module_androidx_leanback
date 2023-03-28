@@ -71,6 +71,7 @@ public class TvEpisodesActivity extends AppCompatActivity {
 
     private final void setData1() {
         TestPresenter.TestData data = new TestPresenter.TestData();
+//        for (int i = 0; i < 200; i++) {
         for (int i = 0; i < 23; i++) {
             TvEpisodesPlusItemBean bean = new TvEpisodesPlusItemBean();
             data.add(bean);
