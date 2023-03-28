@@ -25,7 +25,7 @@ import com.kalu.leanback.R;
 import java.util.LinkedList;
 
 import lib.kalu.leanback.list.LeanBackVerticalGridView;
-import lib.kalu.leanback.presenter.ListTvEpisodesDoubleLinearLayoutPresenter;
+import lib.kalu.leanback.presenter.ListTvEpisodesDoubleRowPresenter;
 import lib.kalu.leanback.presenter.bean.TvEpisodesPlusItemBean;
 import lib.kalu.leanback.util.LeanBackUtil;
 
@@ -42,10 +42,7 @@ public class TvEpisodesActivity extends AppCompatActivity {
         new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
             @Override
             public void run() {
-                VerticalGridView verticalGridView = findViewById(R.id.list_content);
-                TestPresenter presenter = verticalGridView.getPresenter(TestPresenter.class);
-                RecyclerView.ViewHolder holder = verticalGridView.findViewHolderForAdapterObject(TestPresenter.TestData.class);
-                presenter.showData((ViewGroup) holder.itemView, 998, true);
+                showData1();
             }
         }, 100);
 
@@ -55,6 +52,13 @@ public class TvEpisodesActivity extends AppCompatActivity {
 //                findViewById(R.id.top).requestFocus();
 //            }
 //        }, 400);
+    }
+
+    private void showData1() {
+        VerticalGridView verticalGridView = findViewById(R.id.list_content);
+        TestPresenter presenter = verticalGridView.getPresenter(TestPresenter.class);
+        RecyclerView.ViewHolder holder = verticalGridView.findViewHolderForAdapterObject(TestPresenter.TestData.class);
+        presenter.checkedPositionEpisode((ViewGroup) holder.itemView, 0, true);
     }
 
     private final void setAdapter1() {
@@ -67,7 +71,7 @@ public class TvEpisodesActivity extends AppCompatActivity {
 
     private final void setData1() {
         TestPresenter.TestData data = new TestPresenter.TestData();
-        for (int i = 0; i < 2000; i++) {
+        for (int i = 0; i < 23; i++) {
             TvEpisodesPlusItemBean bean = new TvEpisodesPlusItemBean();
             data.add(bean);
         }
@@ -85,7 +89,7 @@ public class TvEpisodesActivity extends AppCompatActivity {
         }
     }
 
-    static class TestPresenter extends ListTvEpisodesDoubleLinearLayoutPresenter<TvEpisodesPlusItemBean> {
+    static class TestPresenter extends ListTvEpisodesDoubleRowPresenter<TvEpisodesPlusItemBean> {
 
         @Override
         public void onBindHolderRange(@NonNull Context context, @NonNull View v, @NonNull TvEpisodesPlusItemBean item, @NonNull int position) {
