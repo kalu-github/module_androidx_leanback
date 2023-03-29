@@ -26,6 +26,7 @@ import java.util.LinkedList;
 
 import lib.kalu.leanback.list.LeanBackVerticalGridView;
 import lib.kalu.leanback.presenter.ListTvEpisodesDoubleRowPresenter;
+import lib.kalu.leanback.presenter.ListTvEpisodesDoubleRowPresenter2;
 import lib.kalu.leanback.presenter.bean.TvEpisodesPlusItemBean;
 import lib.kalu.leanback.util.LeanBackUtil;
 
@@ -90,7 +91,7 @@ public class TvEpisodesActivity extends AppCompatActivity {
         }
     }
 
-    static class TestPresenter extends ListTvEpisodesDoubleRowPresenter<TvEpisodesPlusItemBean> {
+    static class TestPresenter extends ListTvEpisodesDoubleRowPresenter2<TvEpisodesPlusItemBean> {
 
         @Override
         public void onBindHolderRange(@NonNull Context context, @NonNull View v, @NonNull TvEpisodesPlusItemBean item, @NonNull int position) {
