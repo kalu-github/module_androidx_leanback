@@ -34,7 +34,6 @@ public class LeanBackVerticalGridView extends androidx.leanback.widget.VerticalG
         setNestedScrollingEnabled(false);
         setAnimateChildLayout(false);
         setHasFixedSize(true);
-        setFocusableInTouchMode(false);
     }
 
     public final void scrollUp(int row) {

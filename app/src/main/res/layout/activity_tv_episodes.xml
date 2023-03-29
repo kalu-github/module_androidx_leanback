@@ -9,9 +9,9 @@
         android:id="@+id/top"
         android:layout_width="match_parent"
         android:layout_height="60dp"
+        android:background="@drawable/bg_selector"
         android:focusable="true"
         android:gravity="center"
-        android:background="@drawable/bg_selector"
         android:text="top"
         android:textColor="#000000" />
 
@@ -27,10 +27,10 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="60dp"
+        android:background="@drawable/bg_selector"
         android:focusable="true"
         android:gravity="center"
         android:text="bottom"
-        android:background="@drawable/bg_selector"
         android:textColor="#000000" />
 
 </LinearLayout>
