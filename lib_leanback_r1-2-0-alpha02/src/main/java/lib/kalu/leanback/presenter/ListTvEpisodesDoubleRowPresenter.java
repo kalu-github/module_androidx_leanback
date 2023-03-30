@@ -855,6 +855,8 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
                             T t1 = (T) view.getTag(R.id.lb_presenter_episode);
                             if (null == t1)
                                 throw new Exception("t1 error: null");
+                            if (t1.isPlaying())
+                                throw new Exception("t1 warning: playing");
                             for (int m = 0; m < episodeNum; m++) {
                                 View child = episodeGroup.getChildAt(m);
                                 if (null == child)
@@ -875,7 +877,7 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
                         }
                         try {
                             T t = (T) view.getTag(R.id.lb_presenter_episode);
-                            if (null != t) {
+                            if (null != t && !t.isPlaying()) {
                                 int indexOfChild = episodeGroup.indexOfChild(child);
                                 t.setPlaying(true);
                                 view.setTag(R.id.lb_presenter_episode_playing, t);
