@@ -699,13 +699,13 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
             if (episodeChildCount <= 0)
                 throw new Exception("episodeChildCount error: " + episodeChildCount);
             int indexChildOf;
-            int playingIndexEpisode = findPlayingIndexEpisode(viewGroup);
-            if (playingIndexEpisode >= 0) {
-                indexChildOf = playingIndexEpisode;
+            int checkedIndexEpisode = findCheckedIndexEpisode(viewGroup);
+            if (checkedIndexEpisode >= 0) {
+                indexChildOf = checkedIndexEpisode;
             } else {
-                int checkedIndexEpisode = findCheckedIndexEpisode(viewGroup);
-                if (checkedIndexEpisode >= 0) {
-                    indexChildOf = checkedIndexEpisode;
+                int playingIndexEpisode = findPlayingIndexEpisode(viewGroup);
+                if (playingIndexEpisode >= 0) {
+                    indexChildOf = playingIndexEpisode;
                 } else {
                     indexChildOf = 0;
                 }
