@@ -81,7 +81,6 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
             viewGroup.setOnKeyListener(new View.OnKeyListener() {
                 @Override
                 public boolean onKey(View view, int keyCode, KeyEvent keyEvent) {
-                    LeanBackUtil.log("ListTvEpisodesDoubleRowPresenter => onCreateViewHolder => onKey => keyCode = " + keyCode + ", action = " + keyEvent.getAction() + ", view = " + view);
                     // up-in
                     if (keyCode == KeyEvent.KEYCODE_DPAD_UP && keyEvent.getAction() == KeyEvent.ACTION_UP) {
                         requestFocusCheckedRange(view, true);
@@ -317,38 +316,6 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
         }
     }
 
-    private final void requestFocusCheckedRange(@NonNull View viewGroup,
-                                                @NonNull int indexOfChild) {
-        try {
-            if (null == viewGroup)
-                throw new Exception("viewGroup error: null");
-            int childCount = ((ViewGroup) viewGroup).getChildCount();
-            if (childCount != 3)
-                throw new Exception("childCount error: " + childCount);
-            ViewGroup rangeGroup = (ViewGroup) ((ViewGroup) viewGroup).getChildAt(2);
-            if (null == rangeGroup)
-                throw new Exception("rangeGroup error: null");
-            if (!(rangeGroup instanceof LinearLayout))
-                throw new Exception("rangeGroup error: not instanceof LinearLayout");
-            int rangeChildCount = rangeGroup.getChildCount();
-            if (rangeChildCount <= 0)
-                throw new Exception("rangeChildCount error: " + rangeChildCount);
-            if (indexOfChild >= rangeChildCount)
-                throw new Exception("indexOfChild error: " + indexOfChild + ", rangeChildCount = " + rangeChildCount);
-            View child = rangeGroup.getChildAt(indexOfChild);
-            if (null == child)
-                throw new Exception("child error: null");
-            T t = (T) child.getTag(R.id.lb_presenter_range);
-            if (null == t)
-                throw new Exception("t error: null");
-            t.setChecked(true);
-            t.setFocus(true);
-            onBindHolderRange(child.getContext(), child, t, indexOfChild);
-        } catch (Exception e) {
-            LeanBackUtil.log("ListTvEpisodesDoubleRowPresenter => requestFocusCheckedRange => " + e.getMessage(), e);
-        }
-    }
-
     private final void updateEpisode(@NonNull View viewGroup,
                                      @NonNull int rangeIndex,
                                      @NonNull int checkedIndex,
@@ -362,7 +329,6 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
             if (childCount != 3)
                 throw new Exception("childCount error: " + childCount);
             ViewGroup episodeGroup = (ViewGroup) ((ViewGroup) viewGroup).getChildAt(1);
-            LeanBackUtil.log("ListTvEpisodesDoubleRowPresenter => updateEpisode => episodeGroup = " + episodeGroup);
             if (null == episodeGroup)
                 throw new Exception("episodeGroup error: null");
             if (!(episodeGroup instanceof LinearLayout))
@@ -388,10 +354,8 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
                     checkedIndex = 0;
                 }
             }
-            LeanBackUtil.log("ListTvEpisodesDoubleRowPresenter => updateEpisode => length = " + length);
             for (int i = 0; i < episodeChildCount; i++) {
                 View child = episodeGroup.getChildAt(i);
-                LeanBackUtil.log("ListTvEpisodesDoubleRowPresenter => updateEpisode => i = " + i + ", child = " + child);
                 if (null == child)
                     continue;
                 child.setTag(R.id.lb_presenter_episode, null);
@@ -771,10 +735,8 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
                 child.setOnFocusChangeListener(new View.OnFocusChangeListener() {
                     @Override
                     public void onFocusChange(View view, boolean hasFocus) {
-                        LeanBackUtil.log("ListTvEpisodesDoubleRowPresenter => onFocusChange[Range] => hasFocus = " + hasFocus + ", view = " + view);
                         if (hasFocus) {
                             T t = (T) view.getTag(R.id.lb_presenter_range);
-                            LeanBackUtil.log("ListTvEpisodesDoubleRowPresenter => onFocusChange[Range] => t = " + t);
                             if (null != t) {
                                 t.setFocus(true);
                                 int indexOfChild = rangeGroup.indexOfChild(view);
@@ -782,7 +744,6 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
                             }
                         } else {
                             T t = (T) view.getTag(R.id.lb_presenter_range);
-                            LeanBackUtil.log("ListTvEpisodesDoubleRowPresenter => onFocusChange[Range] => t = " + t);
                             if (null != t) {
                                 t.setFocus(false);
                                 int indexOfChild = rangeGroup.indexOfChild(view);
@@ -796,23 +757,19 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
                     public boolean onKey(View view, int keyCode, KeyEvent keyEvent) {
                         // left
                         if (keyEvent.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
-                            LeanBackUtil.log("ListTvEpisodesDoubleRowPresenter => onKey[Range-left] => view = " + view);
                             dispatchEventRange(view, View.FOCUS_LEFT);
                         }
                         // right
                         else if (keyEvent.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_DPAD_RIGHT) {
-                            LeanBackUtil.log("ListTvEpisodesDoubleRowPresenter => onKey[Range-right] => view = " + view);
                             dispatchEventRange(view, View.FOCUS_RIGHT);
                         }
                         // up
                         else if (keyEvent.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_DPAD_UP) {
-                            LeanBackUtil.log("ListTvEpisodesDoubleRowPresenter => onKey[Range-up] => view = " + view);
                             requestFocusCheckedEpisode(viewGroup, false);
                             return true;
                         }
                         // down
                         else if (keyEvent.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_DPAD_DOWN) {
-                            LeanBackUtil.log("ListTvEpisodesDoubleRowPresenter => onKey[Range-down] => view = " + view);
                             view.clearFocus();
                             ((View) view.getParent()).setFocusable(true);
                             ((ViewGroup) view.getParent()).setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
@@ -874,7 +831,6 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
                 child.setOnFocusChangeListener(new View.OnFocusChangeListener() {
                     @Override
                     public void onFocusChange(View view, boolean hasFocus) {
-                        LeanBackUtil.log("ListTvEpisodesDoubleRowPresenter => onFocusChange[Episode] => hasFocus = " + hasFocus + ", view = " + view);
                         if (hasFocus) {
                             T t = (T) view.getTag(R.id.lb_presenter_episode);
                             if (null != t) {
@@ -935,17 +891,14 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
                     public boolean onKey(View view, int keyCode, KeyEvent keyEvent) {
                         // left
                         if (keyEvent.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
-                            LeanBackUtil.log("ListTvEpisodesDoubleRowPresenter => onKey[Episode-left] => view = " + view);
                             dispatchEventEpisode(view, View.FOCUS_LEFT);
                         }
                         // right
                         else if (keyEvent.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_DPAD_RIGHT) {
-                            LeanBackUtil.log("ListTvEpisodesDoubleRowPresenter => onKe[Episode-right] => view = " + view);
                             dispatchEventEpisode(view, View.FOCUS_RIGHT);
                         }
                         // up
                         else if (keyEvent.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_DPAD_UP) {
-                            LeanBackUtil.log("ListTvEpisodesDoubleRowPresenter => onKey[Episode-up] => view = " + view);
                             view.clearFocus();
                             viewGroup.setFocusable(true);
                             ((ViewGroup) viewGroup).setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
@@ -953,7 +906,6 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
                         }
                         // down
                         else if (keyEvent.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_DPAD_DOWN) {
-                            LeanBackUtil.log("ListTvEpisodesDoubleRowPresenter => onKey[Episode-down] => view = " + view);
                             requestFocusCheckedRange(viewGroup, false);
                             return true;
                         }
@@ -1111,7 +1063,6 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
                 int curFirstRangeIndex = curFirstRangeT.getRangeIndex();
                 int rangeIndex = t.getRangeIndex();
                 int nextCheckRangeIndex = rangeIndex - 1;
-                LeanBackUtil.log("ListTvEpisodesDoubleRowPresenter => dispatchEventEpisode => nextCheckRangeIndex = " + nextCheckRangeIndex + ", curFirstRangeIndex = " + curFirstRangeIndex);
                 // 不够
                 if (nextCheckRangeIndex >= curFirstRangeIndex) {
                     swapRange((View) episodeGroup.getParent(), rangeIndex, nextCheckRangeIndex);
@@ -1143,7 +1094,6 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
                 int curLastRangeIndex = curLastRangeT.getRangeIndex();
                 int rangeIndex = t.getRangeIndex();
                 int nextCheckRangeIndex = rangeIndex + 1;
-                LeanBackUtil.log("ListTvEpisodesDoubleRowPresenter => dispatchEventEpisode => nextCheckRangeIndex = " + nextCheckRangeIndex + ", curLastRangeIndex = " + curLastRangeIndex);
                 // 不够
                 if (nextCheckRangeIndex <= curLastRangeIndex) {
                     swapRange((View) episodeGroup.getParent(), rangeIndex, nextCheckRangeIndex);
@@ -1254,7 +1204,6 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
             int rangeLength = getRangeLength();
             if (rangeLength < 0)
                 throw new Exception("rangeLength warning: " + rangeLength);
-            LeanBackUtil.log("ListTvEpisodesDoubleRowPresenter => dispatchEventRange => indexOfChild = " + indexOfChild + ", rangeChildCount = " + rangeChildCount);
             // left-update
             if (direction == View.FOCUS_LEFT && rangeIndex > 0 && indexOfChild <= 0) {
                 int startRangeIndex = rangeIndex - 1;
