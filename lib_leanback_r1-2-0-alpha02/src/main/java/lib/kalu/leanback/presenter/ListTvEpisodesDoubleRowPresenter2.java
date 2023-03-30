@@ -32,63 +32,6 @@ import lib.kalu.leanback.util.LeanBackUtil;
 
 public abstract class ListTvEpisodesDoubleRowPresenter2<T extends TvEpisodesPlusItemBean> extends Presenter implements ListTvPresenterImpl {
 
-    /***************************/
-
-    public static final class TvEpisodesDoubleRowLinearLayout extends LinearLayout {
-
-        public TvEpisodesDoubleRowLinearLayout(Context context) {
-            super(context);
-            setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
-        }
-
-        public TvEpisodesDoubleRowLinearLayout(Context context, @Nullable AttributeSet attrs) {
-            super(context, attrs);
-            setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
-        }
-
-        public TvEpisodesDoubleRowLinearLayout(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
-            super(context, attrs, defStyleAttr);
-            setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
-        }
-
-        @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-        public TvEpisodesDoubleRowLinearLayout(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-            super(context, attrs, defStyleAttr, defStyleRes);
-            setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
-        }
-
-        @Override
-        public boolean dispatchKeyEvent(KeyEvent event) {
-            // down-into
-            if (event.getAction() == KeyEvent.ACTION_UP && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_DOWN) {
-
-            }
-            // down-next
-            else if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_DOWN) {
-
-            }
-            // up-into
-            else if (event.getAction() == KeyEvent.ACTION_UP && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_UP) {
-
-            }
-            // up-next
-            else if (event.getAction() == KeyEvent.ACTION_UP && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_UP) {
-
-            }
-            // left-next
-            else if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_LEFT) {
-
-            }
-            // right-next
-            else if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_LEFT) {
-
-            }
-            return super.dispatchKeyEvent(event);
-        }
-    }
-
-    /***************************/
-
     private final Map<T, List<T>> mData = new LinkedHashMap<>();
 
     /***************************/
@@ -130,7 +73,7 @@ public abstract class ListTvEpisodesDoubleRowPresenter2<T extends TvEpisodesPlus
     public ViewHolder onCreateViewHolder(ViewGroup parent) {
         try {
             Context context = parent.getContext();
-            ViewGroup viewGroup = (ViewGroup) LayoutInflater.from(context).inflate(R.layout.lb_list_tv_episodes_double_row, parent, false);
+            ViewGroup viewGroup = (ViewGroup) LayoutInflater.from(context).inflate(R.layout.lb_list_tv_episodes_double_row2, parent, false);
             setPadding(context, viewGroup);
             setBackgroundColor(context, viewGroup);
             setContentBackgroundColor(context, viewGroup, R.id.module_leanback_lep_episodes);

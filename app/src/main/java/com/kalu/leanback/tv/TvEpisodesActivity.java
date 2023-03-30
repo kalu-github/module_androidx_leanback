@@ -26,7 +26,6 @@ import java.util.LinkedList;
 
 import lib.kalu.leanback.list.LeanBackVerticalGridView;
 import lib.kalu.leanback.presenter.ListTvEpisodesDoubleRowPresenter;
-import lib.kalu.leanback.presenter.ListTvEpisodesDoubleRowPresenter2;
 import lib.kalu.leanback.presenter.bean.TvEpisodesPlusItemBean;
 import lib.kalu.leanback.util.LeanBackUtil;
 
@@ -50,7 +49,7 @@ public class TvEpisodesActivity extends AppCompatActivity {
         new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
             @Override
             public void run() {
-                findViewById(R.id.top).requestFocus();
+                findViewById(R.id.bottom).requestFocus();
             }
         }, 400);
     }
@@ -91,16 +90,33 @@ public class TvEpisodesActivity extends AppCompatActivity {
         }
     }
 
-    static class TestPresenter extends ListTvEpisodesDoubleRowPresenter2<TvEpisodesPlusItemBean> {
+    static class TestPresenter extends ListTvEpisodesDoubleRowPresenter<TvEpisodesPlusItemBean> {
 
         @Override
         public void onBindHolderRange(@NonNull Context context, @NonNull View v, @NonNull TvEpisodesPlusItemBean item, @NonNull int position) {
             Log.e("TvEpisodesActivity", "onBindHolderRange => position = " + position + ", t = " + new Gson().toJson(item));
-            ((TextView) v).setText(item.getRangeStart() + "-" + item.getRangeEnd());
+            // playing
+            if (item.isPlaying()) {
+                ((TextView) v).setText("playing:" + item.getRangeStart() + "-" + item.getRangeEnd());
+            }
+            // checked
+            else if (item.isChecked()) {
+                ((TextView) v).setText("checked:" + item.getRangeStart() + "-" + item.getRangeEnd());
+            }
+            // sample
+            else {
+                ((TextView) v).setText(item.getRangeStart() + "-" + item.getRangeEnd());
+            }
+
             // focus
             if (item.isFocus()) {
                 ((TextView) v).setTextColor(Color.WHITE);
                 ((TextView) v).setBackgroundResource(R.drawable.bg_focus);
+            }
+            // playing
+            else if (item.isPlaying()) {
+                ((TextView) v).setTextColor(Color.BLUE);
+                ((TextView) v).setBackgroundResource(R.drawable.bg);
             }
             // checked
             else if (item.isChecked()) {
@@ -121,7 +137,11 @@ public class TvEpisodesActivity extends AppCompatActivity {
 
             // playing
             if (item.isPlaying()) {
-                ((TextView) v).setText("playing");
+                ((TextView) v).setText("playing:" + item.getEpisodeIndex());
+            }
+            // checked
+            else if (item.isChecked()) {
+                ((TextView) v).setText("checked:" + item.getEpisodeIndex());
             }
             // sample
             else {
@@ -132,6 +152,11 @@ public class TvEpisodesActivity extends AppCompatActivity {
             if (item.isFocus()) {
                 ((TextView) v).setTextColor(Color.WHITE);
                 ((TextView) v).setBackgroundResource(R.drawable.bg_focus);
+            }
+            // playing
+            else if (item.isPlaying()) {
+                ((TextView) v).setTextColor(Color.BLUE);
+                ((TextView) v).setBackgroundResource(R.drawable.bg);
             }
             // checked
             else if (item.isChecked()) {

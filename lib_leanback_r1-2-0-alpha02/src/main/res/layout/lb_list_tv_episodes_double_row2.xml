@@ -5,8 +5,7 @@
     android:layout_height="wrap_content"
     android:clipChildren="false"
     android:clipToPadding="false"
-    android:descendantFocusability="blocksDescendants"
-    android:focusable="true"
+    android:focusable="false"
     android:orientation="vertical">
 
     <TextView
