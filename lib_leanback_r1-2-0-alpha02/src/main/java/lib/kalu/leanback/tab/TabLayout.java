@@ -102,7 +102,6 @@ public final class TabLayout extends HorizontalScrollView {
         }
         // left action_up
         else if (event.getAction() == KeyEvent.ACTION_UP && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_LEFT) {
-            LeanBackUtil.log("TabLayout => dispatchKeyEvent => left_action_up => focus = " + focus);
             if (null != focus && focus instanceof TabLayout) {
                 focusCurrentItem(View.FOCUS_LEFT);
             }
@@ -111,13 +110,10 @@ public final class TabLayout extends HorizontalScrollView {
         else if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_RIGHT) {
             int index = getCheckedIndex();
             int itemCount = getItemCount();
-            LeanBackUtil.log("TabLayout => dispatchKeyEvent => right_action_down => index = " + index + ", itemCount = " + itemCount);
             if (index + 1 < itemCount) {
                 int next = findNextPosition(View.FOCUS_RIGHT, index);
-                LeanBackUtil.log("TabLayout => dispatchKeyEvent => right_action_down => next = " + next);
                 if (next != -1) {
                     boolean scrollRequest = scrollRequest(View.FOCUS_RIGHT, index, next);
-                    LeanBackUtil.log("TabLayout => dispatchKeyEvent => right_action_down => scrollRequest = " + scrollRequest);
                 }
                 return true;
             } else {
@@ -132,16 +128,13 @@ public final class TabLayout extends HorizontalScrollView {
         }
         // right action_up
         else if (event.getAction() == KeyEvent.ACTION_UP && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_RIGHT) {
-            LeanBackUtil.log("TabLayout => dispatchKeyEvent => right_action_up => focus = " + focus);
             if (null != focus && focus instanceof TabLayout) {
                 focusCurrentItem(View.FOCUS_RIGHT);
             }
         }
         // up action_down
         else if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_UP) {
-            LeanBackUtil.log("TabLayout => dispatchKeyEvent => up_action_down => focus = " + focus);
             View nextFocus = findNextFocus(View.FOCUS_UP);
-            LeanBackUtil.log("TabLayout => dispatchKeyEvent => up_action_down => nextFocus = " + nextFocus);
             if (null == nextFocus) {
                 return true;
             } else {
@@ -150,16 +143,13 @@ public final class TabLayout extends HorizontalScrollView {
         }
         // up action_up
         else if (event.getAction() == KeyEvent.ACTION_UP && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_UP) {
-            LeanBackUtil.log("TabLayout => dispatchKeyEvent => up_action_up => focus = " + focus);
             if (null != focus && focus instanceof TabLayout) {
                 focusCurrentItem(View.FOCUS_UP);
             }
         }
         // down action_down
         else if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_DOWN) {
-            LeanBackUtil.log("TabLayout => dispatchKeyEvent => down_action_down => focus = " + focus);
             View nextFocus = findNextFocus(View.FOCUS_DOWN);
-            LeanBackUtil.log("TabLayout => dispatchKeyEvent => down_action_down => nextFocus = " + nextFocus);
             if (null == nextFocus) {
                 return true;
             } else {
@@ -180,7 +170,6 @@ public final class TabLayout extends HorizontalScrollView {
         }
         // down action_up
         else if (event.getAction() == KeyEvent.ACTION_UP && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_DOWN) {
-            LeanBackUtil.log("TabLayout => dispatchKeyEvent => down_action_up => focus = " + focus);
             if (null != focus && focus instanceof TabLayout) {
                 focusCurrentItem(View.FOCUS_DOWN);
             }
@@ -240,7 +229,6 @@ public final class TabLayout extends HorizontalScrollView {
     @Keep
     public <T extends TabModel> void update(@NonNull List<T> list, int position) {
         try {
-            LeanBackUtil.log("TabLayout => update =>");
             int childCount = getChildCount();
             if (childCount != 1) throw new Exception("childCount is not 1");
             // 1
@@ -408,7 +396,6 @@ public final class TabLayout extends HorizontalScrollView {
                 int itemRight = ((TabLinearLayout) getChildAt(0)).getItemRight(next);
                 int scrollX = getScrollX();
                 int width = getWidth() - getPaddingLeft() - getPaddingRight();
-                LeanBackUtil.log("TabLayout => scrollRequest => right => width = " + width + ", scrollX = " + scrollX + ", itemRight = " + itemRight);
 
                 // 不可见/部分不可见
                 if (itemRight > width) {
@@ -535,7 +522,6 @@ public final class TabLayout extends HorizontalScrollView {
 
     private <T extends TabModel> void addAllItem(@NonNull List<T> list) {
         try {
-            LeanBackUtil.log("TabLayout => addAllItem =>");
             if (null == list || list.size() <= 0) throw new Exception("list is null");
             int childCount = getChildCount();
             if (childCount != 1) throw new Exception("childCount is not 1");
@@ -557,7 +543,6 @@ public final class TabLayout extends HorizontalScrollView {
 
     private <T extends TabModel> void addText(@NonNull T t, int index, int count) {
         try {
-            LeanBackUtil.log("TabLayout => addText =>");
             if (null == t) throw new Exception("t error: " + t);
             String text = t.getText();
             if (null == text || text.length() == 0) throw new Exception("text error: " + text);
@@ -585,7 +570,6 @@ public final class TabLayout extends HorizontalScrollView {
     private <T extends TabModel> void addImage(@NonNull T t, int index, int count) {
 
         try {
-            LeanBackUtil.log("TabLayout => addImage =>");
             if (null == t) throw new Exception("t error: " + t);
             int childCount = getChildCount();
             if (childCount != 1) throw new Exception("childCount is not 1");
@@ -612,7 +596,6 @@ public final class TabLayout extends HorizontalScrollView {
             if (null == view) throw new Exception("view error: " + view);
             int childCount = getChildCount();
             if (childCount != 1) throw new Exception("childCount is not 1");
-            LeanBackUtil.log("TabLayout => addItem =>");
             ((TabLinearLayout) getChildAt(0)).addView(view);
         } catch (Exception e) {
             LeanBackUtil.log("TabLayout => addItem => " + e.getMessage());

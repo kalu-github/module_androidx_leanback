@@ -152,7 +152,6 @@ interface ClassLayoutImpl {
                                        @NonNull boolean isFromUser,
                                        @NonNull boolean callListener) {
         try {
-            LeanBackUtil.log("ClassLayoutImpl => setCheckedIndex => checkedIndex = " + checkedIndex + ", hasFocus = " + hasFocus + ", callListener = " + callListener);
             RadioGroup radioGroup = getRadioGroup(true);
             if (null == radioGroup)
                 throw new Exception("radioGroup error: null");
@@ -166,9 +165,7 @@ interface ClassLayoutImpl {
                 Object tag = radioButton.getTag(R.id.lb_classlayout_data);
                 if (null == tag || !(tag instanceof ClassBean))
                     continue;
-                LeanBackUtil.log("ClassLayoutImpl => setCheckedIndex => i = " + i + ", tag = " + tag.toString());
                 ((ClassBean) tag).setChecked(checkedIndex == i);
-                LeanBackUtil.log("ClassLayoutImpl => setCheckedIndex => i = " + i + ", tag = " + tag.toString());
                 // ui
                 radioButton.setText(((ClassBean) tag).getTextSpannableString(((View) this).getContext(), hasFocus));
                 radioButton.setTextColor(((ClassBean) tag).getTextColor(hasFocus));
@@ -292,7 +289,6 @@ interface ClassLayoutImpl {
                 o.setBackgroundResource(backgroundResource);
                 o.setBackgroundResourceChecked(backgroundResourceChecked);
                 o.setBackgroundResourceFocus(backgroundResourceFocus);
-//                LeanBackUtil.log("ClassLayoutImpl => update => i = " + i + ", o = " + o);
             }
             for (int i = 0; i < size; i++) {
                 ClassBean o = data.get(i);

@@ -45,7 +45,6 @@ public class RecyclerViewVertical extends BaseRecyclerView {
                 int height = focusedChild.getHeight();
                 if (height < 0)
                     throw new Exception("height error: " + height);
-                LeanBackUtil.log("RecyclerViewVertical => dispatchKeyEvent => up => focusPosition = " + focusPosition + ", height = " + height);
                 scrollBy(0, -height);
                 View nextFocusNews = FocusFinder.getInstance().findNextFocus(this, focusedChild, View.FOCUS_UP);
                 if (null == nextFocusNews)
@@ -82,7 +81,6 @@ public class RecyclerViewVertical extends BaseRecyclerView {
                 int height = focusedChild.getHeight();
                 if (height < 0)
                     throw new Exception("height error: " + height);
-                LeanBackUtil.log("RecyclerViewVertical => dispatchKeyEvent => down => focusPosition = " + focusPosition + ", itemCount = " + itemCount + ", height = " + height);
                 scrollBy(0, height);
                 View nextFocusNews = FocusFinder.getInstance().findNextFocus(this, focusedChild, View.FOCUS_DOWN);
                 if (null == nextFocusNews)

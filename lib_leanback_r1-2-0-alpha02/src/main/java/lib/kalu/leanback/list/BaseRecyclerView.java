@@ -25,44 +25,6 @@ class BaseRecyclerView extends androidx.recyclerview.widget.RecyclerView {
         init();
     }
 
-//    @Override
-//    public void setLayoutManager(@Nullable LayoutManager layout) {
-//        // StaggeredGridLayoutManager
-//        if (layout instanceof StaggeredGridLayoutManager) {
-//            LeanBackUtil.log("BaseRecyclerView => setLayoutManager[StaggeredGridLayoutManager] =>");
-//            super.setLayoutManager(layout);
-//        }
-//        // GridLayoutManager
-//        else if (layout instanceof GridLayoutManager) {
-//            int orientation = ((GridLayoutManager) layout).getOrientation();
-//            int spanCount = ((GridLayoutManager) layout).getSpanCount();
-//            boolean reverseLayout = ((GridLayoutManager) layout).getReverseLayout();
-//            LeanBackUtil.log("BaseRecyclerView => setLayoutManager[GridLayoutManager] => orientation = " + orientation + ", spanCount = " + spanCount + ", reverseLayout = " + reverseLayout);
-//            GridLayoutManager.SpanSizeLookup spanSizeLookup = ((GridLayoutManager) layout).getSpanSizeLookup();
-//            GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), spanCount, orientation, reverseLayout) {
-//                @Override
-//                public boolean isAutoMeasureEnabled() {
-//                    return false;
-//                }
-//            };
-//            gridLayoutManager.setSpanSizeLookup(spanSizeLookup);
-//            super.setLayoutManager(gridLayoutManager);
-//        }
-//        // LinearLayoutManager
-//        else {
-//            int orientation = ((LinearLayoutManager) layout).getOrientation();
-//            boolean reverseLayout = ((LinearLayoutManager) layout).getReverseLayout();
-//            LeanBackUtil.log("BaseRecyclerView => setLayoutManager[LinearLayoutManager] => orientation = " + orientation + ", reverseLayout = " + reverseLayout);
-//            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), orientation, reverseLayout) {
-//                @Override
-//                public boolean isAutoMeasureEnabled() {
-//                    return false;
-//                }
-//            };
-//            super.setLayoutManager(linearLayoutManager);
-//        }
-//    }
-
     private final void init() {
         setAnimation(null);
         setItemAnimator(null);

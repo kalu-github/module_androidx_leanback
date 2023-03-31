@@ -13,4 +13,4 @@ dependencyResolutionManagement {
 }
 include ':app'
 include ':lib_leanback_r1-2-0-alpha02'
-include ':lib_leanback_r1-2-0-alpha02_lite'
+//include ':lib_leanback_r1-2-0-alpha02_lite'

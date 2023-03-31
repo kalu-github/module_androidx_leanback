@@ -606,12 +606,12 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
                     t.setPlaying(true);
                     t.setChecked(true);
                     onBindHolderRange(child.getContext(), child, t, i);
-                    break;
+                    return;
                 }
             }
             throw new Exception("not find");
         } catch (Exception e) {
-            LeanBackUtil.log("ListTvEpisodesDoubleRowPresenter => setPlayingRange => " + e.getMessage(), e);
+            LeanBackUtil.log("ListTvEpisodesDoubleRowPresenter => setPlayingRange => " + e.getMessage());
         }
     }
 

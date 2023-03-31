@@ -78,9 +78,7 @@ public final class TagsLayout extends LinearLayout {
         super.onFocusChanged(gainFocus, direction, previouslyFocusedRect);
 
         try {
-            LeanBackUtil.log("TagsLayout => onFocusChanged => gainFocus = " + gainFocus);
             int checkedIndexRow = getCheckedIndexRow();
-            LeanBackUtil.log("TagsLayout => onFocusChanged => checkedIndexRow = " + checkedIndexRow);
             if (checkedIndexRow < 0)
                 throw new Exception("checkedIndexRow error: " + checkedIndexRow);
             int checkedIndex = getCheckedIndex(checkedIndexRow);
@@ -97,7 +95,6 @@ public final class TagsLayout extends LinearLayout {
 
             // left
             if (event.getKeyCode() == KeyEvent.KEYCODE_DPAD_LEFT) {
-                LeanBackUtil.log("TagsLayout => dispatchKeyEvent => left =>");
                 try {
                     int checkedIndexRow = getCheckedIndexRow();
                     if (checkedIndexRow < 0)
@@ -105,7 +102,6 @@ public final class TagsLayout extends LinearLayout {
                     int checkedIndex = getCheckedIndex(checkedIndexRow);
                     if (checkedIndex > 0) {
                         int next = checkedIndex - 1;
-                        LeanBackUtil.log("TagsLayout => dispatchKeyEvent => left => next = " + next);
                         setCheckedIndex(checkedIndexRow, next, true);
                         scrollNext(View.FOCUS_LEFT, checkedIndexRow, next);
                         callListener();
@@ -117,7 +113,6 @@ public final class TagsLayout extends LinearLayout {
             }
             // right
             else if (event.getKeyCode() == KeyEvent.KEYCODE_DPAD_RIGHT) {
-                LeanBackUtil.log("TagsLayout => dispatchKeyEvent => right =>");
                 try {
                     int checkedIndexRow = getCheckedIndexRow();
                     if (checkedIndexRow < 0)
@@ -126,7 +121,6 @@ public final class TagsLayout extends LinearLayout {
                     int itemCount = getItemCount(checkedIndexRow);
                     if (checkedIndex + 1 < itemCount) {
                         int next = checkedIndex + 1;
-                        LeanBackUtil.log("TagsLayout => dispatchKeyEvent => right => next = " + next + ", itemCount = " + itemCount);
                         setCheckedIndex(checkedIndexRow, next, true);
                         scrollNext(View.FOCUS_RIGHT, checkedIndexRow, next);
                         callListener();
@@ -138,7 +132,6 @@ public final class TagsLayout extends LinearLayout {
             }
             // up
             else if (event.getKeyCode() == KeyEvent.KEYCODE_DPAD_UP) {
-                LeanBackUtil.log("TagsLayout => dispatchKeyEvent => up =>");
                 try {
                     int checkedIndexRow = getCheckedIndexRow();
                     if (checkedIndexRow < 0)
@@ -147,10 +140,8 @@ public final class TagsLayout extends LinearLayout {
                         int nextRow = checkedIndexRow - 1;
                         setTag(R.id.lb_tagslayout_row, nextRow);
                         int checkedIndexOlds = getCheckedIndex(checkedIndexRow);
-                        LeanBackUtil.log("TagsLayout => dispatchKeyEvent => up => curRow = " + checkedIndexRow + ", checkedIndexOlds = " + checkedIndexOlds);
                         setCheckedIndex(checkedIndexRow, checkedIndexOlds, false);
                         int checkedIndexNews = getCheckedIndex(nextRow);
-                        LeanBackUtil.log("TagsLayout => dispatchKeyEvent => up => nextRow = " + nextRow + ", checkedIndexNews = " + checkedIndexNews);
                         setCheckedIndex(nextRow, checkedIndexNews, true);
                         return true;
                     }
@@ -160,7 +151,6 @@ public final class TagsLayout extends LinearLayout {
             }
             // down
             else if (event.getKeyCode() == KeyEvent.KEYCODE_DPAD_DOWN) {
-                LeanBackUtil.log("TagsLayout => dispatchKeyEvent => down =>");
                 try {
                     int checkedIndexRow = getCheckedIndexRow();
                     if (checkedIndexRow < 0)
@@ -170,10 +160,8 @@ public final class TagsLayout extends LinearLayout {
                         int nextRow = checkedIndexRow + 1;
                         setTag(R.id.lb_tagslayout_row, nextRow);
                         int checkedIndexOlds = getCheckedIndex(checkedIndexRow);
-                        LeanBackUtil.log("TagsLayout => dispatchKeyEvent => down => curRow = " + checkedIndexRow + ", checkedIndexOlds = " + checkedIndexOlds);
                         setCheckedIndex(checkedIndexRow, checkedIndexOlds, false);
                         int checkedIndexNews = getCheckedIndex(nextRow);
-                        LeanBackUtil.log("TagsLayout => dispatchKeyEvent => down => nextRow = " + nextRow + ", checkedIndexNews = " + checkedIndexNews);
                         setCheckedIndex(nextRow, checkedIndexNews, true);
                         return true;
                     }
@@ -415,9 +403,7 @@ public final class TagsLayout extends LinearLayout {
 
     private void scrollNext(int direction, int row, int col) {
         try {
-            LeanBackUtil.log("TagsLayout => scrollNext => row = " + row + ", col = " + col);
             int childCount = getChildCount();
-            LeanBackUtil.log("TagsLayout => scrollNext => childCount = " + childCount);
             if (childCount <= 0)
                 throw new Exception("error: childCount is " + childCount);
             if (row >= childCount)

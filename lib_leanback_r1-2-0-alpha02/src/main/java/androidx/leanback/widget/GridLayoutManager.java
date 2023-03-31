@@ -272,7 +272,7 @@ public final class GridLayoutManager extends RecyclerView.LayoutManager {
 
         @Override
         protected void onTargetFound(View targetView,
-                State state, Action action) {
+                                     State state, Action action) {
             if (getScrollPosition(targetView, null, sTwoInts)) {
                 int dx, dy;
                 if (mOrientation == HORIZONTAL) {
@@ -333,7 +333,7 @@ public final class GridLayoutManager extends RecyclerView.LayoutManager {
             int startPos = mPendingMoves > 0 ? mFocusPosition + mNumRows :
                     mFocusPosition - mNumRows;
             for (int pos = startPos; mPendingMoves != 0;
-                    pos = mPendingMoves > 0 ? pos + mNumRows : pos - mNumRows) {
+                 pos = mPendingMoves > 0 ? pos + mNumRows : pos - mNumRows) {
                 View v = findViewByPosition(pos);
                 if (v == null) {
                     break;
@@ -399,7 +399,6 @@ public final class GridLayoutManager extends RecyclerView.LayoutManager {
     }
 
     private static final String TAG = "GridLayoutManager";
-    static final boolean DEBUG = false;
     static final boolean TRACE = false;
 
     // maximum pending movement in one direction.
@@ -741,7 +740,6 @@ public final class GridLayoutManager extends RecyclerView.LayoutManager {
      */
     public void setOrientation(@RecyclerView.Orientation int orientation) {
         if (orientation != HORIZONTAL && orientation != VERTICAL) {
-            if (DEBUG) LeanBackUtil.log(getTag(), "invalid orientation: " + orientation);
             return;
         }
 
@@ -921,7 +919,7 @@ public final class GridLayoutManager extends RecyclerView.LayoutManager {
     }
 
     void removeOnChildViewHolderSelectedListener(OnChildViewHolderSelectedListener
-            listener) {
+                                                         listener) {
         if (mChildViewHolderSelectedListeners != null) {
             mChildViewHolderSelectedListeners.remove(listener);
         }
@@ -933,7 +931,7 @@ public final class GridLayoutManager extends RecyclerView.LayoutManager {
     }
 
     void fireOnChildViewHolderSelected(RecyclerView parent, RecyclerView.ViewHolder child,
-            int position, int subposition) {
+                                       int position, int subposition) {
         if (mChildViewHolderSelectedListeners == null) {
             return;
         }
@@ -1101,7 +1099,7 @@ public final class GridLayoutManager extends RecyclerView.LayoutManager {
     @NonNull
     @Override
     public RecyclerView.LayoutParams generateLayoutParams(@NonNull Context context,
-            @NonNull AttributeSet attrs) {
+                                                          @NonNull AttributeSet attrs) {
         return new LayoutParams(context, attrs);
     }
 
@@ -1323,7 +1321,7 @@ public final class GridLayoutManager extends RecyclerView.LayoutManager {
     }
 
     private void measureScrapChild(int position, int widthSpec, int heightSpec,
-            int[] measuredDimension) {
+                                   int[] measuredDimension) {
         View view = mRecycler.getViewForPosition(position);
         if (view != null) {
             final LayoutParams p = (LayoutParams) view.getLayoutParams();
@@ -1358,7 +1356,7 @@ public final class GridLayoutManager extends RecyclerView.LayoutManager {
             final int rowItemsPairCount = row == null ? 0 : row.size();
             int rowSize = -1;
             for (int rowItemPairIndex = 0; rowItemPairIndex < rowItemsPairCount;
-                    rowItemPairIndex += 2) {
+                 rowItemPairIndex += 2) {
                 final int rowIndexStart = row.get(rowItemPairIndex);
                 final int rowIndexEnd = row.get(rowItemPairIndex + 1);
                 for (int i = rowIndexStart; i <= rowIndexEnd; i++) {
@@ -1408,16 +1406,8 @@ public final class GridLayoutManager extends RecyclerView.LayoutManager {
                         }
                     }
                     if (position >= 0 && position < itemCount) {
-                        measureScrapChild(position,
-                                MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED),
-                                MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED),
-                                mMeasuredDimension);
-                        scrapeChildSize = mOrientation == HORIZONTAL ? mMeasuredDimension[1] :
-                                mMeasuredDimension[0];
-                        if (DEBUG) {
-                            LeanBackUtil.log(TAG, "measured scrap child: " + mMeasuredDimension[0] + " "
-                                    + mMeasuredDimension[1]);
-                        }
+                        measureScrapChild(position, MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED), MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED), mMeasuredDimension);
+                        scrapeChildSize = mOrientation == HORIZONTAL ? mMeasuredDimension[1] : mMeasuredDimension[0];
                     }
                 }
                 if (scrapeChildSize >= 0) {
@@ -1428,10 +1418,6 @@ public final class GridLayoutManager extends RecyclerView.LayoutManager {
                 rowSize = 0;
             }
             if (mRowSizeSecondary[rowIndex] != rowSize) {
-                if (DEBUG) {
-                    LeanBackUtil.log(getTag(), "row size secondary changed: " + mRowSizeSecondary[rowIndex]
-                            + ", " + rowSize);
-                }
                 mRowSizeSecondary[rowIndex] = rowSize;
                 changed = true;
             }
@@ -1448,13 +1434,13 @@ public final class GridLayoutManager extends RecyclerView.LayoutManager {
         mFlag = (mFlag & ~PF_ROW_SECONDARY_SIZE_REFRESH)
                 | (processRowSizeSecondary(false) ? PF_ROW_SECONDARY_SIZE_REFRESH : 0);
         if ((mFlag & PF_ROW_SECONDARY_SIZE_REFRESH) != 0) {
-            if (DEBUG) LeanBackUtil.log(getTag(), "mRowSecondarySizeRefresh now set");
+            LeanBackUtil.log(getTag(), "mRowSecondarySizeRefresh now set");
             forceRequestLayout();
         }
     }
 
     private void forceRequestLayout() {
-        if (DEBUG) LeanBackUtil.log(getTag(), "forceRequestLayout");
+        LeanBackUtil.log(getTag(), "forceRequestLayout");
         // RecyclerView prevents us from requesting layout in many cases
         // (during layout, during scroll, etc.)
         // For secondary row size wrap_content support we currently need a
@@ -1469,7 +1455,7 @@ public final class GridLayoutManager extends RecyclerView.LayoutManager {
     private final Runnable mRequestLayoutRunnable = new Runnable() {
         @Override
         public void run() {
-            if (DEBUG) LeanBackUtil.log(getTag(), "request Layout from runnable");
+            LeanBackUtil.log(getTag(), "request Layout from runnable");
             requestLayout();
         }
     };
@@ -1477,7 +1463,7 @@ public final class GridLayoutManager extends RecyclerView.LayoutManager {
     @Override
     @SuppressWarnings("ObjectToString")
     public void onMeasure(@NonNull Recycler recycler, @NonNull State state,
-            int widthSpec, int heightSpec) {
+                          int widthSpec, int heightSpec) {
         saveContext(recycler, state);
 
         int sizePrimary, sizeSecondary, modeSecondary, paddingSecondary;
@@ -1493,7 +1479,7 @@ public final class GridLayoutManager extends RecyclerView.LayoutManager {
             modeSecondary = MeasureSpec.getMode(widthSpec);
             paddingSecondary = getPaddingLeft() + getPaddingRight();
         }
-        if (DEBUG) {
+        {
             LeanBackUtil.log(getTag(), "onMeasure widthSpec " + Integer.toHexString(widthSpec)
                     + " heightSpec " + Integer.toHexString(heightSpec)
                     + " modeSecondary " + Integer.toHexString(modeSecondary)
@@ -1575,7 +1561,7 @@ public final class GridLayoutManager extends RecyclerView.LayoutManager {
         } else {
             setMeasuredDimension(measuredSizeSecondary, sizePrimary);
         }
-        if (DEBUG) {
+        {
             LeanBackUtil.log(getTag(), "onMeasure sizePrimary " + sizePrimary
                     + " measuredSizeSecondary " + measuredSizeSecondary
                     + " mFixedRowSizeSecondary " + mFixedRowSizeSecondary
@@ -1607,14 +1593,14 @@ public final class GridLayoutManager extends RecyclerView.LayoutManager {
             widthSpec = ViewGroup.getChildMeasureSpec(secondarySpec, widthUsed, lp.width);
         }
         child.measure(widthSpec, heightSpec);
-        if (DEBUG) {
+        {
             LeanBackUtil.log(getTag(), "measureChild secondarySpec " + Integer.toHexString(secondarySpec)
                     + " widthSpec " + Integer.toHexString(widthSpec)
                     + " heightSpec " + Integer.toHexString(heightSpec)
                     + " measuredWidth " + child.getMeasuredWidth()
                     + " measuredHeight " + child.getMeasuredHeight());
         }
-        if (DEBUG) LeanBackUtil.log(getTag(), "child lp width " + lp.width + " height " + lp.height);
+        LeanBackUtil.log(getTag(), "child lp width " + lp.width + " height " + lp.height);
         if (TRACE) TraceCompat.endSection();
     }
 
@@ -1722,7 +1708,7 @@ public final class GridLayoutManager extends RecyclerView.LayoutManager {
             if (edge == Integer.MIN_VALUE || edge == Integer.MAX_VALUE) {
                 edge = !mGrid.isReversedFlow() ? mWindowAlignment.mainAxis().getPaddingMin()
                         : mWindowAlignment.mainAxis().getSize()
-                                - mWindowAlignment.mainAxis().getPaddingMax();
+                        - mWindowAlignment.mainAxis().getPaddingMax();
             }
             boolean edgeIsMin = !mGrid.isReversedFlow();
             if (edgeIsMin) {
@@ -1736,7 +1722,7 @@ public final class GridLayoutManager extends RecyclerView.LayoutManager {
                     + mWindowAlignment.secondAxis().getPaddingMin() - mScrollOffsetSecondary;
             mChildrenStates.loadView(v, index);
             layoutChild(rowIndex, v, start, end, startSecondary);
-            if (DEBUG) {
+            {
                 LeanBackUtil.log(getTag(), "addView " + index + " " + v);
             }
             if (TRACE) TraceCompat.endSection();
@@ -1894,7 +1880,7 @@ public final class GridLayoutManager extends RecyclerView.LayoutManager {
                     mBaseGridView.addOnScrollListener(new RecyclerView.OnScrollListener() {
                         @Override
                         public void onScrollStateChanged(@NonNull RecyclerView recyclerView,
-                                int newState) {
+                                                         int newState) {
                             if (newState == SCROLL_STATE_IDLE) {
                                 mBaseGridView.removeOnScrollListener(this);
                                 requestLayout();
@@ -2036,7 +2022,7 @@ public final class GridLayoutManager extends RecyclerView.LayoutManager {
             layoutChild(location.mRow, view, start, end, startSecondary);
             if (oldPrimarySize != primarySize) {
                 // size changed invalidate remaining Locations
-                if (DEBUG) LeanBackUtil.log(getTag(), "fastRelayout: view size changed at " + position);
+                LeanBackUtil.log(getTag(), "fastRelayout: view size changed at " + position);
                 invalidateAfter = true;
                 break;
             }
@@ -2073,7 +2059,7 @@ public final class GridLayoutManager extends RecyclerView.LayoutManager {
     @Override
     public void removeAndRecycleAllViews(@NonNull Recycler recycler) {
         if (TRACE) TraceCompat.beginSection("removeAndRecycleAllViews");
-        if (DEBUG) LeanBackUtil.log(TAG, "removeAndRecycleAllViews " + getChildCount());
+        LeanBackUtil.log(TAG, "removeAndRecycleAllViews " + getChildCount());
         for (int i = getChildCount() - 1; i >= 0; i--) {
             removeAndRecycleViewAt(i, recycler);
         }
@@ -2083,7 +2069,7 @@ public final class GridLayoutManager extends RecyclerView.LayoutManager {
     // called by onLayoutChildren, either focus to FocusPosition or declare focusViewAvailable
     // and scroll to the view if framework focus on it.
     private void focusToViewInLayout(boolean hadFocus, boolean alignToView, int extraDelta,
-            int extraDeltaSecondary) {
+                                     int extraDeltaSecondary) {
         View focusView = findViewByPosition(mFocusPosition);
         if (focusView != null && alignToView) {
             scrollToView(focusView, false, extraDelta, extraDeltaSecondary);
@@ -2187,8 +2173,8 @@ public final class GridLayoutManager extends RecyclerView.LayoutManager {
     // Lays out items based on the current scroll position
     @Override
     public void onLayoutChildren(@NonNull Recycler recycler,
-            @NonNull State state) {
-        if (DEBUG) {
+                                 @NonNull State state) {
+        {
             LeanBackUtil.log(getTag(), "layoutChildren start numRows " + mNumRows
                     + " inPreLayout " + state.isPreLayout()
                     + " didStructureChange " + state.didStructureChange()
@@ -2260,7 +2246,7 @@ public final class GridLayoutManager extends RecyclerView.LayoutManager {
             }
             mFlag &= ~PF_STAGE_MASK;
             leaveContext();
-            if (DEBUG) LeanBackUtil.log(getTag(), "layoutChildren end");
+            LeanBackUtil.log(getTag(), "layoutChildren end");
             return;
         }
 
@@ -2352,7 +2338,7 @@ public final class GridLayoutManager extends RecyclerView.LayoutManager {
             fillScrapViewsInPostLayout();
         }
 
-        if (DEBUG) {
+        {
             StringWriter sw = new StringWriter();
             PrintWriter pw = new PrintWriter(sw);
             mGrid.debugPrint(pw);
@@ -2384,7 +2370,7 @@ public final class GridLayoutManager extends RecyclerView.LayoutManager {
 
         mFlag &= ~PF_STAGE_MASK;
         leaveContext();
-        if (DEBUG) LeanBackUtil.log(getTag(), "layoutChildren end");
+        LeanBackUtil.log(getTag(), "layoutChildren end");
     }
 
     private void offsetChildrenSecondary(int increment) {
@@ -2415,8 +2401,8 @@ public final class GridLayoutManager extends RecyclerView.LayoutManager {
 
     @Override
     public int scrollHorizontallyBy(int dx, @NonNull Recycler recycler,
-            @NonNull State state) {
-        if (DEBUG) LeanBackUtil.log(getTag(), "scrollHorizontallyBy " + dx);
+                                    @NonNull State state) {
+        LeanBackUtil.log(getTag(), "scrollHorizontallyBy " + dx);
         if ((mFlag & PF_LAYOUT_ENABLED) == 0 || !hasDoneFirstLayout()) {
             return 0;
         }
@@ -2435,8 +2421,8 @@ public final class GridLayoutManager extends RecyclerView.LayoutManager {
 
     @Override
     public int scrollVerticallyBy(int dy, @NonNull Recycler recycler,
-            @NonNull State state) {
-        if (DEBUG) LeanBackUtil.log(getTag(), "scrollVerticallyBy " + dy);
+                                  @NonNull State state) {
+        LeanBackUtil.log(getTag(), "scrollVerticallyBy " + dy);
         if ((mFlag & PF_LAYOUT_ENABLED) == 0 || !hasDoneFirstLayout()) {
             return 0;
         }
@@ -2532,7 +2518,7 @@ public final class GridLayoutManager extends RecyclerView.LayoutManager {
 
     @Override
     public void collectAdjacentPrefetchPositions(int dx, int dy, @NonNull State state,
-            @NonNull LayoutPrefetchRegistry layoutPrefetchRegistry) {
+                                                 @NonNull LayoutPrefetchRegistry layoutPrefetchRegistry) {
         try {
             saveContext(null, state);
             int da = (mOrientation == HORIZONTAL) ? dx : dy;
@@ -2552,7 +2538,7 @@ public final class GridLayoutManager extends RecyclerView.LayoutManager {
 
     @Override
     public void collectInitialPrefetchPositions(int adapterItemCount,
-            @NonNull LayoutPrefetchRegistry layoutPrefetchRegistry) {
+                                                @NonNull LayoutPrefetchRegistry layoutPrefetchRegistry) {
         int numToPrefetch = mBaseGridView.mInitialPrefetchItemCount;
         if (adapterItemCount != 0 && numToPrefetch != 0) {
             // prefetch items centered around mFocusPosition
@@ -2636,7 +2622,7 @@ public final class GridLayoutManager extends RecyclerView.LayoutManager {
         mSizePrimary = mWindowAlignment.mainAxis().getSize();
         mScrollOffsetSecondary = 0;
 
-        if (DEBUG) {
+        {
             LeanBackUtil.log(getTag(), "initScrollController mSizePrimary " + mSizePrimary
                     + " mWindowAlignment " + mWindowAlignment);
         }
@@ -2649,7 +2635,7 @@ public final class GridLayoutManager extends RecyclerView.LayoutManager {
         mWindowAlignment.vertical.setPadding(getPaddingTop(), getPaddingBottom());
         mSizePrimary = mWindowAlignment.mainAxis().getSize();
 
-        if (DEBUG) {
+        {
             LeanBackUtil.log(getTag(), "updateScrollController mSizePrimary " + mSizePrimary
                     + " mWindowAlignment " + mWindowAlignment);
         }
@@ -2662,12 +2648,12 @@ public final class GridLayoutManager extends RecyclerView.LayoutManager {
 
     @Override
     public void smoothScrollToPosition(@NonNull RecyclerView recyclerView, @NonNull State state,
-            int position) {
+                                       int position) {
         setSelection(position, 0, true, 0);
     }
 
     void setSelection(int position,
-            int primaryScrollExtra) {
+                      int primaryScrollExtra) {
         setSelection(position, 0, false, primaryScrollExtra);
     }
 
@@ -2676,7 +2662,7 @@ public final class GridLayoutManager extends RecyclerView.LayoutManager {
     }
 
     void setSelectionWithSub(int position, int subposition,
-            int primaryScrollExtra) {
+                             int primaryScrollExtra) {
         setSelection(position, subposition, false, primaryScrollExtra);
     }
 
@@ -2693,7 +2679,7 @@ public final class GridLayoutManager extends RecyclerView.LayoutManager {
     }
 
     void setSelection(int position, int subposition, boolean smooth,
-            int primaryScrollExtra) {
+                      int primaryScrollExtra) {
         if ((mFocusPosition != position && position != NO_POSITION)
                 || subposition != mSubFocusPosition || primaryScrollExtra != mPrimaryScrollExtra) {
             scrollToSelection(position, subposition, smooth, primaryScrollExtra);
@@ -2701,7 +2687,7 @@ public final class GridLayoutManager extends RecyclerView.LayoutManager {
     }
 
     void scrollToSelection(int position, int subposition,
-            boolean smooth, int primaryScrollExtra) {
+                           boolean smooth, int primaryScrollExtra) {
         if (TRACE) TraceCompat.beginSection("scrollToSelection");
         mPrimaryScrollExtra = primaryScrollExtra;
 
@@ -2836,8 +2822,8 @@ public final class GridLayoutManager extends RecyclerView.LayoutManager {
 
     @Override
     public void onItemsAdded(@NonNull RecyclerView recyclerView, int positionStart,
-            int itemCount) {
-        if (DEBUG) {
+                             int itemCount) {
+        {
             LeanBackUtil.log(getTag(), "onItemsAdded positionStart "
                     + positionStart + " itemCount " + itemCount);
         }
@@ -2853,15 +2839,15 @@ public final class GridLayoutManager extends RecyclerView.LayoutManager {
 
     @Override
     public void onItemsChanged(@NonNull RecyclerView recyclerView) {
-        if (DEBUG) LeanBackUtil.log(getTag(), "onItemsChanged");
+        LeanBackUtil.log(getTag(), "onItemsChanged");
         mFocusPositionOffset = 0;
         mChildrenStates.clear();
     }
 
     @Override
     public void onItemsRemoved(@NonNull RecyclerView recyclerView,
-            int positionStart, int itemCount) {
-        if (DEBUG) {
+                               int positionStart, int itemCount) {
+        {
             LeanBackUtil.log(getTag(), "onItemsRemoved positionStart "
                     + positionStart + " itemCount " + itemCount);
         }
@@ -2884,8 +2870,8 @@ public final class GridLayoutManager extends RecyclerView.LayoutManager {
 
     @Override
     public void onItemsMoved(@NonNull RecyclerView recyclerView,
-            int fromPosition, int toPosition, int itemCount) {
-        if (DEBUG) {
+                             int fromPosition, int toPosition, int itemCount) {
+        {
             LeanBackUtil.log(getTag(), "onItemsMoved fromPosition "
                     + fromPosition + " toPosition " + toPosition);
         }
@@ -2907,8 +2893,8 @@ public final class GridLayoutManager extends RecyclerView.LayoutManager {
 
     @Override
     public void onItemsUpdated(@NonNull RecyclerView recyclerView,
-            int positionStart, int itemCount) {
-        if (DEBUG) {
+                               int positionStart, int itemCount) {
+        {
             LeanBackUtil.log(getTag(), "onItemsUpdated positionStart "
                     + positionStart + " itemCount " + itemCount);
         }
@@ -2919,7 +2905,7 @@ public final class GridLayoutManager extends RecyclerView.LayoutManager {
 
     @Override
     public boolean onRequestChildFocus(@NonNull RecyclerView parent, @NonNull State state,
-            @NonNull View child, @Nullable View focused) {
+                                       @NonNull View child, @Nullable View focused) {
         if ((mFlag & PF_FOCUS_SEARCH_DISABLED) != 0) {
             return true;
         }
@@ -2935,8 +2921,8 @@ public final class GridLayoutManager extends RecyclerView.LayoutManager {
 
     @Override
     public boolean requestChildRectangleOnScreen(@NonNull RecyclerView parent,
-            @NonNull View child, @NonNull Rect rect, boolean immediate) {
-        if (DEBUG) LeanBackUtil.log(getTag(), "requestChildRectangleOnScreen " + child + " " + rect);
+                                                 @NonNull View child, @NonNull Rect rect, boolean immediate) {
+        LeanBackUtil.log(getTag(), "requestChildRectangleOnScreen " + child + " " + rect);
         return false;
     }
 
@@ -2963,7 +2949,7 @@ public final class GridLayoutManager extends RecyclerView.LayoutManager {
      * defined on the view).
      */
     private int getAdjustedPrimaryAlignedScrollDistance(int scrollPrimary, View view,
-            View childView) {
+                                                        View childView) {
         int subindex = getSubPositionByView(view, childView);
         if (subindex != 0) {
             final LayoutParams lp = (LayoutParams) view.getLayoutParams();
@@ -2997,7 +2983,7 @@ public final class GridLayoutManager extends RecyclerView.LayoutManager {
      * Scroll to a given child view and change mFocusPosition. Ignored when in slideOut() state.
      */
     private void scrollToView(View view, View childView, boolean smooth, int extraDelta,
-            int extraDeltaSecondary) {
+                              int extraDeltaSecondary) {
         if ((mFlag & PF_SLIDING) != 0) {
             return;
         }
@@ -3122,7 +3108,7 @@ public final class GridLayoutManager extends RecyclerView.LayoutManager {
             scrollPrimary = getAdjustedPrimaryAlignedScrollDistance(scrollPrimary, view, childView);
         }
         int scrollSecondary = getSecondaryScrollDistance(view);
-        if (DEBUG) {
+        {
             LeanBackUtil.log(getTag(), "getAlignedPosition " + scrollPrimary + " " + scrollSecondary
                     + " " + mPrimaryScrollExtra + " " + mWindowAlignment);
         }
@@ -3264,7 +3250,7 @@ public final class GridLayoutManager extends RecyclerView.LayoutManager {
             return mBaseGridView.getParent().focusSearch(focused, direction);
         }
 
-        if (DEBUG) LeanBackUtil.log(getTag(), "regular focusSearch failed direction " + direction);
+        LeanBackUtil.log(getTag(), "regular focusSearch failed direction " + direction);
         int movement = getMovement(direction);
         final boolean isScroll = mBaseGridView.getScrollState() != RecyclerView.SCROLL_STATE_IDLE;
         if (movement == NEXT_ITEM) {
@@ -3296,7 +3282,7 @@ public final class GridLayoutManager extends RecyclerView.LayoutManager {
             return result;
         }
 
-        if (DEBUG) LeanBackUtil.log(getTag(), "now focusSearch in parent");
+        LeanBackUtil.log(getTag(), "now focusSearch in parent");
         result = mBaseGridView.getParent().focusSearch(focused, direction);
         if (result != null) {
             return result;
@@ -3326,8 +3312,8 @@ public final class GridLayoutManager extends RecyclerView.LayoutManager {
 
     @Override
     public boolean onAddFocusables(@NonNull RecyclerView recyclerView,
-            @SuppressLint("ConcreteCollection") @NonNull ArrayList<View> views, int direction,
-            int focusableMode) {
+                                   @SuppressLint("ConcreteCollection") @NonNull ArrayList<View> views, int direction,
+                                   int focusableMode) {
         if ((mFlag & PF_FOCUS_SEARCH_DISABLED) != 0) {
             return true;
         }
@@ -3493,7 +3479,7 @@ public final class GridLayoutManager extends RecyclerView.LayoutManager {
     }
 
     boolean gridOnRequestFocusInDescendants(RecyclerView recyclerView, int direction,
-            Rect previouslyFocusedRect) {
+                                            Rect previouslyFocusedRect) {
         switch (mFocusScrollStrategy) {
             case BaseGridView.FOCUS_SCROLL_ALIGNED:
             default:
@@ -3507,11 +3493,11 @@ public final class GridLayoutManager extends RecyclerView.LayoutManager {
     }
 
     private boolean gridOnRequestFocusInDescendantsAligned(int direction,
-            Rect previouslyFocusedRect) {
+                                                           Rect previouslyFocusedRect) {
         View view = findViewByPosition(mFocusPosition);
         if (view != null) {
             boolean result = view.requestFocus(direction, previouslyFocusedRect);
-            if (!result && DEBUG) {
+            if (!result) {
                 LeanBackUtil.log(getTag(), "failed to request focus on " + view);
             }
             return result;
@@ -3520,7 +3506,7 @@ public final class GridLayoutManager extends RecyclerView.LayoutManager {
     }
 
     private boolean gridOnRequestFocusInDescendantsUnaligned(int direction,
-            Rect previouslyFocusedRect) {
+                                                             Rect previouslyFocusedRect) {
         // focus to view not overlapping padding area to avoid scrolling in gaining focus
         int index;
         int increment;
@@ -3612,8 +3598,8 @@ public final class GridLayoutManager extends RecyclerView.LayoutManager {
 
     @Override
     public void onAdapterChanged(@Nullable RecyclerView.Adapter oldAdapter,
-            @Nullable RecyclerView.Adapter newAdapter) {
-        if (DEBUG) LeanBackUtil.log(getTag(), "onAdapterChanged to " + newAdapter);
+                                 @Nullable RecyclerView.Adapter newAdapter) {
+        LeanBackUtil.log(getTag(), "onAdapterChanged to " + newAdapter);
         if (oldAdapter != null) {
             discardLayoutInfo();
             mFocusPosition = NO_POSITION;
@@ -3694,7 +3680,7 @@ public final class GridLayoutManager extends RecyclerView.LayoutManager {
     @NonNull
     @Override
     public Parcelable onSaveInstanceState() {
-        if (DEBUG) LeanBackUtil.log(getTag(), "onSaveInstanceState getSelection() " + getSelection());
+        LeanBackUtil.log(getTag(), "onSaveInstanceState getSelection() " + getSelection());
         SavedState ss = new SavedState();
         // save selected index
         ss.mIndex = getSelection();
@@ -3730,12 +3716,12 @@ public final class GridLayoutManager extends RecyclerView.LayoutManager {
         mChildrenStates.loadFromBundle(loadingState.mChildStates);
         mFlag |= PF_FORCE_FULL_LAYOUT;
         requestLayout();
-        if (DEBUG) LeanBackUtil.log(getTag(), "onRestoreInstanceState mFocusPosition " + mFocusPosition);
+        LeanBackUtil.log(getTag(), "onRestoreInstanceState mFocusPosition " + mFocusPosition);
     }
 
     @Override
     public int getRowCountForAccessibility(@NonNull Recycler recycler,
-            @NonNull State state) {
+                                           @NonNull State state) {
         if (mOrientation == HORIZONTAL && mGrid != null) {
             return mGrid.getNumRows();
         }
@@ -3744,7 +3730,7 @@ public final class GridLayoutManager extends RecyclerView.LayoutManager {
 
     @Override
     public int getColumnCountForAccessibility(@NonNull Recycler recycler,
-            @NonNull State state) {
+                                              @NonNull State state) {
         if (mOrientation == VERTICAL && mGrid != null) {
             return mGrid.getNumRows();
         }
@@ -3753,8 +3739,8 @@ public final class GridLayoutManager extends RecyclerView.LayoutManager {
 
     @Override
     public void onInitializeAccessibilityNodeInfoForItem(@NonNull Recycler recycler,
-            @NonNull State state, @NonNull View host,
-            @NonNull AccessibilityNodeInfoCompat info) {
+                                                         @NonNull State state, @NonNull View host,
+                                                         @NonNull AccessibilityNodeInfoCompat info) {
         ViewGroup.LayoutParams lp = host.getLayoutParams();
         if (mGrid == null || !(lp instanceof LayoutParams)) {
             return;
@@ -3781,7 +3767,7 @@ public final class GridLayoutManager extends RecyclerView.LayoutManager {
      */
     @Override
     public boolean performAccessibilityAction(@NonNull Recycler recycler, @NonNull State state,
-            int action, @Nullable Bundle args) {
+                                              int action, @Nullable Bundle args) {
         if (!isScrollEnabled()) {
             // eat action request so that talkback wont focus out of RV
             return true;
@@ -3901,7 +3887,7 @@ public final class GridLayoutManager extends RecyclerView.LayoutManager {
     }
 
     private void addA11yActionMovingBackward(AccessibilityNodeInfoCompat info,
-            boolean reverseFlowPrimary) {
+                                             boolean reverseFlowPrimary) {
         if (Build.VERSION.SDK_INT >= 23) {
             if (mOrientation == HORIZONTAL) {
                 info.addAction(reverseFlowPrimary
@@ -3920,7 +3906,7 @@ public final class GridLayoutManager extends RecyclerView.LayoutManager {
     }
 
     private void addA11yActionMovingForward(AccessibilityNodeInfoCompat info,
-            boolean reverseFlowPrimary) {
+                                            boolean reverseFlowPrimary) {
         if (Build.VERSION.SDK_INT >= 23) {
             if (mOrientation == HORIZONTAL) {
                 info.addAction(reverseFlowPrimary
@@ -3940,7 +3926,7 @@ public final class GridLayoutManager extends RecyclerView.LayoutManager {
 
     @Override
     public void onInitializeAccessibilityNodeInfo(@NonNull Recycler recycler,
-            @NonNull State state, @NonNull AccessibilityNodeInfoCompat info) {
+                                                  @NonNull State state, @NonNull AccessibilityNodeInfoCompat info) {
         saveContext(recycler, state);
         int count = state.getItemCount();
         // reverseFlowPrimary is whether we are in LTR/RTL mode.

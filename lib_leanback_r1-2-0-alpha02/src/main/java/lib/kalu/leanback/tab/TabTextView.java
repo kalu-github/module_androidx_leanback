@@ -192,7 +192,6 @@ class TabTextView extends TextView {
     private void refreshText() {
         try {
             String text = mTabModel.getText();
-            LeanBackUtil.log("TabTextView => refreshText => text = " + text + ", this = " + this);
             if (null != text && text.length() >= 0) {
                 setText(text);
             }
@@ -207,12 +206,10 @@ class TabTextView extends TextView {
         try {
             @ColorRes int c1 = mTabModel.getTextColorResource(focus, checked);
             if (c1 != 0) {
-                LeanBackUtil.log("TabTextView => refreshTextColor => c1 = " + c1 + ", this = " + this);
                 setTextColor(getResources().getColor(c1));
             } else {
                 @ColorInt int c2 = mTabModel.getTextColor(focus, checked);
                 if (c2 != 0) {
-                    LeanBackUtil.log("TabTextView => refreshTextColor => c2 = " + c2 + ", this = " + this);
                     setTextColor(c2);
                 }
             }

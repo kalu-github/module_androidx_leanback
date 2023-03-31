@@ -154,8 +154,6 @@ final class TagsHorizontalScrollView extends HorizontalScrollView {
                 int itemRight = ((TagsLinearLayoutChild) getChildAt(0)).getItemRight(next);
                 int scrollX = getScrollX();
                 int width = getWidth() - getPaddingLeft() - getPaddingRight();
-                LeanBackUtil.log("TagsHorizontalScrollView => scrollNext => right => width = " + width + ", scrollX = " + scrollX + ", itemRight = " + itemRight);
-
                 // 不可见/部分不可见
                 if (itemRight > width) {
                     int x = itemRight - scrollX - width;

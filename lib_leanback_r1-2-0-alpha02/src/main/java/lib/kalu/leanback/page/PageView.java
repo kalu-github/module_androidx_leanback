@@ -43,7 +43,6 @@ public class PageView extends FrameLayout {
         if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_LEFT) {
             mPressNumRight = 0;
             if (!dispatchKeyEvent) {
-                LeanBackUtil.log("PageView => dispatchKeyEvent => left => mPressNumLeft = " + mPressNumLeft + ", mPressNumRight = " + mPressNumRight);
                 View focus = findFocus();
                 View nextFocus = FocusFinder.getInstance().findNextFocus(this, focus, View.FOCUS_LEFT);
                 if (null != focus && null == nextFocus) {
@@ -64,7 +63,6 @@ public class PageView extends FrameLayout {
         else if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_RIGHT) {
             mPressNumLeft = 0;
             if (!dispatchKeyEvent) {
-                LeanBackUtil.log("PageView => dispatchKeyEvent => right => mPressNumLeft = " + mPressNumLeft + ", mPressNumRight = " + mPressNumRight);
                 View focus = findFocus();
                 View nextFocus = FocusFinder.getInstance().findNextFocus(this, focus, View.FOCUS_RIGHT);
                 if (null != focus && null == nextFocus) {

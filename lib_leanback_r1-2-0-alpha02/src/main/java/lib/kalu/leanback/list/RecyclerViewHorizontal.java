@@ -46,7 +46,6 @@ public class RecyclerViewHorizontal extends BaseRecyclerView {
                 int width = focusedChild.getWidth();
                 if (width < 0)
                     throw new Exception("width error: " + width);
-                LeanBackUtil.log("RecyclerViewHorizontal => dispatchKeyEvent => left => focusPosition = " + focusPosition + ", width = " + width);
                 scrollBy(-width, 0);
                 View nextFocusNews = FocusFinder.getInstance().findNextFocus(this, focusedChild, View.FOCUS_LEFT);
                 if (null == nextFocusNews)
@@ -83,7 +82,6 @@ public class RecyclerViewHorizontal extends BaseRecyclerView {
                 int width = focusedChild.getWidth();
                 if (width < 0)
                     throw new Exception("width error: " + width);
-                LeanBackUtil.log("RecyclerViewHorizontal => dispatchKeyEvent => right => focusPosition = " + focusPosition + ", itemCount = " + itemCount + ", width = " + width);
                 scrollBy(width, 0);
                 View nextFocusNews = FocusFinder.getInstance().findNextFocus(this, focusedChild, View.FOCUS_RIGHT);
                 if (null == nextFocusNews)

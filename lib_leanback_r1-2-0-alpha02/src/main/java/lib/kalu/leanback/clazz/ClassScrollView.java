@@ -77,7 +77,6 @@ public final class ClassScrollView extends ScrollView implements ClassLayoutImpl
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
-        LeanBackUtil.log("ClassScrollView => onFinishInflate => mOrientation = " + mOrientation);
         // 1
         setFillViewport(true);
         setVerticalScrollBarEnabled(false);
@@ -95,7 +94,6 @@ public final class ClassScrollView extends ScrollView implements ClassLayoutImpl
     @Override
     protected void onFocusChanged(boolean gainFocus, int direction, @Nullable Rect previouslyFocusedRect) {
         super.onFocusChanged(gainFocus, direction, previouslyFocusedRect);
-        LeanBackUtil.log("ClassScrollView => onFocusChanged => gainFocus = " + gainFocus);
         setCheckedRadioButton(gainFocus, false, false);
     }
 
@@ -204,18 +202,14 @@ public final class ClassScrollView extends ScrollView implements ClassLayoutImpl
                 nextFocus = FocusFinder.getInstance().findNextFocus(findDecorView(this),  this, View.FOCUS_DOWN);
             }
 
-            LeanBackUtil.log("ClassScrollView => checkNextFocus => checkNext = " + checkNext + ", nextFocus = " + nextFocus);
-
             if (checkNext && null == nextFocus) {
                 return true;
             } else if (checkNext && nextFocus instanceof RecyclerView) {
                 androidx.recyclerview.widget.RecyclerView.Adapter adapter = ((RecyclerView) nextFocus).getAdapter();
-                LeanBackUtil.log("ClassScrollView => checkNextFocus => adapter = " + adapter);
                 if (null == adapter) {
                     return true;
                 } else {
                     int itemCount = adapter.getItemCount();
-                    LeanBackUtil.log("ClassScrollView => checkNextFocus => itemCount = " + itemCount);
                     if (itemCount <= 0) {
                         return true;
                     }

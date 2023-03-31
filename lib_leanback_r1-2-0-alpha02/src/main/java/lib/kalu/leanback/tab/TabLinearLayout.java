@@ -269,21 +269,6 @@ final class TabLinearLayout extends LinearLayout {
         }
     }
 
-//    protected int getScrollRange(int position, int width) {
-//        try {
-//            int childCount = getChildCount();
-//            if (childCount <= 0) throw new Exception("childCount <= 0");
-//            if (position < 0 || position + 1 >= childCount)
-//                throw new Exception("position error: " + position);
-//            View view = getChildAt(position);
-//            if (null == view) throw new Exception("view is null");
-//            return view.getRight();
-//        } catch (Exception e) {
-//            LeanBackUtil.log("TabLinearLayout => getItemRight => " + e.getMessage());
-//            return 0;
-//        }
-//    }
-
     protected int getItemWidth(int position) {
 
         try {
