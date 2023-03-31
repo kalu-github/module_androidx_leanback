@@ -366,7 +366,6 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
                 T t = list.get(i);
                 if (null == t)
                     continue;
-                t.setFocus(isFromUser && i == checkedIndex);
                 t.setChecked(i == checkedIndex);
                 child.setVisibility(View.VISIBLE);
                 child.setTag(R.id.lb_presenter_episode, t);
@@ -1102,12 +1101,12 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
                 // 不够
                 if (nextCheckRangeIndex >= curFirstRangeIndex) {
                     swapRange((View) episodeGroup.getParent(), rangeIndex, nextCheckRangeIndex);
-                    updateEpisode((View) episodeGroup.getParent(), nextCheckRangeIndex, episodeNum - 1, true);
+                    updateEpisode((View) episodeGroup.getParent(), nextCheckRangeIndex, episodeNum - 1,  false);
                 }
                 // 够了
                 else {
                     updateRange((View) episodeGroup.getParent(), nextCheckRangeIndex, nextCheckRangeIndex, -2);
-                    updateEpisode((View) episodeGroup.getParent(), nextCheckRangeIndex, episodeNum - 1, true);
+                    updateEpisode((View) episodeGroup.getParent(), nextCheckRangeIndex, episodeNum - 1, false);
                 }
                 // nextFocus
                 episodeGroup.post(new Runnable() {
@@ -1133,13 +1132,13 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
                 // 不够
                 if (nextCheckRangeIndex <= curLastRangeIndex) {
                     swapRange((View) episodeGroup.getParent(), rangeIndex, nextCheckRangeIndex);
-                    updateEpisode((View) episodeGroup.getParent(), nextCheckRangeIndex, 0, true);
+                    updateEpisode((View) episodeGroup.getParent(), nextCheckRangeIndex, 0, false);
                 }
                 // 够了
                 else {
                     int startRangeIndex = nextCheckRangeIndex - initRangeNum() + 1;
                     updateRange((View) episodeGroup.getParent(), startRangeIndex, nextCheckRangeIndex, -2);
-                    updateEpisode((View) episodeGroup.getParent(), nextCheckRangeIndex, 0, true);
+                    updateEpisode((View) episodeGroup.getParent(), nextCheckRangeIndex, 0,  false);
                 }
                 // nextFocus
                 episodeGroup.post(new Runnable() {
@@ -1244,7 +1243,7 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
             if (direction == View.FOCUS_LEFT && rangeIndex > 0 && indexOfChild <= 0) {
                 int startRangeIndex = rangeIndex - 1;
                 updateRange((View) rangeGroup.getParent(), startRangeIndex, -1, direction);
-                updateEpisode((View) rangeGroup.getParent(), startRangeIndex, 0, false);
+                updateEpisode((View) rangeGroup.getParent(), startRangeIndex, 0,  false);
             }
             // left-move
             else if (direction == View.FOCUS_LEFT && rangeIndex > 0) {
@@ -1257,13 +1256,13 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
                 int checkedRangeIndex = rangeIndex + 1;
                 int startRangeIndex = checkedRangeIndex - initRangeNum() + 1;
                 updateRange((View) rangeGroup.getParent(), startRangeIndex, -1, direction);
-                updateEpisode((View) rangeGroup.getParent(), checkedRangeIndex, 0, false);
+                updateEpisode((View) rangeGroup.getParent(), checkedRangeIndex, 0,  false);
             }
             // right-move
             else if (direction == View.FOCUS_RIGHT && rangeIndex + 1 < rangeLength) {
                 int nextCheckedRangeIndex = rangeIndex + 1;
                 swapRange((View) rangeGroup.getParent(), rangeIndex, nextCheckedRangeIndex);
-                updateEpisode((View) rangeGroup.getParent(), nextCheckedRangeIndex, -1, false);
+                updateEpisode((View) rangeGroup.getParent(), nextCheckedRangeIndex, -1,  false);
             }
             return false;
         } catch (Exception e) {
@@ -1389,7 +1388,7 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
             findCleanFocusCheckedRange(rootGroup);
             findCleanFocusCheckedEpisode(rootGroup);
             updateRange(viewGroup, startRangeIndex, checkedRangeIndex, -1);
-            updateEpisode(viewGroup, checkedRangeIndex, checkedEpisodeIndex, false);
+            updateEpisode(viewGroup, checkedRangeIndex, checkedEpisodeIndex, true);
             setPlayingRange(viewGroup, checkedRangeIndex);
             setPlayingEpisode(viewGroup, checkedEpisodeIndex);
         } catch (Exception e) {
