@@ -1487,7 +1487,8 @@ public abstract class BaseGridView extends RecyclerView {
                 Object o = objectAdapter.get(i);
                 if (null == o)
                     continue;
-                if (simpleName.equals(o.getClass().getSimpleName())) {
+                String oName = o.getClass().getSimpleName();
+                if (simpleName.equals(oName)) {
                     return findViewHolderForAdapterPosition(i);
                 }
             }
