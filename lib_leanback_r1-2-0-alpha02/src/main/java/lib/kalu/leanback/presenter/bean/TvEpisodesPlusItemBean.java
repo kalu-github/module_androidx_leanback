@@ -10,12 +10,12 @@ public class TvEpisodesPlusItemBean extends TvEpisodesGridItemBean implements Se
     public TvEpisodesPlusItemBean() {
     }
 
-    private int rangeStart;
-    private int rangeEnd;
-    private int rangeIndex;
-    private int rangeMax;
-    private int episodeIndex;
-    private int episodeMax;
+    private int rangeStart = -1;
+    private int rangeEnd = -1;
+    private int rangeIndex = -1;
+    private int rangeMax = -1;
+    private int episodeIndex = -1;
+    private int episodeMax = -1;
 
     public int getRangeStart() {
         return rangeStart;
