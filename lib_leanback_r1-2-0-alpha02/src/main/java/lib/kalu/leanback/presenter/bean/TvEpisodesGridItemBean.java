@@ -14,6 +14,25 @@ public class TvEpisodesGridItemBean extends TvPresenterRowBeanImpl implements Se
     private boolean playing = false; // 是否正在播放
     private boolean focus = false; // 是否有焦点
 
+    private int episodeIndex = -1;
+    private int episodeMax = -1;
+
+    public int getEpisodeIndex() {
+        return episodeIndex;
+    }
+
+    public void setEpisodeIndex(int episodeIndex) {
+        this.episodeIndex = episodeIndex;
+    }
+
+    public int getEpisodeMax() {
+        return episodeMax;
+    }
+
+    public void setEpisodeMax(int episodeMax) {
+        this.episodeMax = episodeMax;
+    }
+
     public boolean isChecked() {
         return checked;
     }

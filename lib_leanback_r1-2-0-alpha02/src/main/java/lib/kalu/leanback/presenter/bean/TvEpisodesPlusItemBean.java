@@ -14,8 +14,6 @@ public class TvEpisodesPlusItemBean extends TvEpisodesGridItemBean implements Se
     private int rangeEnd = -1;
     private int rangeIndex = -1;
     private int rangeMax = -1;
-    private int episodeIndex = -1;
-    private int episodeMax = -1;
 
     public int getRangeStart() {
         return rangeStart;
@@ -49,19 +47,4 @@ public class TvEpisodesPlusItemBean extends TvEpisodesGridItemBean implements Se
         this.rangeMax = rangeMax;
     }
 
-    public int getEpisodeIndex() {
-        return episodeIndex;
-    }
-
-    public void setEpisodeIndex(int episodeIndex) {
-        this.episodeIndex = episodeIndex;
-    }
-
-    public int getEpisodeMax() {
-        return episodeMax;
-    }
-
-    public void setEpisodeMax(int episodeMax) {
-        this.episodeMax = episodeMax;
-    }
 }

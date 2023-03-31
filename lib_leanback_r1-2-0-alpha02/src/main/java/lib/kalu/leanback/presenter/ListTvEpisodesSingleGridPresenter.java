@@ -81,12 +81,14 @@ public abstract class ListTvEpisodesSingleGridPresenter<T extends TvEpisodesGrid
             if (size > 0)
                 throw new Exception("not empty");
             mData.clear();
-            List<T> collection = (List<T>) item;
-            int max = collection.size();
+            List<T> list = (List<T>) item;
+            int max = list.size();
             for (int i = 0; i < max; i++) {
-                T t = collection.get(i);
+                T t = list.get(i);
                 if (null == t)
                     continue;
+                t.setEpisodeIndex(i);
+                t.setEpisodeMax(max);
                 t.setChecked(false);
                 t.setPlaying(false);
                 t.setFocus(false);
