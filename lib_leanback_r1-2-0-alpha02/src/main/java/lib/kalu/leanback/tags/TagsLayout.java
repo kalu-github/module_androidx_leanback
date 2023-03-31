@@ -7,9 +7,11 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.util.AttributeSet;
+import android.view.FocusFinder;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 import androidx.annotation.ColorInt;
@@ -29,7 +31,6 @@ import lib.kalu.leanback.tags.listener.OnTagsChangeListener;
 import lib.kalu.leanback.tags.model.TagBean;
 import lib.kalu.leanback.tags.model.TagResultBean;
 import lib.kalu.leanback.util.LeanBackUtil;
-import lib.kalu.leanback.util.WrapperUtil;
 
 @Keep
 public final class TagsLayout extends LinearLayout {
@@ -427,6 +428,20 @@ public final class TagsLayout extends LinearLayout {
         }
     }
 
+    private ViewGroup findDecorView(View view) {
+        try {
+            View parent = (View) view.getParent();
+            if (null == parent) {
+                return (ViewGroup) view;
+            } else {
+                return findDecorView(parent);
+            }
+        } catch (Exception e) {
+            LeanBackUtil.log("TabLayout => findDecorView => " + e.getMessage());
+            return (ViewGroup) view;
+        }
+    }
+
     private boolean checkNextFocus(@NonNull KeyEvent event) {
         try {
 
@@ -436,22 +451,22 @@ public final class TagsLayout extends LinearLayout {
             // left
             if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_LEFT) {
                 checkNext = true;
-                nextFocus = WrapperUtil.findNextFocus(getContext(), this, View.FOCUS_LEFT);
+                nextFocus = FocusFinder.getInstance().findNextFocus(findDecorView(this), this, View.FOCUS_LEFT);
             }
             // right
             else if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_RIGHT) {
                 checkNext = true;
-                nextFocus = WrapperUtil.findNextFocus(getContext(), this, View.FOCUS_RIGHT);
+                nextFocus =FocusFinder.getInstance().findNextFocus(findDecorView(this),  this, View.FOCUS_RIGHT);
             }
             // up
             else if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_UP) {
                 checkNext = true;
-                nextFocus = WrapperUtil.findNextFocus(getContext(), this, View.FOCUS_UP);
+                nextFocus = FocusFinder.getInstance().findNextFocus(findDecorView(this), this, View.FOCUS_UP);
             }
             // down
             else if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_DOWN) {
                 checkNext = true;
-                nextFocus = WrapperUtil.findNextFocus(getContext(), this, View.FOCUS_DOWN);
+                nextFocus = FocusFinder.getInstance().findNextFocus(findDecorView(this), this, View.FOCUS_DOWN);
             }
 
             if (checkNext && null == nextFocus) {

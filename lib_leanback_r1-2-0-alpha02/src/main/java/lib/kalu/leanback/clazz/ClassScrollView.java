@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.graphics.Rect;
 import android.os.Build;
 import android.util.AttributeSet;
+import android.view.FocusFinder;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,7 +27,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 
 import lib.kalu.leanback.util.LeanBackUtil;
-import lib.kalu.leanback.util.WrapperUtil;
 
 public final class ClassScrollView extends ScrollView implements ClassLayoutImpl {
 
@@ -77,7 +77,7 @@ public final class ClassScrollView extends ScrollView implements ClassLayoutImpl
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
-        LeanBackUtil.log("BaseScrollView => onFinishInflate => mOrientation = " + mOrientation);
+        LeanBackUtil.log("ClassScrollView => onFinishInflate => mOrientation = " + mOrientation);
         // 1
         setFillViewport(true);
         setVerticalScrollBarEnabled(false);
@@ -95,7 +95,7 @@ public final class ClassScrollView extends ScrollView implements ClassLayoutImpl
     @Override
     protected void onFocusChanged(boolean gainFocus, int direction, @Nullable Rect previouslyFocusedRect) {
         super.onFocusChanged(gainFocus, direction, previouslyFocusedRect);
-        LeanBackUtil.log("BaseScrollView => onFocusChanged => gainFocus = " + gainFocus);
+        LeanBackUtil.log("ClassScrollView => onFocusChanged => gainFocus = " + gainFocus);
         setCheckedRadioButton(gainFocus, false, false);
     }
 
@@ -163,6 +163,20 @@ public final class ClassScrollView extends ScrollView implements ClassLayoutImpl
         return checkNextFocus(event) || super.dispatchKeyEvent(event);
     }
 
+    private ViewGroup findDecorView(View view) {
+        try {
+            View parent = (View) view.getParent();
+            if (null == parent) {
+                return (ViewGroup) view;
+            } else {
+                return findDecorView(parent);
+            }
+        } catch (Exception e) {
+            LeanBackUtil.log("ClassScrollView => findDecorView => " + e.getMessage());
+            return (ViewGroup) view;
+        }
+    }
+
     private boolean checkNextFocus(@NonNull KeyEvent event) {
         try {
 
@@ -172,36 +186,36 @@ public final class ClassScrollView extends ScrollView implements ClassLayoutImpl
             // left
             if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_LEFT) {
                 checkNext = true;
-                nextFocus = WrapperUtil.findNextFocus(getContext(), this, View.FOCUS_LEFT);
+                nextFocus = FocusFinder.getInstance().findNextFocus(findDecorView(this), this, View.FOCUS_LEFT);
             }
             // right
             else if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_RIGHT) {
                 checkNext = true;
-                nextFocus = WrapperUtil.findNextFocus(getContext(), this, View.FOCUS_RIGHT);
+                nextFocus = FocusFinder.getInstance().findNextFocus(findDecorView(this),  this, View.FOCUS_RIGHT);
             }
             // up
             else if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_UP) {
                 checkNext = true;
-                nextFocus = WrapperUtil.findNextFocus(getContext(), this, View.FOCUS_UP);
+                nextFocus = FocusFinder.getInstance().findNextFocus(findDecorView(this),  this, View.FOCUS_UP);
             }
             // down
             else if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_DOWN) {
                 checkNext = true;
-                nextFocus = WrapperUtil.findNextFocus(getContext(), this, View.FOCUS_DOWN);
+                nextFocus = FocusFinder.getInstance().findNextFocus(findDecorView(this),  this, View.FOCUS_DOWN);
             }
 
-            LeanBackUtil.log("BaseScrollView => checkNextFocus => checkNext = " + checkNext + ", nextFocus = " + nextFocus);
+            LeanBackUtil.log("ClassScrollView => checkNextFocus => checkNext = " + checkNext + ", nextFocus = " + nextFocus);
 
             if (checkNext && null == nextFocus) {
                 return true;
             } else if (checkNext && nextFocus instanceof RecyclerView) {
                 androidx.recyclerview.widget.RecyclerView.Adapter adapter = ((RecyclerView) nextFocus).getAdapter();
-                LeanBackUtil.log("BaseScrollView => checkNextFocus => adapter = " + adapter);
+                LeanBackUtil.log("ClassScrollView => checkNextFocus => adapter = " + adapter);
                 if (null == adapter) {
                     return true;
                 } else {
                     int itemCount = adapter.getItemCount();
-                    LeanBackUtil.log("BaseScrollView => checkNextFocus => itemCount = " + itemCount);
+                    LeanBackUtil.log("ClassScrollView => checkNextFocus => itemCount = " + itemCount);
                     if (itemCount <= 0) {
                         return true;
                     }
@@ -209,7 +223,7 @@ public final class ClassScrollView extends ScrollView implements ClassLayoutImpl
             }
             throw new Exception("check error");
         } catch (Exception e) {
-            LeanBackUtil.log("BaseScrollView => checkNextFocus => " + e.getMessage());
+            LeanBackUtil.log("ClassScrollView => checkNextFocus => " + e.getMessage());
             return false;
         }
     }

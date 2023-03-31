@@ -30,7 +30,6 @@ import lib.kalu.leanback.tab.listener.OnTabChangeListener;
 import lib.kalu.leanback.tab.model.TabModel;
 import lib.kalu.leanback.tags.TagsLayout;
 import lib.kalu.leanback.util.LeanBackUtil;
-import lib.kalu.leanback.util.WrapperUtil;
 
 /**
  * TabLayout for TV
@@ -341,21 +340,31 @@ public final class TabLayout extends HorizontalScrollView {
         }
     }
 
+    private ViewGroup findDecorView(View view) {
+        try {
+            View parent = (View) view.getParent();
+            if (null == parent) {
+                return (ViewGroup) view;
+            } else {
+                return findDecorView(parent);
+            }
+        } catch (Exception e) {
+            LeanBackUtil.log("TabLayout => findDecorView => " + e.getMessage());
+            return (ViewGroup) view;
+        }
+    }
+
     @Keep
     public View findNextFocus(int direction) {
         View nextFocus = null;
         if (direction == View.FOCUS_LEFT) {
-            ViewGroup rootView = WrapperUtil.getRootView(getContext());
-            nextFocus = FocusFinder.getInstance().findNextFocus(rootView, this, View.FOCUS_LEFT);
+            nextFocus = FocusFinder.getInstance().findNextFocus(findDecorView(this), this, View.FOCUS_LEFT);
         } else if (direction == View.FOCUS_RIGHT) {
-            ViewGroup rootView = WrapperUtil.getRootView(getContext());
-            nextFocus = FocusFinder.getInstance().findNextFocus(rootView, this, View.FOCUS_RIGHT);
+            nextFocus = FocusFinder.getInstance().findNextFocus(findDecorView(this), this, View.FOCUS_RIGHT);
         } else if (direction == View.FOCUS_UP) {
-            ViewGroup rootView = WrapperUtil.getRootView(getContext());
-            nextFocus = FocusFinder.getInstance().findNextFocus(rootView, this, View.FOCUS_UP);
+            nextFocus = FocusFinder.getInstance().findNextFocus(findDecorView(this), this, View.FOCUS_UP);
         } else if (direction == View.FOCUS_DOWN) {
-            ViewGroup rootView = WrapperUtil.getRootView(getContext());
-            nextFocus = FocusFinder.getInstance().findNextFocus(rootView, this, View.FOCUS_DOWN);
+            nextFocus = FocusFinder.getInstance().findNextFocus(findDecorView(this), this, View.FOCUS_DOWN);
         }
         if (null != nextFocus && nextFocus instanceof TagsLayout) {
             nextFocus = null;
