@@ -29,7 +29,7 @@ import lib.kalu.leanback.tags.listener.OnTagsChangeListener;
 import lib.kalu.leanback.tags.model.TagBean;
 import lib.kalu.leanback.tags.model.TagResultBean;
 import lib.kalu.leanback.util.LeanBackUtil;
-import lib.kalu.leanback.util.ViewUtil;
+import lib.kalu.leanback.util.WrapperUtil;
 
 @Keep
 public final class TagsLayout extends LinearLayout {
@@ -436,22 +436,22 @@ public final class TagsLayout extends LinearLayout {
             // left
             if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_LEFT) {
                 checkNext = true;
-                nextFocus = ViewUtil.findNextFocus(getContext(), this, View.FOCUS_LEFT);
+                nextFocus = WrapperUtil.findNextFocus(getContext(), this, View.FOCUS_LEFT);
             }
             // right
             else if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_RIGHT) {
                 checkNext = true;
-                nextFocus = ViewUtil.findNextFocus(getContext(), this, View.FOCUS_RIGHT);
+                nextFocus = WrapperUtil.findNextFocus(getContext(), this, View.FOCUS_RIGHT);
             }
             // up
             else if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_UP) {
                 checkNext = true;
-                nextFocus = ViewUtil.findNextFocus(getContext(), this, View.FOCUS_UP);
+                nextFocus = WrapperUtil.findNextFocus(getContext(), this, View.FOCUS_UP);
             }
             // down
             else if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_DOWN) {
                 checkNext = true;
-                nextFocus = ViewUtil.findNextFocus(getContext(), this, View.FOCUS_DOWN);
+                nextFocus = WrapperUtil.findNextFocus(getContext(), this, View.FOCUS_DOWN);
             }
 
             if (checkNext && null == nextFocus) {

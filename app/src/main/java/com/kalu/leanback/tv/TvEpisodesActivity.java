@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -30,6 +31,12 @@ import lib.kalu.leanback.presenter.bean.TvEpisodesPlusItemBean;
 import lib.kalu.leanback.util.LeanBackUtil;
 
 public class TvEpisodesActivity extends AppCompatActivity {
+
+    @Override
+    public boolean dispatchKeyEvent(KeyEvent event) {
+        Log.e("TvEpisodesActivity", "dispatchKeyEvent => aition = " + event.getAction() + ", keyCode = " + event.getKeyCode() + ", focusView = " + getCurrentFocus());
+        return super.dispatchKeyEvent(event);
+    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {

@@ -10,7 +10,6 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.ScrollView;
 
@@ -27,7 +26,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 
 import lib.kalu.leanback.util.LeanBackUtil;
-import lib.kalu.leanback.util.ViewUtil;
+import lib.kalu.leanback.util.WrapperUtil;
 
 public final class ClassScrollView extends ScrollView implements ClassLayoutImpl {
 
@@ -173,22 +172,22 @@ public final class ClassScrollView extends ScrollView implements ClassLayoutImpl
             // left
             if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_LEFT) {
                 checkNext = true;
-                nextFocus = ViewUtil.findNextFocus(getContext(), this, View.FOCUS_LEFT);
+                nextFocus = WrapperUtil.findNextFocus(getContext(), this, View.FOCUS_LEFT);
             }
             // right
             else if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_RIGHT) {
                 checkNext = true;
-                nextFocus = ViewUtil.findNextFocus(getContext(), this, View.FOCUS_RIGHT);
+                nextFocus = WrapperUtil.findNextFocus(getContext(), this, View.FOCUS_RIGHT);
             }
             // up
             else if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_UP) {
                 checkNext = true;
-                nextFocus = ViewUtil.findNextFocus(getContext(), this, View.FOCUS_UP);
+                nextFocus = WrapperUtil.findNextFocus(getContext(), this, View.FOCUS_UP);
             }
             // down
             else if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_DOWN) {
                 checkNext = true;
-                nextFocus = ViewUtil.findNextFocus(getContext(), this, View.FOCUS_DOWN);
+                nextFocus = WrapperUtil.findNextFocus(getContext(), this, View.FOCUS_DOWN);
             }
 
             LeanBackUtil.log("BaseScrollView => checkNextFocus => checkNext = " + checkNext + ", nextFocus = " + nextFocus);

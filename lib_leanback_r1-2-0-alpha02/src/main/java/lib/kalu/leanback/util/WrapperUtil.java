@@ -9,7 +9,7 @@ import android.view.Window;
 
 import androidx.appcompat.view.ContextThemeWrapper;
 
-public final class ViewUtil {
+public final class WrapperUtil {
 
     public static Activity getActivity(Context context) {
         try {

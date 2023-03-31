@@ -30,7 +30,7 @@ import lib.kalu.leanback.tab.listener.OnTabChangeListener;
 import lib.kalu.leanback.tab.model.TabModel;
 import lib.kalu.leanback.tags.TagsLayout;
 import lib.kalu.leanback.util.LeanBackUtil;
-import lib.kalu.leanback.util.ViewUtil;
+import lib.kalu.leanback.util.WrapperUtil;
 
 /**
  * TabLayout for TV
@@ -345,16 +345,16 @@ public final class TabLayout extends HorizontalScrollView {
     public View findNextFocus(int direction) {
         View nextFocus = null;
         if (direction == View.FOCUS_LEFT) {
-            ViewGroup rootView = ViewUtil.getRootView(getContext());
+            ViewGroup rootView = WrapperUtil.getRootView(getContext());
             nextFocus = FocusFinder.getInstance().findNextFocus(rootView, this, View.FOCUS_LEFT);
         } else if (direction == View.FOCUS_RIGHT) {
-            ViewGroup rootView = ViewUtil.getRootView(getContext());
+            ViewGroup rootView = WrapperUtil.getRootView(getContext());
             nextFocus = FocusFinder.getInstance().findNextFocus(rootView, this, View.FOCUS_RIGHT);
         } else if (direction == View.FOCUS_UP) {
-            ViewGroup rootView = ViewUtil.getRootView(getContext());
+            ViewGroup rootView = WrapperUtil.getRootView(getContext());
             nextFocus = FocusFinder.getInstance().findNextFocus(rootView, this, View.FOCUS_UP);
         } else if (direction == View.FOCUS_DOWN) {
-            ViewGroup rootView = ViewUtil.getRootView(getContext());
+            ViewGroup rootView = WrapperUtil.getRootView(getContext());
             nextFocus = FocusFinder.getInstance().findNextFocus(rootView, this, View.FOCUS_DOWN);
         }
         if (null != nextFocus && nextFocus instanceof TagsLayout) {

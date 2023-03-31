@@ -1,6 +1,7 @@
 package lib.kalu.leanback.presenter;
 
 import android.content.Context;
+import android.view.FocusFinder;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,6 +24,7 @@ import java.util.Map;
 import lib.kalu.leanback.presenter.bean.TvEpisodesPlusItemBean;
 import lib.kalu.leanback.presenter.impl.ListTvPresenterImpl;
 import lib.kalu.leanback.util.LeanBackUtil;
+import lib.kalu.leanback.util.WrapperUtil;
 
 public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusItemBean> extends Presenter implements ListTvPresenterImpl {
 
@@ -770,17 +772,42 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
                         }
                         // down
                         else if (keyEvent.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_DPAD_DOWN) {
-                            view.clearFocus();
-                            ((View) view.getParent()).setFocusable(true);
-                            ((ViewGroup) view.getParent()).setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
+                            requestFocus(view, View.FOCUS_DOWN);
                             return true;
                         }
                         return false;
                     }
+
+
                 });
             }
         } catch (Exception e) {
             LeanBackUtil.log("ListTvEpisodesDoubleRowPresenter => initLayoutRange => " + e.getMessage());
+        }
+    }
+
+    private final void requestFocus(@NonNull View focusView,
+                                    @NonNull int direction) {
+
+//        try {
+//            focusView.clearFocus();
+//            ViewGroup rootGroup = (ViewGroup) focusView.getParent().getParent();
+//            rootGroup.setFocusable(true);
+//            rootGroup.setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
+//            rootGroup.clearFocus();
+//        } catch (Exception e) {
+//        }
+
+        try {
+            ViewGroup rootGroup = (ViewGroup) focusView.getParent().getParent();
+            rootGroup.setFocusable(true);
+            rootGroup.setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
+            ViewGroup rootView = WrapperUtil.getRootView(focusView.getContext());
+            View nextFocus = FocusFinder.getInstance().findNextFocus(rootView, focusView, direction);
+            if (null != nextFocus) {
+                nextFocus.requestFocus();
+            }
+        } catch (Exception e) {
         }
     }
 
@@ -901,10 +928,8 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
                         }
                         // up
                         else if (keyEvent.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_DPAD_UP) {
-                            view.clearFocus();
-                            viewGroup.setFocusable(true);
-                            ((ViewGroup) viewGroup).setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
-                            viewGroup.clearFocus();
+                            requestFocus(view, View.FOCUS_UP);
+                            return true;
                         }
                         // down
                         else if (keyEvent.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_DPAD_DOWN) {
@@ -1374,92 +1399,4 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
     }
 
     /**************/
-
-//    private final int getPlayingIndexOfRange() {
-//        try {
-//            int index = -1;
-//            for (Map.Entry<T, List<T>> entry : mData.entrySet()) {
-//                if (null == entry)
-//                    continue;
-//                TvEpisodesPlusItemBean t = entry.getKey();
-//                if (null == t)
-//                    continue;
-//                index += 1;
-//                if (t.isPlaying()) {
-//                    return index;
-//                }
-//            }
-//            throw new Exception("index error: " + index);
-//        } catch (Exception e) {
-//            LeanBackUtil.log("ListTvEpisodesDoubleRowPresenter => getPlayingIndexOfRange => " + e.getMessage());
-//            return -1;
-//        }
-//    }
-//
-//    private final int getCheckedIndexOfRange() {
-//        try {
-//            int index = -1;
-//            for (Map.Entry<T, List<T>> entry : mData.entrySet()) {
-//                if (null == entry)
-//                    continue;
-//                TvEpisodesPlusItemBean t = entry.getKey();
-//                if (null == t)
-//                    continue;
-//                index += 1;
-//                if (t.isChecked()) {
-//                    return index;
-//                }
-//            }
-//            throw new Exception("index error: " + index);
-//        } catch (Exception e) {
-//            LeanBackUtil.log("ListTvEpisodesDoubleRowPresenter => getCheckedIndexOfRange => " + e.getMessage());
-//            return -1;
-//        }
-//    }
-//
-//    private final int getPlayingIndexOfEpisode(int playingIndexRange) {
-//        try {
-//            if (playingIndexRange < 0)
-//                throw new Exception("playingIndexRange error: " + playingIndexRange);
-//            List<T> list = getDataIndexOfEpisode(playingIndexRange);
-//            if (null == list)
-//                throw new Exception("list error: null");
-//            int size = list.size();
-//            if (size <= 0) throw new Exception("size error: " + size);
-//            for (int i = 0; i < size; i++) {
-//                T t = list.get(i);
-//                if (null == t)
-//                    continue;
-//                if (t.isPlaying())
-//                    return i;
-//            }
-//            throw new Exception("not find");
-//        } catch (Exception e) {
-//            LeanBackUtil.log("ListTvEpisodesDoubleRowPresenter => getPlayingIndexOfEpisode => " + e.getMessage());
-//            return -1;
-//        }
-//    }
-//
-//    private final int getCheckedIndexOfEpisode(int checkedIndexRange) {
-//        try {
-//            if (checkedIndexRange < 0)
-//                throw new Exception("checkedIndexRange error: " + checkedIndexRange);
-//            List<T> list = getDataIndexOfEpisode(checkedIndexRange);
-//            if (null == list)
-//                throw new Exception("list error: null");
-//            int size = list.size();
-//            if (size <= 0) throw new Exception("size error: " + size);
-//            for (int i = 0; i < size; i++) {
-//                T t = list.get(i);
-//                if (null == t)
-//                    continue;
-//                if (t.isPlaying())
-//                    return i;
-//            }
-//            throw new Exception("not find");
-//        } catch (Exception e) {
-//            LeanBackUtil.log("ListTvEpisodesDoubleRowPresenter => getCheckedIndexOfEpisode => " + e.getMessage());
-//            return -1;
-//        }
-//    }
 }

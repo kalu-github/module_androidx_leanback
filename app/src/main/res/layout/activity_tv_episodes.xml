@@ -12,7 +12,27 @@
         android:background="@drawable/bg_selector"
         android:focusable="true"
         android:gravity="center"
-        android:text="top"
+        android:text="top1"
+        android:textColor="#000000" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:background="@drawable/bg_selector"
+        android:focusable="true"
+        android:layout_marginTop="10dp"
+        android:gravity="center"
+        android:text="top2"
+        android:textColor="#000000" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:background="@drawable/bg_selector"
+        android:focusable="true"
+        android:layout_marginTop="10dp"
+        android:gravity="center"
+        android:text="top3"
         android:textColor="#000000" />
 
     <lib.kalu.leanback.list.LeanBackVerticalGridView
@@ -31,7 +51,27 @@
         android:background="@drawable/bg_selector"
         android:focusable="true"
         android:gravity="center"
-        android:text="bottom"
+        android:text="bottom1"
+        android:textColor="#000000" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:background="@drawable/bg_selector"
+        android:focusable="true"
+        android:gravity="center"
+        android:text="bottom2"
+        android:layout_marginTop="10dp"
+        android:textColor="#000000" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:background="@drawable/bg_selector"
+        android:focusable="true"
+        android:layout_marginTop="10dp"
+        android:gravity="center"
+        android:text="bottom3"
         android:textColor="#000000" />
 
 </LinearLayout>
