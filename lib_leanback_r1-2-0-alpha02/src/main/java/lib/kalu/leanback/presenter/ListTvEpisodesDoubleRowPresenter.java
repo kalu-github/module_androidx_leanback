@@ -24,7 +24,6 @@ import java.util.Map;
 import lib.kalu.leanback.presenter.bean.TvEpisodesPlusItemBean;
 import lib.kalu.leanback.presenter.impl.ListTvPresenterImpl;
 import lib.kalu.leanback.util.LeanBackUtil;
-import lib.kalu.leanback.util.WrapperUtil;
 
 public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusItemBean> extends Presenter implements ListTvPresenterImpl {
 
@@ -632,7 +631,7 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
             int rangeChildCount = rangeGroup.getChildCount();
             if (rangeChildCount <= 0)
                 throw new Exception("rangeChildCount error: " + rangeChildCount);
-            int checkedIndexRange = findCheckedIndexRange(viewGroup);
+            int checkedIndexRange = getRangeCheckedIndexOfChild(viewGroup);
             if (checkedIndexRange < 0)
                 throw new Exception("checkedIndexRange error: " + checkedIndexRange);
             View child = rangeGroup.getChildAt(checkedIndexRange);
@@ -665,11 +664,11 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
             if (episodeChildCount <= 0)
                 throw new Exception("episodeChildCount error: " + episodeChildCount);
             int indexChildOf;
-            int checkedIndexEpisode = findCheckedIndexEpisode(viewGroup);
+            int checkedIndexEpisode = getEpisodeCheckedIndexOfChild(viewGroup);
             if (checkedIndexEpisode >= 0) {
                 indexChildOf = checkedIndexEpisode;
             } else {
-                int playingIndexEpisode = findPlayingIndexEpisode(viewGroup);
+                int playingIndexEpisode = getEpisodePlayingIndexOfChild(viewGroup);
                 if (playingIndexEpisode >= 0) {
                     indexChildOf = playingIndexEpisode;
                 } else {
@@ -786,28 +785,38 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
         }
     }
 
+    private final ViewGroup findDecorView(View view) {
+        try {
+            View parent = (View) view.getParent();
+            if (null == parent) {
+                return (ViewGroup) view;
+            } else {
+                return findDecorView(parent);
+            }
+        } catch (Exception e) {
+            LeanBackUtil.log("ListTvEpisodesDoubleRowPresenter => findDecorView => " + e.getMessage());
+            return (ViewGroup) view;
+        }
+    }
+
     private final void requestFocus(@NonNull View focusView,
                                     @NonNull int direction) {
 
-//        try {
-//            focusView.clearFocus();
-//            ViewGroup rootGroup = (ViewGroup) focusView.getParent().getParent();
-//            rootGroup.setFocusable(true);
-//            rootGroup.setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
-//            rootGroup.clearFocus();
-//        } catch (Exception e) {
-//        }
-
         try {
-            ViewGroup rootGroup = (ViewGroup) focusView.getParent().getParent();
-            rootGroup.setFocusable(true);
-            rootGroup.setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
-            ViewGroup rootView = WrapperUtil.getRootView(focusView.getContext());
-            View nextFocus = FocusFinder.getInstance().findNextFocus(rootView, focusView, direction);
-            if (null != nextFocus) {
-                nextFocus.requestFocus();
-            }
+            ViewGroup decodeView = findDecorView(focusView);
+            if (null == decodeView)
+                throw new Exception("decodeView error: null");
+            View nextFocus = FocusFinder.getInstance().findNextFocus(decodeView, focusView, direction);
+            if (null == nextFocus)
+                throw new Exception("nextFocus error: null");
+            ViewGroup tvGroup = (ViewGroup) focusView.getParent().getParent();
+            if (null == tvGroup)
+                throw new Exception("tvGroup error: null");
+            tvGroup.setFocusable(true);
+            tvGroup.setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
+            nextFocus.requestFocus();
         } catch (Exception e) {
+            LeanBackUtil.log("ListTvEpisodesDoubleRowPresenter => requestFocus => " + e.getMessage());
         }
     }
 
@@ -945,7 +954,7 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
         }
     }
 
-    private final int findCheckedIndexEpisode(@NonNull View viewGroup) {
+    private final int getEpisodeCheckedIndexOfChild(@NonNull View viewGroup) {
         try {
             if (null == viewGroup)
                 throw new Exception("viewGroup error: null");
@@ -973,12 +982,12 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
             }
             throw new Exception("not find");
         } catch (Exception e) {
-            LeanBackUtil.log("ListTvEpisodesDoubleRowPresenter => findCheckedIndexEpisode => " + e.getMessage());
+            LeanBackUtil.log("ListTvEpisodesDoubleRowPresenter => getEpisodeCheckedIndexOfChild => " + e.getMessage());
             return -1;
         }
     }
 
-    private final int findPlayingIndexEpisode(@NonNull View viewGroup) {
+    private final int getEpisodePlayingIndexOfChild(@NonNull View viewGroup) {
         try {
             if (null == viewGroup)
                 throw new Exception("viewGroup error: null");
@@ -1006,12 +1015,12 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
             }
             throw new Exception("not find");
         } catch (Exception e) {
-            LeanBackUtil.log("ListTvEpisodesDoubleRowPresenter => findPlayingIndexEpisode => " + e.getMessage());
+            LeanBackUtil.log("ListTvEpisodesDoubleRowPresenter => getEpisodePlayingIndexOfChild => " + e.getMessage());
             return -1;
         }
     }
 
-    private final int findCheckedIndexRange(@NonNull View viewGroup) {
+    private final int getRangeCheckedIndexOfChild(@NonNull View viewGroup) {
         try {
             if (null == viewGroup)
                 throw new Exception("viewGroup error: null");
@@ -1039,7 +1048,7 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
             }
             throw new Exception("not find");
         } catch (Exception e) {
-            LeanBackUtil.log("ListTvEpisodesDoubleRowPresenter => findCheckedIndexRange => " + e.getMessage());
+            LeanBackUtil.log("ListTvEpisodesDoubleRowPresenter => getRangeCheckedIndexOfChild => " + e.getMessage());
             return -1;
         }
     }
@@ -1265,79 +1274,86 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
 
     /*********************/
 
-    public final boolean isPlayingEnd(View viewGroup) {
+    public final boolean isPlayingPositionLast(View viewGroup) {
         try {
             if (null == viewGroup)
                 throw new Exception("viewGroup error: null");
             if (viewGroup.getId() != R.id.module_leanback_lep_root)
                 throw new Exception("viewGroup.getId error: not R.id.module_leanback_lep_root");
-            ViewGroup episodeGroup = viewGroup.findViewById(R.id.module_leanback_lep_episodes);
+            if (!(viewGroup instanceof LinearLayout))
+                throw new Exception("viewGroup error: not instanceof LinearLayout");
+            int indexOfChild = getEpisodePlayingIndexOfChild(viewGroup);
+            if (indexOfChild < 0)
+                throw new Exception("indexOfChild error: " + indexOfChild);
+            ViewGroup episodeGroup = (ViewGroup) ((ViewGroup) viewGroup).getChildAt(1);
             if (null == episodeGroup)
                 throw new Exception("episodeGroup error: null");
-            int childCount = episodeGroup.getChildCount();
-            if (childCount <= 0)
-                throw new Exception("childCount error: " + childCount);
-            for (int i = 0; i < childCount; i++) {
-                View child = episodeGroup.getChildAt(i);
-                if (null == child)
-                    continue;
-                T t = (T) child.getTag(R.id.lb_presenter_episode_playing);
-                if (null == t)
-                    continue;
-                int episodeIndex = t.getEpisodeIndex();
-                if (episodeIndex < 0)
-                    continue;
-                int episodeMax = t.getEpisodeMax();
-                if (episodeMax < 0)
-                    continue;
-                if (episodeIndex + 1 >= episodeMax)
-                    return true;
-            }
-            throw new Exception("nit find");
+            View child = episodeGroup.getChildAt(indexOfChild);
+            if (null == child)
+                throw new Exception("child error: null");
+            T t = (T) child.getTag(R.id.lb_presenter_episode_playing);
+            if (null == t)
+                throw new Exception("t error: null");
+            int episodeIndex = t.getEpisodeIndex();
+            if (episodeIndex < 0)
+                throw new Exception("episodeIndex error: " + episodeIndex);
+            int episodeMax = t.getEpisodeMax();
+            if (episodeMax < 0)
+                throw new Exception("episodeMax error: " + episodeMax);
+            return episodeIndex + 1 >= episodeMax;
         } catch (Exception e) {
-            LeanBackUtil.log("ListTvEpisodesGridPresenter => isPlayingEnd => " + e.getMessage());
-            return false;
+            LeanBackUtil.log("ListTvEpisodesGridPresenter => isPlayingPositionLast => " + e.getMessage());
+            return true;
+        }
+    }
+
+    public final int getPlayingPosition(View viewGroup) {
+        try {
+            if (null == viewGroup)
+                throw new Exception("viewGroup error: null");
+            if (viewGroup.getId() != R.id.module_leanback_lep_root)
+                throw new Exception("viewGroup.getId error: not R.id.module_leanback_lep_root");
+            if (!(viewGroup instanceof LinearLayout))
+                throw new Exception("viewGroup error: not instanceof LinearLayout");
+            int indexOfChild = getEpisodePlayingIndexOfChild(viewGroup);
+            if (indexOfChild < 0)
+                throw new Exception("indexOfChild error: " + indexOfChild);
+            ViewGroup episodeGroup = (ViewGroup) ((ViewGroup) viewGroup).getChildAt(1);
+            if (null == episodeGroup)
+                throw new Exception("episodeGroup error: null");
+            View child = episodeGroup.getChildAt(indexOfChild);
+            if (null == child)
+                throw new Exception("child error: null");
+            T t = (T) child.getTag(R.id.lb_presenter_episode_playing);
+            if (null == t)
+                throw new Exception("t error: null");
+            int episodeIndex = t.getEpisodeIndex();
+            if (episodeIndex < 0)
+                throw new Exception("episodeIndex error: " + episodeIndex);
+            return episodeIndex;
+        } catch (Exception e) {
+            LeanBackUtil.log("ListTvEpisodesGridPresenter => getPlayingPosition => " + e.getMessage());
+            return -1;
         }
     }
 
     public final int getPlayingPositionNext(View viewGroup) {
         try {
-            if (null == viewGroup)
-                throw new Exception("viewGroup error: null");
-            if (viewGroup.getId() != R.id.module_leanback_lep_root)
-                throw new Exception("viewGroup.getId error: not R.id.module_leanback_lep_root");
-            ViewGroup episodeGroup = viewGroup.findViewById(R.id.module_leanback_lep_episodes);
-            if (null == episodeGroup)
-                throw new Exception("episodeGroup error: null");
-            int childCount = episodeGroup.getChildCount();
-            if (childCount <= 0)
-                throw new Exception("childCount error: " + childCount);
-            for (int i = 0; i < childCount; i++) {
-                View child = episodeGroup.getChildAt(i);
-                if (null == child)
-                    continue;
-                T t = (T) child.getTag(R.id.lb_presenter_episode_playing);
-                if (null == t)
-                    continue;
-                int episodeIndex = t.getEpisodeIndex();
-                if (episodeIndex < 0)
-                    continue;
-                int episodeMax = t.getEpisodeMax();
-                if (episodeMax < 0)
-                    continue;
-                int nextEpisodeIndex = episodeIndex + 1;
-                if (nextEpisodeIndex < episodeMax)
-                    return nextEpisodeIndex;
-            }
-            throw new Exception("nit find");
+            boolean isPlayingPositionLast = isPlayingPositionLast(viewGroup);
+            if (isPlayingPositionLast)
+                throw new Exception("isPlayingPositionLast warning: true");
+            int playingPosition = getPlayingPosition(viewGroup);
+            if (playingPosition < 0)
+                throw new Exception("playingPosition error: " + playingPosition);
+            return playingPosition + 1;
         } catch (Exception e) {
             LeanBackUtil.log("ListTvEpisodesGridPresenter => getPlayingPositionNext => " + e.getMessage());
             return -1;
         }
     }
 
-    public final void startPlayingPosition(@NonNull View viewGroup,
-                                           @NonNull int checkedEpisodePosition) {
+    public final void checkedPlayingPosition(@NonNull View viewGroup,
+                                             @NonNull int checkedEpisodePosition) {
         try {
             if (null == viewGroup)
                 throw new Exception("viewGroup error: null");
@@ -1377,11 +1393,11 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
             setPlayingRange(viewGroup, checkedRangeIndex);
             setPlayingEpisode(viewGroup, checkedEpisodeIndex);
         } catch (Exception e) {
-            LeanBackUtil.log("ListTvEpisodesDoubleRowPresenter => startPlayingPosition => " + e.getMessage());
+            LeanBackUtil.log("ListTvEpisodesDoubleRowPresenter => checkedPlayingPosition => " + e.getMessage());
         }
     }
 
-    public final boolean startPlayingNext(@NonNull View viewGroup) {
+    public final boolean checkedPlayingPositionNext(@NonNull View viewGroup) {
         try {
             if (null == viewGroup)
                 throw new Exception("viewGroup error: null");
@@ -1390,10 +1406,10 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
             int episodeNextPosition = getPlayingPositionNext(viewGroup);
             if (episodeNextPosition < 0)
                 throw new Exception("episodeNextPosition error: " + episodeNextPosition);
-            startPlayingPosition(viewGroup, episodeNextPosition);
+            checkedPlayingPosition(viewGroup, episodeNextPosition);
             return true;
         } catch (Exception e) {
-            LeanBackUtil.log("ListTvEpisodesDoubleRowPresenter => startPlayingNext => " + e.getMessage());
+            LeanBackUtil.log("ListTvEpisodesDoubleRowPresenter => checkedPlayingPositionNext => " + e.getMessage());
             return false;
         }
     }

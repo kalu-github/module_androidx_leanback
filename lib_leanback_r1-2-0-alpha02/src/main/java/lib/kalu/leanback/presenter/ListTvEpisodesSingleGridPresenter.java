@@ -402,77 +402,75 @@ public abstract class ListTvEpisodesSingleGridPresenter<T extends TvEpisodesGrid
         return true;
     }
 
-    public final void checkedPositionNext(ViewGroup viewGroup) {
+    protected abstract void onBindHolder(@NonNull Context context, @NonNull View view, @NonNull T item, @NonNull int position);
 
+    protected void onClickHolder(@NonNull Context context, @NonNull View v, @NonNull T item, @NonNull int position, boolean isFromUser) {
+    }
+
+    @LayoutRes
+    protected abstract int initLayout(int viewType);
+
+    /*********************/
+
+    public final boolean isPlayingPositionLast() {
         try {
-            int chechedIndex = -1;
             int playingIndex = -1;
-            // 1
-            int size = mData.size();
-            for (int i = 0; i < size; i++) {
-                if (chechedIndex != -1 && playingIndex != -1)
-                    break;
-                T t = mData.get(i);
+            for (T t : mData) {
                 if (null == t)
                     continue;
-                if (t.isChecked() && t.isPlaying()) {
-                    playingIndex = i;
+                if (t.isPlaying()) {
+                    playingIndex = mData.indexOf(t);
                     break;
-                } else if (chechedIndex == -1 && t.isChecked()) {
-                    chechedIndex = i;
-                } else if (playingIndex == -1 && t.isPlaying()) {
-                    playingIndex = i;
                 }
             }
-            LeanBackUtil.log("ListTvEpisodesGridPresenter => checkedPosition => playingIndex = " + playingIndex);
-            LeanBackUtil.log("ListTvEpisodesGridPresenter => checkedPosition => playingIndex = " + playingIndex);
-            if (playingIndex == -1)
+            if (playingIndex < 0)
                 throw new Exception("playingIndex error: " + playingIndex);
-            int nextCheckedPosition = playingIndex + 1;
-            if (nextCheckedPosition >= size)
-                throw new Exception("nextCheckedPosition error: " + nextCheckedPosition);
-            for (int i = 0; i < size; i++) {
-                T t = mData.get(i);
-                if (null == t)
-                    continue;
-                t.setPlaying(i == nextCheckedPosition);
-                t.setChecked(i == nextCheckedPosition);
-            }
-            // 2
-            RecyclerView recyclerView = viewGroup.findViewById(R.id.module_leanback_legp_list);
-            if (chechedIndex != -1) {
-                recyclerView.getAdapter().notifyItemRangeChanged(chechedIndex, 1);
-            }
-            if (playingIndex != -1) {
-                recyclerView.getAdapter().notifyItemRangeChanged(playingIndex, 1);
-            }
-            // 3
-            RecyclerView.ViewHolder viewHolderForAdapterPosition = recyclerView.findViewHolderForAdapterPosition(nextCheckedPosition);
-            LeanBackUtil.log("ListTvEpisodesGridPresenter => checkedPosition => viewHolderForAdapterPosition = " + viewHolderForAdapterPosition);
-            if (null == viewHolderForAdapterPosition) {
-                recyclerView.scrollToPosition(nextCheckedPosition);
-                int finalNextChechedPosition = nextCheckedPosition;
-                new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        T t = mData.get(finalNextChechedPosition);
-                        View v = viewHolderForAdapterPosition.itemView;
-                        onBindHolder(v.getContext(), v, t, finalNextChechedPosition);
-                        onClickHolder(v.getContext(), v, t, finalNextChechedPosition, false);
-                    }
-                }, 50);
-            } else {
-                T t = mData.get(nextCheckedPosition);
-                View v = viewHolderForAdapterPosition.itemView;
-                onBindHolder(v.getContext(), v, t, nextCheckedPosition);
-                onClickHolder(v.getContext(), v, t, nextCheckedPosition, false);
-            }
+            int count = mData.size();
+            int nextIndex = playingIndex + 1;
+            return nextIndex >= count;
         } catch (Exception e) {
-            LeanBackUtil.log("ListTvEpisodesGridPresenter => checkedPositionNext => " + e.getMessage(), e);
+            LeanBackUtil.log("ListTvEpisodesGridPresenter => isPlayingPositionLast => " + e.getMessage());
+            return true;
         }
     }
 
-    public final void checkedPosition(ViewGroup viewGroup, int checkedPosition) {
+    public final int getPlayingPosition() {
+        try {
+            int playingIndex = -1;
+            for (T t : mData) {
+                if (null == t)
+                    continue;
+                if (t.isPlaying()) {
+                    playingIndex = mData.indexOf(t);
+                    break;
+                }
+            }
+            if (playingIndex < 0)
+                throw new Exception("playingIndex error: " + playingIndex);
+            return playingIndex;
+        } catch (Exception e) {
+            LeanBackUtil.log("ListTvEpisodesGridPresenter => getPlayingPosition => " + e.getMessage());
+            return -1;
+        }
+    }
+
+    public final int getPlayingPositionNext() {
+        try {
+            boolean isPlayingPositionLast = isPlayingPositionLast();
+            if (isPlayingPositionLast)
+                throw new Exception("isPlayingPositionLast warning: true");
+            int playingPosition = getPlayingPosition();
+            if (playingPosition < 0)
+                throw new Exception("playingPosition error: " + playingPosition);
+            return playingPosition + 1;
+        } catch (Exception e) {
+            LeanBackUtil.log("ListTvEpisodesGridPresenter => getPlayingPositionNext => " + e.getMessage());
+            return -1;
+        }
+    }
+
+    public final void checkedPlayingPosition(@NonNull ViewGroup viewGroup,
+                                             @NonNull int checkedPosition) {
 
         try {
             int playingIndex = -1;
@@ -502,13 +500,12 @@ public abstract class ListTvEpisodesSingleGridPresenter<T extends TvEpisodesGrid
             }
             // 3
             RecyclerView.ViewHolder viewHolderForAdapterPosition = recyclerView.findViewHolderForAdapterPosition(checkedPosition);
-            LeanBackUtil.log("ListTvEpisodesGridPresenter => checkedPosition => viewHolderForAdapterPosition = " + viewHolderForAdapterPosition);
             if (null == viewHolderForAdapterPosition) {
                 recyclerView.scrollToPosition(checkedPosition);
                 new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        checkedPosition(viewGroup, checkedPosition);
+                        checkedPlayingPosition(viewGroup, checkedPosition);
                     }
                 }, 50);
             } else {
@@ -518,7 +515,74 @@ public abstract class ListTvEpisodesSingleGridPresenter<T extends TvEpisodesGrid
                 onClickHolder(v.getContext(), v, t, checkedPosition, false);
             }
         } catch (Exception e) {
-            LeanBackUtil.log("ListTvEpisodesGridPresenter => checkedPosition => " + e.getMessage(), e);
+            LeanBackUtil.log("ListTvEpisodesGridPresenter => checkedPlayingPosition => " + e.getMessage(), e);
+        }
+    }
+
+    public final void checkedPlayingPositionNext(ViewGroup viewGroup) {
+
+        try {
+            int chechedIndex = -1;
+            int playingIndex = -1;
+            // 1
+            int size = mData.size();
+            for (int i = 0; i < size; i++) {
+                if (chechedIndex != -1 && playingIndex != -1)
+                    break;
+                T t = mData.get(i);
+                if (null == t)
+                    continue;
+                if (t.isChecked() && t.isPlaying()) {
+                    playingIndex = i;
+                    break;
+                } else if (chechedIndex == -1 && t.isChecked()) {
+                    chechedIndex = i;
+                } else if (playingIndex == -1 && t.isPlaying()) {
+                    playingIndex = i;
+                }
+            }
+            if (playingIndex == -1)
+                throw new Exception("playingIndex error: " + playingIndex);
+            int nextCheckedPosition = playingIndex + 1;
+            if (nextCheckedPosition >= size)
+                throw new Exception("nextCheckedPosition error: " + nextCheckedPosition);
+            for (int i = 0; i < size; i++) {
+                T t = mData.get(i);
+                if (null == t)
+                    continue;
+                t.setPlaying(i == nextCheckedPosition);
+                t.setChecked(i == nextCheckedPosition);
+            }
+            // 2
+            RecyclerView recyclerView = viewGroup.findViewById(R.id.module_leanback_legp_list);
+            if (chechedIndex != -1) {
+                recyclerView.getAdapter().notifyItemRangeChanged(chechedIndex, 1);
+            }
+            if (playingIndex != -1) {
+                recyclerView.getAdapter().notifyItemRangeChanged(playingIndex, 1);
+            }
+            // 3
+            RecyclerView.ViewHolder viewHolderForAdapterPosition = recyclerView.findViewHolderForAdapterPosition(nextCheckedPosition);
+            if (null == viewHolderForAdapterPosition) {
+                recyclerView.scrollToPosition(nextCheckedPosition);
+                int finalNextChechedPosition = nextCheckedPosition;
+                new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        T t = mData.get(finalNextChechedPosition);
+                        View v = viewHolderForAdapterPosition.itemView;
+                        onBindHolder(v.getContext(), v, t, finalNextChechedPosition);
+                        onClickHolder(v.getContext(), v, t, finalNextChechedPosition, false);
+                    }
+                }, 50);
+            } else {
+                T t = mData.get(nextCheckedPosition);
+                View v = viewHolderForAdapterPosition.itemView;
+                onBindHolder(v.getContext(), v, t, nextCheckedPosition);
+                onClickHolder(v.getContext(), v, t, nextCheckedPosition, false);
+            }
+        } catch (Exception e) {
+            LeanBackUtil.log("ListTvEpisodesGridPresenter => checkedPlayingPositionNext => " + e.getMessage(), e);
         }
     }
 
@@ -556,58 +620,4 @@ public abstract class ListTvEpisodesSingleGridPresenter<T extends TvEpisodesGrid
             return false;
         }
     }
-
-    public int getEpisodeNextPosition() {
-        try {
-            int playingIndex = -1;
-            for (T t : mData) {
-                if (null == t)
-                    continue;
-                if (t.isPlaying()) {
-                    playingIndex = mData.indexOf(t);
-                    break;
-                }
-            }
-            if (playingIndex < 0)
-                throw new Exception("playingIndex error: " + playingIndex);
-            int count = mData.size();
-            int nextIndex = playingIndex + 1;
-            if (nextIndex >= count)
-                throw new Exception("nextIndex error: " + nextIndex);
-            return nextIndex;
-        } catch (Exception e) {
-            LeanBackUtil.log("ListTvEpisodesGridPresenter => getEpisodeNextPosition => " + e.getMessage());
-            return -1;
-        }
-    }
-
-    public boolean isEpisodeEnd() {
-        try {
-            int playingIndex = -1;
-            for (T t : mData) {
-                if (null == t)
-                    continue;
-                if (t.isPlaying()) {
-                    playingIndex = mData.indexOf(t);
-                    break;
-                }
-            }
-            if (playingIndex < 0)
-                throw new Exception("playingIndex error: " + playingIndex);
-            int count = mData.size();
-            int nextIndex = playingIndex + 1;
-            return nextIndex >= count;
-        } catch (Exception e) {
-            LeanBackUtil.log("ListTvEpisodesGridPresenter => isEpisodeEnd => " + e.getMessage());
-            return true;
-        }
-    }
-
-    protected abstract void onBindHolder(@NonNull Context context, @NonNull View view, @NonNull T item, @NonNull int position);
-
-    protected void onClickHolder(@NonNull Context context, @NonNull View v, @NonNull T item, @NonNull int position, boolean isFromUser) {
-    }
-
-    @LayoutRes
-    protected abstract int initLayout(int viewType);
 }
