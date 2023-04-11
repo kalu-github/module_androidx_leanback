@@ -398,7 +398,7 @@ public final class TabLayout extends HorizontalScrollView {
                 int width = getWidth() - getPaddingLeft() - getPaddingRight();
 
                 // 不可见/部分不可见
-                if (itemRight > width) {
+                if (itemRight - scrollX > width) {
                     int x = itemRight - scrollX - width;
                     scrollBy(x, 0);
                 }
@@ -415,6 +415,7 @@ public final class TabLayout extends HorizontalScrollView {
 
                 int scrollX = getScrollX();
                 int itemLeft = ((TabLinearLayout) getChildAt(0)).getItemLeft(next);
+
                 if (itemLeft < scrollX) {
                     scrollTo(itemLeft, 0);
                 }
