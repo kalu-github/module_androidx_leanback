@@ -1066,9 +1066,9 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
                 throw new Exception("episodeGroup error: null");
             if (!(episodeGroup instanceof LinearLayout))
                 throw new Exception("episodeGroup error: not instanceof LinearLayout");
-            int episodeChildCount = episodeGroup.getChildCount();
-            if (episodeChildCount <= 0)
-                throw new Exception("episodeChildCount error: " + episodeChildCount);
+            int episodeChildCountReal = getEpisodeChildCountReal(episodeGroup);
+            if (episodeChildCountReal <= 0)
+                throw new Exception("episodeChildCountReal error: " + episodeChildCountReal);
             int episodeNum = initEpisodeNum();
             if (episodeNum < 0)
                 throw new Exception("episodeNum error: " + episodeNum);
@@ -1122,11 +1122,11 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
                 });
             }
             // right-move
-            else if (direction == View.FOCUS_RIGHT && indexOfChild + 1 < episodeChildCount) {
+            else if (direction == View.FOCUS_RIGHT && indexOfChild + 1 < episodeChildCountReal) {
                 swapEpisode((View) episodeGroup.getParent(), episodeIndex, episodeIndex + 1);
             }
             // right-update
-            else if (direction == View.FOCUS_RIGHT && indexOfChild + 1 >= episodeChildCount && episodeIndex + 1 < episodeLength) {
+            else if (direction == View.FOCUS_RIGHT && indexOfChild + 1 >= episodeChildCountReal && episodeIndex + 1 < episodeLength) {
                 T curLastRangeT = getCurLastRangeT((View) episodeGroup.getParent());
                 if (null == curLastRangeT)
                     throw new Exception("curLastRangeT error: null");
@@ -1157,6 +1157,25 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
         } catch (Exception e) {
             LeanBackUtil.log("ListTvEpisodesDoubleRowPresenter => dispatchEventEpisode => " + e.getMessage());
             return true;
+        }
+    }
+
+    private int getEpisodeChildCountReal(ViewGroup viewGroup) {
+        try {
+            int count = 0;
+            int childCount = viewGroup.getChildCount();
+            for (int i = 0; i < childCount; i++) {
+                View child = viewGroup.getChildAt(i);
+                if (null == child)
+                    continue;
+                if (child.getVisibility() == View.VISIBLE) {
+                    count += 1;
+                }
+            }
+            return count;
+        } catch (Exception e) {
+            LeanBackUtil.log("ListTvEpisodesDoubleRowPresenter => getEpisodeChildCountReal => " + e.getMessage());
+            return 0;
         }
     }
 
@@ -1365,7 +1384,7 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
             if (checkedEpisodePosition < 0)
                 throw new Exception("checkedEpisodePosition error: " + checkedEpisodePosition);
             int episodeLength = getEpisodeLength();
-            if (checkedEpisodePosition + 1 > episodeLength){
+            if (checkedEpisodePosition + 1 > episodeLength) {
                 checkedEpisodePosition = 0;
             }
             int episodeNum = initEpisodeNum();
