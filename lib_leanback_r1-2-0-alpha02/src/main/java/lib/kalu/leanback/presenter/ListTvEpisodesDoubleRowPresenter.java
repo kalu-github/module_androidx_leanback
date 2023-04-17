@@ -1365,8 +1365,9 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
             if (checkedEpisodePosition < 0)
                 throw new Exception("checkedEpisodePosition error: " + checkedEpisodePosition);
             int episodeLength = getEpisodeLength();
-            if (checkedEpisodePosition + 1 >= episodeLength)
-                throw new Exception("checkedEpisodePosition error: " + checkedEpisodePosition + ", episodeLength = " + episodeLength);
+            if (checkedEpisodePosition + 1 > episodeLength){
+                checkedEpisodePosition = 0;
+            }
             int episodeNum = initEpisodeNum();
             int checkedEpisodeIndex = checkedEpisodePosition % episodeNum;
             int checkedRangeIndex = checkedEpisodePosition / episodeNum;
