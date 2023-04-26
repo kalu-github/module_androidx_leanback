@@ -26,6 +26,28 @@ public abstract class ListTvGridPresenter<T extends TvPresenterRowBean> extends 
 
     private final List<T> mData = new LinkedList<>();
 
+    public final void set(int position, T t) {
+        try {
+            if (null == t)
+                throw new Exception("t error: null");
+            mData.set(position, t);
+        } catch (Exception e) {
+            LeanBackUtil.log("ListTvGridPresenter => set => " + e.getMessage());
+        }
+    }
+
+    public final T get(int position) {
+        try {
+            T t = mData.get(position);
+            if (null == t)
+                throw new Exception("t error: null");
+            return t;
+        } catch (Exception e) {
+            LeanBackUtil.log("ListTvGridPresenter => get => " + e.getMessage());
+            return null;
+        }
+    }
+
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent) {
         try {
