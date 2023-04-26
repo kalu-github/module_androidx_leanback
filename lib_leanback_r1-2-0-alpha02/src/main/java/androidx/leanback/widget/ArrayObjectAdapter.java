@@ -104,6 +104,10 @@ public class ArrayObjectAdapter extends ObjectAdapter {
         add(mItems.size(), item, false);
     }
 
+    public void add(Object item, boolean notifyUI) {
+        add(mItems.size(), item, notifyUI);
+    }
+
     /**
      * Inserts an item into this adapter at the specified index.
      * If the index is > {@link #size} an exception will be thrown.
@@ -113,7 +117,7 @@ public class ArrayObjectAdapter extends ObjectAdapter {
      */
     public void add(int index, Object item, boolean notifyUI) {
         mItems.add(index, item);
-        if(notifyUI){
+        if (notifyUI) {
             notifyItemRangeInserted(index, 1);
         }
     }
@@ -132,7 +136,7 @@ public class ArrayObjectAdapter extends ObjectAdapter {
             return;
         }
         mItems.addAll(index, items);
-        if(notifyUI){
+        if (notifyUI) {
             notifyItemRangeInserted(index, itemsCount);
         }
     }
@@ -147,7 +151,7 @@ public class ArrayObjectAdapter extends ObjectAdapter {
         int index = mItems.indexOf(item);
         if (index >= 0) {
             mItems.remove(index);
-            if(notifyUI){
+            if (notifyUI) {
                 notifyItemRangeRemoved(index, 1);
             }
         }
@@ -167,7 +171,7 @@ public class ArrayObjectAdapter extends ObjectAdapter {
         }
         Object item = mItems.remove(fromPosition);
         mItems.add(toPosition, item);
-        if(notifyUI){
+        if (notifyUI) {
             notifyItemMoved(fromPosition, toPosition);
         }
     }
@@ -182,7 +186,7 @@ public class ArrayObjectAdapter extends ObjectAdapter {
      */
     public void replace(int position, Object item, boolean notifyUI) {
         mItems.set(position, item);
-        if(notifyUI){
+        if (notifyUI) {
             notifyItemRangeChanged(position, 1);
         }
     }
@@ -204,7 +208,7 @@ public class ArrayObjectAdapter extends ObjectAdapter {
         for (int i = 0; i < itemsToRemove; i++) {
             mItems.remove(position);
         }
-        if(notifyUI){
+        if (notifyUI) {
             notifyItemRangeRemoved(position, itemsToRemove);
         }
         return itemsToRemove;
@@ -219,7 +223,7 @@ public class ArrayObjectAdapter extends ObjectAdapter {
             return;
         }
         mItems.clear();
-        if(notifyUI){
+        if (notifyUI) {
             notifyItemRangeRemoved(0, itemCount);
         }
     }
