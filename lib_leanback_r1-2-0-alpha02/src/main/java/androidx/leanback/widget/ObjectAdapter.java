@@ -25,7 +25,9 @@ import androidx.annotation.RestrictTo;
  */
 public abstract class ObjectAdapter {
 
-    /** Indicates that an id has not been set. */
+    /**
+     * Indicates that an id has not been set.
+     */
     public static final int NO_ID = -1;
 
     /**
@@ -256,7 +258,7 @@ public abstract class ObjectAdapter {
      * @param positionStart Position where new items has been inserted.
      * @param itemCount     Count of the new items has been inserted.
      */
-    final protected void notifyItemRangeInserted(int positionStart, int itemCount) {
+    public final void notifyItemRangeInserted(int positionStart, int itemCount) {
         mObservable.notifyItemRangeInserted(positionStart, itemCount);
     }
 
@@ -266,7 +268,7 @@ public abstract class ObjectAdapter {
      * @param positionStart Starting position of the removed items.
      * @param itemCount     Total number of items that has been removed.
      */
-    final protected void notifyItemRangeRemoved(int positionStart, int itemCount) {
+    public final void notifyItemRangeRemoved(int positionStart, int itemCount) {
         mObservable.notifyItemRangeRemoved(positionStart, itemCount);
     }
 
