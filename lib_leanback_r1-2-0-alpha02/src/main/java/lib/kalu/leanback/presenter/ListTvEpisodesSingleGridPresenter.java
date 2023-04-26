@@ -471,7 +471,7 @@ public abstract class ListTvEpisodesSingleGridPresenter<T extends TvEpisodesGrid
         }
     }
 
-    public final void checkedPlayingPosition(@NonNull ViewGroup viewGroup,
+    public final void checkedPlayingPosition(@NonNull View viewGroup,
                                              @NonNull int checkedPosition) {
 
         try {
@@ -521,7 +521,7 @@ public abstract class ListTvEpisodesSingleGridPresenter<T extends TvEpisodesGrid
         }
     }
 
-    public final void checkedPlayingPositionNext(ViewGroup viewGroup) {
+    public final void checkedPlayingPositionNext(View viewGroup) {
 
         try {
             int chechedIndex = -1;
@@ -588,7 +588,7 @@ public abstract class ListTvEpisodesSingleGridPresenter<T extends TvEpisodesGrid
         }
     }
 
-    public final boolean dispatchKeyEventCheckedPosition(ViewGroup viewGroup) {
+    public final boolean dispatchKeyEventCheckedPosition(View viewGroup) {
         try {
             int checkedPosition = -1;
             for (T t : mData) {
