@@ -1034,7 +1034,7 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
                         }
                         try {
                             T t = (T) view.getTag(R.id.lb_presenter_episode);
-                            if (null != t && !t.isPlaying()) {
+                            if (null != t) {
                                 int indexOfChild = episodeGroup.indexOfChild(child);
                                 t.setPlaying(true);
                                 view.setTag(R.id.lb_presenter_episode_playing, t);
