@@ -690,7 +690,7 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
             t.setChecked(true);
             child.setTag(R.id.lb_presenter_episode_playing, t);
             onBindHolderEpisode(child.getContext(), child, t, indexOfChild);
-            onClickEpisode(child.getContext(), child, t, indexOfChild, true);
+            onClickEpisode(child.getContext(), child, t, indexOfChild, false);
         } catch (Exception e) {
             LeanBackUtil.log("ListTvEpisodesDoubleRowPresenter => setPlayingEpisode => " + e.getMessage(), e);
         }
@@ -1521,7 +1521,7 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
             findCleanFocusCheckedRange(rootGroup);
             findCleanFocusCheckedEpisode(rootGroup);
             updateRange(viewGroup, startRangeIndex, checkedRangeIndex, -1);
-            updateEpisode(viewGroup, checkedRangeIndex, checkedEpisodeIndex, false, false);
+            updateEpisode(viewGroup, checkedRangeIndex, checkedEpisodeIndex, true, true);
             setPlayingRange(viewGroup, checkedRangeIndex);
             setPlayingEpisode(viewGroup, checkedEpisodeIndex);
         } catch (Exception e) {
