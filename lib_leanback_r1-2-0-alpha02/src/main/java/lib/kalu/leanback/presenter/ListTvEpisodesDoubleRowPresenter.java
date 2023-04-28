@@ -653,6 +653,7 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
                 if (t.isPlaying() || t.isChecked() || t.isFocus()) {
                     t.setFocus(false);
                     t.setChecked(false);
+                    t.setPlaying(false);
                     onBindHolderEpisode(child.getContext(), child, t, i);
                 }
             }
@@ -1516,6 +1517,7 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
                 throw new Exception("rootGroup error: null");
             if (!(rootGroup instanceof LinearLayout))
                 throw new Exception("rootGroup error: not instanceof LinearLayout");
+
             findCleanFocusCheckedRange(rootGroup);
             findCleanFocusCheckedEpisode(rootGroup);
             updateRange(viewGroup, startRangeIndex, checkedRangeIndex, -1);
