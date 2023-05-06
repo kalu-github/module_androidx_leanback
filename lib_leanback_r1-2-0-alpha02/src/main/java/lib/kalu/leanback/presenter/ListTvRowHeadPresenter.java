@@ -60,6 +60,9 @@ public abstract class ListTvRowHeadPresenter<T extends TvPresenterRowBean> exten
 
         // list
         updateAdapter(viewHolder.view);
+
+        // head
+        onCreateHeadHolder(viewHolder.view.getContext(), viewHolder.view, mData);
     }
 
     @Override
@@ -89,13 +92,13 @@ public abstract class ListTvRowHeadPresenter<T extends TvPresenterRowBean> exten
 
     private final void initHeadAdapter(@NonNull Context context, @NonNull View inflate) {
         try {
-            RelativeLayout relativeLayout = inflate.findViewById(R.id.module_leanback_llr_head_content);
-            int childCount = relativeLayout.getChildCount();
+            RelativeLayout headLayout = inflate.findViewById(R.id.module_leanback_llr_head_content);
+            int childCount = headLayout.getChildCount();
             if (childCount > 0)
                 throw new Exception("constance child");
-            View view = LayoutInflater.from(context).inflate(initContent(), relativeLayout, false);
-            relativeLayout.removeAllViews();
-            relativeLayout.addView(view);
+            View view = LayoutInflater.from(context).inflate(initContent(), headLayout, false);
+            headLayout.removeAllViews();
+            headLayout.addView(view);
             if (null != view.getLayoutParams()) {
                 ((RelativeLayout.LayoutParams) view.getLayoutParams()).bottomMargin = initContentMarginBottom(context);
                 ((RelativeLayout.LayoutParams) view.getLayoutParams()).leftMargin = 0;
@@ -103,7 +106,7 @@ public abstract class ListTvRowHeadPresenter<T extends TvPresenterRowBean> exten
                 ((RelativeLayout.LayoutParams) view.getLayoutParams()).topMargin = 0;
             }
         } catch (Exception e) {
-            LeanBackUtil.log("ListTvRowPresenter => initContent => " + e.getMessage(), e);
+            LeanBackUtil.log("ListTvRowPresenter => initHeadAdapter => " + e.getMessage(), e);
         }
     }
 
@@ -174,7 +177,7 @@ public abstract class ListTvRowHeadPresenter<T extends TvPresenterRowBean> exten
                 });
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LeanBackUtil.log("ListTvRowPresenter => initItemAdapter => " + e.getMessage(), e);
         }
     }
 
@@ -194,9 +197,14 @@ public abstract class ListTvRowHeadPresenter<T extends TvPresenterRowBean> exten
 //            }
     }
 
-    protected abstract void onCreateItemHolder(@NonNull Context context, @NonNull View viewHead, @NonNull View viewItem, @NonNull List<T> data, @NonNull RecyclerView.ViewHolder holder);
+    protected void onCreateHeadHolder(@NonNull Context context, @NonNull View headView, @NonNull List<T> data) {
+    }
 
-    protected abstract void onBindItemHolder(@NonNull Context context, @NonNull View viewHead, @NonNull View viewItem, @NonNull T item, @NonNull int position);
+    protected void onCreateItemHolder(@NonNull Context context, @NonNull View headView, @NonNull View itemView, @NonNull List<T> data, @NonNull RecyclerView.ViewHolder holder) {
+    }
+
+    protected void onBindItemHolder(@NonNull Context context, @NonNull View headView, @NonNull View itemView, @NonNull T item, @NonNull int position) {
+    }
 
     @LayoutRes
     protected abstract int initLayout();
