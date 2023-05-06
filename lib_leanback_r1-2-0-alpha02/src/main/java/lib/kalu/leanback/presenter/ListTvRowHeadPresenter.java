@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.Collection;
 import java.util.LinkedList;
+import java.util.List;
 
 import lib.kalu.leanback.presenter.bean.TvPresenterRowBean;
 import lib.kalu.leanback.presenter.impl.ListTvPresenterImpl;
@@ -39,8 +40,8 @@ public abstract class ListTvRowHeadPresenter<T extends TvPresenterRowBean> exten
             setTitleTextSize(context, inflate, R.id.module_leanback_llr_head_title);
             setTitleAssetTTF(context, inflate, R.id.module_leanback_llr_head_title);
             setTitleBackgroundColor(context, inflate, R.id.module_leanback_llr_head_title);
-            initContent(context, inflate);
-            initAdapter(context, inflate);
+            initHeadAdapter(context, inflate);
+            initItemAdapter(context, inflate);
             return new ViewHolder(inflate);
         } catch (Exception e) {
             e.printStackTrace();
@@ -86,7 +87,7 @@ public abstract class ListTvRowHeadPresenter<T extends TvPresenterRowBean> exten
         }
     }
 
-    private final void initContent(@NonNull Context context, @NonNull View inflate) {
+    private final void initHeadAdapter(@NonNull Context context, @NonNull View inflate) {
         try {
             RelativeLayout relativeLayout = inflate.findViewById(R.id.module_leanback_llr_head_content);
             int childCount = relativeLayout.getChildCount();
@@ -106,10 +107,10 @@ public abstract class ListTvRowHeadPresenter<T extends TvPresenterRowBean> exten
         }
     }
 
-    private final void initAdapter(@NonNull Context context, @NonNull ViewGroup viewGroup) {
+    private final void initItemAdapter(@NonNull Context context, @NonNull ViewGroup viewGroup) {
         try {
 
-            // 1
+            ViewGroup headLayout = viewGroup.findViewById(R.id.module_leanback_llr_head_content);
             RecyclerView recyclerView = viewGroup.findViewById(R.id.module_leanback_llr_head_list);
             RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
             if (null == layoutManager) {
@@ -149,40 +150,7 @@ public abstract class ListTvRowHeadPresenter<T extends TvPresenterRowBean> exten
                             View view = LayoutInflater.from(context).inflate(initLayout(), parent, false);
                             RecyclerView.ViewHolder holder = new RecyclerView.ViewHolder(view) {
                             };
-                            // onClick
-                            try {
-                                view.setOnClickListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View v) {
-                                        int position = holder.getAbsoluteAdapterPosition();
-                                        if (position >= 0) {
-                                            T t = mData.get(position);
-                                            onClickItemHolder(v.getContext(), v, t, position);
-                                        }
-                                    }
-                                });
-                            } catch (Exception e) {
-                            }
-                            // onFocus
-                            try {
-                                view.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-                                    @Override
-                                    public void onFocusChange(View v, boolean b) {
-                                        int position = holder.getAbsoluteAdapterPosition();
-                                        if (position >= 0) {
-                                            // 1
-                                            T t = mData.get(position);
-                                            onFocusItemHolder(v.getContext(), v, t, position, b);
-                                            // 2
-                                            if (b) {
-                                                ViewGroup groupLayout = viewGroup.findViewById(R.id.module_leanback_llr_head_content);
-                                                onBindHeadHolder(groupLayout.getContext(), groupLayout, t, position);
-                                            }
-                                        }
-                                    }
-                                });
-                            } catch (Exception e) {
-                            }
+                            onCreateItemHolder(context, headLayout, view, mData, holder);
                             return holder;
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -194,19 +162,7 @@ public abstract class ListTvRowHeadPresenter<T extends TvPresenterRowBean> exten
                     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
                         try {
                             T t = mData.get(position);
-                            onBindItemHolder(holder.itemView.getContext(), holder.itemView, t, position);
-                        } catch (Exception e) {
-                        }
-                        try {
-                            if (position > 0)
-                                throw new Exception();
-                            ViewGroup groupLayout = viewGroup.findViewById(R.id.module_leanback_llr_head_content);
-                            Object tag = groupLayout.getTag(R.id.module_leanback_llr_head_content);
-                            if (null != tag)
-                                throw new Exception();
-                            groupLayout.setTag(R.id.module_leanback_llr_head_content, 1);
-                            T t = mData.get(position);
-                            onBindHeadHolder(groupLayout.getContext(), groupLayout, t, position);
+                            onBindItemHolder(holder.itemView.getContext(), headLayout, holder.itemView, t, position);
                         } catch (Exception e) {
                         }
                     }
@@ -238,13 +194,9 @@ public abstract class ListTvRowHeadPresenter<T extends TvPresenterRowBean> exten
 //            }
     }
 
-    protected abstract void onFocusItemHolder(@NonNull Context context, @NonNull View view, @NonNull T item, @NonNull int position, boolean hasFocus);
+    protected abstract void onCreateItemHolder(@NonNull Context context, @NonNull View viewHead, @NonNull View viewItem, @NonNull List<T> data, @NonNull RecyclerView.ViewHolder holder);
 
-    protected abstract void onClickItemHolder(@NonNull Context context, @NonNull View view, @NonNull T item, @NonNull int position);
-
-    protected abstract void onBindItemHolder(@NonNull Context context, @NonNull View view, @NonNull T item, @NonNull int position);
-
-    protected abstract void onBindHeadHolder(@NonNull Context context, @NonNull View view, @NonNull T item, @NonNull int position);
+    protected abstract void onBindItemHolder(@NonNull Context context, @NonNull View viewHead, @NonNull View viewItem, @NonNull T item, @NonNull int position);
 
     @LayoutRes
     protected abstract int initLayout();
