@@ -363,15 +363,6 @@ public final class TagsLayout extends LinearLayout {
         }
     }
 
-    private int getRowCount() {
-        try {
-            return getChildCount();
-        } catch (Exception e) {
-            LeanBackUtil.log("TagsLayout => getRowCount => " + e.getMessage());
-            return 0;
-        }
-    }
-
     private boolean setCheckedIndex(int row, int checkedIndex, boolean hasFocus) {
         try {
             int childCount = getChildCount();
@@ -387,7 +378,16 @@ public final class TagsLayout extends LinearLayout {
         }
     }
 
-    private int getCheckedIndexRow() {
+    public int getRowCount() {
+        try {
+            return getChildCount();
+        } catch (Exception e) {
+            LeanBackUtil.log("TagsLayout => getRowCount => " + e.getMessage());
+            return 0;
+        }
+    }
+
+    public int getCheckedIndexRow() {
         try {
             Object tag = getTag(R.id.lb_tagslayout_row);
             if (null == tag)
@@ -442,7 +442,7 @@ public final class TagsLayout extends LinearLayout {
             // right
             else if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_RIGHT) {
                 checkNext = true;
-                nextFocus =FocusFinder.getInstance().findNextFocus(findDecorView(this),  this, View.FOCUS_RIGHT);
+                nextFocus = FocusFinder.getInstance().findNextFocus(findDecorView(this), this, View.FOCUS_RIGHT);
             }
             // up
             else if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_UP) {
