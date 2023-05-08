@@ -154,7 +154,7 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
     }
 
     public void onClickEpisode(@NonNull Context context, @NonNull View v, @NonNull T item,
-                               @NonNull int position, boolean isFromUser) {
+                               @NonNull int playingIndex, @NonNull int checkedPosition, boolean isFromUser) {
     }
 
     /************/
@@ -493,7 +493,8 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
                 child.setTag(R.id.lb_presenter_episode, t);
                 onBindHolderEpisode(child.getContext(), child, t, i);
                 if (!isFromSwapEpisode && !isFromSwapRange && i == checkedIndex) {
-                    onClickEpisode(child.getContext(), child, t, i, false);
+                    int currentPlayingIndexOfChild = getEpisodeCurrentPlayingIndexOfChild(viewGroup);
+                    onClickEpisode(child.getContext(), child, t, checkedIndex, currentPlayingIndexOfChild, false);
                 }
             }
         } catch (Exception e) {
@@ -690,7 +691,8 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
             t.setChecked(true);
             child.setTag(R.id.lb_presenter_episode_playing, t);
             onBindHolderEpisode(child.getContext(), child, t, indexOfChild);
-            onClickEpisode(child.getContext(), child, t, indexOfChild, false);
+            int currentPlayingIndexOfChild = getEpisodeCurrentPlayingIndexOfChild(viewGroup);
+            onClickEpisode(child.getContext(), child, t, indexOfChild, currentPlayingIndexOfChild, false);
         } catch (Exception e) {
             LeanBackUtil.log("ListTvEpisodesDoubleRowPresenter => setPlayingEpisode => " + e.getMessage(), e);
         }
@@ -1040,7 +1042,8 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
                                 t.setPlaying(true);
                                 view.setTag(R.id.lb_presenter_episode_playing, t);
                                 onBindHolderEpisode(view.getContext(), view, t, indexOfChild);
-                                onClickEpisode(view.getContext(), view, t, indexOfChild, true);
+                                int currentPlayingIndexOfChild = getEpisodeCurrentPlayingIndexOfChild(viewGroup);
+                                onClickEpisode(view.getContext(), view, t, t.getEpisodeIndex(), currentPlayingIndexOfChild, true);
                             }
                         } catch (Exception e) {
                         }
@@ -1073,6 +1076,37 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
             }
         } catch (Exception e) {
             LeanBackUtil.log("ListTvEpisodesDoubleRowPresenter => initLayoutEpisode => " + e.getMessage());
+        }
+    }
+
+    private final int getEpisodeCurrentPlayingIndexOfChild(View viewGroup) {
+        try {
+            if (null == viewGroup)
+                throw new Exception("viewGroup error: null");
+            int childCount = ((ViewGroup) viewGroup).getChildCount();
+            if (childCount != 3)
+                throw new Exception("childCount error: " + childCount);
+            ViewGroup episodeGroup = (ViewGroup) ((ViewGroup) viewGroup).getChildAt(1);
+            if (null == episodeGroup)
+                throw new Exception("episodeGroup error: null");
+            if (!(episodeGroup instanceof LinearLayout))
+                throw new Exception("episodeGroup error: not instanceof LinearLayout");
+            int episodeChildCount = episodeGroup.getChildCount();
+            if (episodeChildCount <= 0)
+                throw new Exception("episodeChildCount error: " + episodeChildCount);
+            for (int i = 0; i < episodeChildCount; i++) {
+                View child = episodeGroup.getChildAt(i);
+                if (null == child)
+                    continue;
+                T t = (T) child.getTag(R.id.lb_presenter_episode_playing);
+                if (null == t)
+                    continue;
+                return t.getEpisodeIndex();
+            }
+            throw new Exception("not find");
+        } catch (Exception e) {
+            LeanBackUtil.log("ListTvEpisodesDoubleRowPresenter => getEpisodeCurrentPlayingIndexOfChild => " + e.getMessage());
+            return -1;
         }
     }
 
