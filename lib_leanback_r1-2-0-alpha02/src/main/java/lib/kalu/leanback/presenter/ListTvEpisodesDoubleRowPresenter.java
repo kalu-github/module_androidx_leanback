@@ -154,7 +154,7 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
     }
 
     public void onClickEpisode(@NonNull Context context, @NonNull View v, @NonNull T item,
-                               @NonNull int playingIndex, @NonNull int checkedPosition, boolean isFromUser) {
+                               @NonNull int playingIndex, @NonNull int checkedIndex, boolean isFromUser) {
     }
 
     /************/
