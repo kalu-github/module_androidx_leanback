@@ -402,7 +402,7 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
         }
     }
 
-    private final void findCleanFocusCheckedRange(@NonNull View viewGroup) {
+    private final void resetRange(@NonNull View viewGroup) {
         try {
             if (null == viewGroup)
                 throw new Exception("viewGroup error: null");
@@ -427,11 +427,12 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
                 if (t.isPlaying() || t.isChecked() || t.isFocus()) {
                     t.setChecked(false);
                     t.setFocus(false);
+                    t.setPlaying(false);
                     onBindHolderRange(child.getContext(), child, t, i);
                 }
             }
         } catch (Exception e) {
-            LeanBackUtil.log("ListTvEpisodesDoubleRowPresenter => findCleanFocusCheckedRange => " + e.getMessage(), e);
+            LeanBackUtil.log("ListTvEpisodesDoubleRowPresenter => resetRange => " + e.getMessage(), e);
         }
     }
 
@@ -542,7 +543,11 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
                     t.setFocus(i == 0);
                     t.setChecked(i == 0);
                 } else if (direction == -2) {
+                    t.setChecked(false);
                     t.setChecked(rangeIndex == checkedIndex);
+                } else {
+                    t.setFocus(false);
+                    t.setChecked(false);
                 }
                 child.setTag(R.id.lb_presenter_range, t);
                 onBindHolderRange(child.getContext(), child, t, i);
@@ -629,7 +634,7 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
         }
     }
 
-    private final void findCleanFocusCheckedEpisode(@NonNull View viewGroup) {
+    private final void resetEpisode(@NonNull View viewGroup) {
         try {
             if (null == viewGroup)
                 throw new Exception("viewGroup error: null");
@@ -659,7 +664,7 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
                 }
             }
         } catch (Exception e) {
-            LeanBackUtil.log("ListTvEpisodesDoubleRowPresenter => cleanFocusCheckedEpisode => " + e.getMessage(), e);
+            LeanBackUtil.log("ListTvEpisodesDoubleRowPresenter => resetEpisode => " + e.getMessage(), e);
         }
     }
 
@@ -730,7 +735,11 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
                     t.setPlaying(true);
                     t.setChecked(true);
                     onBindHolderRange(child.getContext(), child, t, i);
-                    return;
+                } else if (t.isPlaying() || t.isChecked() || t.isFocus()) {
+                    t.setPlaying(false);
+                    t.setChecked(false);
+                    t.setFocus(false);
+                    onBindHolderRange(child.getContext(), child, t, i);
                 }
             }
             throw new Exception("not find");
@@ -1552,8 +1561,8 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
             if (!(rootGroup instanceof LinearLayout))
                 throw new Exception("rootGroup error: not instanceof LinearLayout");
 
-            findCleanFocusCheckedRange(rootGroup);
-            findCleanFocusCheckedEpisode(rootGroup);
+            resetRange(rootGroup);
+            resetEpisode(rootGroup);
             updateRange(viewGroup, startRangeIndex, checkedRangeIndex, -1);
             updateEpisode(viewGroup, checkedRangeIndex, checkedEpisodeIndex, true, true);
             setPlayingRange(viewGroup, checkedRangeIndex);
