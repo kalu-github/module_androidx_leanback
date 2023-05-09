@@ -36,7 +36,7 @@ public class RecyclerViewGrid extends BaseRecyclerView {
                 int spanCount = getSpanCount();
                 if (spanCount <= 1)
                     throw new Exception("spanCount error: " + spanCount);
-                int focusPosition = findFocusPosition();
+                int focusPosition = findFocusedChildPosition();
                 if (focusPosition < spanCount)
                     throw new Exception("focusPosition error: " + focusPosition);
                 View focusedChild = getFocusedChild();
@@ -73,7 +73,7 @@ public class RecyclerViewGrid extends BaseRecyclerView {
                 int itemCount = adapter.getItemCount();
                 if (itemCount < 0)
                     throw new Exception("itemCount error: " + itemCount);
-                int focusPosition = findFocusPosition();
+                int focusPosition = findFocusedChildPosition();
                 if (focusPosition < 0)
                     throw new Exception("focusPosition error: " + focusPosition);
                 if (itemCount - focusPosition <= spanCount)

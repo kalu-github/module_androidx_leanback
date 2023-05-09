@@ -2,7 +2,9 @@ package lib.kalu.leanback.list;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.view.FocusFinder;
 import android.view.View;
+import android.view.ViewParent;
 
 import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
@@ -34,31 +36,6 @@ class BaseRecyclerView extends androidx.recyclerview.widget.RecyclerView {
         setFocusableInTouchMode(false);
     }
 
-    public final int getSpanCount() {
-        try {
-            return ((GridLayoutManager) getLayoutManager()).getSpanCount();
-        } catch (Exception e) {
-            return 1;
-        }
-    }
-
-    public final int getItemCount() {
-        try {
-            return getAdapter().getItemCount();
-        } catch (Exception e) {
-            return 0;
-        }
-    }
-
-    public final int findFocusPosition() {
-        try {
-            View focusedView = getFocusedChild();
-            return getChildAdapterPosition(focusedView);
-        } catch (Exception e) {
-            return -1;
-        }
-    }
-
     @Override
     public final void smoothScrollToPosition(int position) {
         try {
@@ -67,7 +44,15 @@ class BaseRecyclerView extends androidx.recyclerview.widget.RecyclerView {
         }
     }
 
-    public final void requestFocusChild(int position, @IdRes int id) {
+    public int getSpanCount() {
+        try {
+            return ((GridLayoutManager) getLayoutManager()).getSpanCount();
+        } catch (Exception e) {
+            return 1;
+        }
+    }
+
+    public void requestFocusChild(int position, @IdRes int id) {
         try {
             ViewHolder viewHolder = findViewHolderForAdapterPosition(position);
             viewHolder.itemView.findViewById(id).requestFocus();
@@ -75,11 +60,52 @@ class BaseRecyclerView extends androidx.recyclerview.widget.RecyclerView {
         }
     }
 
-    public final void performClickChild(int position, @IdRes int id) {
+    public void performClickChild(int position, @IdRes int id) {
         try {
             ViewHolder viewHolder = findViewHolderForAdapterPosition(position);
             viewHolder.itemView.findViewById(id).performClick();
         } catch (Exception e) {
         }
+    }
+
+    public int findFocusedChildPosition() {
+        try {
+            View focusedView = getFocusedChild();
+            if (null == focusedView)
+                throw new Exception("focusedView error: null");
+            while (true) {
+                ViewParent parent = focusedView.getParent();
+                if (parent instanceof BaseRecyclerView) {
+                    int adapterPosition = getChildAdapterPosition(focusedView);
+                    if (adapterPosition < 0)
+                        throw new Exception("adapterPosition error: " + adapterPosition);
+                    return adapterPosition;
+                } else {
+                    focusedView = (View) parent;
+                }
+            }
+        } catch (Exception e) {
+            return -1;
+        }
+    }
+
+    public int getAdapterItemCount() {
+        try {
+            Adapter adapter = getAdapter();
+            if (null == adapter)
+                throw new Exception("adapter error: null");
+            return adapter.getItemCount();
+        } catch (Exception e) {
+            return 0;
+        }
+    }
+
+    public void scrollFocusedChild(int direction) {
+    }
+
+    public void scrollTop(boolean hasFocus) {
+    }
+
+    public void scrollBottom(boolean hasFocus) {
     }
 }

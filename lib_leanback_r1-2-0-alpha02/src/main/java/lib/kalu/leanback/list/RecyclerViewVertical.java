@@ -31,9 +31,9 @@ public class RecyclerViewVertical extends BaseRecyclerView {
         if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_UP) {
             try {
                 LayoutManager layoutManager = getLayoutManager();
-                if(null == layoutManager)
+                if (null == layoutManager)
                     throw new Exception("layoutManager error: null");
-                int focusPosition = findFocusPosition();
+                int focusPosition = findFocusedChildPosition();
                 if (focusPosition < 0)
                     throw new Exception("focusPosition error: " + focusPosition);
                 View focusedChild = getFocusedChild();
@@ -59,7 +59,7 @@ public class RecyclerViewVertical extends BaseRecyclerView {
         else if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_DOWN) {
             try {
                 LayoutManager layoutManager = getLayoutManager();
-                if(null == layoutManager)
+                if (null == layoutManager)
                     throw new Exception("layoutManager error: null");
                 Adapter adapter = getAdapter();
                 if (null == adapter)
@@ -67,7 +67,7 @@ public class RecyclerViewVertical extends BaseRecyclerView {
                 int itemCount = adapter.getItemCount();
                 if (itemCount < 0)
                     throw new Exception("itemCount error: " + itemCount);
-                int focusPosition = findFocusPosition();
+                int focusPosition = findFocusedChildPosition();
                 if (focusPosition < 0)
                     throw new Exception("focusPosition error: " + focusPosition);
                 if (focusPosition + 1 >= itemCount)
@@ -92,5 +92,64 @@ public class RecyclerViewVertical extends BaseRecyclerView {
             }
         }
         return super.dispatchKeyEvent(event);
+    }
+
+    @Override
+    public void scrollFocusedChild(int direction) {
+        try {
+            if (direction != View.FOCUS_UP && direction != View.FOCUS_DOWN)
+                throw new Exception("direction error: " + direction);
+            View focusedView = getFocusedChild();
+            if (null == focusedView)
+                throw new Exception("focusedView error: null");
+            int measuredHeight = focusedView.getMeasuredHeight();
+            scrollBy(0, direction == View.FOCUS_UP ? -measuredHeight : measuredHeight);
+        } catch (Exception e) {
+        }
+    }
+
+    @Override
+    public void scrollTop(boolean hasFocus) {
+
+        while (true) {
+            View focusedChild = getFocusedChild();
+            if (null == focusedChild)
+                break;
+            int focusPosition = findFocusedChildPosition();
+            if (focusPosition <= 0) {
+                if (!hasFocus) {
+                    focusedChild.clearFocus();
+                }
+                break;
+            }
+            scrollFocusedChild(View.FOCUS_UP);
+            View nextFocus = FocusFinder.getInstance().findNextFocus(this, focusedChild, View.FOCUS_UP);
+            if (null == nextFocus)
+                continue;
+            nextFocus.requestFocus();
+        }
+    }
+
+    @Override
+    public void scrollBottom(boolean hasFocus) {
+
+        while (true) {
+            View focusedChild = getFocusedChild();
+            if (null == focusedChild)
+                break;
+            int focusPosition = findFocusedChildPosition();
+            int adapterItemCount = getAdapterItemCount();
+            if (focusPosition + 1 >= adapterItemCount) {
+                if (!hasFocus) {
+                    focusedChild.clearFocus();
+                }
+                break;
+            }
+            scrollFocusedChild(View.FOCUS_DOWN);
+            View nextFocus = FocusFinder.getInstance().findNextFocus(this, focusedChild, View.FOCUS_DOWN);
+            if (null == nextFocus)
+                continue;
+            nextFocus.requestFocus();
+        }
     }
 }
