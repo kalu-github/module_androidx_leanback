@@ -154,7 +154,7 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
     }
 
     public void onClickEpisode(@NonNull Context context, @NonNull View v, @NonNull T item,
-                               @NonNull int playingIndex, @NonNull int checkedIndex, boolean isFromUser) {
+                               @NonNull int checkedIndex, @NonNull int playingIndex, boolean isFromUser) {
     }
 
     /************/
@@ -493,8 +493,8 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
                 child.setTag(R.id.lb_presenter_episode, t);
                 onBindHolderEpisode(child.getContext(), child, t, i);
                 if (!isFromSwapEpisode && !isFromSwapRange && i == checkedIndex) {
-                    int currentPlayingIndexOfChild = getEpisodeCurrentPlayingIndexOfChild(viewGroup);
-                    onClickEpisode(child.getContext(), child, t, checkedIndex, currentPlayingIndexOfChild, false);
+                    int playingIndexOfChild = getEpisodeCurrentPlayingIndexOfChild(viewGroup);
+                    onClickEpisode(child.getContext(), child, t, t.getEpisodeIndex(), playingIndexOfChild, false);
                 }
             }
         } catch (Exception e) {
@@ -687,12 +687,12 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
             T t = (T) child.getTag(R.id.lb_presenter_episode);
             if (null == t)
                 throw new Exception("t error: null");
+            int playingIndexOfChild = getEpisodeCurrentPlayingIndexOfChild(viewGroup);
             t.setPlaying(true);
             t.setChecked(true);
             child.setTag(R.id.lb_presenter_episode_playing, t);
             onBindHolderEpisode(child.getContext(), child, t, indexOfChild);
-            int currentPlayingIndexOfChild = getEpisodeCurrentPlayingIndexOfChild(viewGroup);
-            onClickEpisode(child.getContext(), child, t, indexOfChild, currentPlayingIndexOfChild, false);
+            onClickEpisode(child.getContext(), child, t, t.getEpisodeIndex(), playingIndexOfChild, false);
         } catch (Exception e) {
             LeanBackUtil.log("ListTvEpisodesDoubleRowPresenter => setPlayingEpisode => " + e.getMessage(), e);
         }
@@ -1037,14 +1037,14 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
                         }
                         try {
                             T t = (T) view.getTag(R.id.lb_presenter_episode);
-                            if (null != t) {
-                                int indexOfChild = episodeGroup.indexOfChild(child);
-                                t.setPlaying(true);
-                                view.setTag(R.id.lb_presenter_episode_playing, t);
-                                onBindHolderEpisode(view.getContext(), view, t, indexOfChild);
-                                int currentPlayingIndexOfChild = getEpisodeCurrentPlayingIndexOfChild(viewGroup);
-                                onClickEpisode(view.getContext(), view, t, t.getEpisodeIndex(), currentPlayingIndexOfChild, true);
-                            }
+                            if (null == t)
+                                throw new Exception("t error: null");
+                            int playingIndexOfChild = getEpisodeCurrentPlayingIndexOfChild(viewGroup);
+                            int indexOfChild = episodeGroup.indexOfChild(child);
+                            t.setPlaying(true);
+                            view.setTag(R.id.lb_presenter_episode_playing, t);
+                            onBindHolderEpisode(view.getContext(), view, t, indexOfChild);
+                            onClickEpisode(view.getContext(), view, t, t.getEpisodeIndex(), playingIndexOfChild, true);
                         } catch (Exception e) {
                         }
                     }
