@@ -1110,7 +1110,8 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
                 T t = (T) child.getTag(R.id.lb_presenter_episode_playing);
                 if (null == t)
                     continue;
-                return t.getEpisodeIndex();
+                if (t.isPlaying())
+                    return t.getEpisodeIndex();
             }
             throw new Exception("not find");
         } catch (Exception e) {
