@@ -77,7 +77,7 @@ public abstract class ListTvRowHeadPresenter<T extends TvPresenterRowBean> exten
             mData.clear();
             mData.addAll((Collection<? extends T>) item);
         } catch (Exception e) {
-            LeanBackUtil.log("ListTvRowPresenter => formatData => " + e.getMessage(), e);
+            LeanBackUtil.log("ListTvRowHeadPresenter => formatData => " + e.getMessage());
         }
     }
 
@@ -86,7 +86,7 @@ public abstract class ListTvRowHeadPresenter<T extends TvPresenterRowBean> exten
             RecyclerView recyclerView = view.findViewById(R.id.module_leanback_llr_head_list);
             recyclerView.getAdapter().notifyDataSetChanged();
         } catch (Exception e) {
-            LeanBackUtil.log("ListTvRowPresenter => updateAdapter => " + e.getMessage(), e);
+            LeanBackUtil.log("ListTvRowHeadPresenter => updateAdapter => " + e.getMessage());
         }
     }
 
@@ -106,7 +106,7 @@ public abstract class ListTvRowHeadPresenter<T extends TvPresenterRowBean> exten
                 ((RelativeLayout.LayoutParams) view.getLayoutParams()).topMargin = 0;
             }
         } catch (Exception e) {
-            LeanBackUtil.log("ListTvRowPresenter => initHeadAdapter => " + e.getMessage(), e);
+            LeanBackUtil.log("ListTvRowHeadPresenter => initHeadAdapter => " + e.getMessage());
         }
     }
 
@@ -177,7 +177,7 @@ public abstract class ListTvRowHeadPresenter<T extends TvPresenterRowBean> exten
                 });
             }
         } catch (Exception e) {
-            LeanBackUtil.log("ListTvRowPresenter => initItemAdapter => " + e.getMessage(), e);
+            LeanBackUtil.log("ListTvRowHeadPresenter => initItemAdapter => " + e.getMessage());
         }
     }
 

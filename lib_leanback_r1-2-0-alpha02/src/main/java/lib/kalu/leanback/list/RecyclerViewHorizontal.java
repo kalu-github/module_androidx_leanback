@@ -164,6 +164,13 @@ public class RecyclerViewHorizontal extends BaseRecyclerView {
             View nextFocus = FocusFinder.getInstance().findNextFocus(this, focusedChild, View.FOCUS_LEFT);
             if (null == nextFocus)
                 continue;
+            while (true) {
+                if (null == nextFocus)
+                    break;
+                if (nextFocus.isFocusable())
+                    break;
+                nextFocus = FocusFinder.getInstance().findNextFocus(this, nextFocus, View.FOCUS_UP);
+            }
             nextFocus.requestFocus();
         }
     }
@@ -187,6 +194,13 @@ public class RecyclerViewHorizontal extends BaseRecyclerView {
             View nextFocus = FocusFinder.getInstance().findNextFocus(this, focusedChild, View.FOCUS_RIGHT);
             if (null == nextFocus)
                 continue;
+            while (true) {
+                if (null == nextFocus)
+                    break;
+                if (nextFocus.isFocusable())
+                    break;
+                nextFocus = FocusFinder.getInstance().findNextFocus(this, nextFocus, View.FOCUS_UP);
+            }
             nextFocus.requestFocus();
         }
     }
