@@ -9,6 +9,7 @@ import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import lib.kalu.leanback.list.layoutmanager.BaseGridLayoutManager;
 import lib.kalu.leanback.util.LeanBackUtil;
 
 public class RecyclerViewGrid extends BaseRecyclerView {
@@ -55,7 +56,7 @@ public class RecyclerViewGrid extends BaseRecyclerView {
                 nextFocusNews.requestFocus();
                 return true;
             } catch (Exception e) {
-                LeanBackUtil.log("RecyclerViewVertical => dispatchKeyEvent => up => " + e.getMessage());
+                LeanBackUtil.log("RecyclerViewGrid => dispatchKeyEvent => up => " + e.getMessage());
             }
         }
         // down
@@ -94,9 +95,49 @@ public class RecyclerViewGrid extends BaseRecyclerView {
                 nextFocusNews.requestFocus();
                 return true;
             } catch (Exception e) {
-                LeanBackUtil.log("RecyclerViewVertical => dispatchKeyEvent => down => " + e.getMessage());
+                LeanBackUtil.log("RecyclerViewGrid => dispatchKeyEvent => down => " + e.getMessage());
             }
         }
+//        // left
+//        else if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_LEFT) {
+//            try {
+//                View focusedChild = getFocusedChild();
+//                if (null == focusedChild)
+//                    throw new Exception("focusedChild error: null");
+//                View nextFocus = FocusFinder.getInstance().findNextFocus(this, focusedChild, View.FOCUS_LEFT);
+//                if (null != nextFocus)
+//                    throw new Exception("nextFocus warning: " + nextFocus);
+//                LayoutManager layoutManager = getLayoutManager();
+//                if (null == layoutManager)
+//                    throw new Exception("layoutManager error: null");
+//                if (!(layoutManager instanceof BaseGridLayoutManager))
+//                    throw new Exception("layoutManager warning: not instanceof BaseGridLayoutManager");
+//                ((BaseGridLayoutManager) layoutManager).setCanScrollVertically(false);
+//            } catch (Exception e) {
+//                LeanBackUtil.log("RecyclerViewGrid => dispatchKeyEvent => left => " + e.getMessage());
+//            }
+//        }
+//        // right-iin
+//        else if (event.getAction() == KeyEvent.ACTION_UP) {
+//            switch (event.getKeyCode()) {
+//                case KeyEvent.KEYCODE_DPAD_RIGHT:
+//                case KeyEvent.KEYCODE_DPAD_LEFT:
+//                case KeyEvent.KEYCODE_DPAD_UP:
+//                case KeyEvent.KEYCODE_DPAD_DOWN:
+//                    try {
+//                        LayoutManager layoutManager = getLayoutManager();
+//                        LeanBackUtil.log("RecyclerViewVertical => dispatchKeyEvent => into => layoutManager = " + layoutManager);
+//                        if (null == layoutManager)
+//                            throw new Exception("layoutManager error: null");
+//                        if (!(layoutManager instanceof BaseGridLayoutManager))
+//                            throw new Exception("layoutManager warning: not instanceof BaseGridLayoutManager");
+//                        ((BaseGridLayoutManager) layoutManager).setCanScrollVertically(true);
+//                    } catch (Exception e) {
+//                        LeanBackUtil.log("RecyclerViewGrid => dispatchKeyEvent => into => " + e.getMessage());
+//                    }
+//                    break;
+//            }
+//        }
         return super.dispatchKeyEvent(event);
     }
 }
