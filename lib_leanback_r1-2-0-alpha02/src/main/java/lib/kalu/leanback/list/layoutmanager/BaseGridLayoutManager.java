@@ -6,10 +6,6 @@ import android.util.AttributeSet;
 
 public class BaseGridLayoutManager extends androidx.recyclerview.widget.GridLayoutManager {
 
-    public BaseGridLayoutManager(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-        super(context, attrs, defStyleAttr, defStyleRes);
-    }
-
     public BaseGridLayoutManager(Context context, int spanCount) {
         super(context, spanCount);
     }
@@ -29,9 +25,19 @@ public class BaseGridLayoutManager extends androidx.recyclerview.widget.GridLayo
         this.mCanScrollVertically = mCanScrollVertically;
     }
 
+//    @Override
+//    public boolean requestChildRectangleOnScreen(@NonNull RecyclerView parent, @NonNull View child, @NonNull Rect rect, boolean immediate) {
+//        return canScrollVertically() && super.requestChildRectangleOnScreen(parent, child, rect, immediate);
+//    }
+//
+//    @Override
+//    public boolean requestChildRectangleOnScreen(@NonNull RecyclerView parent, @NonNull View child, @NonNull Rect rect, boolean immediate, boolean focusedChildVisible) {
+//        return canScrollVertically() && super.requestChildRectangleOnScreen(parent, child, rect, immediate, focusedChildVisible);
+//    }
+
     @Override
     public boolean canScrollVertically() {
-        return mCanScrollVertically;
+        return this.mCanScrollVertically;
     }
 
     @Override
