@@ -13,19 +13,19 @@ import androidx.annotation.Nullable;
 import lib.kalu.leanback.list.layoutmanager.BaseGridLayoutManager;
 import lib.kalu.leanback.util.LeanBackUtil;
 
-public class RecyclerViewGrid extends BaseRecyclerView {
+public class RecyclerViewGrid2 extends BaseRecyclerView {
 
-    public RecyclerViewGrid(@NonNull Context context) {
+    public RecyclerViewGrid2(@NonNull Context context) {
         super(context);
         setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
     }
 
-    public RecyclerViewGrid(@NonNull Context context, @Nullable AttributeSet attrs) {
+    public RecyclerViewGrid2(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
     }
 
-    public RecyclerViewGrid(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+    public RecyclerViewGrid2(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
     }
@@ -138,6 +138,10 @@ public class RecyclerViewGrid extends BaseRecyclerView {
                 nextFocus.requestFocus();
                 return true;
             } catch (Exception e) {
+                int focusedChildPosition = findFocusedChildPosition();
+                setLastFocusChildPosition(focusedChildPosition);
+                setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
+//                setScrollEnable(false);
                 LeanBackUtil.log("RecyclerViewGrid => dispatchKeyEvent => left-down => " + e.getMessage());
             }
         }
@@ -170,7 +174,34 @@ public class RecyclerViewGrid extends BaseRecyclerView {
                 nextFocus.requestFocus();
                 return true;
             } catch (Exception e) {
+                int focusedChildPosition = findFocusedChildPosition();
+                setLastFocusChildPosition(focusedChildPosition);
+                setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
+//                setScrollEnable(false);
                 LeanBackUtil.log("RecyclerViewGrid => dispatchKeyEvent => right-down => " + e.getMessage());
+            }
+        }
+        // action_up => into
+        else if (event.getAction() == KeyEvent.ACTION_UP) {
+            switch (event.getKeyCode()) {
+                case KeyEvent.KEYCODE_DPAD_UP:
+                case KeyEvent.KEYCODE_DPAD_DOWN:
+                case KeyEvent.KEYCODE_DPAD_LEFT:
+                case KeyEvent.KEYCODE_DPAD_RIGHT:
+                    try {
+                        int descendantFocusability = getDescendantFocusability();
+                        if (descendantFocusability != ViewGroup.FOCUS_BLOCK_DESCENDANTS)
+                            throw new Exception();
+                        int focusChildPosition = getLastFocusChildPosition();
+                        ViewHolder viewHolder = findViewHolderForAdapterPosition(focusChildPosition);
+                        if (null == viewHolder || null == viewHolder.itemView)
+                            throw new Exception();
+                        setDescendantFocusability(ViewGroup.FOCUS_AFTER_DESCENDANTS);
+                        viewHolder.itemView.requestFocus();
+                        return true;
+                    } catch (Exception e) {
+                    }
+                    break;
             }
         }
         return super.dispatchKeyEvent(event);

@@ -10,4 +10,5 @@
     <item name="lb_tagslayout_data" type="id" />
     <item name="lb_tagslayout_key" type="id" />
     <item name="lb_tagslayout_row" type="id" />
+    <item name="lb_baserecyclerview_last_focus_child_position" type="id" />
 </resources>

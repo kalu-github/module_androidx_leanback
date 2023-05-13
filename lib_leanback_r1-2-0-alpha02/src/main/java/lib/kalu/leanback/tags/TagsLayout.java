@@ -7,7 +7,6 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.util.AttributeSet;
-import android.view.FocusFinder;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
@@ -20,7 +19,6 @@ import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.leanback.R;
-import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -90,87 +88,81 @@ public final class TagsLayout extends LinearLayout {
 
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
+        return dispatchKey(event) || super.dispatchKeyEvent(event);
+    }
 
-        if (event.getAction() == KeyEvent.ACTION_DOWN && null != findFocus() && findFocus() instanceof TagsLayout) {
-
-            // left
-            if (event.getKeyCode() == KeyEvent.KEYCODE_DPAD_LEFT) {
-                try {
-                    int checkedIndexRow = getCheckedIndexRow();
-                    if (checkedIndexRow < 0)
-                        throw new Exception("checkedIndexRow error: " + checkedIndexRow);
-                    int checkedIndex = getCheckedIndex(checkedIndexRow);
-                    if (checkedIndex > 0) {
-                        int next = checkedIndex - 1;
-                        setCheckedIndex(checkedIndexRow, next, true);
-                        scrollNext(View.FOCUS_LEFT, checkedIndexRow, next);
-                        callListener();
-                        return true;
-                    }
-                } catch (Exception e) {
-                    LeanBackUtil.log("TagsLayout => dispatchKeyEvent => left => " + e.getMessage());
+    private boolean dispatchKey(KeyEvent event) {
+        try {
+            View focus = findFocus();
+            if (null == focus)
+                throw new Exception("focus warning: null");
+            if (!(focus instanceof TagsLayout))
+                throw new Exception("focus warning: not instanceof TagsLayout");
+            // action-down => left
+            if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_LEFT) {
+                int checkedIndexRow = getCheckedIndexRow();
+                if (checkedIndexRow < 0)
+                    throw new Exception("checkedIndexRow error: " + checkedIndexRow);
+                int checkedIndex = getCheckedIndex(checkedIndexRow);
+                if (checkedIndex > 0) {
+                    int next = checkedIndex - 1;
+                    setCheckedIndex(checkedIndexRow, next, true);
+                    scrollNext(View.FOCUS_LEFT, checkedIndexRow, next);
+                    callListener();
+                    return true;
                 }
             }
-            // right
-            else if (event.getKeyCode() == KeyEvent.KEYCODE_DPAD_RIGHT) {
-                try {
-                    int checkedIndexRow = getCheckedIndexRow();
-                    if (checkedIndexRow < 0)
-                        throw new Exception("checkedIndexRow error: " + checkedIndexRow);
-                    int checkedIndex = getCheckedIndex(checkedIndexRow);
-                    int itemCount = getItemCount(checkedIndexRow);
-                    if (checkedIndex + 1 < itemCount) {
-                        int next = checkedIndex + 1;
-                        setCheckedIndex(checkedIndexRow, next, true);
-                        scrollNext(View.FOCUS_RIGHT, checkedIndexRow, next);
-                        callListener();
-                        return true;
-                    }
-                } catch (Exception e) {
-                    LeanBackUtil.log("TagsLayout => dispatchKeyEvent => right => " + e.getMessage());
+            // action-down => right
+            else if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_RIGHT) {
+                int checkedIndexRow = getCheckedIndexRow();
+                if (checkedIndexRow < 0)
+                    throw new Exception("checkedIndexRow error: " + checkedIndexRow);
+                int checkedIndex = getCheckedIndex(checkedIndexRow);
+                int itemCount = getItemCount(checkedIndexRow);
+                if (checkedIndex + 1 < itemCount) {
+                    int next = checkedIndex + 1;
+                    setCheckedIndex(checkedIndexRow, next, true);
+                    scrollNext(View.FOCUS_RIGHT, checkedIndexRow, next);
+                    callListener();
+                    return true;
                 }
             }
-            // up
-            else if (event.getKeyCode() == KeyEvent.KEYCODE_DPAD_UP) {
-                try {
-                    int checkedIndexRow = getCheckedIndexRow();
-                    if (checkedIndexRow < 0)
-                        throw new Exception("checkedIndexRow error: " + checkedIndexRow);
-                    if (checkedIndexRow > 0) {
-                        int nextRow = checkedIndexRow - 1;
-                        setTag(R.id.lb_tagslayout_row, nextRow);
-                        int checkedIndexOlds = getCheckedIndex(checkedIndexRow);
-                        setCheckedIndex(checkedIndexRow, checkedIndexOlds, false);
-                        int checkedIndexNews = getCheckedIndex(nextRow);
-                        setCheckedIndex(nextRow, checkedIndexNews, true);
-                        return true;
-                    }
-                } catch (Exception e) {
-                    LeanBackUtil.log("TagsLayout => dispatchKeyEvent => up => " + e.getMessage());
+            // action-down => up
+            else if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_UP) {
+                int checkedIndexRow = getCheckedIndexRow();
+                if (checkedIndexRow < 0)
+                    throw new Exception("checkedIndexRow error: " + checkedIndexRow);
+                if (checkedIndexRow > 0) {
+                    int nextRow = checkedIndexRow - 1;
+                    setTag(R.id.lb_tagslayout_row, nextRow);
+                    int checkedIndexOlds = getCheckedIndex(checkedIndexRow);
+                    setCheckedIndex(checkedIndexRow, checkedIndexOlds, false);
+                    int checkedIndexNews = getCheckedIndex(nextRow);
+                    setCheckedIndex(nextRow, checkedIndexNews, true);
+                    return true;
                 }
             }
-            // down
-            else if (event.getKeyCode() == KeyEvent.KEYCODE_DPAD_DOWN) {
-                try {
-                    int checkedIndexRow = getCheckedIndexRow();
-                    if (checkedIndexRow < 0)
-                        throw new Exception("checkedIndexRow error: " + checkedIndexRow);
-                    int rowCount = getRowCount();
-                    if (checkedIndexRow + 1 < rowCount) {
-                        int nextRow = checkedIndexRow + 1;
-                        setTag(R.id.lb_tagslayout_row, nextRow);
-                        int checkedIndexOlds = getCheckedIndex(checkedIndexRow);
-                        setCheckedIndex(checkedIndexRow, checkedIndexOlds, false);
-                        int checkedIndexNews = getCheckedIndex(nextRow);
-                        setCheckedIndex(nextRow, checkedIndexNews, true);
-                        return true;
-                    }
-                } catch (Exception e) {
-                    LeanBackUtil.log("TagsLayout => dispatchKeyEvent => down => " + e.getMessage());
+            // action-down => down
+            else if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_DOWN) {
+                int checkedIndexRow = getCheckedIndexRow();
+                if (checkedIndexRow < 0)
+                    throw new Exception("checkedIndexRow error: " + checkedIndexRow);
+                int rowCount = getRowCount();
+                if (checkedIndexRow + 1 < rowCount) {
+                    int nextRow = checkedIndexRow + 1;
+                    setTag(R.id.lb_tagslayout_row, nextRow);
+                    int checkedIndexOlds = getCheckedIndex(checkedIndexRow);
+                    setCheckedIndex(checkedIndexRow, checkedIndexOlds, false);
+                    int checkedIndexNews = getCheckedIndex(nextRow);
+                    setCheckedIndex(nextRow, checkedIndexNews, true);
+                    return true;
                 }
             }
+            throw new Exception("not find");
+        } catch (Exception e) {
+            LeanBackUtil.log("TagsLayout => dispatchKey => " + e.getMessage());
+            return false;
         }
-        return checkNextFocus(event) || super.dispatchKeyEvent(event);
     }
 
     @Override
@@ -411,67 +403,6 @@ public final class TagsLayout extends LinearLayout {
             ((TagsHorizontalScrollView) getChildAt(row)).scrollNext(direction, col);
         } catch (Exception e) {
             LeanBackUtil.log("TagsLayout => scrollNext => " + e.getMessage());
-        }
-    }
-
-    private ViewGroup findDecorView(View view) {
-        try {
-            View parent = (View) view.getParent();
-            if (null == parent) {
-                return (ViewGroup) view;
-            } else {
-                return findDecorView(parent);
-            }
-        } catch (Exception e) {
-            LeanBackUtil.log("TabLayout => findDecorView => " + e.getMessage());
-            return (ViewGroup) view;
-        }
-    }
-
-    private boolean checkNextFocus(@NonNull KeyEvent event) {
-        try {
-
-            View nextFocus = null;
-            boolean checkNext = false;
-
-            // left
-            if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_LEFT) {
-                checkNext = true;
-                nextFocus = FocusFinder.getInstance().findNextFocus(findDecorView(this), this, View.FOCUS_LEFT);
-            }
-            // right
-            else if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_RIGHT) {
-                checkNext = true;
-                nextFocus = FocusFinder.getInstance().findNextFocus(findDecorView(this), this, View.FOCUS_RIGHT);
-            }
-            // up
-            else if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_UP) {
-                checkNext = true;
-                nextFocus = FocusFinder.getInstance().findNextFocus(findDecorView(this), this, View.FOCUS_UP);
-            }
-            // down
-            else if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_DOWN) {
-                checkNext = true;
-                nextFocus = FocusFinder.getInstance().findNextFocus(findDecorView(this), this, View.FOCUS_DOWN);
-            }
-
-            if (checkNext && null == nextFocus) {
-                return true;
-            } else if (checkNext && nextFocus instanceof RecyclerView) {
-                androidx.recyclerview.widget.RecyclerView.Adapter adapter = ((RecyclerView) nextFocus).getAdapter();
-                if (null == adapter) {
-                    return true;
-                } else {
-                    int itemCount = adapter.getItemCount();
-                    if (itemCount <= 0) {
-                        return true;
-                    }
-                }
-            }
-            throw new Exception("check error");
-        } catch (Exception e) {
-            LeanBackUtil.log("TagsLayout => checkNextFocus => " + e.getMessage());
-            return false;
         }
     }
 

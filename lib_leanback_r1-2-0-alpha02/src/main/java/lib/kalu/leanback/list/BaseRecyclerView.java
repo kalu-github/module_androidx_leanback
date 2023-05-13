@@ -2,14 +2,15 @@ package lib.kalu.leanback.list;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.view.FocusFinder;
 import android.view.View;
 import android.view.ViewParent;
 
 import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.leanback.R;
 import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 class BaseRecyclerView extends androidx.recyclerview.widget.RecyclerView {
     public BaseRecyclerView(@NonNull Context context) {
@@ -33,7 +34,59 @@ class BaseRecyclerView extends androidx.recyclerview.widget.RecyclerView {
         setAnimationCacheEnabled(false);
         setNestedScrollingEnabled(false);
         setHasFixedSize(true);
+        setFocusable(false);
         setFocusableInTouchMode(false);
+    }
+
+    @Override
+    public void setAdapter(@Nullable Adapter adapter) {
+        try {
+            if (null == adapter)
+                throw new Exception("adapter error: null");
+            super.setAdapter(adapter);
+            adapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+
+            });
+        } catch (Exception e) {
+        }
+    }
+
+    public void setLastFocusChildPosition(int position) {
+        try {
+            setTag(R.id.lb_baserecyclerview_last_focus_child_position, position);
+        } catch (Exception e) {
+        }
+    }
+
+    public int getLastFocusChildPosition() {
+        try {
+            Object tag = getTag(R.id.lb_baserecyclerview_last_focus_child_position);
+            if (null == tag)
+                throw new Exception();
+            return (int) tag;
+        } catch (Exception e) {
+            return findCurrentFirstVisableChildPosition();
+        }
+    }
+
+    private int findCurrentFirstVisableChildPosition() {
+        try {
+            int itemCount = getAdapterItemCount();
+            if (itemCount <= 0)
+                throw new Exception();
+            for (int i = 0; i < itemCount; i++) {
+                ViewHolder viewHolder = findViewHolderForAdapterPosition(i);
+                if (null == viewHolder)
+                    continue;
+                int visibility = viewHolder.itemView.getVisibility();
+                if (visibility != View.VISIBLE)
+                    continue;
+                return i;
+            }
+            throw new Exception();
+        } catch (Exception e) {
+            return 0;
+        }
     }
 
     @Override
