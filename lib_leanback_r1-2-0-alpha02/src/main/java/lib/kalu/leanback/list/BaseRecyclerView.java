@@ -2,7 +2,9 @@ package lib.kalu.leanback.list;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.ViewParent;
 
 import androidx.annotation.IdRes;
@@ -12,7 +14,12 @@ import androidx.leanback.R;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import lib.kalu.leanback.util.LeanBackUtil;
+
 class BaseRecyclerView extends androidx.recyclerview.widget.RecyclerView {
+
+    private boolean mBlockDescendants = false;
+
     public BaseRecyclerView(@NonNull Context context) {
         super(context);
         init();
@@ -34,8 +41,69 @@ class BaseRecyclerView extends androidx.recyclerview.widget.RecyclerView {
         setAnimationCacheEnabled(false);
         setNestedScrollingEnabled(false);
         setHasFixedSize(true);
-        setFocusable(false);
-        setFocusableInTouchMode(false);
+
+        try {
+            int descendantFocusability = getDescendantFocusability();
+            if (descendantFocusability != ViewGroup.FOCUS_BLOCK_DESCENDANTS)
+                throw new Exception();
+            mBlockDescendants = true;
+        } catch (Exception e) {
+            mBlockDescendants = false;
+        }
+    }
+
+    @Override
+    public boolean dispatchKeyEvent(KeyEvent event) {
+
+        // into
+        try {
+            if (!mBlockDescendants)
+                throw new Exception();
+            View focus = findFocus();
+            LeanBackUtil.log("BaseRecyclerView => dispatchKeyEvent => focus = "+focus);
+            // action_up => up => from down
+            if (event.getAction() == KeyEvent.ACTION_UP && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_UP) {
+                int focusChildPosition = getLastFocusChildPosition();
+                ViewHolder viewHolder = findViewHolderForAdapterPosition(focusChildPosition);
+                if (null == viewHolder || null == viewHolder.itemView)
+                    throw new Exception();
+                viewHolder.itemView.requestFocus();
+                intoFromDown();
+                return true;
+            }
+            // action_up => down => from up
+            else if (event.getAction() == KeyEvent.ACTION_UP && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_DOWN) {
+                int focusChildPosition = getLastFocusChildPosition();
+                ViewHolder viewHolder = findViewHolderForAdapterPosition(focusChildPosition);
+                if (null == viewHolder || null == viewHolder.itemView)
+                    throw new Exception();
+                viewHolder.itemView.requestFocus();
+                intoFromUp();
+                return true;
+            }
+            // action_up => up => from left
+            else if (event.getAction() == KeyEvent.ACTION_UP && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_RIGHT) {
+                int focusChildPosition = getLastFocusChildPosition();
+                ViewHolder viewHolder = findViewHolderForAdapterPosition(focusChildPosition);
+                if (null == viewHolder || null == viewHolder.itemView)
+                    throw new Exception();
+                viewHolder.itemView.requestFocus();
+                intoFromLeft();
+                return true;
+            }
+            // action_up => up => from right
+            else if (event.getAction() == KeyEvent.ACTION_UP && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_LEFT) {
+                int focusChildPosition = getLastFocusChildPosition();
+                ViewHolder viewHolder = findViewHolderForAdapterPosition(focusChildPosition);
+                if (null == viewHolder || null == viewHolder.itemView)
+                    throw new Exception();
+                viewHolder.itemView.requestFocus();
+                intoFromLeft();
+                return true;
+            }
+        } catch (Exception e) {
+        }
+        return super.dispatchKeyEvent(event);
     }
 
     @Override
@@ -160,5 +228,77 @@ class BaseRecyclerView extends androidx.recyclerview.widget.RecyclerView {
     }
 
     public void scrollBottom(boolean hasFocus) {
+    }
+
+    public void leaveFromLeft() {
+        try {
+            if (!mBlockDescendants)
+                throw new Exception();
+            setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
+        } catch (Exception e) {
+        }
+    }
+
+    public void leaveFromRight() {
+        try {
+            if (!mBlockDescendants)
+                throw new Exception();
+            setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
+        } catch (Exception e) {
+        }
+    }
+
+    public void leaveFromUp() {
+        try {
+            if (!mBlockDescendants)
+                throw new Exception();
+            setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
+        } catch (Exception e) {
+        }
+    }
+
+    public void leaveFromDown() {
+        try {
+            if (!mBlockDescendants)
+                throw new Exception();
+            setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
+        } catch (Exception e) {
+        }
+    }
+
+    public void intoFromLeft() {
+        try {
+            if (!mBlockDescendants)
+                throw new Exception();
+            setDescendantFocusability(ViewGroup.FOCUS_AFTER_DESCENDANTS);
+        } catch (Exception e) {
+        }
+    }
+
+    public void intoFromRight() {
+        try {
+            if (!mBlockDescendants)
+                throw new Exception();
+            setDescendantFocusability(ViewGroup.FOCUS_AFTER_DESCENDANTS);
+        } catch (Exception e) {
+        }
+    }
+
+    public void intoFromUp() {
+        try {
+            if (!mBlockDescendants)
+                throw new Exception();
+            setDescendantFocusability(ViewGroup.FOCUS_AFTER_DESCENDANTS);
+        } catch (Exception e) {
+        }
+    }
+
+    public void intoFromDown() {
+        try {
+            if (!mBlockDescendants)
+                throw new Exception();
+            setDescendantFocusability(ViewGroup.FOCUS_AFTER_DESCENDANTS);
+        } catch (Exception e) {
+        }
     }
 }

@@ -29,6 +29,5 @@ class BaseLeanBackGridViewHorizontal extends androidx.leanback.widget.Horizontal
         setNestedScrollingEnabled(false);
         setAnimateChildLayout(false);
         setHasFixedSize(true);
-        setFocusableInTouchMode(false);
     }
 }

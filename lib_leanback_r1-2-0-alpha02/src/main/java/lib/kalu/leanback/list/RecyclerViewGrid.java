@@ -5,7 +5,6 @@ import android.util.AttributeSet;
 import android.view.FocusFinder;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -17,17 +16,14 @@ public class RecyclerViewGrid extends BaseRecyclerView {
 
     public RecyclerViewGrid(@NonNull Context context) {
         super(context);
-        setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
     }
 
     public RecyclerViewGrid(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
-        setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
     }
 
     public RecyclerViewGrid(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
     }
 
     @Override
@@ -64,6 +60,7 @@ public class RecyclerViewGrid extends BaseRecyclerView {
                 nextFocusNews.requestFocus();
                 return true;
             } catch (Exception e) {
+                leaveFromUp();
                 LeanBackUtil.log("RecyclerViewGrid => dispatchKeyEvent => up-down => " + e.getMessage());
             }
         }
@@ -105,6 +102,7 @@ public class RecyclerViewGrid extends BaseRecyclerView {
                 setLastFocusChildPosition(focusedChildPosition);
                 return true;
             } catch (Exception e) {
+                leaveFromDown();
                 LeanBackUtil.log("RecyclerViewGrid => dispatchKeyEvent => down-down => " + e.getMessage());
             }
         }
@@ -138,6 +136,7 @@ public class RecyclerViewGrid extends BaseRecyclerView {
                 nextFocus.requestFocus();
                 return true;
             } catch (Exception e) {
+                leaveFromLeft();
                 LeanBackUtil.log("RecyclerViewGrid => dispatchKeyEvent => left-down => " + e.getMessage());
             }
         }
@@ -170,6 +169,7 @@ public class RecyclerViewGrid extends BaseRecyclerView {
                 nextFocus.requestFocus();
                 return true;
             } catch (Exception e) {
+                leaveFromRight();
                 LeanBackUtil.log("RecyclerViewGrid => dispatchKeyEvent => right-down => " + e.getMessage());
             }
         }

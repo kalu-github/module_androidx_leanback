@@ -29,6 +29,5 @@ class BaseLeanBackGridViewVertical extends androidx.leanback.widget.VerticalGrid
         setNestedScrollingEnabled(false);
         setAnimateChildLayout(false);
         setHasFixedSize(true);
-        setFocusableInTouchMode(false);
     }
 }
