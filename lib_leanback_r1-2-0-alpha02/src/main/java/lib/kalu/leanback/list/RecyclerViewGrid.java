@@ -5,6 +5,7 @@ import android.util.AttributeSet;
 import android.view.FocusFinder;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -32,6 +33,8 @@ public class RecyclerViewGrid extends BaseRecyclerView {
         if (event.getRepeatCount() > 1)
             return true;
 
+        addLoadmoreListener(event);
+
         // action_down => up
         if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_UP) {
             try {
@@ -54,13 +57,10 @@ public class RecyclerViewGrid extends BaseRecyclerView {
                 if (height < 0)
                     throw new Exception("height error: " + height);
                 scrollBy(0, -height);
-                View nextFocusNews = FocusFinder.getInstance().findNextFocus(this, focusedChild, View.FOCUS_UP);
-                if (null == nextFocusNews)
-                    throw new Exception("nextFocusNews error: null");
-                nextFocusNews.requestFocus();
+                nextFocus.requestFocus();
                 return true;
             } catch (Exception e) {
-                leaveFromUp();
+                leave(ViewGroup.FOCUS_UP);
                 LeanBackUtil.log("RecyclerViewGrid => dispatchKeyEvent => up-down => " + e.getMessage());
             }
         }
@@ -94,15 +94,10 @@ public class RecyclerViewGrid extends BaseRecyclerView {
                 if (height < 0)
                     throw new Exception("height error: " + height);
                 scrollBy(0, height);
-                View nextFocusNews = FocusFinder.getInstance().findNextFocus(this, focusedChild, View.FOCUS_DOWN);
-                if (null == nextFocusNews)
-                    throw new Exception("nextFocusNews error: null");
-                nextFocusNews.requestFocus();
-                int focusedChildPosition = findFocusedChildPosition();
-                setLastFocusChildPosition(focusedChildPosition);
+                nextFocus.requestFocus();
                 return true;
             } catch (Exception e) {
-                leaveFromDown();
+                leave(ViewGroup.FOCUS_DOWN);
                 LeanBackUtil.log("RecyclerViewGrid => dispatchKeyEvent => down-down => " + e.getMessage());
             }
         }
@@ -136,7 +131,8 @@ public class RecyclerViewGrid extends BaseRecyclerView {
                 nextFocus.requestFocus();
                 return true;
             } catch (Exception e) {
-                leaveFromLeft();
+                leave(ViewGroup.FOCUS_LEFT);
+                leaveScrollFocusedChild();
                 LeanBackUtil.log("RecyclerViewGrid => dispatchKeyEvent => left-down => " + e.getMessage());
             }
         }
@@ -169,23 +165,11 @@ public class RecyclerViewGrid extends BaseRecyclerView {
                 nextFocus.requestFocus();
                 return true;
             } catch (Exception e) {
-                leaveFromRight();
+                leave(ViewGroup.FOCUS_RIGHT);
+                leaveScrollFocusedChild();
                 LeanBackUtil.log("RecyclerViewGrid => dispatchKeyEvent => right-down => " + e.getMessage());
             }
         }
         return super.dispatchKeyEvent(event);
-    }
-
-    private void setScrollEnable(boolean enable) {
-        try {
-            LayoutManager layoutManager = getLayoutManager();
-            if (null == layoutManager)
-                throw new Exception("layoutManager error: null");
-            if (!(layoutManager instanceof BaseGridLayoutManager))
-                throw new Exception("layoutManager warning: not instanceof BaseGridLayoutManager");
-            ((BaseGridLayoutManager) layoutManager).setCanScrollVertically(enable);
-        } catch (Exception e) {
-            LeanBackUtil.log("RecyclerViewGrid => setScrollEnable => " + e.getMessage());
-        }
     }
 }

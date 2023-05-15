@@ -27,6 +27,10 @@ public class RecyclerViewHorizontal extends BaseRecyclerView {
 
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
+
+        if (event.getRepeatCount() > 1)
+            return true;
+
         // left
         if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_LEFT) {
             try {
