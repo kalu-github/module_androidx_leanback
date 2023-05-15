@@ -30,7 +30,7 @@ public class RecyclerViewGrid extends BaseRecyclerView {
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
 
-        if (event.getRepeatCount() > 1)
+        if (event.getRepeatCount() > 0)
             return true;
 
         addLoadmoreListener(event);

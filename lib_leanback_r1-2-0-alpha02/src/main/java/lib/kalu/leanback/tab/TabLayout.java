@@ -75,12 +75,9 @@ public final class TabLayout extends HorizontalScrollView {
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
 
-        // repeat
-        View focus = findFocus();
-        if (null != focus) {
-            int repeatCount = event.getRepeatCount();
-            if (repeatCount > 0) return true;
-        }
+        int repeatCount = event.getRepeatCount();
+        if (repeatCount > 0)
+            return true;
 
         // left action_down
         if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_LEFT) {
@@ -102,6 +99,7 @@ public final class TabLayout extends HorizontalScrollView {
         }
         // left action_up
         else if (event.getAction() == KeyEvent.ACTION_UP && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_LEFT) {
+            View focus = findFocus();
             if (null != focus && focus instanceof TabLayout) {
                 focusCurrentItem(View.FOCUS_LEFT);
             }
@@ -128,6 +126,7 @@ public final class TabLayout extends HorizontalScrollView {
         }
         // right action_up
         else if (event.getAction() == KeyEvent.ACTION_UP && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_RIGHT) {
+            View focus = findFocus();
             if (null != focus && focus instanceof TabLayout) {
                 focusCurrentItem(View.FOCUS_RIGHT);
             }
@@ -143,6 +142,7 @@ public final class TabLayout extends HorizontalScrollView {
         }
         // up action_up
         else if (event.getAction() == KeyEvent.ACTION_UP && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_UP) {
+            View focus = findFocus();
             if (null != focus && focus instanceof TabLayout) {
                 focusCurrentItem(View.FOCUS_UP);
             }
@@ -170,6 +170,7 @@ public final class TabLayout extends HorizontalScrollView {
         }
         // down action_up
         else if (event.getAction() == KeyEvent.ACTION_UP && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_DOWN) {
+            View focus = findFocus();
             if (null != focus && focus instanceof TabLayout) {
                 focusCurrentItem(View.FOCUS_DOWN);
             }
