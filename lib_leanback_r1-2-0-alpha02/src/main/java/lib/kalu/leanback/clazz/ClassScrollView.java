@@ -99,10 +99,13 @@ public final class ClassScrollView extends ScrollView implements ClassLayoutImpl
 
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
-        View focus = findFocus();
-        if (null != focus && focus instanceof ClassScrollView && mOrientation == 1) {
+
+        if (event.getRepeatCount() > 0)
+            return true;
+
+        if (mOrientation == 1) {
             return dispatchEventHorizontal(event);
-        } else if (null != focus && focus instanceof ClassScrollView && mOrientation == 2) {
+        } else if (mOrientation == 2) {
             return dispatchEventVertical(event);
         } else {
             return super.dispatchKeyEvent(event);
@@ -189,17 +192,17 @@ public final class ClassScrollView extends ScrollView implements ClassLayoutImpl
             // right
             else if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_RIGHT) {
                 checkNext = true;
-                nextFocus = FocusFinder.getInstance().findNextFocus(findDecorView(this),  this, View.FOCUS_RIGHT);
+                nextFocus = FocusFinder.getInstance().findNextFocus(findDecorView(this), this, View.FOCUS_RIGHT);
             }
             // up
             else if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_UP) {
                 checkNext = true;
-                nextFocus = FocusFinder.getInstance().findNextFocus(findDecorView(this),  this, View.FOCUS_UP);
+                nextFocus = FocusFinder.getInstance().findNextFocus(findDecorView(this), this, View.FOCUS_UP);
             }
             // down
             else if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_DOWN) {
                 checkNext = true;
-                nextFocus = FocusFinder.getInstance().findNextFocus(findDecorView(this),  this, View.FOCUS_DOWN);
+                nextFocus = FocusFinder.getInstance().findNextFocus(findDecorView(this), this, View.FOCUS_DOWN);
             }
 
             if (checkNext && null == nextFocus) {
