@@ -39,6 +39,14 @@ class BaseRecyclerView extends androidx.recyclerview.widget.RecyclerView {
     }
 
     @Override
+    protected void onLayout(boolean changed, int l, int t, int r, int b) {
+        try {
+            super.onLayout(changed, l, t, r, b);
+        } catch (Exception e) {
+        }
+    }
+
+    @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
         return super.dispatchKeyEvent(event);
     }
