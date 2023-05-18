@@ -162,37 +162,33 @@ public abstract class ListTvEpisodesSingleGridPresenter<T extends TvEpisodesGrid
                                 @Override
                                 public void onClick(View v) {
 
-                                    int position = holder.getAbsoluteAdapterPosition();
-                                    LeanBackUtil.log("ListTvEpisodesGridPresenter => onClick => position = " + position);
-                                    if (position >= 0) {
-
+                                    try {
+                                        int checkedPosition = holder.getAbsoluteAdapterPosition();
+                                        if (checkedPosition < 0)
+                                            throw new Exception("position error: " + checkedPosition);
                                         // 1
+                                        int playingIndex = -1;
                                         for (T t : mData) {
                                             if (null == t)
                                                 continue;
-//                                            boolean checked = t.isChecked();
                                             boolean playing = t.isPlaying();
                                             if (playing) {
                                                 t.setChecked(false);
                                                 t.setPlaying(false);
-                                                int playingIndex = mData.indexOf(t);
-                                                LeanBackUtil.log("ListTvEpisodesGridPresenter => onClick => playingIndex = " + playingIndex);
+                                                playingIndex = mData.indexOf(t);
                                                 recyclerView.getAdapter().notifyItemRangeChanged(playingIndex, 1);
+                                                break;
                                             }
-//                                            else if (checked) {
-//                                                t.setChecked(false);
-//                                                t.setPlaying(false);
-//                                                int index = mData.indexOf(t);
-//                                                onBindHolder(v.getContext(), v, t, index);
-//                                            }
                                         }
 
                                         // 2
-                                        T t = mData.get(position);
+                                        T t = mData.get(checkedPosition);
                                         t.setChecked(true);
                                         t.setPlaying(true);
-                                        onBindHolder(v.getContext(), v, t, position);
-                                        onClickHolder(v.getContext(), v, t, position, true);
+                                        onBindHolder(v.getContext(), v, t, checkedPosition);
+                                        onClickHolder(v.getContext(), v, t, checkedPosition, playingIndex, true);
+                                    } catch (Exception e) {
+                                        LeanBackUtil.log("ListTvEpisodesGridPresenter => onClick => " + e.getMessage());
                                     }
                                 }
                             });
@@ -406,7 +402,7 @@ public abstract class ListTvEpisodesSingleGridPresenter<T extends TvEpisodesGrid
 
     protected abstract void onBindHolder(@NonNull Context context, @NonNull View view, @NonNull T item, @NonNull int position);
 
-    protected void onClickHolder(@NonNull Context context, @NonNull View v, @NonNull T item, @NonNull int position, boolean isFromUser) {
+    protected void onClickHolder(@NonNull Context context, @NonNull View v, @NonNull T item, @NonNull int checkedIndex, @NonNull int playingIndex, boolean isFromUser) {
     }
 
     @LayoutRes
@@ -514,7 +510,7 @@ public abstract class ListTvEpisodesSingleGridPresenter<T extends TvEpisodesGrid
                 T t = mData.get(checkedPosition);
                 View v = viewHolderForAdapterPosition.itemView;
                 onBindHolder(v.getContext(), v, t, checkedPosition);
-                onClickHolder(v.getContext(), v, t, checkedPosition, false);
+                onClickHolder(v.getContext(), v, t, checkedPosition, playingIndex, false);
             }
         } catch (Exception e) {
             LeanBackUtil.log("ListTvEpisodesGridPresenter => checkedPlayingPosition => " + e.getMessage(), e);
@@ -568,20 +564,21 @@ public abstract class ListTvEpisodesSingleGridPresenter<T extends TvEpisodesGrid
             if (null == viewHolderForAdapterPosition) {
                 recyclerView.scrollToPosition(nextCheckedPosition);
                 int finalNextChechedPosition = nextCheckedPosition;
+                int finalPlayingIndex = playingIndex;
                 new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         T t = mData.get(finalNextChechedPosition);
                         View v = viewHolderForAdapterPosition.itemView;
                         onBindHolder(v.getContext(), v, t, finalNextChechedPosition);
-                        onClickHolder(v.getContext(), v, t, finalNextChechedPosition, false);
+                        onClickHolder(v.getContext(), v, t, finalNextChechedPosition, finalPlayingIndex, false);
                     }
                 }, 50);
             } else {
                 T t = mData.get(nextCheckedPosition);
                 View v = viewHolderForAdapterPosition.itemView;
                 onBindHolder(v.getContext(), v, t, nextCheckedPosition);
-                onClickHolder(v.getContext(), v, t, nextCheckedPosition, false);
+                onClickHolder(v.getContext(), v, t, nextCheckedPosition, playingIndex, false);
             }
         } catch (Exception e) {
             LeanBackUtil.log("ListTvEpisodesGridPresenter => checkedPlayingPositionNext => " + e.getMessage(), e);
