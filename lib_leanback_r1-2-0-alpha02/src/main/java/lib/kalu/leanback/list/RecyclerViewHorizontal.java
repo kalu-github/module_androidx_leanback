@@ -152,60 +152,73 @@ public class RecyclerViewHorizontal extends BaseRecyclerView {
 
     @Override
     public void scrollTop(boolean hasFocus) {
-
-        while (true) {
-            View focusedChild = getFocusedChild();
-            if (null == focusedChild)
-                break;
-            int focusPosition = findFocusedChildPosition();
-            if (focusPosition <= 0) {
-                if (!hasFocus) {
-                    focusedChild.clearFocus();
-                }
-                break;
-            }
-            scrollFocusedChild(View.FOCUS_LEFT);
-            View nextFocus = FocusFinder.getInstance().findNextFocus(this, focusedChild, View.FOCUS_LEFT);
-            if (null == nextFocus)
-                continue;
+        try {
             while (true) {
+                View focusedChild = getFocusedChild();
+                if (null == focusedChild)
+                    throw new Exception();
+                int focusPosition = findFocusedChildPosition();
+                if (focusPosition <= 0) {
+                    if (!hasFocus) {
+                        focusedChild.clearFocus();
+                    }
+                    break;
+                }
+                scrollFocusedChild(View.FOCUS_LEFT);
+                View nextFocus = FocusFinder.getInstance().findNextFocus(this, focusedChild, View.FOCUS_LEFT);
                 if (null == nextFocus)
-                    break;
-                if (nextFocus.isFocusable())
-                    break;
-                nextFocus = FocusFinder.getInstance().findNextFocus(this, nextFocus, View.FOCUS_UP);
+                    continue;
+                while (true) {
+                    if (null == nextFocus)
+                        break;
+                    if (nextFocus.isFocusable())
+                        break;
+                    nextFocus = FocusFinder.getInstance().findNextFocus(this, nextFocus, View.FOCUS_UP);
+                }
+                nextFocus.requestFocus();
             }
-            nextFocus.requestFocus();
+        } catch (Exception e) {
+            int itemCount = getAdapterItemCount();
+            if (itemCount > 0) {
+                scrollToPosition(0);
+            }
         }
     }
 
     @Override
     public void scrollBottom(boolean hasFocus) {
 
-        while (true) {
-            View focusedChild = getFocusedChild();
-            if (null == focusedChild)
-                break;
-            int focusPosition = findFocusedChildPosition();
-            int adapterItemCount = getAdapterItemCount();
-            if (focusPosition + 1 >= adapterItemCount) {
-                if (!hasFocus) {
-                    focusedChild.clearFocus();
-                }
-                break;
-            }
-            scrollFocusedChild(View.FOCUS_RIGHT);
-            View nextFocus = FocusFinder.getInstance().findNextFocus(this, focusedChild, View.FOCUS_RIGHT);
-            if (null == nextFocus)
-                continue;
+        try {
             while (true) {
+                View focusedChild = getFocusedChild();
+                if (null == focusedChild)
+                    throw new Exception();
+                int focusPosition = findFocusedChildPosition();
+                int adapterItemCount = getAdapterItemCount();
+                if (focusPosition + 1 >= adapterItemCount) {
+                    if (!hasFocus) {
+                        focusedChild.clearFocus();
+                    }
+                    break;
+                }
+                scrollFocusedChild(View.FOCUS_RIGHT);
+                View nextFocus = FocusFinder.getInstance().findNextFocus(this, focusedChild, View.FOCUS_RIGHT);
                 if (null == nextFocus)
-                    break;
-                if (nextFocus.isFocusable())
-                    break;
-                nextFocus = FocusFinder.getInstance().findNextFocus(this, nextFocus, View.FOCUS_UP);
+                    continue;
+                while (true) {
+                    if (null == nextFocus)
+                        break;
+                    if (nextFocus.isFocusable())
+                        break;
+                    nextFocus = FocusFinder.getInstance().findNextFocus(this, nextFocus, View.FOCUS_UP);
+                }
+                nextFocus.requestFocus();
             }
-            nextFocus.requestFocus();
+        } catch (Exception e) {
+            int itemCount = getAdapterItemCount();
+            if (itemCount > 0) {
+                scrollToPosition(itemCount - 1);
+            }
         }
     }
 }
