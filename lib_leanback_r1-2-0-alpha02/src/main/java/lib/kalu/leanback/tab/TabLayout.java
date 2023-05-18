@@ -496,14 +496,23 @@ public final class TabLayout extends HorizontalScrollView {
         }
     }
 
+
     @Keep
     public boolean checkedPosition(int position) {
+        return checkedPosition(position, false);
+    }
+
+    @Keep
+    public boolean checkedPosition(int position, boolean scrollTop) {
         try {
             int itemCount = getItemCount();
             if (itemCount <= 0)
                 throw new Exception("itemCount error: " + itemCount);
             if (position < 0 || position + 1 > itemCount)
                 throw new Exception("position error:" + position);
+            if (scrollTop) {
+                scrollTo(0, 0);
+            }
             int index = getCheckedIndex();
             return scrollRequest(0x9999, index, position);
         } catch (Exception e) {
