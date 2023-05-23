@@ -1590,5 +1590,22 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
         }
     }
 
+    public final boolean checkedPlayingPositionRepeat(@NonNull View viewGroup) {
+        try {
+            if (null == viewGroup)
+                throw new Exception("viewGroup error: null");
+            if (viewGroup.getId() != R.id.module_leanback_lep_root)
+                throw new Exception("viewGroup.getId error: not R.id.module_leanback_lep_root");
+            int playingPosition = getPlayingPosition(viewGroup);
+            if (playingPosition < 0)
+                throw new Exception("playingPosition error: " + playingPosition);
+            checkedPlayingPosition(viewGroup, playingPosition);
+            return true;
+        } catch (Exception e) {
+            LeanBackUtil.log("ListTvEpisodesDoubleRowPresenter => checkedPlayingPositionRepeat => " + e.getMessage());
+            return false;
+        }
+    }
+
     /**************/
 }

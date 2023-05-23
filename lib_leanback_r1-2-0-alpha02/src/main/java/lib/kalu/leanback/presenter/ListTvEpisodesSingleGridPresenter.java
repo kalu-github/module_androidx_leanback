@@ -471,6 +471,10 @@ public abstract class ListTvEpisodesSingleGridPresenter<T extends TvEpisodesGrid
                                              @NonNull int checkedPosition) {
 
         try {
+            if (null == viewGroup)
+                throw new Exception("viewGroup error: null");
+            if (viewGroup.getId() != R.id.module_leanback_legp_root)
+                throw new Exception("viewGroup.getId error: not R.id.module_leanback_legp_root");
             int playingIndex = -1;
             int chechedIndex = -1;
             // 1
@@ -520,6 +524,10 @@ public abstract class ListTvEpisodesSingleGridPresenter<T extends TvEpisodesGrid
     public final void checkedPlayingPositionNext(View viewGroup) {
 
         try {
+            if (null == viewGroup)
+                throw new Exception("viewGroup error: null");
+            if (viewGroup.getId() != R.id.module_leanback_legp_root)
+                throw new Exception("viewGroup.getId error: not R.id.module_leanback_legp_root");
             int chechedIndex = -1;
             int playingIndex = -1;
             // 1
@@ -587,6 +595,10 @@ public abstract class ListTvEpisodesSingleGridPresenter<T extends TvEpisodesGrid
 
     public final boolean dispatchKeyEventCheckedPosition(View viewGroup) {
         try {
+            if (null == viewGroup)
+                throw new Exception("viewGroup error: null");
+            if (viewGroup.getId() != R.id.module_leanback_legp_root)
+                throw new Exception("viewGroup.getId error: not R.id.module_leanback_legp_root");
             int checkedPosition = -1;
             for (T t : mData) {
                 if (null == t)
@@ -616,6 +628,23 @@ public abstract class ListTvEpisodesSingleGridPresenter<T extends TvEpisodesGrid
             return true;
         } catch (Exception e) {
             LeanBackUtil.log("ListTvEpisodesGridPresenter => dispatchKeyEventCheckedPosition => " + e.getMessage());
+            return false;
+        }
+    }
+
+    public final boolean checkedPlayingPositionRepeat(@NonNull View viewGroup) {
+        try {
+            if (null == viewGroup)
+                throw new Exception("viewGroup error: null");
+            if (viewGroup.getId() != R.id.module_leanback_legp_root)
+                throw new Exception("viewGroup.getId error: not R.id.module_leanback_legp_root");
+            int playingPosition = getPlayingPosition();
+            if (playingPosition < 0)
+                throw new Exception("playingPosition error: " + playingPosition);
+            checkedPlayingPosition(viewGroup, playingPosition);
+            return true;
+        } catch (Exception e) {
+            LeanBackUtil.log("ListTvEpisodesGridPresenter => checkedPlayingPositionRepeat => " + e.getMessage());
             return false;
         }
     }
