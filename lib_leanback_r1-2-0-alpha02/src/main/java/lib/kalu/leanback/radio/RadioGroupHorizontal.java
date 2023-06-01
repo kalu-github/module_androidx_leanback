@@ -31,6 +31,7 @@ public final class RadioGroupHorizontal extends android.widget.RadioGroup {
     @Override
     protected void onFocusChanged(boolean gainFocus, int direction, @Nullable Rect previouslyFocusedRect) {
         super.onFocusChanged(gainFocus, direction, previouslyFocusedRect);
+        LeanBackUtil.log("RadioGroupHorizontal => onFocusChanged => ");
         try {
             if (!gainFocus)
                 throw new Exception("gainFocus warning: false");

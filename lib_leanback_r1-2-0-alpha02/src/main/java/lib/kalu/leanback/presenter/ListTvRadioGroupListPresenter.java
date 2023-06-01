@@ -43,7 +43,7 @@ public abstract class ListTvRadioGroupListPresenter<T extends TvPresenterRowBean
             setTitleAssetTTF(context, inflate, R.id.module_leanback_lrgl_title);
             setTitleBackgroundColor(context, inflate, R.id.module_leanback_lrgl_title);
             initContent(context, inflate);
-            initHead(context, inflate);
+            initRadioGroup(context, inflate);
             initAdapter(context, inflate);
             return new ViewHolder(inflate);
         } catch (Exception e) {
@@ -112,13 +112,16 @@ public abstract class ListTvRadioGroupListPresenter<T extends TvPresenterRowBean
             RecyclerViewVertical recyclerView = viewGroup.findViewById(R.id.module_leanback_lrgl_list);
             if (null == recyclerView)
                 throw new Exception("recyclerView error: null");
+            int size1 = mData.size();
+            mData.clear();
+            playerPosition = -1;
+            recyclerView.getAdapter().notifyItemRangeRemoved(0, size1);
             int size = mCollection.size();
-            if (position + 1 >= size)
+            if (position + 1 > size)
                 throw new Exception("size error: " + size);
             List<T> list = mCollection.get(position);
             if (null == list || list.size() <= 0)
                 throw new Exception("list error: " + list);
-            mData.clear();
             mData.addAll(list);
             recyclerView.getAdapter().notifyItemRangeChanged(0, mData.size());
             View viewById = viewGroup.findViewById(R.id.module_leanback_lrgl_contont);
@@ -129,17 +132,17 @@ public abstract class ListTvRadioGroupListPresenter<T extends TvPresenterRowBean
         }
     }
 
-    private final void initHead(Context context, View viewGroup) {
+    private final void initRadioGroup(Context context, View viewGroup) {
         try {
             if (null == viewGroup)
                 throw new Exception("viewGroup error: null");
-            ViewGroup headGroup = viewGroup.findViewById(R.id.module_leanback_lrgl_head);
+            ViewGroup headGroup = viewGroup.findViewById(R.id.module_leanback_lrgl_radio);
             if (null == headGroup)
                 throw new Exception("headGroup error: null");
             int childCount = headGroup.getChildCount();
             if (childCount > 0)
                 throw new Exception("childCount warning: " + childCount);
-            int[] headMargin = initHeadMargin(context);
+            int[] headMargin = initMarginRadioGroup(context);
             if (null != headMargin && headMargin.length == 4) {
                 ViewGroup.LayoutParams layoutParams = headGroup.getLayoutParams();
                 if (null != layoutParams) {
@@ -149,12 +152,12 @@ public abstract class ListTvRadioGroupListPresenter<T extends TvPresenterRowBean
                     ((RelativeLayout.LayoutParams) layoutParams).bottomMargin = headMargin[3];
                 }
             }
-            int[] headPadding = initHeadPadding(context);
+            int[] headPadding = initPaddingRadioGroup(context);
             if (null != headPadding && headPadding.length == 4) {
                 headGroup.setPadding(headPadding[0], headPadding[1], headPadding[2], headPadding[3]);
             }
-            LayoutInflater.from(context).inflate(initLayoutHead(), headGroup, true);
-            onCreateHolderHead(viewGroup, headGroup);
+            LayoutInflater.from(context).inflate(initLayoutRadioGroup(), headGroup, true);
+            onCreateHolderRadioGroup(viewGroup, headGroup);
         } catch (Exception e) {
             LeanBackUtil.log("ListTvRadioGroupListPresenter => initRadioGroup => " + e.getMessage());
         }
@@ -165,7 +168,7 @@ public abstract class ListTvRadioGroupListPresenter<T extends TvPresenterRowBean
             RecyclerView recyclerView = viewGroup.findViewById(R.id.module_leanback_lrgl_list);
             if (null == recyclerView)
                 throw new Exception("recyclerView error: null");
-            int[] itemMargin = initItemMargin(context);
+            int[] itemMargin = initMarginItem(context);
             if (null != itemMargin && itemMargin.length == 4) {
                 ViewGroup.LayoutParams layoutParams = recyclerView.getLayoutParams();
                 if (null != layoutParams) {
@@ -175,7 +178,7 @@ public abstract class ListTvRadioGroupListPresenter<T extends TvPresenterRowBean
                     ((RelativeLayout.LayoutParams) layoutParams).bottomMargin = itemMargin[3];
                 }
             }
-            int[] itemPadding = initItemPadding(context);
+            int[] itemPadding = initPaddingItem(context);
             if (null != itemPadding && itemPadding.length == 4) {
                 recyclerView.setPadding(itemPadding[0], itemPadding[1], itemPadding[2], itemPadding[3]);
             }
@@ -271,7 +274,7 @@ public abstract class ListTvRadioGroupListPresenter<T extends TvPresenterRowBean
     protected abstract int initLayoutContent();
 
     @LayoutRes
-    protected abstract int initLayoutHead();
+    protected abstract int initLayoutRadioGroup();
 
     /**************/
 
@@ -287,24 +290,24 @@ public abstract class ListTvRadioGroupListPresenter<T extends TvPresenterRowBean
     protected void onBindHolderContent(@NonNull View rootGroup, @NonNull View contentGroup, int position, T t, boolean isFromUser) {
     }
 
-    protected void onCreateHolderHead(@NonNull View rootGroup, @NonNull View headGroup) {
+    protected void onCreateHolderRadioGroup(@NonNull View rootGroup, @NonNull View headGroup) {
     }
 
     /**************/
 
-    protected int[] initHeadPadding(@NonNull Context context) {
+    protected int[] initPaddingRadioGroup(@NonNull Context context) {
         return null;
     }
 
-    protected int[] initHeadMargin(@NonNull Context context) {
+    protected int[] initMarginRadioGroup(@NonNull Context context) {
         return null;
     }
 
-    protected int[] initItemMargin(@NonNull Context context) {
+    protected int[] initMarginItem(@NonNull Context context) {
         return null;
     }
 
-    protected int[] initItemPadding(@NonNull Context context) {
+    protected int[] initPaddingItem(@NonNull Context context) {
         return null;
     }
 
@@ -314,7 +317,7 @@ public abstract class ListTvRadioGroupListPresenter<T extends TvPresenterRowBean
         try {
             if (null == viewGroup)
                 throw new Exception("viewGroup error: null");
-            ViewGroup viewById = viewGroup.findViewById(R.id.module_leanback_lrgl_head);
+            ViewGroup viewById = viewGroup.findViewById(R.id.module_leanback_lrgl_radio);
             if (null == viewById)
                 throw new Exception("viewById error: null");
             viewById.setVisibility(View.GONE);
@@ -337,7 +340,7 @@ public abstract class ListTvRadioGroupListPresenter<T extends TvPresenterRowBean
         try {
             if (null == viewGroup)
                 throw new Exception("viewGroup error: null");
-            ViewGroup viewById = viewGroup.findViewById(R.id.module_leanback_lrgl_head);
+            ViewGroup viewById = viewGroup.findViewById(R.id.module_leanback_lrgl_radio);
             if (null == viewById)
                 throw new Exception("viewById error: null");
             viewById.setVisibility(View.VISIBLE);
