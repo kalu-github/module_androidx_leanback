@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 
 import androidx.annotation.LayoutRes;
@@ -136,15 +137,15 @@ public abstract class ListTvRadioGroupListPresenter<T extends TvPresenterRowBean
         try {
             if (null == viewGroup)
                 throw new Exception("viewGroup error: null");
-            ViewGroup headGroup = viewGroup.findViewById(R.id.module_leanback_lrgl_radio);
-            if (null == headGroup)
+            RadioGroup radioGroup = viewGroup.findViewById(R.id.module_leanback_lrgl_radio);
+            if (null == radioGroup)
                 throw new Exception("headGroup error: null");
-            int childCount = headGroup.getChildCount();
+            int childCount = radioGroup.getChildCount();
             if (childCount > 0)
                 throw new Exception("childCount warning: " + childCount);
             int[] headMargin = initMarginRadioGroup(context);
             if (null != headMargin && headMargin.length == 4) {
-                ViewGroup.LayoutParams layoutParams = headGroup.getLayoutParams();
+                ViewGroup.LayoutParams layoutParams = radioGroup.getLayoutParams();
                 if (null != layoutParams) {
                     ((RelativeLayout.LayoutParams) layoutParams).leftMargin = headMargin[0];
                     ((RelativeLayout.LayoutParams) layoutParams).topMargin = headMargin[1];
@@ -154,10 +155,10 @@ public abstract class ListTvRadioGroupListPresenter<T extends TvPresenterRowBean
             }
             int[] headPadding = initPaddingRadioGroup(context);
             if (null != headPadding && headPadding.length == 4) {
-                headGroup.setPadding(headPadding[0], headPadding[1], headPadding[2], headPadding[3]);
+                radioGroup.setPadding(headPadding[0], headPadding[1], headPadding[2], headPadding[3]);
             }
-            LayoutInflater.from(context).inflate(initLayoutRadioGroup(), headGroup, true);
-            onCreateHolderRadioGroup(viewGroup, headGroup);
+            LayoutInflater.from(context).inflate(initLayoutRadioGroup(), radioGroup, true);
+            onCreateHolderRadioGroup(viewGroup, radioGroup);
         } catch (Exception e) {
             LeanBackUtil.log("ListTvRadioGroupListPresenter => initRadioGroup => " + e.getMessage());
         }
@@ -290,7 +291,7 @@ public abstract class ListTvRadioGroupListPresenter<T extends TvPresenterRowBean
     protected void onBindHolderContent(@NonNull View rootGroup, @NonNull View contentGroup, int position, T t, boolean isFromUser) {
     }
 
-    protected void onCreateHolderRadioGroup(@NonNull View rootGroup, @NonNull View headGroup) {
+    protected void onCreateHolderRadioGroup(@NonNull View rootGroup, @NonNull RadioGroup radioGroup) {
     }
 
     /**************/
