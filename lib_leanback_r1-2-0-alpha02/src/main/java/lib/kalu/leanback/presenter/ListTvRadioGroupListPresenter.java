@@ -144,8 +144,8 @@ public abstract class ListTvRadioGroupListPresenter<T extends TvPresenterRowBean
                 ViewGroup.LayoutParams layoutParams = headGroup.getLayoutParams();
                 if (null != layoutParams) {
                     ((RelativeLayout.LayoutParams) layoutParams).leftMargin = headMargin[0];
-                    ((RelativeLayout.LayoutParams) layoutParams).rightMargin = headMargin[1];
-                    ((RelativeLayout.LayoutParams) layoutParams).topMargin = headMargin[2];
+                    ((RelativeLayout.LayoutParams) layoutParams).topMargin = headMargin[1];
+                    ((RelativeLayout.LayoutParams) layoutParams).rightMargin = headMargin[2];
                     ((RelativeLayout.LayoutParams) layoutParams).bottomMargin = headMargin[3];
                 }
             }
@@ -165,19 +165,19 @@ public abstract class ListTvRadioGroupListPresenter<T extends TvPresenterRowBean
             RecyclerView recyclerView = viewGroup.findViewById(R.id.module_leanback_lrgl_list);
             if (null == recyclerView)
                 throw new Exception("recyclerView error: null");
-            int[] margin = initContentMargin(context);
-            if (null != margin && margin.length == 4) {
+            int[] itemMargin = initItemMargin(context);
+            if (null != itemMargin && itemMargin.length == 4) {
                 ViewGroup.LayoutParams layoutParams = recyclerView.getLayoutParams();
                 if (null != layoutParams) {
-                    ((RelativeLayout.LayoutParams) layoutParams).leftMargin = margin[0];
-                    ((RelativeLayout.LayoutParams) layoutParams).rightMargin = margin[1];
-                    ((RelativeLayout.LayoutParams) layoutParams).topMargin = margin[2];
-                    ((RelativeLayout.LayoutParams) layoutParams).bottomMargin = margin[3];
+                    ((RelativeLayout.LayoutParams) layoutParams).leftMargin = itemMargin[0];
+                    ((RelativeLayout.LayoutParams) layoutParams).topMargin = itemMargin[1];
+                    ((RelativeLayout.LayoutParams) layoutParams).rightMargin = itemMargin[2];
+                    ((RelativeLayout.LayoutParams) layoutParams).bottomMargin = itemMargin[3];
                 }
             }
-            int[] padding = initContentPadding(context);
-            if (null != padding && padding.length == 4) {
-                recyclerView.setPadding(padding[0], padding[1], padding[2], padding[3]);
+            int[] itemPadding = initItemPadding(context);
+            if (null != itemPadding && itemPadding.length == 4) {
+                recyclerView.setPadding(itemPadding[0], itemPadding[1], itemPadding[2], itemPadding[3]);
             }
             RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
             if (null == layoutManager) {
@@ -300,11 +300,11 @@ public abstract class ListTvRadioGroupListPresenter<T extends TvPresenterRowBean
         return null;
     }
 
-    protected int[] initContentMargin(@NonNull Context context) {
+    protected int[] initItemMargin(@NonNull Context context) {
         return null;
     }
 
-    protected int[] initContentPadding(@NonNull Context context) {
+    protected int[] initItemPadding(@NonNull Context context) {
         return null;
     }
 
