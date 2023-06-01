@@ -60,85 +60,89 @@ public final class RadioGroupHorizontal extends android.widget.RadioGroup {
         if (event.getAction() == KeyEvent.ACTION_DOWN) {
             switch (event.getKeyCode()) {
                 case KeyEvent.KEYCODE_DPAD_LEFT:
-                    if (scroll(View.FOCUS_LEFT)) {
-                        return true;
-                    } else {
-                        break;
-                    }
+                    checkedLeft();
+                    requestFocusChecked();
+                    return true;
                 case KeyEvent.KEYCODE_DPAD_RIGHT:
-                    if (scroll(View.FOCUS_RIGHT)) {
-                        return true;
-                    } else {
-                        break;
-                    }
-                case KeyEvent.KEYCODE_DPAD_UP:
-                case KeyEvent.KEYCODE_DPAD_DOWN:
-                    setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
-                    break;
+                    checkedRight();
+                    requestFocusChecked();
+                    return true;
             }
         }
         return super.dispatchKeyEvent(event);
     }
 
-    private boolean scroll(int direction) {
-        // left
-        if (direction == View.FOCUS_LEFT) {
-            try {
-                int nextCheckedIndex = -1;
-                int count = getChildCount();
-                for (int i = 0; i < count; i++) {
-                    View child = getChildAt(i);
-                    if (null == child)
-                        continue;
-                    if (!(child instanceof RadioButton))
-                        continue;
-                    if (((RadioButton) child).isChecked()) {
-                        if (i > 0) {
-                            nextCheckedIndex = i - 1;
-                            ((RadioButton) child).setChecked(false);
-                        }
-                    }
+    private int getCheckedIndex() {
+        try {
+            int count = getChildCount();
+            for (int i = 0; i < count; i++) {
+                View child = getChildAt(i);
+                if (null == child)
+                    continue;
+                if (!(child instanceof RadioButton))
+                    continue;
+                if (((RadioButton) child).isChecked()) {
+                    return i;
                 }
-                if (nextCheckedIndex < 0)
-                    throw new Exception("nextCheckedIndex error: " + nextCheckedIndex);
-                View child = getChildAt(nextCheckedIndex);
-                ((RadioButton) child).setChecked(true);
-                setDescendantFocusability(ViewGroup.FOCUS_AFTER_DESCENDANTS);
-                child.requestFocus();
-                setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
-                return true;
-            } catch (Exception e) {
             }
+            throw new Exception();
+        } catch (Exception e) {
+            return -1;
         }
-        // right
-        if (direction == View.FOCUS_RIGHT) {
-            try {
-                int nextCheckedIndex = -1;
-                int count = getChildCount();
-                for (int i = 0; i < count; i++) {
-                    View child = getChildAt(i);
-                    if (null == child)
-                        continue;
-                    if (!(child instanceof RadioButton))
-                        continue;
-                    if (((RadioButton) child).isChecked()) {
-                        if (i + 1 < count) {
-                            nextCheckedIndex = i + 1;
-                            ((RadioButton) child).setChecked(false);
-                        }
-                    }
+    }
+
+    private void updateCheckedIndex(int index) {
+        try {
+            int count = getChildCount();
+            for (int i = 0; i < count; i++) {
+                View child = getChildAt(i);
+                if (null == child)
+                    continue;
+                if (!(child instanceof RadioButton))
+                    continue;
+                ((RadioButton) child).setChecked(i == index);
+            }
+        } catch (Exception e) {
+        }
+    }
+
+    private void checkedLeft() {
+        try {
+            int checkedIndex = getCheckedIndex();
+            if (checkedIndex <= 0)
+                throw new Exception();
+            updateCheckedIndex(checkedIndex - 1);
+        } catch (Exception e) {
+        }
+    }
+
+    private void checkedRight() {
+        try {
+            int checkedIndex = getCheckedIndex();
+            int count = getChildCount();
+            if (checkedIndex + 1 > count)
+                throw new Exception();
+            updateCheckedIndex(checkedIndex + 1);
+        } catch (Exception e) {
+        }
+    }
+
+    private void requestFocusChecked() {
+        try {
+            int checkedIndex = getCheckedIndex();
+            int count = getChildCount();
+            for (int i = 0; i < count; i++) {
+                View child = getChildAt(i);
+                if (null == child)
+                    continue;
+                if (i == checkedIndex) {
+                    setDescendantFocusability(ViewGroup.FOCUS_AFTER_DESCENDANTS);
+                    ((RadioButton) child).requestFocus();
+                    setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
+                    break;
                 }
-                if (nextCheckedIndex < 0)
-                    throw new Exception("nextCheckedIndex error: " + nextCheckedIndex);
-                View child = getChildAt(nextCheckedIndex);
-                ((RadioButton) child).setChecked(true);
-                setDescendantFocusability(ViewGroup.FOCUS_AFTER_DESCENDANTS);
-                child.requestFocus();
-                setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
-                return true;
-            } catch (Exception e) {
             }
+        } catch (Exception e) {
         }
-        return false;
     }
 }
