@@ -329,8 +329,7 @@ public abstract class ListTvEpisodesSingleGridPresenter<T extends TvEpisodesGrid
                     }
                 });
             }
-        } catch (
-                Exception e) {
+        } catch (Exception e) {
             LeanBackUtil.log("ListTvEpisodesGridPresenter => setAdapter => " + e.getMessage(), e);
         }
 

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/module_leanback_lep_root"
+    android:layout_width="match_parent"
+    android:layout_height="440dp"
+    android:clipChildren="false"
+    android:clipToPadding="false"
+    android:focusable="false"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:id="@+id/module_leanback_lrgl_contont"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        android:focusable="false" />
+
+    <TextView
+        android:id="@+id/module_leanback_lrgl_title"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:layout_alignTop="@id/module_leanback_lrgl_contont"
+        android:focusable="false"
+        android:gravity="center_vertical|left"
+        android:longClickable="false"
+        android:textColor="@android:color/white"
+        android:textSize="18sp"
+        android:visibility="gone" />
+
+    <lib.kalu.leanback.radio.RadioGroupHorizontal
+        android:id="@+id/module_leanback_lrgl_radio"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_below="@id/module_leanback_lrgl_title"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        android:orientation="horizontal" />
+
+    <lib.kalu.leanback.list.RecyclerViewVertical
+        android:id="@+id/module_leanback_lrgl_list"
+        android:layout_width="310dp"
+        android:layout_height="match_parent"
+        android:layout_below="@id/module_leanback_lrgl_radio"
+        android:focusable="false" />
+
+</RelativeLayout>

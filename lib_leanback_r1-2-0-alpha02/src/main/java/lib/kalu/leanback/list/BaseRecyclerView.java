@@ -108,7 +108,6 @@ class BaseRecyclerView extends androidx.recyclerview.widget.RecyclerView {
     public void scrollBottom(boolean hasFocus) {
     }
 
-
     public void leave(int direction) {
     }
 
