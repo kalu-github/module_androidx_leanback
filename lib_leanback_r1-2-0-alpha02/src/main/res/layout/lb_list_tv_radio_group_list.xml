@@ -23,25 +23,24 @@
         android:layout_alignTop="@id/module_leanback_lrgl_contont"
         android:focusable="false"
         android:gravity="center_vertical|left"
-        android:longClickable="false"
         android:textColor="@android:color/white"
         android:textSize="18sp"
         android:visibility="gone" />
 
-    <lib.kalu.leanback.radio.RadioGroupHorizontal
-        android:id="@+id/module_leanback_lrgl_radio"
+    <RelativeLayout
+        android:id="@+id/module_leanback_lrgl_head"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         android:layout_below="@id/module_leanback_lrgl_title"
         android:clipChildren="false"
         android:clipToPadding="false"
-        android:orientation="horizontal" />
+        android:focusable="true" />
 
     <lib.kalu.leanback.list.RecyclerViewVertical
         android:id="@+id/module_leanback_lrgl_list"
         android:layout_width="310dp"
         android:layout_height="match_parent"
-        android:layout_below="@id/module_leanback_lrgl_radio"
+        android:layout_below="@id/module_leanback_lrgl_head"
         android:focusable="false" />
 
 </RelativeLayout>
