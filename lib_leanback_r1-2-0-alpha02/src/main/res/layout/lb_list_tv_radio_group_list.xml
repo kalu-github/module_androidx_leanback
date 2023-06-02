@@ -36,13 +36,18 @@
         android:clipToPadding="false"
         android:focusable="true" />
 
-    <lib.kalu.leanback.list.RecyclerViewVertical
-        android:id="@+id/module_leanback_lrgl_list"
+    <RelativeLayout
         android:layout_width="310dp"
-        android:layout_height="200dp"
+        android:layout_height="wrap_content"
         android:layout_below="@id/module_leanback_lrgl_radio"
-        android:clipChildren="true"
-        android:clipToPadding="true"
-        android:focusable="false" />
+        android:focusable="false">
+
+        <lib.kalu.leanback.list.RecyclerViewVertical
+            android:id="@+id/module_leanback_lrgl_list"
+            android:layout_width="match_parent"
+            android:layout_height="400dp"
+            android:focusable="false" />
+
+    </RelativeLayout>
 
 </RelativeLayout>

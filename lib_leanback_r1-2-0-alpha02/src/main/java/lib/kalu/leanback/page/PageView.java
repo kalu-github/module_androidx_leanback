@@ -16,8 +16,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 
-import lib.kalu.leanback.util.LeanBackUtil;
-
 public class PageView extends FrameLayout {
     public PageView(@NonNull Context context) {
         super(context);
@@ -39,7 +37,7 @@ public class PageView extends FrameLayout {
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
         boolean dispatchKeyEvent = super.dispatchKeyEvent(event);
-        // left
+        // action_down => keycode_dpad_left
         if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_LEFT) {
             mPressNumRight = 0;
             if (!dispatchKeyEvent) {
@@ -59,7 +57,7 @@ public class PageView extends FrameLayout {
                 }
             }
         }
-        // right
+        // action_down => keycode_dpad_right
         else if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_RIGHT) {
             mPressNumLeft = 0;
             if (!dispatchKeyEvent) {
@@ -79,12 +77,12 @@ public class PageView extends FrameLayout {
                 }
             }
         }
-        // up
+        // action_down => keycode_dpad_up
         else if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_UP) {
             mPressNumLeft = 0;
             mPressNumRight = 0;
         }
-        // down
+        // action_down => keycode_dpad_down
         else if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_DOWN) {
             mPressNumLeft = 0;
             mPressNumRight = 0;

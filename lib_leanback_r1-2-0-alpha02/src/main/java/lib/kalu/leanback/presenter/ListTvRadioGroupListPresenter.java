@@ -185,7 +185,8 @@ public abstract class ListTvRadioGroupListPresenter<T extends TvPresenterRowBean
             }
             RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
             if (null == layoutManager) {
-                BaseLinearLayoutManager manager = new BaseLinearLayoutManager(context);
+                BaseLinearLayoutManager manager = new BaseLinearLayoutManager(context) {
+                };
                 manager.setOrientation(BaseLinearLayoutManager.VERTICAL);
                 recyclerView.setLayoutManager(manager);
             }
