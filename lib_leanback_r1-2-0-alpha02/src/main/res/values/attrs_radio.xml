@@ -1,0 +1,10 @@
+<resources>
+    <declare-styleable name="RadioButton">
+        <!-- 文字下划线颜色 -->
+        <attr name="rb_text_underline_color" format="reference|color" />
+        <!-- 文字下划线宽度 -->
+        <attr name="rb_text_underline_width" format="reference|dimension" />
+        <!-- 文字下划线高度 -->
+        <attr name="rb_text_underline_height" format="reference|dimension" />
+    </declare-styleable>
+</resources>
