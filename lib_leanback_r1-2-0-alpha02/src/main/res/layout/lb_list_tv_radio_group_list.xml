@@ -37,14 +37,14 @@
         android:focusable="true" />
 
     <RelativeLayout
-        android:layout_width="310dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/module_leanback_lrgl_radio"
         android:focusable="false">
 
         <lib.kalu.leanback.list.RecyclerViewVertical
             android:id="@+id/module_leanback_lrgl_list"
-            android:layout_width="match_parent"
+            android:layout_width="310dp"
             android:layout_height="400dp"
             android:focusable="false" />
 
