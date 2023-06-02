@@ -1,6 +1,7 @@
 package lib.kalu.leanback.presenter;
 
 import android.content.Context;
+import android.graphics.Rect;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -169,6 +170,13 @@ public abstract class ListTvRadioGroupListPresenter<T extends TvPresenterRowBean
             RecyclerView recyclerView = viewGroup.findViewById(R.id.module_leanback_lrgl_list);
             if (null == recyclerView)
                 throw new Exception("recyclerView error: null");
+            recyclerView.addItemDecoration(new RecyclerView.ItemDecoration() {
+                @Override
+                public void getItemOffsets(@NonNull Rect outRect, @NonNull View view, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
+                    super.getItemOffsets(outRect, view, parent, state);
+                    initItemOffsets(outRect, view, parent, state);
+                }
+            });
             int[] itemMargin = initMarginItem(context);
             if (null != itemMargin && itemMargin.length == 4) {
                 ViewGroup.LayoutParams layoutParams = recyclerView.getLayoutParams();

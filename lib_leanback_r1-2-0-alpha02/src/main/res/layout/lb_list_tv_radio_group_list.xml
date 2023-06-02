@@ -46,6 +46,8 @@
             android:id="@+id/module_leanback_lrgl_list"
             android:layout_width="310dp"
             android:layout_height="400dp"
+            android:clipChildren="true"
+            android:clipToPadding="false"
             android:focusable="false" />
 
     </RelativeLayout>
