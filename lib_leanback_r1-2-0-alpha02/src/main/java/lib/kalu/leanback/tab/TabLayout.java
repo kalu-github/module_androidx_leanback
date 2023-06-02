@@ -3,12 +3,12 @@ package lib.kalu.leanback.tab;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Color;
+import android.graphics.Rect;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.util.AttributeSet;
 import android.util.TypedValue;
-import android.view.FocusFinder;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -22,13 +22,11 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.core.view.ViewCompat;
 import androidx.leanback.R;
-import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
 import lib.kalu.leanback.tab.listener.OnTabChangeListener;
 import lib.kalu.leanback.tab.model.TabModel;
-import lib.kalu.leanback.tags.TagsLayout;
 import lib.kalu.leanback.util.LeanBackUtil;
 
 /**
@@ -78,102 +76,100 @@ public final class TabLayout extends HorizontalScrollView {
         int repeatCount = event.getRepeatCount();
         if (repeatCount > 0)
             return true;
+//        LeanBackUtil.log("TabLayout => dispatchKeyEvent => action = " + event.getAction() + ", keyCode = " + event.getKeyCode());
 
-        // left action_down
-        if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_LEFT) {
-            int index = getCheckedIndex();
-            if (index <= 0) {
-                View nextFocus = findNextFocus(View.FOCUS_LEFT);
-                if (null != nextFocus) {
-                    return true;
-                } else {
-                    checkedCurrentItem(View.FOCUS_LEFT);
-                }
-            } else {
-                int next = findNextPosition(View.FOCUS_LEFT, index);
-                if (next != -1) {
-                    boolean scrollRequest = scrollRequest(View.FOCUS_LEFT, index, next);
-                }
-                return true;
-            }
-        }
-        // left action_up
-        else if (event.getAction() == KeyEvent.ACTION_UP && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_LEFT) {
+        // action_up => keycode_dpad_down
+        if (event.getAction() == KeyEvent.ACTION_UP && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_DOWN) {
             View focus = findFocus();
             if (null != focus && focus instanceof TabLayout) {
-                focusCurrentItem(View.FOCUS_LEFT);
+                requestTab(View.FOCUS_DOWN);
             }
+            return true;
         }
-        // right action_down
-        else if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_RIGHT) {
-            int index = getCheckedIndex();
-            int itemCount = getItemCount();
-            if (index + 1 < itemCount) {
-                int next = findNextPosition(View.FOCUS_RIGHT, index);
-                if (next != -1) {
-                    boolean scrollRequest = scrollRequest(View.FOCUS_RIGHT, index, next);
-                }
-                return true;
-            } else {
-                View nextFocus = findNextFocus(View.FOCUS_RIGHT);
-                if (null != nextFocus) {
-                    return true;
-                } else {
-                    checkedCurrentItem(View.FOCUS_RIGHT);
-                    return false;
-                }
-            }
-        }
-        // right action_up
-        else if (event.getAction() == KeyEvent.ACTION_UP && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_RIGHT) {
-            View focus = findFocus();
-            if (null != focus && focus instanceof TabLayout) {
-                focusCurrentItem(View.FOCUS_RIGHT);
-            }
-        }
-        // up action_down
-        else if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_UP) {
-            View nextFocus = findNextFocus(View.FOCUS_UP);
-            if (null == nextFocus) {
-                return true;
-            } else {
-                checkedCurrentItem(View.FOCUS_UP);
-            }
-        }
-        // up action_up
+        // action_up => keycode_dpad_up
         else if (event.getAction() == KeyEvent.ACTION_UP && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_UP) {
             View focus = findFocus();
             if (null != focus && focus instanceof TabLayout) {
-                focusCurrentItem(View.FOCUS_UP);
+                requestTab(View.FOCUS_UP);
             }
+            return true;
+        }
+        // action_up => keycode_dpad_left
+        else if (event.getAction() == KeyEvent.ACTION_UP && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_LEFT) {
+            View focus = findFocus();
+            if (null != focus && focus instanceof TabLayout) {
+                requestTab(View.FOCUS_LEFT);
+            }
+            return true;
+        }
+        // action_up => keycode_dpad_right
+        else if (event.getAction() == KeyEvent.ACTION_UP && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_RIGHT) {
+            View focus = findFocus();
+            if (null != focus && focus instanceof TabLayout) {
+                requestTab(View.FOCUS_RIGHT);
+            }
+            return true;
+        }
+        // action_down => keycode_dpad_left
+        else if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_LEFT) {
+            try {
+                int index = getCheckedIndex();
+                if (index <= 0)
+                    throw new Exception();
+                int next = findNextPosition(View.FOCUS_LEFT, index);
+                boolean scrollRequest = scrollRequest(View.FOCUS_LEFT, index, next);
+                if (!scrollRequest)
+                    throw new Exception();
+                return true;
+            } catch (Exception e) {
+                return false;
+            }
+        }
+        // action_down => keycode_dpad_right
+        else if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_RIGHT) {
+            try {
+                int index = getCheckedIndex();
+                int itemCount = getItemCount();
+                if (index + 1 >= itemCount)
+                    throw new Exception();
+                int next = findNextPosition(View.FOCUS_RIGHT, index);
+                boolean scrollRequest = scrollRequest(View.FOCUS_RIGHT, index, next);
+                if (!scrollRequest)
+                    throw new Exception();
+                return true;
+            } catch (Exception e) {
+                return false;
+            }
+        }
+        // action_down => keycode_dpad_up
+        else if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_UP) {
+//            View nextFocus = findNextFocus(View.FOCUS_UP);
+//            if (null == nextFocus) {
+//                return true;
+//            } else {
+//                checkedCurrentItem(View.FOCUS_UP);
+//            }
         }
         // down action_down
         else if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_DOWN) {
-            View nextFocus = findNextFocus(View.FOCUS_DOWN);
-            if (null == nextFocus) {
-                return true;
-            } else {
-                try {
-                    if (nextFocus instanceof androidx.recyclerview.widget.RecyclerView) {
-                        int itemCount = ((RecyclerView) nextFocus).getAdapter().getItemCount();
-                        if (itemCount <= 0) {
-                            return true;
-                        } else {
-                            throw new Exception();
-                        }
-                    }
-                    throw new Exception();
-                } catch (Exception e) {
-                    checkedCurrentItem(View.FOCUS_DOWN);
-                }
-            }
-        }
-        // down action_up
-        else if (event.getAction() == KeyEvent.ACTION_UP && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_DOWN) {
-            View focus = findFocus();
-            if (null != focus && focus instanceof TabLayout) {
-                focusCurrentItem(View.FOCUS_DOWN);
-            }
+//            View nextFocus = findNextFocus(View.FOCUS_DOWN);
+//            if (null == nextFocus) {
+//                return true;
+//            } else {
+//                try {
+//                    if (nextFocus instanceof androidx.recyclerview.widget.RecyclerView) {
+//                        int itemCount = ((RecyclerView) nextFocus).getAdapter().getItemCount();
+//                        if (itemCount <= 0) {
+//                            return true;
+//                        } else {
+//                            throw new Exception();
+//                        }
+//                    }
+//                    throw new Exception();
+//                } catch (Exception e) {
+//                    checkedCurrentItem(View.FOCUS_DOWN);
+//                }
+//            }
         }
         return super.dispatchKeyEvent(event);
     }
@@ -189,6 +185,8 @@ public final class TabLayout extends HorizontalScrollView {
     }
 
     private void init(@Nullable AttributeSet attrs) {
+        setFocusable(true);
+        setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
         super.setBackground(new ColorDrawable(Color.TRANSPARENT));
         setSmoothScrollingEnabled(true);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -253,66 +251,67 @@ public final class TabLayout extends HorizontalScrollView {
         }
     }
 
-    @Keep
-    public boolean focusCurrentItem() {
-        return focusCurrentItem(0x8888);
+    @Override
+    protected void onFocusChanged(boolean gainFocus, int direction, @Nullable Rect previouslyFocusedRect) {
+        super.onFocusChanged(gainFocus, direction, previouslyFocusedRect);
+        LeanBackUtil.log("TabLayout => onFocusChanged => gainFocus = " + gainFocus + ", direction = " + direction);
+        if (gainFocus) {
+            requestTab(0x8888);
+        } else {
+            checkedTab(0x8888);
+        }
     }
 
     @Keep
-    private boolean focusCurrentItem(int direction) {
+    private boolean requestTab(int direction) {
         try {
             int childCount = getChildCount();
             if (childCount != 1) throw new Exception("childCount is not 1");
             int index = getCheckedIndex();
-            boolean b = ((TabLinearLayout) getChildAt(0)).focusItem(index);
-            if (b) {
-                if (null != mListener) {
-                    if (direction == View.FOCUS_UP) {
-                        mListener.onRepeatUp(index);
-                    } else if (direction == View.FOCUS_DOWN) {
-                        mListener.onRepeatDown(index);
-                    } else if (direction == View.FOCUS_LEFT) {
-                        mListener.onRepeatLeft(index);
-                    } else if (direction == View.FOCUS_RIGHT) {
-                        mListener.onRepeatRight(index);
-                    }
-                }
+            boolean requestChild = ((TabLinearLayout) getChildAt(0)).requestChild(index);
+            if (!requestChild)
+                throw new Exception("requestChild warning: false");
+            if (null == mListener)
+                throw new Exception("mListener warning: null");
+            if (direction == View.FOCUS_UP) {
+                mListener.onRepeatUp(index);
+            } else if (direction == View.FOCUS_DOWN) {
+                mListener.onRepeatDown(index);
+            } else if (direction == View.FOCUS_LEFT) {
+                mListener.onRepeatLeft(index);
+            } else if (direction == View.FOCUS_RIGHT) {
+                mListener.onRepeatRight(index);
             }
-            return b;
+            return true;
         } catch (Exception e) {
-            LeanBackUtil.log("TabLayout => focusCurrentItem => " + e.getMessage());
+            LeanBackUtil.log("TabLayout => requestTab => " + e.getMessage());
             return false;
         }
     }
 
     @Keep
-    public boolean checkedCurrentItem() {
-        return checkedCurrentItem(0x8888);
-    }
-
-    @Keep
-    private boolean checkedCurrentItem(int direction) {
+    private boolean checkedTab(int direction) {
         try {
             int childCount = getChildCount();
             if (childCount != 1) throw new Exception("childCount is not 1");
             int index = getCheckedIndex();
-            boolean b = ((TabLinearLayout) getChildAt(0)).checkItem(index);
-            if (b) {
-                if (null != mListener) {
-                    if (direction == View.FOCUS_UP) {
-                        mListener.onLeaveUp(index);
-                    } else if (direction == View.FOCUS_DOWN) {
-                        mListener.onLeaveDown(index);
-                    } else if (direction == View.FOCUS_LEFT) {
-                        mListener.onLeaveLeft(index);
-                    } else if (direction == View.FOCUS_RIGHT) {
-                        mListener.onLeaveRight(index);
-                    }
-                }
+            boolean checkChild = ((TabLinearLayout) getChildAt(0)).checkChild(index);
+            if (!checkChild)
+                throw new Exception("checkChild warning: false");
+            if (null == mListener)
+                throw new Exception("mListener warning: null");
+            if (direction == View.FOCUS_UP) {
+                mListener.onLeaveUp(index);
+            } else if (direction == View.FOCUS_DOWN) {
+                mListener.onLeaveDown(index);
+            } else if (direction == View.FOCUS_LEFT) {
+                mListener.onLeaveLeft(index);
+            } else if (direction == View.FOCUS_RIGHT) {
+                mListener.onLeaveRight(index);
             }
-            return b;
+            return true;
         } catch (Exception e) {
-            LeanBackUtil.log("TabLayout => checkedCurrentItem => " + e.getMessage());
+            LeanBackUtil.log("TabLayout => checkedTab => " + e.getMessage());
             return false;
         }
     }
@@ -329,37 +328,37 @@ public final class TabLayout extends HorizontalScrollView {
         }
     }
 
-    private ViewGroup findDecorView(View view) {
-        try {
-            View parent = (View) view.getParent();
-            if (null == parent) {
-                return (ViewGroup) view;
-            } else {
-                return findDecorView(parent);
-            }
-        } catch (Exception e) {
-            LeanBackUtil.log("TabLayout => findDecorView => " + e.getMessage());
-            return (ViewGroup) view;
-        }
-    }
+//    private ViewGroup findDecorView(View view) {
+//        try {
+//            View parent = (View) view.getParent();
+//            if (null == parent) {
+//                return (ViewGroup) view;
+//            } else {
+//                return findDecorView(parent);
+//            }
+//        } catch (Exception e) {
+//            LeanBackUtil.log("TabLayout => findDecorView => " + e.getMessage());
+//            return (ViewGroup) view;
+//        }
+//    }
 
-    @Keep
-    public View findNextFocus(int direction) {
-        View nextFocus = null;
-        if (direction == View.FOCUS_LEFT) {
-            nextFocus = FocusFinder.getInstance().findNextFocus(findDecorView(this), this, View.FOCUS_LEFT);
-        } else if (direction == View.FOCUS_RIGHT) {
-            nextFocus = FocusFinder.getInstance().findNextFocus(findDecorView(this), this, View.FOCUS_RIGHT);
-        } else if (direction == View.FOCUS_UP) {
-            nextFocus = FocusFinder.getInstance().findNextFocus(findDecorView(this), this, View.FOCUS_UP);
-        } else if (direction == View.FOCUS_DOWN) {
-            nextFocus = FocusFinder.getInstance().findNextFocus(findDecorView(this), this, View.FOCUS_DOWN);
-        }
-        if (null != nextFocus && nextFocus instanceof TagsLayout) {
-            nextFocus = null;
-        }
-        return nextFocus;
-    }
+//    @Keep
+//    public View findNextFocus(int direction) {
+//        View nextFocus = null;
+//        if (direction == View.FOCUS_LEFT) {
+//            nextFocus = FocusFinder.getInstance().findNextFocus(findDecorView(this), this, View.FOCUS_LEFT);
+//        } else if (direction == View.FOCUS_RIGHT) {
+//            nextFocus = FocusFinder.getInstance().findNextFocus(findDecorView(this), this, View.FOCUS_RIGHT);
+//        } else if (direction == View.FOCUS_UP) {
+//            nextFocus = FocusFinder.getInstance().findNextFocus(findDecorView(this), this, View.FOCUS_UP);
+//        } else if (direction == View.FOCUS_DOWN) {
+//            nextFocus = FocusFinder.getInstance().findNextFocus(findDecorView(this), this, View.FOCUS_DOWN);
+//        }
+//        if (null != nextFocus && nextFocus instanceof TagsLayout) {
+//            nextFocus = null;
+//        }
+//        return nextFocus;
+//    }
 
     @Keep
     private int findNextPosition(int direction, int position) {
@@ -405,9 +404,9 @@ public final class TabLayout extends HorizontalScrollView {
                 }
 
                 if (position != next) {
-                    ((TabLinearLayout) getChildAt(0)).resetItem(position);
+                    ((TabLinearLayout) getChildAt(0)).resetChild(position);
                 }
-                ((TabLinearLayout) getChildAt(0)).focusItem(next);
+                ((TabLinearLayout) getChildAt(0)).requestChild(next);
                 if (null != mListener) {
                     mListener.onChecked(next, position);
                 }
@@ -422,17 +421,17 @@ public final class TabLayout extends HorizontalScrollView {
                 }
 
                 if (position != next) {
-                    ((TabLinearLayout) getChildAt(0)).resetItem(position);
+                    ((TabLinearLayout) getChildAt(0)).resetChild(position);
                 }
-                ((TabLinearLayout) getChildAt(0)).focusItem(next);
+                ((TabLinearLayout) getChildAt(0)).requestChild(next);
                 if (null != mListener) {
                     mListener.onChecked(next, position);
                 }
             } else if (direction == 0x9999) {
                 if (position != next) {
-                    ((TabLinearLayout) getChildAt(0)).resetItem(position);
+                    ((TabLinearLayout) getChildAt(0)).resetChild(position);
                 }
-                ((TabLinearLayout) getChildAt(0)).focusItem(next);
+                ((TabLinearLayout) getChildAt(0)).requestChild(next);
                 if (null != mListener) {
                     mListener.onChecked(next, position);
                 }

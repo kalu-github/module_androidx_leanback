@@ -1,4 +1,4 @@
-package lib.kalu.leanback.round;
+package lib.kalu.leanback.round.news;
 
 import android.content.Context;
 import android.content.res.TypedArray;

@@ -10,7 +10,6 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import lib.kalu.leanback.list.layoutmanager.BaseGridLayoutManager;
 import lib.kalu.leanback.util.LeanBackUtil;
 
 public class RecyclerViewGrid extends BaseRecyclerView {
@@ -32,10 +31,11 @@ public class RecyclerViewGrid extends BaseRecyclerView {
 
         if (event.getRepeatCount() > 0)
             return true;
+//        LeanBackUtil.log("RecyclerViewGrid => dispatchKeyEvent => action = " + event.getAction() + ", keyCode = " + event.getKeyCode());
 
         addLoadmoreListener(event);
 
-        // action_down => up
+        // action_down => keycode_dpad_up
         if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_UP) {
             try {
                 LayoutManager layoutManager = getLayoutManager();
@@ -64,7 +64,7 @@ public class RecyclerViewGrid extends BaseRecyclerView {
                 LeanBackUtil.log("RecyclerViewGrid => dispatchKeyEvent => up-down => " + e.getMessage());
             }
         }
-        // action_down => down
+        // action_down => keycode_dpad_down
         else if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_DOWN) {
             try {
                 LayoutManager layoutManager = getLayoutManager();
@@ -101,7 +101,7 @@ public class RecyclerViewGrid extends BaseRecyclerView {
                 LeanBackUtil.log("RecyclerViewGrid => dispatchKeyEvent => down-down => " + e.getMessage());
             }
         }
-        // action_down => left
+        // action_down => keycode_dpad_left
         else if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_LEFT) {
 
             try {
@@ -136,7 +136,7 @@ public class RecyclerViewGrid extends BaseRecyclerView {
                 LeanBackUtil.log("RecyclerViewGrid => dispatchKeyEvent => left-down => " + e.getMessage());
             }
         }
-        // action_down => right
+        // action_down => keycode_dpad_right
         else if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_RIGHT) {
             try {
                 LayoutManager layoutManager = getLayoutManager();

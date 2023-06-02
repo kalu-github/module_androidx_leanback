@@ -68,14 +68,14 @@ final class TabLinearLayout extends LinearLayout {
         }
     }
 
-    protected boolean focusItem(int position) {
+    protected boolean requestChild(int index) {
 
         try {
             int childCount = getChildCount();
             if (childCount <= 0) throw new Exception("childCount <= 0");
-            if (position < 0 || position + 1 > childCount)
-                throw new Exception("position error: " + position);
-            View view2 = getChildAt(position);
+            if (index < 0 || index + 1 > childCount)
+                throw new Exception("index error: " + index);
+            View view2 = getChildAt(index);
             if (null != view2) {
                 if (view2 instanceof TabTextView) {
                     view2.setEnabled(true);
@@ -92,14 +92,14 @@ final class TabLinearLayout extends LinearLayout {
         }
     }
 
-    protected boolean checkItem(int position) {
+    protected boolean checkChild(int index) {
 
         try {
             int childCount = getChildCount();
             if (childCount <= 0) throw new Exception("childCount <= 0");
-            if (position < 0 || position + 1 > childCount)
-                throw new Exception("position error: " + position);
-            View view1 = getChildAt(position);
+            if (index < 0 || index + 1 > childCount)
+                throw new Exception("index error: " + index);
+            View view1 = getChildAt(index);
             if (null != view1) {
                 if (view1 instanceof TabTextView) {
                     view1.setEnabled(false);
@@ -116,14 +116,14 @@ final class TabLinearLayout extends LinearLayout {
         }
     }
 
-    protected boolean resetItem(int position) {
+    protected boolean resetChild(int index) {
 
         try {
             int childCount = getChildCount();
             if (childCount <= 0) throw new Exception("childCount <= 0");
-            if (position < 0 || position + 1 > childCount)
-                throw new Exception("position error: " + position);
-            View view1 = getChildAt(position);
+            if (index < 0 || index + 1 > childCount)
+                throw new Exception("index error: " + index);
+            View view1 = getChildAt(index);
             if (null != view1) {
                 if (view1 instanceof TabTextView) {
                     view1.setEnabled(false);

@@ -7,11 +7,12 @@ import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.widget.RelativeLayout;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import lib.kalu.leanback.util.LeanBackUtil;
+public class RoundRelativeLayout extends RelativeLayout {
 
-public class RoundRelativeLayout extends RelativeLayout implements RoundImpl {
+    RoundHelper mRCHelper;
 
     public RoundRelativeLayout(Context context) {
         super(context);
@@ -19,65 +20,100 @@ public class RoundRelativeLayout extends RelativeLayout implements RoundImpl {
 
     public RoundRelativeLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
-        initAttributeSet(context, attrs);
+        init(context, attrs);
     }
 
     public RoundRelativeLayout(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        initAttributeSet(context, attrs);
+        init(context, attrs);
     }
 
     @SuppressLint("NewApi")
     public RoundRelativeLayout(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
-        initAttributeSet(context, attrs);
+        init(context, attrs);
+    }
+
+    private void init(Context context, AttributeSet attrs) {
+        this.mRCHelper = new RoundHelper();
+        this.mRCHelper.init(context, attrs);
+    }
+
+    protected void setRadius(int topLeft, int topRight, int bottomLeft, int bottomRight) {
+        this.mRCHelper.setRadius(topLeft, topRight, bottomLeft, bottomRight);
+    }
+
+    protected void setScale(float v) {
+        this.mRCHelper.setScale(v);
     }
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        try {
-            int[] measureSpec = measureSpec(widthMeasureSpec, heightMeasureSpec);
-            if (null == measureSpec)
-                throw new Exception("measureSpec error: null");
-            if (measureSpec.length != 2)
-                throw new Exception("length error: != 2");
-            super.onMeasure(measureSpec[0], measureSpec[1]);
-        } catch (Exception e) {
+        float rateW = mRCHelper.getRateW();
+        float rateH = mRCHelper.getRateH();
+        if (rateH <= 0 && rateW <= 0) {
             super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-            LeanBackUtil.log("RoundRelativeLayout => onMeasure => " + e.getMessage());
+        } else {
+            try {
+                int width;
+                int height;
+                int spec;
+                if (rateW > 0) {
+                    height = MeasureSpec.getSize(heightMeasureSpec);
+                    width = (int) (height * rateW);
+                    spec = MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY);
+                    super.onMeasure(spec, heightMeasureSpec);
+                } else {
+                    width = MeasureSpec.getSize(widthMeasureSpec);
+                    height = (int) (width * rateH);
+                    spec = MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY);
+                    super.onMeasure(widthMeasureSpec, spec);
+                }
+                setMeasuredDimension(width, height);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
-        onSizeChanged(this, w, h);
+        mRCHelper.onSizeChanged(this, w, h);
     }
 
     @Override
     protected void onFocusChanged(boolean gainFocus, int direction, @Nullable Rect previouslyFocusedRect) {
         super.onFocusChanged(gainFocus, direction, previouslyFocusedRect);
-        onFocusChanged(this, gainFocus);
+        mRCHelper.onFocusChanged(this, gainFocus);
     }
 
     @Override
     public void dispatchDraw(Canvas canvas) {
-        saveLayer(canvas);
-        clipPath(canvas);
+        mRCHelper.saveLayer(canvas);
+        mRCHelper.clipPath(canvas);
         super.dispatchDraw(canvas);
-        drawPath(canvas);
+        mRCHelper.drawPath(canvas);
         canvas.restore();
     }
 
     @Override
     public void draw(Canvas canvas) {
-        if (mClipBackground[0]) {
+        if (mRCHelper.mClipBackground) {
             canvas.save();
-            canvas.clipPath(mClipPath[0]);
+            canvas.clipPath(mRCHelper.mClipPath);
             super.draw(canvas);
             canvas.restore();
         } else {
             super.draw(canvas);
         }
+    }
+
+    public void refreshRound(@NonNull float topLeft, @NonNull float topRight, @NonNull float bottomLeft, @NonNull float bottomRight) {
+        mRCHelper.refreshRound(this, topLeft, topRight, bottomLeft, bottomRight);
+    }
+
+    public void resetRound() {
+        mRCHelper.resetRound(this);
     }
 }
