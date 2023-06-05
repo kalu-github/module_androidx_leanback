@@ -1,6 +1,7 @@
 package lib.kalu.leanback.presenter;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.FocusFinder;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -16,6 +17,7 @@ import androidx.leanback.R;
 import androidx.leanback.widget.Presenter;
 
 import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -27,7 +29,7 @@ import lib.kalu.leanback.util.LeanBackUtil;
 
 public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusItemBean> extends Presenter implements ListTvPresenterImpl {
 
-    private final Map<T, List<T>> mData = new LinkedHashMap<>();
+    private final Map<T, List<T>> mMap = new LinkedHashMap<>();
 
     /***************************/
 
@@ -74,6 +76,7 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent) {
+        LeanBackUtil.log("ListTvEpisodesDoubleRowPresenter => onCreateViewHolder =>");
         try {
             Context context = parent.getContext();
             ViewGroup viewGroup = (ViewGroup) LayoutInflater.from(context).inflate(R.layout.lb_list_tv_episodes_double_row, parent, false);
@@ -123,6 +126,7 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
 
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, Object item) {
+        LeanBackUtil.log("ListTvEpisodesDoubleRowPresenter => onBindViewHolder =>");
         // 数据
         formatData(item);
         // 标题
@@ -237,7 +241,7 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
         }
     }
 
-    private final void updateDefaultRangeUI(View view) {
+    private void updateDefaultRangeUI(View view) {
         try {
             if (null == view)
                 throw new Exception("view error: null");
@@ -245,7 +249,7 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
             int rangeChildCount = rangeGroup.getChildCount();
             if (rangeChildCount <= 0)
                 throw new Exception("rangeChildCount error: " + rangeChildCount);
-            int size = mData.size();
+            int size = mMap.size();
             if (size >= rangeChildCount)
                 throw new Exception("size warning: " + size + ", rangeChildCount = " + rangeChildCount);
             for (int i = 0; i < rangeChildCount; i++) {
@@ -257,7 +261,7 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
         }
     }
 
-    private final void updateDefaultEpisodeUI(View view) {
+    private void updateDefaultEpisodeUI(View view) {
         try {
             if (null == view)
                 throw new Exception("view error: null");
@@ -280,15 +284,15 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
         }
     }
 
-    private final int getEpisodeLength() {
+    private int getEpisodeLength() {
         try {
             int length = 0;
-            for (Map.Entry<T, List<T>> entry : mData.entrySet()) {
+            for (Map.Entry<T, List<T>> entry : mMap.entrySet()) {
                 List<T> value = entry.getValue();
                 if (null == value)
                     continue;
                 int size = value.size();
-                if (size <= 0)
+                if (size == 0)
                     continue;
                 length += size;
             }
@@ -301,9 +305,9 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
         }
     }
 
-    private final int getRangeLength() {
+    private int getRangeLength() {
         try {
-            return mData.size();
+            return mMap.size();
         } catch (Exception e) {
             LeanBackUtil.log("ListTvEpisodesDoubleRowPresenter => getRangeLength => " + e.getMessage());
             return 0;
@@ -312,11 +316,38 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
 
     /*********************/
 
-    private final void formatData(Object item) {
+    private void formatData(Object item) {
+        LeanBackUtil.log("ListTvEpisodesDoubleRowPresenter => formatData =>");
         try {
-            int length = mData.size();
+            int length = mMap.size();
             if (length > 0)
                 throw new Exception("length warning: " + length);
+//            Type[] genericInterfaces1 = getClass().getGenericInterfaces();
+//            LeanBackUtil.log("ListTvEpisodesDoubleRowPresenter => formatData => genericInterfaces1 = " + genericInterfaces1);
+//            Type genericInterfaces = genericInterfaces1[0];
+//            LeanBackUtil.log("ListTvEpisodesDoubleRowPresenter => formatData => genericInterfaces = " + genericInterfaces);
+//            if (!(genericInterfaces instanceof ParameterizedType))
+//                throw new Exception("genericSuperclass error: not instanceof ParameterizedType");
+//            Type type = ((ParameterizedType) genericInterfaces).getActualTypeArguments()[0];
+//            while (type instanceof ParameterizedType) {
+//                type = ((ParameterizedType) type).getRawType();
+//            }
+//            String className = type.toString();
+//            if (className.startsWith("class ")) {
+//                className = className.substring(6);
+//            } else if (className.startsWith("interface ")) {
+//                className = className.substring(10);
+//            }
+            Type genericSuperclass = getClass().getGenericSuperclass();
+            LeanBackUtil.log("ListTvEpisodesDoubleRowPresenter => formatData => genericSuperclass = " + genericSuperclass);
+            if (!(genericSuperclass instanceof ParameterizedType))
+                throw new Exception("genericSuperclass error: not instanceof ParameterizedType");
+            Type[] actualTypeArguments = ((ParameterizedType) genericSuperclass).getActualTypeArguments();
+            LeanBackUtil.log("ListTvEpisodesDoubleRowPresenter => formatData => actualTypeArguments = " + actualTypeArguments);
+            if (null == actualTypeArguments || actualTypeArguments.length == 0)
+                throw new Exception("actualTypeArguments error: " + actualTypeArguments);
+            Class<T> cls = (Class<T>) actualTypeArguments[0];
+            LeanBackUtil.log("ListTvEpisodesDoubleRowPresenter => formatData => cls = " + cls);
             List<T> list = (List<T>) item;
             int size = list.size();
             int episodeNum = initEpisodeNum();
@@ -328,8 +359,6 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
             }
             for (int i = 0; i < size; i += episodeNum) {
 
-                // map-key
-                Class<T> cls = (Class) ((ParameterizedType) this.getClass().getGenericSuperclass()).getActualTypeArguments()[0];
                 T key = cls.newInstance();
                 int start = (i / episodeNum) * episodeNum + 1;
                 int end = start + (episodeNum - 1);
@@ -361,20 +390,23 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
                     t.setChecked(false);
                     value.add(t);
                 }
-
+                LeanBackUtil.log("ListTvEpisodesDoubleRowPresenter => formatData => value = " + value);
                 // map
-                mData.put(key, value);
+                mMap.put(key, value);
+                // map-key
+//                Class<T> cls = (Class) ((ParameterizedType) this.getClass().getGenericSuperclass()).getActualTypeArguments()[0];
             }
 
         } catch (Exception e) {
+            Log.e("ListTvEpisodesDouble", "formatData => " + e.getMessage(), e);
             LeanBackUtil.log("ListTvEpisodesDoubleRowPresenter => formatData => " + e.getMessage());
         }
     }
 
-    private final T getDataIndexOfRange(int position) {
+    private T getDataIndexOfRange(int position) {
         try {
             int index = 0;
-            for (Map.Entry<T, List<T>> entry : mData.entrySet()) {
+            for (Map.Entry<T, List<T>> entry : mMap.entrySet()) {
                 if (index == position) {
                     return (T) entry.getKey();
                 }
@@ -387,10 +419,10 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
         }
     }
 
-    private final List<T> getDataIndexOfEpisode(int position) {
+    private List<T> getDataIndexOfEpisode(int position) {
         try {
             int index = 0;
-            for (Map.Entry<T, List<T>> entry : mData.entrySet()) {
+            for (Map.Entry<T, List<T>> entry : mMap.entrySet()) {
                 if (index == position)
                     return entry.getValue();
                 index += 1;
@@ -402,7 +434,7 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
         }
     }
 
-    private final void resetRange(@NonNull View viewGroup) {
+    private void resetRange(@NonNull View viewGroup) {
         try {
             if (null == viewGroup)
                 throw new Exception("viewGroup error: null");
@@ -436,11 +468,11 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
         }
     }
 
-    private final void updateEpisode(@NonNull View viewGroup,
-                                     @NonNull int rangeIndex,
-                                     @NonNull int checkedIndex,
-                                     @NonNull boolean isFromSwapRange,
-                                     @NonNull boolean isFromSwapEpisode) {
+    private void updateEpisode(@NonNull View viewGroup,
+                               @NonNull int rangeIndex,
+                               @NonNull int checkedIndex,
+                               @NonNull boolean isFromSwapRange,
+                               @NonNull boolean isFromSwapEpisode) {
         try {
             if (rangeIndex < 0)
                 throw new Exception("rangeIndex error: " + rangeIndex);
@@ -503,10 +535,10 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
         }
     }
 
-    private final void updateRange(@NonNull View viewGroup,
-                                   @NonNull int startIndex,
-                                   @NonNull int checkedIndex,
-                                   @NonNull int direction) {
+    private void updateRange(@NonNull View viewGroup,
+                             @NonNull int startIndex,
+                             @NonNull int checkedIndex,
+                             @NonNull int direction) {
         try {
             if (null == viewGroup)
                 throw new Exception("viewGroup error: null");
@@ -557,9 +589,9 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
         }
     }
 
-    private final void swapRange(@NonNull View viewGroup,
-                                 @NonNull int oldCheckedIndex,
-                                 @NonNull int newCheckedIndex) {
+    private void swapRange(@NonNull View viewGroup,
+                           @NonNull int oldCheckedIndex,
+                           @NonNull int newCheckedIndex) {
         try {
             if (null == viewGroup)
                 throw new Exception("viewGroup error: null");
@@ -597,9 +629,9 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
         }
     }
 
-    private final void swapEpisode(@NonNull View viewGroup,
-                                   @NonNull int oldCheckedIndex,
-                                   @NonNull int newCheckedIndex) {
+    private void swapEpisode(@NonNull View viewGroup,
+                             @NonNull int oldCheckedIndex,
+                             @NonNull int newCheckedIndex) {
         try {
             if (null == viewGroup)
                 throw new Exception("viewGroup error: null");
@@ -634,7 +666,7 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
         }
     }
 
-    private final void resetEpisode(@NonNull View viewGroup) {
+    private void resetEpisode(@NonNull View viewGroup) {
         try {
             if (null == viewGroup)
                 throw new Exception("viewGroup error: null");
@@ -668,8 +700,8 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
         }
     }
 
-    private final void setPlayingEpisode(@NonNull View viewGroup,
-                                         @NonNull int indexOfChild) {
+    private void setPlayingEpisode(@NonNull View viewGroup,
+                                   @NonNull int indexOfChild) {
         try {
             if (null == viewGroup)
                 throw new Exception("viewGroup error: null");
@@ -703,8 +735,8 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
         }
     }
 
-    private final void setPlayingRange(@NonNull View viewGroup,
-                                       @NonNull int checkedIndex) {
+    private void setPlayingRange(@NonNull View viewGroup,
+                                 @NonNull int checkedIndex) {
         try {
             if (null == viewGroup)
                 throw new Exception("viewGroup error: null");
@@ -748,8 +780,8 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
         }
     }
 
-    private final void requestFocusCheckedRange(@NonNull View viewGroup,
-                                                @NonNull boolean isDescendant) {
+    private void requestFocusCheckedRange(@NonNull View viewGroup,
+                                          @NonNull boolean isDescendant) {
         try {
             if (null == viewGroup)
                 throw new Exception("viewGroup error: null");
@@ -780,8 +812,8 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
         }
     }
 
-    private final void requestFocusCheckedEpisode(@NonNull View viewGroup,
-                                                  @NonNull boolean isDescendant) {
+    private void requestFocusCheckedEpisode(@NonNull View viewGroup,
+                                            @NonNull boolean isDescendant) {
         try {
             if (null == viewGroup)
                 throw new Exception("viewGroup error: null");
@@ -822,8 +854,8 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
     }
 
     @Keep
-    private final void initLayoutRange(@NonNull Context context,
-                                       @NonNull View viewGroup) {
+    private void initLayoutRange(@NonNull Context context,
+                                 @NonNull View viewGroup) {
         try {
             if (null == viewGroup)
                 throw new Exception("viewGroup error: null");
@@ -918,7 +950,7 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
         }
     }
 
-    private final ViewGroup findDecorView(View view) {
+    private ViewGroup findDecorView(View view) {
         try {
             View parent = (View) view.getParent();
             if (null == parent) {
@@ -932,8 +964,8 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
         }
     }
 
-    private final void requestFocus(@NonNull View focusView,
-                                    @NonNull int direction) {
+    private void requestFocus(@NonNull View focusView,
+                              @NonNull int direction) {
 
         try {
             ViewGroup decodeView = findDecorView(focusView);
@@ -954,8 +986,8 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
     }
 
     @Keep
-    private final void initLayoutEpisode(@NonNull Context context,
-                                         @NonNull View viewGroup) {
+    private void initLayoutEpisode(@NonNull Context context,
+                                   @NonNull View viewGroup) {
         try {
             if (null == viewGroup)
                 throw new Exception("viewGroup error: null");
@@ -1088,7 +1120,7 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
         }
     }
 
-    private final int getEpisodeCurrentPlayingIndexOfChild(View viewGroup) {
+    private int getEpisodeCurrentPlayingIndexOfChild(View viewGroup) {
         try {
             if (null == viewGroup)
                 throw new Exception("viewGroup error: null");
@@ -1120,7 +1152,7 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
         }
     }
 
-    private final int getEpisodeCheckedIndexOfChild(@NonNull View viewGroup) {
+    private int getEpisodeCheckedIndexOfChild(@NonNull View viewGroup) {
         try {
             if (null == viewGroup)
                 throw new Exception("viewGroup error: null");
@@ -1153,7 +1185,7 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
         }
     }
 
-    private final int getEpisodePlayingIndexOfChild(@NonNull View viewGroup) {
+    private int getEpisodePlayingIndexOfChild(@NonNull View viewGroup) {
         try {
             if (null == viewGroup)
                 throw new Exception("viewGroup error: null");
@@ -1186,7 +1218,7 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
         }
     }
 
-    private final int getRangeCheckedIndexOfChild(@NonNull View viewGroup) {
+    private int getRangeCheckedIndexOfChild(@NonNull View viewGroup) {
         try {
             if (null == viewGroup)
                 throw new Exception("viewGroup error: null");
@@ -1219,8 +1251,8 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
         }
     }
 
-    private final boolean dispatchEventEpisode(@NonNull View focusView,
-                                               @NonNull int direction) {
+    private boolean dispatchEventEpisode(@NonNull View focusView,
+                                         @NonNull int direction) {
         try {
             if (null == focusView)
                 throw new Exception("focusView error: null");
@@ -1385,8 +1417,8 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
         }
     }
 
-    private final boolean dispatchEventRange(@NonNull View focusView,
-                                             @NonNull int direction) {
+    private boolean dispatchEventRange(@NonNull View focusView,
+                                       @NonNull int direction) {
 
         try {
             if (null == focusView)
@@ -1448,7 +1480,7 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
 
     /*********************/
 
-    public final boolean isPlayingPositionLast(View viewGroup) {
+    public boolean isPlayingPositionLast(View viewGroup) {
         try {
             if (null == viewGroup)
                 throw new Exception("viewGroup error: null");
@@ -1481,7 +1513,7 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
         }
     }
 
-    public final int getPlayingPosition(View viewGroup) {
+    public int getPlayingPosition(View viewGroup) {
         try {
             if (null == viewGroup)
                 throw new Exception("viewGroup error: null");
@@ -1511,7 +1543,7 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
         }
     }
 
-    public final int getPlayingPositionNext(View viewGroup) {
+    public int getPlayingPositionNext(View viewGroup) {
         try {
             boolean isPlayingPositionLast = isPlayingPositionLast(viewGroup);
             if (isPlayingPositionLast)
@@ -1526,8 +1558,8 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
         }
     }
 
-    public final void checkedPlayingPosition(@NonNull View viewGroup,
-                                             @NonNull int checkedEpisodePosition) {
+    public void checkedPlayingPosition(@NonNull View viewGroup,
+                                       @NonNull int checkedEpisodePosition) {
         try {
             if (null == viewGroup)
                 throw new Exception("viewGroup error: null");
@@ -1573,7 +1605,7 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
         }
     }
 
-    public final boolean checkedPlayingPositionNext(@NonNull View viewGroup) {
+    public boolean checkedPlayingPositionNext(@NonNull View viewGroup) {
         try {
             if (null == viewGroup)
                 throw new Exception("viewGroup error: null");
@@ -1590,7 +1622,7 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
         }
     }
 
-    public final boolean checkedPlayingPositionRepeat(@NonNull View viewGroup) {
+    public boolean checkedPlayingPositionRepeat(@NonNull View viewGroup) {
         try {
             if (null == viewGroup)
                 throw new Exception("viewGroup error: null");

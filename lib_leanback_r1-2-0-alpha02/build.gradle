@@ -16,13 +16,14 @@ android {
     buildTypes {
         release {
             minifyEnabled false
-            proguardFiles 'proguard-rules.pro'
+            consumerProguardFiles 'proguard-rules.pro'
         }
-        debug{
+        debug {
             minifyEnabled false
-            proguardFiles 'proguard-rules.pro'
+            consumerProguardFiles 'proguard-rules.pro'
         }
     }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8

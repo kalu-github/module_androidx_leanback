@@ -66,7 +66,7 @@ public abstract class ListTvEpisodesSingleGridPresenter<T extends TvEpisodesGrid
         updateAdapter(viewHolder.view);
     }
 
-    private final void updateAdapter(View view) {
+    private void updateAdapter(View view) {
         try {
             RecyclerView recyclerView = view.findViewById(R.id.module_leanback_legp_list);
             recyclerView.getAdapter().notifyDataSetChanged();
@@ -75,7 +75,7 @@ public abstract class ListTvEpisodesSingleGridPresenter<T extends TvEpisodesGrid
         }
     }
 
-    private final void formatData(Object item) {
+    private void formatData(Object item) {
         try {
             int size = mData.size();
             if (size > 0)
@@ -103,7 +103,7 @@ public abstract class ListTvEpisodesSingleGridPresenter<T extends TvEpisodesGrid
     public void onUnbindViewHolder(ViewHolder viewHolder) {
     }
 
-    private final void initLayoutManager(@NonNull View inflate) {
+    private void initLayoutManager(@NonNull View inflate) {
         try {
             RecyclerView recyclerView = inflate.findViewById(R.id.module_leanback_legp_list);
             RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
@@ -144,7 +144,7 @@ public abstract class ListTvEpisodesSingleGridPresenter<T extends TvEpisodesGrid
         }
     }
 
-    private final void initAdapter(@NonNull Context context, @NonNull View inflate) {
+    private void initAdapter(@NonNull Context context, @NonNull View inflate) {
         try {
             RecyclerView recyclerView = inflate.findViewById(R.id.module_leanback_legp_list);
             RecyclerView.Adapter adapter = recyclerView.getAdapter();
@@ -338,7 +338,7 @@ public abstract class ListTvEpisodesSingleGridPresenter<T extends TvEpisodesGrid
     protected void onLife(@NonNull Context context) {
     }
 
-    protected final void requestFocus(@NonNull View v, @NonNull int position) {
+    protected void requestFocus(@NonNull View v, @NonNull int position) {
         try {
             RecyclerView recyclerView = findRecyclerView(v, true);
             View viewByPosition = recyclerView.getLayoutManager().findViewByPosition(position);
@@ -348,7 +348,7 @@ public abstract class ListTvEpisodesSingleGridPresenter<T extends TvEpisodesGrid
         }
     }
 
-    protected final void notifyDataSetChanged(@NonNull View v) {
+    protected void notifyDataSetChanged(@NonNull View v) {
         try {
             RecyclerView recyclerView = findRecyclerView(v, true);
             recyclerView.getAdapter().notifyDataSetChanged();
@@ -357,7 +357,7 @@ public abstract class ListTvEpisodesSingleGridPresenter<T extends TvEpisodesGrid
         }
     }
 
-    protected final void notifyItemRangeChanged(@NonNull View v, int start, int itemCount) {
+    protected void notifyItemRangeChanged(@NonNull View v, int start, int itemCount) {
         try {
             RecyclerView recyclerView = findRecyclerView(v, true);
             recyclerView.getAdapter().notifyItemRangeChanged(start, itemCount);
@@ -366,7 +366,7 @@ public abstract class ListTvEpisodesSingleGridPresenter<T extends TvEpisodesGrid
         }
     }
 
-    private final RecyclerView findRecyclerView(@NonNull View v, @NonNull boolean init) {
+    private RecyclerView findRecyclerView(@NonNull View v, @NonNull boolean init) {
 
         if (init) {
             View view = v.findViewById(R.id.module_leanback_legp_list);
@@ -409,7 +409,7 @@ public abstract class ListTvEpisodesSingleGridPresenter<T extends TvEpisodesGrid
 
     /*********************/
 
-    public final boolean isPlayingPositionLast() {
+    public boolean isPlayingPositionLast() {
         try {
             int playingIndex = -1;
             for (T t : mData) {
@@ -431,7 +431,7 @@ public abstract class ListTvEpisodesSingleGridPresenter<T extends TvEpisodesGrid
         }
     }
 
-    public final int getPlayingPosition() {
+    public int getPlayingPosition() {
         try {
             int playingIndex = -1;
             for (T t : mData) {
@@ -451,7 +451,7 @@ public abstract class ListTvEpisodesSingleGridPresenter<T extends TvEpisodesGrid
         }
     }
 
-    public final int getPlayingPositionNext() {
+    public int getPlayingPositionNext() {
         try {
             boolean isPlayingPositionLast = isPlayingPositionLast();
             if (isPlayingPositionLast)
@@ -466,8 +466,8 @@ public abstract class ListTvEpisodesSingleGridPresenter<T extends TvEpisodesGrid
         }
     }
 
-    public final void checkedPlayingPosition(@NonNull View viewGroup,
-                                             @NonNull int checkedPosition) {
+    public void checkedPlayingPosition(@NonNull View viewGroup,
+                                       @NonNull int checkedPosition) {
 
         try {
             if (null == viewGroup)
@@ -520,7 +520,7 @@ public abstract class ListTvEpisodesSingleGridPresenter<T extends TvEpisodesGrid
         }
     }
 
-    public final void checkedPlayingPositionNext(View viewGroup) {
+    public void checkedPlayingPositionNext(View viewGroup) {
 
         try {
             if (null == viewGroup)
@@ -570,15 +570,15 @@ public abstract class ListTvEpisodesSingleGridPresenter<T extends TvEpisodesGrid
             RecyclerView.ViewHolder viewHolderForAdapterPosition = recyclerView.findViewHolderForAdapterPosition(nextCheckedPosition);
             if (null == viewHolderForAdapterPosition) {
                 recyclerView.scrollToPosition(nextCheckedPosition);
-                int finalNextChechedPosition = nextCheckedPosition;
-                int finalPlayingIndex = playingIndex;
+                int NextChechedPosition = nextCheckedPosition;
+                int PlayingIndex = playingIndex;
                 new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        T t = mData.get(finalNextChechedPosition);
+                        T t = mData.get(NextChechedPosition);
                         View v = viewHolderForAdapterPosition.itemView;
-                        onBindHolder(v.getContext(), v, t, finalNextChechedPosition);
-                        onClickHolder(v.getContext(), v, t, finalNextChechedPosition, finalPlayingIndex, false);
+                        onBindHolder(v.getContext(), v, t, NextChechedPosition);
+                        onClickHolder(v.getContext(), v, t, NextChechedPosition, PlayingIndex, false);
                     }
                 }, 50);
             } else {
@@ -592,7 +592,7 @@ public abstract class ListTvEpisodesSingleGridPresenter<T extends TvEpisodesGrid
         }
     }
 
-    public final boolean dispatchKeyEventCheckedPosition(View viewGroup) {
+    public boolean dispatchKeyEventCheckedPosition(View viewGroup) {
         try {
             if (null == viewGroup)
                 throw new Exception("viewGroup error: null");
@@ -631,7 +631,7 @@ public abstract class ListTvEpisodesSingleGridPresenter<T extends TvEpisodesGrid
         }
     }
 
-    public final boolean checkedPlayingPositionRepeat(@NonNull View viewGroup) {
+    public boolean checkedPlayingPositionRepeat(@NonNull View viewGroup) {
         try {
             if (null == viewGroup)
                 throw new Exception("viewGroup error: null");
