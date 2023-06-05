@@ -76,7 +76,6 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent) {
-        LeanBackUtil.log("ListTvEpisodesDoubleRowPresenter => onCreateViewHolder =>");
         try {
             Context context = parent.getContext();
             ViewGroup viewGroup = (ViewGroup) LayoutInflater.from(context).inflate(R.layout.lb_list_tv_episodes_double_row, parent, false);
@@ -126,7 +125,6 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
 
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, Object item) {
-        LeanBackUtil.log("ListTvEpisodesDoubleRowPresenter => onBindViewHolder =>");
         // 数据
         formatData(item);
         // 标题
@@ -317,37 +315,17 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
     /*********************/
 
     private void formatData(Object item) {
-        LeanBackUtil.log("ListTvEpisodesDoubleRowPresenter => formatData =>");
         try {
             int length = mMap.size();
             if (length > 0)
                 throw new Exception("length warning: " + length);
-//            Type[] genericInterfaces1 = getClass().getGenericInterfaces();
-//            LeanBackUtil.log("ListTvEpisodesDoubleRowPresenter => formatData => genericInterfaces1 = " + genericInterfaces1);
-//            Type genericInterfaces = genericInterfaces1[0];
-//            LeanBackUtil.log("ListTvEpisodesDoubleRowPresenter => formatData => genericInterfaces = " + genericInterfaces);
-//            if (!(genericInterfaces instanceof ParameterizedType))
-//                throw new Exception("genericSuperclass error: not instanceof ParameterizedType");
-//            Type type = ((ParameterizedType) genericInterfaces).getActualTypeArguments()[0];
-//            while (type instanceof ParameterizedType) {
-//                type = ((ParameterizedType) type).getRawType();
-//            }
-//            String className = type.toString();
-//            if (className.startsWith("class ")) {
-//                className = className.substring(6);
-//            } else if (className.startsWith("interface ")) {
-//                className = className.substring(10);
-//            }
             Type genericSuperclass = getClass().getGenericSuperclass();
-            LeanBackUtil.log("ListTvEpisodesDoubleRowPresenter => formatData => genericSuperclass = " + genericSuperclass);
             if (!(genericSuperclass instanceof ParameterizedType))
                 throw new Exception("genericSuperclass error: not instanceof ParameterizedType");
             Type[] actualTypeArguments = ((ParameterizedType) genericSuperclass).getActualTypeArguments();
-            LeanBackUtil.log("ListTvEpisodesDoubleRowPresenter => formatData => actualTypeArguments = " + actualTypeArguments);
             if (null == actualTypeArguments || actualTypeArguments.length == 0)
                 throw new Exception("actualTypeArguments error: " + actualTypeArguments);
             Class<T> cls = (Class<T>) actualTypeArguments[0];
-            LeanBackUtil.log("ListTvEpisodesDoubleRowPresenter => formatData => cls = " + cls);
             List<T> list = (List<T>) item;
             int size = list.size();
             int episodeNum = initEpisodeNum();
