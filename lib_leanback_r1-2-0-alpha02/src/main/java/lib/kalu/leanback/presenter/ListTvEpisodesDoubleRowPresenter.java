@@ -368,11 +368,8 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
                     t.setChecked(false);
                     value.add(t);
                 }
-                LeanBackUtil.log("ListTvEpisodesDoubleRowPresenter => formatData => value = " + value);
                 // map
                 mMap.put(key, value);
-                // map-key
-//                Class<T> cls = (Class) ((ParameterizedType) this.getClass().getGenericSuperclass()).getActualTypeArguments()[0];
             }
 
         } catch (Exception e) {
