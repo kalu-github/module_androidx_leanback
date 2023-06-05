@@ -373,7 +373,6 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
             }
 
         } catch (Exception e) {
-            Log.e("ListTvEpisodesDouble", "formatData => " + e.getMessage(), e);
             LeanBackUtil.log("ListTvEpisodesDoubleRowPresenter => formatData => " + e.getMessage());
         }
     }
