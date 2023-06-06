@@ -11,9 +11,11 @@ import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.text.TextPaint;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.ViewParent;
 import android.webkit.WebSettings;
 import android.widget.TextView;
 
@@ -279,23 +281,25 @@ class TabTextView extends TextView {
         }
     }
 
+    private String downloadUrl = null;
     private void download(@NonNull String url) {
 
         try {
-            if (null == url || url.length() <= 0) throw new Exception("url is null");
+            if (null == url || url.length() == 0)
+                throw new Exception("url error: " + url);
+            downloadUrl = url;
             new Thread(new Runnable() {
                 @Override
                 public void run() {
                     try {
-                        // 1. 下载
+                        // 1
                         HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
                         connection.setDoInput(true);
                         connection.connect();
                         InputStream input = connection.getInputStream();
                         Bitmap bitmap = BitmapFactory.decodeStream(input);
                         input.close();
-
-                        // 2.保存
+                        // 2
                         String path = getPath(url);
                         File file = new File(path);
                         if (file.exists()) {
@@ -307,8 +311,9 @@ class TabTextView extends TextView {
                         out.flush();
                         out.close();
                         bitmap.recycle();
-
-                        // 3.主线程更新
+                        // 3
+                        if (!url.equals(downloadUrl))
+                            throw new Exception("url warning: change url");
                         post(new Runnable() {
                             @Override
                             public void run() {
@@ -317,11 +322,12 @@ class TabTextView extends TextView {
                             }
                         });
                     } catch (Exception e) {
+                        LeanBackUtil.log("TabTextView => checkPath => " + e.getMessage());
                     }
                 }
             }).start();
         } catch (Exception e) {
-            LeanBackUtil.log("TabImageView => checkPath => " + e.getMessage());
+            LeanBackUtil.log("TabTextView => checkPath => " + e.getMessage());
         }
     }
 
@@ -341,14 +347,14 @@ class TabTextView extends TextView {
             String s = builder.toString();
             File dir = getContext().getFilesDir();
             String path = dir.getAbsolutePath();
-            File file = new File(path, "tab@@$$");
+            File file = new File(path, "tab@img@");
             if (file.exists()) {
                 file.delete();
             }
             file.mkdirs();
             return file.getAbsolutePath() + File.separator + s;
         } catch (Exception e) {
-            LeanBackUtil.log("TabImageView => getPath => " + e.getMessage());
+            LeanBackUtil.log("TabTextView => getPath => " + e.getMessage());
             return null;
         }
     }
@@ -361,7 +367,7 @@ class TabTextView extends TextView {
             if (!file.exists()) throw new Exception("url not find from sdcard");
             return true;
         } catch (Exception e) {
-            LeanBackUtil.log("TabImageView => checkPath => " + e.getMessage());
+            LeanBackUtil.log("TabTextView => checkPath => " + e.getMessage());
             return false;
         }
     }
