@@ -2,9 +2,12 @@ package lib.kalu.leanback.presenter;
 
 import android.content.Context;
 import android.graphics.Rect;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewParent;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 
@@ -21,6 +24,7 @@ import lib.kalu.leanback.list.RecyclerViewVertical;
 import lib.kalu.leanback.list.layoutmanager.BaseLinearLayoutManager;
 import lib.kalu.leanback.presenter.bean.TvPresenterRowBean;
 import lib.kalu.leanback.presenter.impl.ListTvPresenterImpl;
+import lib.kalu.leanback.radio.RadioGroupHorizontal;
 import lib.kalu.leanback.util.LeanBackUtil;
 
 public abstract class ListTvRadioGroupListPresenter<T extends TvPresenterRowBean> extends Presenter implements ListTvPresenterImpl {
@@ -44,7 +48,7 @@ public abstract class ListTvRadioGroupListPresenter<T extends TvPresenterRowBean
             setTitleTextSize(context, inflate, R.id.module_leanback_lrgl_title);
             setTitleAssetTTF(context, inflate, R.id.module_leanback_lrgl_title);
             setTitleBackgroundColor(context, inflate, R.id.module_leanback_lrgl_title);
-            initContent(context, inflate);
+            initBackground(context, inflate);
             initRadioGroup(context, inflate);
             initAdapter(context, inflate);
             return new ViewHolder(inflate);
@@ -54,7 +58,7 @@ public abstract class ListTvRadioGroupListPresenter<T extends TvPresenterRowBean
         }
     }
 
-    private void initContent(Context context, View viewGroup) {
+    private void initBackground(Context context, View viewGroup) {
         try {
             if (null == viewGroup)
                 throw new Exception("viewGroup error: null");
@@ -64,10 +68,10 @@ public abstract class ListTvRadioGroupListPresenter<T extends TvPresenterRowBean
             int childCount = viewById.getChildCount();
             if (childCount > 0)
                 throw new Exception("childCount warning: " + childCount);
-            LayoutInflater.from(context).inflate(initLayoutContent(), viewById, true);
-            onCreateHolderContent(viewGroup, viewById);
+            LayoutInflater.from(context).inflate(initLayoutBackground(), viewById, true);
+            onCreateHolderBackground(viewGroup, viewById);
         } catch (Exception e) {
-            LeanBackUtil.log("ListTvRadioGroupListPresenter => initContent => " + e.getMessage());
+            LeanBackUtil.log("ListTvRadioGroupListPresenter => initBackground => " + e.getMessage());
         }
     }
 
@@ -128,7 +132,7 @@ public abstract class ListTvRadioGroupListPresenter<T extends TvPresenterRowBean
             recyclerView.getAdapter().notifyItemRangeChanged(0, mData.size());
             View viewById = viewGroup.findViewById(R.id.module_leanback_lrgl_contont);
             playerPosition = 0;
-            onBindHolderContent(viewGroup, viewById, 0, mData.get(0), isFromUser);
+            onBindHolderBackground(viewGroup, viewById, 0, mData.get(0), isFromUser);
         } catch (Exception e) {
             LeanBackUtil.log("ListTvRadioGroupListPresenter => switchData => " + e.getMessage());
         }
@@ -165,7 +169,7 @@ public abstract class ListTvRadioGroupListPresenter<T extends TvPresenterRowBean
         }
     }
 
-    private final void initAdapter(Context context, View viewGroup) {
+    private void initAdapter(Context context, View viewGroup) {
         try {
             RecyclerView recyclerView = viewGroup.findViewById(R.id.module_leanback_lrgl_list);
             if (null == recyclerView)
@@ -217,7 +221,7 @@ public abstract class ListTvRadioGroupListPresenter<T extends TvPresenterRowBean
                                             throw new Exception("position error: " + position);
                                         View viewById = viewGroup.findViewById(R.id.module_leanback_lrgl_contont);
                                         playerPosition = position;
-                                        onBindHolderContent(viewGroup, viewById, position, mData.get(position), true);
+                                        onBindHolderBackground(viewGroup, viewById, position, mData.get(position), true);
                                     } catch (Exception e) {
                                         LeanBackUtil.log("ListTvRadioGroupListPresenter => initAdapter => onClick => " + e.getMessage());
                                     }
@@ -236,13 +240,36 @@ public abstract class ListTvRadioGroupListPresenter<T extends TvPresenterRowBean
                                             throw new Exception("hasFocus warning: false");
                                         playerPosition = position;
                                         View viewById = viewGroup.findViewById(R.id.module_leanback_lrgl_contont);
-                                        onBindHolderContent(viewGroup, viewById, position, mData.get(position), true);
+                                        onBindHolderBackground(viewGroup, viewById, position, mData.get(position), true);
                                     } catch (Exception e) {
                                         LeanBackUtil.log("ListTvRadioGroupListPresenter => initAdapter => onFocusChange => " + e.getMessage());
                                     }
                                 }
                             });
                             onCreateHolderItem(holder, mData);
+                            holder.itemView.setOnKeyListener(new View.OnKeyListener() {
+                                @Override
+                                public boolean onKey(View view, int i, KeyEvent keyEvent) {
+                                    // action_down => keycode_dpad_left
+                                    if (keyEvent.getAction() == KeyEvent.ACTION_DOWN && keyEvent.getKeyCode() == KeyEvent.KEYCODE_DPAD_LEFT) {
+                                        int checkedIndex = getCheckedIndexFromRadioGroup(viewGroup);
+                                        if (checkedIndex > 0) {
+                                            setCheckedIndexFromRadioGroup(viewGroup, checkedIndex - 1);
+                                            return true;
+                                        }
+                                    }
+                                    // action_down => keycode_dpad_right
+                                    else if (keyEvent.getAction() == KeyEvent.ACTION_DOWN && keyEvent.getKeyCode() == KeyEvent.KEYCODE_DPAD_RIGHT) {
+                                        int checkedIndex = getCheckedIndexFromRadioGroup(viewGroup);
+                                        int childCount = getChildCountFromRadioGroup(viewGroup);
+                                        if (checkedIndex + 1 < childCount) {
+                                            setCheckedIndexFromRadioGroup(viewGroup, checkedIndex + 1);
+                                            return true;
+                                        }
+                                    }
+                                    return false;
+                                }
+                            });
                             return holder;
                         } catch (Exception e) {
                             LeanBackUtil.log("ListTvRadioGroupListPresenter => initAdapter => onCreateViewHolder => " + e.getMessage(), e);
@@ -281,7 +308,7 @@ public abstract class ListTvRadioGroupListPresenter<T extends TvPresenterRowBean
     protected abstract int initLayoutItem();
 
     @LayoutRes
-    protected abstract int initLayoutContent();
+    protected abstract int initLayoutBackground();
 
     @LayoutRes
     protected abstract int initLayoutRadioGroup();
@@ -294,10 +321,10 @@ public abstract class ListTvRadioGroupListPresenter<T extends TvPresenterRowBean
     protected void onBindHolderItem(@NonNull RecyclerView.ViewHolder holder, int position, T t) {
     }
 
-    protected void onCreateHolderContent(@NonNull View rootGroup, @NonNull View contentGroup) {
+    protected void onCreateHolderBackground(@NonNull View rootGroup, @NonNull View contentGroup) {
     }
 
-    protected void onBindHolderContent(@NonNull View rootGroup, @NonNull View contentGroup, int position, T t, boolean isFromUser) {
+    protected void onBindHolderBackground(@NonNull View rootGroup, @NonNull View contentGroup, int position, T t, boolean isFromUser) {
     }
 
     protected void onCreateHolderRadioGroup(@NonNull View rootGroup, @NonNull RadioGroup radioGroup) {
@@ -384,7 +411,7 @@ public abstract class ListTvRadioGroupListPresenter<T extends TvPresenterRowBean
             recyclerView.scrollBy(0, -measuredHeight);
             View viewById = viewGroup.findViewById(R.id.module_leanback_lrgl_contont);
             playerPosition = playerPosition - 1;
-            onBindHolderContent(viewGroup, viewById, playerPosition, mData.get(playerPosition), true);
+            onBindHolderBackground(viewGroup, viewById, playerPosition, mData.get(playerPosition), true);
         } catch (Exception e) {
             LeanBackUtil.log("ListTvRadioGroupListPresenter => switchPlayerUp => " + e.getMessage());
         }
@@ -405,7 +432,7 @@ public abstract class ListTvRadioGroupListPresenter<T extends TvPresenterRowBean
             recyclerView.scrollBy(0, measuredHeight);
             View viewById = viewGroup.findViewById(R.id.module_leanback_lrgl_contont);
             playerPosition = playerPosition + 1;
-            onBindHolderContent(viewGroup, viewById, playerPosition, mData.get(playerPosition), true);
+            onBindHolderBackground(viewGroup, viewById, playerPosition, mData.get(playerPosition), true);
         } catch (Exception e) {
             LeanBackUtil.log("ListTvRadioGroupListPresenter => switchPlayerDown => " + e.getMessage());
         }
@@ -434,6 +461,78 @@ public abstract class ListTvRadioGroupListPresenter<T extends TvPresenterRowBean
         } catch (Exception e) {
             LeanBackUtil.log("ListTvRadioGroupListPresenter => getViewItemForPosition => " + e.getMessage());
             return null;
+        }
+    }
+
+    private int getCheckedIndexFromRadioGroup(@NonNull View viewGroup) {
+        try {
+            if (null == viewGroup)
+                throw new Exception("parent error: null");
+            if (viewGroup.getId() != R.id.module_leanback_lep_root)
+                throw new Exception("id error: != R.id.module_leanback_lep_root");
+            RadioGroupHorizontal radioGroup = viewGroup.findViewById(R.id.module_leanback_lrgl_radio);
+            if (null == radioGroup)
+                throw new Exception("radioGroup error: null");
+            int childCount = radioGroup.getChildCount();
+            if (childCount <= 0)
+                throw new Exception("childCount error: " + childCount);
+            for (int i = 0; i < childCount; i++) {
+                View childAt = radioGroup.getChildAt(i);
+                if (null == childAt)
+                    continue;
+                if (!(childAt instanceof RadioButton))
+                    continue;
+                boolean checked = ((RadioButton) childAt).isChecked();
+                if (checked)
+                    return i;
+            }
+            throw new Exception("not find");
+        } catch (Exception e) {
+            LeanBackUtil.log("ListTvRadioGroupListPresenter => getCheckedIndexFromRadioGroup => " + e.getMessage());
+            return -1;
+        }
+    }
+
+    private int getChildCountFromRadioGroup(@NonNull View viewGroup) {
+        try {
+            if (null == viewGroup)
+                throw new Exception("parent error: null");
+            if (viewGroup.getId() != R.id.module_leanback_lep_root)
+                throw new Exception("id error: != R.id.module_leanback_lep_root");
+            RadioGroupHorizontal radioGroup = viewGroup.findViewById(R.id.module_leanback_lrgl_radio);
+            if (null == radioGroup)
+                throw new Exception("radioGroup error: null");
+            int childCount = radioGroup.getChildCount();
+            return childCount;
+        } catch (Exception e) {
+            LeanBackUtil.log("ListTvRadioGroupListPresenter => getChildCountFromRadioGroup => " + e.getMessage());
+            return 0;
+        }
+    }
+
+    private void setCheckedIndexFromRadioGroup(@NonNull View viewGroup, int index) {
+        try {
+            if (null == viewGroup)
+                throw new Exception("parent error: null");
+            if (viewGroup.getId() != R.id.module_leanback_lep_root)
+                throw new Exception("id error: != R.id.module_leanback_lep_root");
+            RadioGroupHorizontal radioGroup = viewGroup.findViewById(R.id.module_leanback_lrgl_radio);
+            if (null == radioGroup)
+                throw new Exception("radioGroup error: null");
+            int childCount = radioGroup.getChildCount();
+            if (childCount <= 0)
+                throw new Exception("childCount error: " + childCount);
+            for (int i = 0; i < childCount; i++) {
+                View childAt = radioGroup.getChildAt(i);
+                if (null == childAt)
+                    continue;
+                if (!(childAt instanceof RadioButton))
+                    continue;
+                ((RadioButton) childAt).setChecked(i == index);
+            }
+            throw new Exception("not find");
+        } catch (Exception e) {
+            LeanBackUtil.log("ListTvRadioGroupListPresenter => setCheckedIndexFromRadioGroup => " + e.getMessage());
         }
     }
 }
