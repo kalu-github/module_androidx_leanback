@@ -1,5 +1,5 @@
 # bean
--keepattributes Signature
+-keep class lib.kalu.leanback.presenter.bean.**{*;}
 -keep class * extends lib.kalu.leanback.presenter.bean.TvEpisodesPlusItemBean  {
       public <init>();
  }
