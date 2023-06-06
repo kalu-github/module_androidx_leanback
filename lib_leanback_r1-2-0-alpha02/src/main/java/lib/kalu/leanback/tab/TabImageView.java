@@ -278,20 +278,26 @@ class TabImageView extends ImageView {
 
     private void show(String url, boolean isBg) {
 
-        boolean checkPath = checkPath(url);
-        // file
-        if (checkPath) {
-            String path = getPath(url);
-            Drawable drawable = decodeDrawable(getContext(), path, false);
-            if (isBg) {
-                setBackground(drawable);
-            } else {
-                setImageDrawable(drawable);
+        try {
+            boolean checkPath = checkPath(url);
+            // file
+            if (checkPath) {
+                String path = getPath(url);
+                if (null == path || path.length() == 0)
+                    throw new Exception("path error: null");
+                Drawable drawable = decodeDrawable(getContext(), path, false);
+                if (isBg) {
+                    setBackground(drawable);
+                } else {
+                    setImageDrawable(drawable);
+                }
             }
-        }
-        // download
-        else {
-            download(url, isBg);
+            // download
+            else {
+                download(url, isBg);
+            }
+        } catch (Exception e) {
+            LeanBackUtil.log("TabImageView => show => " + e.getMessage());
         }
     }
 
@@ -303,7 +309,8 @@ class TabImageView extends ImageView {
             if (null == url || url.length() == 0)
                 throw new Exception("url error: " + url);
             downloadUrl = url;
-            new Thread(new Runnable() {
+            Executors.newSingleThreadExecutor().shutdownNow();
+            Executors.newSingleThreadExecutor().submit(new Runnable() {
                 @Override
                 public void run() {
                     try {
@@ -336,18 +343,22 @@ class TabImageView extends ImageView {
                             }
                         });
                     } catch (Exception e) {
-                        LeanBackUtil.log("TabImageView => checkPath => " + e.getMessage());
+                        downloadUrl = null;
+                        LeanBackUtil.log("TabImageView => download => " + e.getMessage());
                     }
                 }
-            }).start();
+            });
         } catch (Exception e) {
-            LeanBackUtil.log("TabImageView => checkPath => " + e.getMessage());
+            LeanBackUtil.log("TabImageView => download => " + e.getMessage());
         }
     }
 
     private String getPath(@NonNull String url) {
         try {
-            if (null == url || url.length() == 0) throw new Exception("url is null");
+            if (null == url || url.length() == 0)
+                throw new Exception("url is null");
+            if (null != downloadUrl && !downloadUrl.equals(url))
+                throw new Exception("url is change");
             MessageDigest digest = MessageDigest.getInstance("MD5");
             byte[] bytes = digest.digest(url.getBytes());
             StringBuilder builder = new StringBuilder();
@@ -369,6 +380,7 @@ class TabImageView extends ImageView {
             return file.getAbsolutePath() + File.separator + s;
         } catch (Exception e) {
             LeanBackUtil.log("TabImageView => getPath => " + e.getMessage());
+            downloadUrl = null;
             return null;
         }
     }

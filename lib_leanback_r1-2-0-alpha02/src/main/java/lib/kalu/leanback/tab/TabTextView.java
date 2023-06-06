@@ -30,6 +30,7 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.security.MessageDigest;
+import java.util.concurrent.Executors;
 
 import lib.kalu.leanback.tab.model.TabModel;
 import lib.kalu.leanback.tab.ninepatch.NinePatchChunk;
@@ -288,7 +289,8 @@ class TabTextView extends TextView {
             if (null == url || url.length() == 0)
                 throw new Exception("url error: " + url);
             downloadUrl = url;
-            new Thread(new Runnable() {
+            Executors.newSingleThreadExecutor().shutdownNow();
+            Executors.newSingleThreadExecutor().submit(new Runnable() {
                 @Override
                 public void run() {
                     try {
@@ -317,17 +319,25 @@ class TabTextView extends TextView {
                         post(new Runnable() {
                             @Override
                             public void run() {
-                                Drawable drawable = decodeDrawable(getContext(), path, false);
-                                setBackground(drawable);
+                                try {
+                                    if (!url.equals(downloadUrl))
+                                        throw new Exception("url warning: change url");
+                                    Drawable drawable = decodeDrawable(getContext(), path, false);
+                                    setBackground(drawable);
+                                }catch (Exception e){
+                                    downloadUrl = null;
+                                    LeanBackUtil.log("TabTextView => download => " + e.getMessage());
+                                }
                             }
                         });
                     } catch (Exception e) {
-                        LeanBackUtil.log("TabTextView => checkPath => " + e.getMessage());
+                        downloadUrl = null;
+                        LeanBackUtil.log("TabTextView => download => " + e.getMessage());
                     }
                 }
-            }).start();
+            });
         } catch (Exception e) {
-            LeanBackUtil.log("TabTextView => checkPath => " + e.getMessage());
+            LeanBackUtil.log("TabTextView => download => " + e.getMessage());
         }
     }
 
