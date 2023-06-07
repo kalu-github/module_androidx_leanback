@@ -2,6 +2,7 @@ package lib.kalu.leanback.presenter;
 
 import android.content.Context;
 import android.graphics.Rect;
+import android.os.Looper;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -398,25 +399,7 @@ public abstract class ListTvRadioGroupListPresenter<T extends TvPresenterRowBean
         }
     }
 
-    public void switchUp(@NonNull View viewGroup) {
-        switchUp(viewGroup, null);
-    }
-
-    public void switchUp(@NonNull View viewGroup, @StringRes int resId) {
-        try {
-            if (null == viewGroup)
-                throw new Exception("viewGroup error: null");
-            String s = viewGroup.getResources().getString(resId);
-            if (null == s || s.length() == 0)
-                throw new Exception("s warning: " + s);
-            switchUp(viewGroup, s);
-        } catch (Exception e) {
-            switchUp(viewGroup, null);
-            LeanBackUtil.log("ListTvRadioGroupListPresenter => switchUp => " + e.getMessage());
-        }
-    }
-
-    public void switchUp(@NonNull View viewGroup, @NonNull String s) {
+    public boolean switchUp(@NonNull View viewGroup) {
         try {
             if (null == viewGroup)
                 throw new Exception("viewGroup error: null");
@@ -434,33 +417,14 @@ public abstract class ListTvRadioGroupListPresenter<T extends TvPresenterRowBean
             View viewById = viewGroup.findViewById(R.id.module_leanback_lrgl_contont);
             playerPosition = playerPosition - 1;
             onBindHolderBackground(viewGroup, viewById, playerPosition, mData.get(playerPosition), true);
+            return true;
         } catch (Exception e) {
-            if (null != viewGroup && null != s && s.length() > 0) {
-                Toast.makeText(viewGroup.getContext(), s, Toast.LENGTH_SHORT).show();
-            }
             LeanBackUtil.log("ListTvRadioGroupListPresenter => switchUp => " + e.getMessage());
+            return false;
         }
     }
 
-    public void switchDown(@NonNull View viewGroup) {
-        switchDown(viewGroup, null);
-    }
-
-    public void switchDown(@NonNull View viewGroup, @StringRes int resId) {
-        try {
-            if (null == viewGroup)
-                throw new Exception("viewGroup error: null");
-            String s = viewGroup.getResources().getString(resId);
-            if (null == s || s.length() == 0)
-                throw new Exception("s warning: " + s);
-            switchDown(viewGroup, s);
-        } catch (Exception e) {
-            switchDown(viewGroup, null);
-            LeanBackUtil.log("ListTvRadioGroupListPresenter => switchDown => " + e.getMessage());
-        }
-    }
-
-    public void switchDown(@NonNull View viewGroup, @NonNull String s) {
+    public boolean switchDown(@NonNull View viewGroup) {
         try {
             RecyclerViewVertical recyclerView = viewGroup.findViewById(R.id.module_leanback_lrgl_list);
             if (null == recyclerView)
@@ -476,11 +440,10 @@ public abstract class ListTvRadioGroupListPresenter<T extends TvPresenterRowBean
             View viewById = viewGroup.findViewById(R.id.module_leanback_lrgl_contont);
             playerPosition = playerPosition + 1;
             onBindHolderBackground(viewGroup, viewById, playerPosition, mData.get(playerPosition), true);
+            return true;
         } catch (Exception e) {
-            if (null != viewGroup && null != s && s.length() > 0) {
-                Toast.makeText(viewGroup.getContext(), s, Toast.LENGTH_SHORT).show();
-            }
             LeanBackUtil.log("ListTvRadioGroupListPresenter => switchDown => " + e.getMessage());
+            return false;
         }
     }
 
