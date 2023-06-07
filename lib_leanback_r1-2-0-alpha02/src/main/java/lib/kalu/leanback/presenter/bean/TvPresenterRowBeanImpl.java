@@ -5,7 +5,7 @@ import androidx.annotation.Keep;
 import java.io.Serializable;
 
 @Keep
-public class TvPresenterRowBeanImpl  implements TvPresenterRowBean, Serializable {
+public class TvPresenterRowBeanImpl  extends TvRadioGroupItemBean implements Serializable {
 
     private String rowTitle;
 
