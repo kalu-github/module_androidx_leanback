@@ -10,9 +10,11 @@ import android.view.ViewParent;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
+import androidx.annotation.StringRes;
 import androidx.leanback.R;
 import androidx.leanback.widget.Presenter;
 import androidx.recyclerview.widget.RecyclerView;
@@ -396,8 +398,28 @@ public abstract class ListTvRadioGroupListPresenter<T extends TvPresenterRowBean
         }
     }
 
-    public void switchPlayerUp(@NonNull View viewGroup) {
+    public void switchUp(@NonNull View viewGroup) {
+        switchUp(viewGroup, null);
+    }
+
+    public void switchUp(@NonNull View viewGroup, @StringRes int resId) {
         try {
+            if (null == viewGroup)
+                throw new Exception("viewGroup error: null");
+            String s = viewGroup.getResources().getString(resId);
+            if (null == s || s.length() == 0)
+                throw new Exception("s warning: " + s);
+            switchUp(viewGroup, s);
+        } catch (Exception e) {
+            switchUp(viewGroup, null);
+            LeanBackUtil.log("ListTvRadioGroupListPresenter => switchUp => " + e.getMessage());
+        }
+    }
+
+    public void switchUp(@NonNull View viewGroup, @NonNull String s) {
+        try {
+            if (null == viewGroup)
+                throw new Exception("viewGroup error: null");
             RecyclerViewVertical recyclerView = viewGroup.findViewById(R.id.module_leanback_lrgl_list);
             if (null == recyclerView)
                 throw new Exception("recyclerView error: null");
@@ -413,11 +435,32 @@ public abstract class ListTvRadioGroupListPresenter<T extends TvPresenterRowBean
             playerPosition = playerPosition - 1;
             onBindHolderBackground(viewGroup, viewById, playerPosition, mData.get(playerPosition), true);
         } catch (Exception e) {
-            LeanBackUtil.log("ListTvRadioGroupListPresenter => switchPlayerUp => " + e.getMessage());
+            if (null != viewGroup && null != s && s.length() > 0) {
+                Toast.makeText(viewGroup.getContext(), s, Toast.LENGTH_SHORT).show();
+            }
+            LeanBackUtil.log("ListTvRadioGroupListPresenter => switchUp => " + e.getMessage());
         }
     }
 
-    public void switchPlayerDown(@NonNull View viewGroup) {
+    public void switchDown(@NonNull View viewGroup) {
+        switchDown(viewGroup, null);
+    }
+
+    public void switchDown(@NonNull View viewGroup, @StringRes int resId) {
+        try {
+            if (null == viewGroup)
+                throw new Exception("viewGroup error: null");
+            String s = viewGroup.getResources().getString(resId);
+            if (null == s || s.length() == 0)
+                throw new Exception("s warning: " + s);
+            switchDown(viewGroup, s);
+        } catch (Exception e) {
+            switchDown(viewGroup, null);
+            LeanBackUtil.log("ListTvRadioGroupListPresenter => switchDown => " + e.getMessage());
+        }
+    }
+
+    public void switchDown(@NonNull View viewGroup, @NonNull String s) {
         try {
             RecyclerViewVertical recyclerView = viewGroup.findViewById(R.id.module_leanback_lrgl_list);
             if (null == recyclerView)
@@ -434,7 +477,10 @@ public abstract class ListTvRadioGroupListPresenter<T extends TvPresenterRowBean
             playerPosition = playerPosition + 1;
             onBindHolderBackground(viewGroup, viewById, playerPosition, mData.get(playerPosition), true);
         } catch (Exception e) {
-            LeanBackUtil.log("ListTvRadioGroupListPresenter => switchPlayerDown => " + e.getMessage());
+            if (null != viewGroup && null != s && s.length() > 0) {
+                Toast.makeText(viewGroup.getContext(), s, Toast.LENGTH_SHORT).show();
+            }
+            LeanBackUtil.log("ListTvRadioGroupListPresenter => switchDown => " + e.getMessage());
         }
     }
 
