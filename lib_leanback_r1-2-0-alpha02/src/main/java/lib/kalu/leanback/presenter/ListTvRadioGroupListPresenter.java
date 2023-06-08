@@ -510,6 +510,25 @@ public abstract class ListTvRadioGroupListPresenter<T extends TvRadioGroupItemBe
         }
     }
 
+    public boolean setBindHolderBackgroundForAdapterChecked(@NonNull View viewGroup) {
+        try {
+            RecyclerViewVertical recyclerView = viewGroup.findViewById(R.id.module_leanback_lrgl_list);
+            if (null == recyclerView)
+                throw new Exception("recyclerView error: null");
+            int itemCount = recyclerView.getAdapterItemCount();
+            if (itemCount <= 0)
+                throw new Exception("itemCount error: " + itemCount);
+            if (playerPosition + 1 > itemCount)
+                throw new Exception("playerPosition error: " + playerPosition);
+            View viewById = viewGroup.findViewById(R.id.module_leanback_lrgl_contont);
+            onBindHolderBackground(viewGroup, viewById, playerPosition, mData.get(playerPosition), true, false);
+            return true;
+        } catch (Exception e) {
+            LeanBackUtil.log("ListTvRadioGroupListPresenter => setBindHolderBackgroundForAdapterChecked => " + e.getMessage());
+            return false;
+        }
+    }
+
     public void switchData(View viewGroup, int position) {
         switchData(viewGroup, position, true);
     }
