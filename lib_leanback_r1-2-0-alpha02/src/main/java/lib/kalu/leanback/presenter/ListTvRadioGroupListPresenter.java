@@ -230,6 +230,7 @@ public abstract class ListTvRadioGroupListPresenter<T extends TvRadioGroupItemBe
                                             throw new Exception("position error: " + position);
                                         View viewById = viewGroup.findViewById(R.id.module_leanback_lrgl_contont);
                                         if (playerPosition != position) {
+                                            onSwitchHolderItem(viewGroup, playerPosition, position);
                                             playerPosition = position;
                                             onBindHolderBackground(viewGroup, viewById, position, mData.get(position), true, false);
                                         } else {
@@ -260,6 +261,7 @@ public abstract class ListTvRadioGroupListPresenter<T extends TvRadioGroupItemBe
                                             T t = mData.get(position);
                                             t.setChecked(true);
                                             onBindHolderItem(holder, position, t);
+                                            onSwitchHolderItem(viewGroup, playerPosition, position);
                                             playerPosition = position;
                                             View viewById = viewGroup.findViewById(R.id.module_leanback_lrgl_contont);
                                             onBindHolderBackground(viewGroup, viewById, position, mData.get(position), true, false);
@@ -378,8 +380,10 @@ public abstract class ListTvRadioGroupListPresenter<T extends TvRadioGroupItemBe
     protected void onBindHolderBackground(@NonNull View rootGroup, @NonNull View contentGroup, int position, T t, boolean isFromUser, boolean isPlaying) {
     }
 
-    protected void onCreateHolderRadioGroup(@NonNull View rootGroup, @NonNull RadioGroup
-            radioGroup) {
+    protected void onCreateHolderRadioGroup(@NonNull View rootGroup, @NonNull RadioGroup radioGroup) {
+    }
+
+    protected void onSwitchHolderItem(@NonNull View rootGroup, int oldPosition, int newPosition) {
     }
 
     /**************/
@@ -627,14 +631,28 @@ public abstract class ListTvRadioGroupListPresenter<T extends TvRadioGroupItemBe
         }
     }
 
-    public T getDataFromPlaying() {
+    public T getDataForPlaying() {
         try {
             if (playerPosition < 0)
                 throw new Exception("playerPosition error: " + playerPosition);
             int size = mData.size();
             if (playerPosition + 1 > size)
                 throw new Exception("playerPosition error: " + playerPosition + ", size error: " + size);
-            return mData.get(playerPosition);
+            return getDataForAdapterPosition(playerPosition);
+        } catch (Exception e) {
+            LeanBackUtil.log("ListTvRadioGroupListPresenter => getDataForPlaying => " + e.getMessage());
+            return null;
+        }
+    }
+
+    public T getDataForAdapterPosition(int index) {
+        try {
+            if (index < 0)
+                throw new Exception("index error: " + index);
+            int size = mData.size();
+            if (index + 1 > size)
+                throw new Exception("index error: " + index + ", size error: " + size);
+            return mData.get(index);
         } catch (Exception e) {
             LeanBackUtil.log("ListTvRadioGroupListPresenter => getDataFromPlaying => " + e.getMessage());
             return null;
