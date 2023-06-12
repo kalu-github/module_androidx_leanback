@@ -626,4 +626,18 @@ public abstract class ListTvRadioGroupListPresenter<T extends TvRadioGroupItemBe
             LeanBackUtil.log("ListTvRadioGroupListPresenter => setCheckedIndexFromRadioGroup => " + e.getMessage());
         }
     }
+
+    public T getDataFromPlaying() {
+        try {
+            if (playerPosition < 0)
+                throw new Exception("playerPosition error: " + playerPosition);
+            int size = mData.size();
+            if (playerPosition + 1 >= size)
+                throw new Exception("playerPosition error: " + playerPosition + ", size error: " + size);
+            return mData.get(playerPosition);
+        } catch (Exception e) {
+            LeanBackUtil.log("ListTvRadioGroupListPresenter => getDataFromPlaying => " + e.getMessage());
+            return null;
+        }
+    }
 }
