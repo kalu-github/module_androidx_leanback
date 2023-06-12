@@ -632,7 +632,7 @@ public abstract class ListTvRadioGroupListPresenter<T extends TvRadioGroupItemBe
             if (playerPosition < 0)
                 throw new Exception("playerPosition error: " + playerPosition);
             int size = mData.size();
-            if (playerPosition + 1 >= size)
+            if (playerPosition + 1 > size)
                 throw new Exception("playerPosition error: " + playerPosition + ", size error: " + size);
             return mData.get(playerPosition);
         } catch (Exception e) {
