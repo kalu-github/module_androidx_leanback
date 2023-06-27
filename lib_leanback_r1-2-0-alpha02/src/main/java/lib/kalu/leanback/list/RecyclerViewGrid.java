@@ -51,14 +51,12 @@ public class RecyclerViewGrid extends BaseRecyclerView {
                 if (null == focusedChild)
                     throw new Exception("focusedChild error: null");
                 View nextFocus = FocusFinder.getInstance().findNextFocus(this, focusedChild, View.FOCUS_UP);
-                if (null != nextFocus)
-                    throw new Exception("nextFocus warning: " + nextFocus);
-                int height = focusedChild.getHeight();
-                if (height < 0)
-                    throw new Exception("height error: " + height);
-                scrollBy(0, -height);
-                nextFocus.requestFocus();
-                return true;
+                if (null == nextFocus) {
+                    int height = focusedChild.getHeight();
+                    if (height < 0)
+                        throw new Exception("height error: " + height);
+                    scrollBy(0, -height);
+                }
             } catch (Exception e) {
                 leave(ViewGroup.FOCUS_UP);
                 LeanBackUtil.log("RecyclerViewGrid => dispatchKeyEvent => up-down => " + e.getMessage());
@@ -82,20 +80,19 @@ public class RecyclerViewGrid extends BaseRecyclerView {
                 int focusPosition = findFocusedChildPosition();
                 if (focusPosition < 0)
                     throw new Exception("focusPosition error: " + focusPosition);
-                if (itemCount - focusPosition <= spanCount)
-                    throw new Exception("focusPosition warning: " + focusPosition + ", itemCount = " + itemCount + ", spanCount = " + spanCount);
+                int min = Math.min(itemCount % spanCount, spanCount);
+                if (itemCount - focusPosition <= min)
+                    throw new Exception("focusPosition warning: " + focusPosition + ", itemCount = " + itemCount + ", spanCount = " + spanCount + ", min = " + min);
                 View focusedChild = getFocusedChild();
                 if (null == focusedChild)
                     throw new Exception("focusedChild error: null");
                 View nextFocus = FocusFinder.getInstance().findNextFocus(this, focusedChild, View.FOCUS_DOWN);
-                if (null != nextFocus)
-                    throw new Exception("nextFocus warning: " + nextFocus);
-                int height = focusedChild.getHeight();
-                if (height < 0)
-                    throw new Exception("height error: " + height);
-                scrollBy(0, height);
-                nextFocus.requestFocus();
-                return true;
+                if (null == nextFocus) {
+                    int height = focusedChild.getHeight();
+                    if (height < 0)
+                        throw new Exception("height error: " + height);
+                    scrollBy(0, height);
+                }
             } catch (Exception e) {
                 leave(ViewGroup.FOCUS_DOWN);
                 LeanBackUtil.log("RecyclerViewGrid => dispatchKeyEvent => down-down => " + e.getMessage());
