@@ -77,9 +77,9 @@ public abstract class ListTvEpisodesSingleGridPresenter<T extends TvEpisodesGrid
 
     private void formatData(Object item) {
         try {
-            int size = mData.size();
-            if (size > 0)
-                throw new Exception("not empty");
+//            int size = mData.size();
+//            if (size > 0)
+//                throw new Exception("not empty");
             mData.clear();
             List<T> list = (List<T>) item;
             int max = list.size();

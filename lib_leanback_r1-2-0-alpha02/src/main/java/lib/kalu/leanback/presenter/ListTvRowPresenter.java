@@ -66,9 +66,9 @@ public abstract class ListTvRowPresenter<T extends TvPresenterRowBean> extends P
 
     private final void formatData(Object item) {
         try {
-            int size = mData.size();
-            if (size > 0)
-                throw new Exception("not empty");
+//            int size = mData.size();
+//            if (size > 0)
+//                throw new Exception("not empty");
             mData.clear();
             mData.addAll((Collection<? extends T>) item);
         } catch (Exception e) {

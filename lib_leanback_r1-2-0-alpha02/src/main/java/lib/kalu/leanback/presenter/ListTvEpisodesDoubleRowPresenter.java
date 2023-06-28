@@ -316,9 +316,9 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
 
     private void formatData(Object item) {
         try {
-            int length = mMap.size();
-            if (length > 0)
-                throw new Exception("length warning: " + length);
+//            int length = mMap.size();
+//            if (length > 0)
+//                throw new Exception("length warning: " + length);
             Type genericSuperclass = getClass().getGenericSuperclass();
             if (!(genericSuperclass instanceof ParameterizedType))
                 throw new Exception("genericSuperclass error: not instanceof ParameterizedType");

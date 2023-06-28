@@ -95,11 +95,11 @@ public abstract class ListTvGridPresenter<T extends TvPresenterRowBean> extends 
         }
     }
 
-    private final void formatData(Object item) {
+    private void formatData(Object item) {
         try {
-            int size = mData.size();
-            if (size > 0)
-                throw new Exception("not empty");
+//            int size = mData.size();
+//            if (size > 0)
+//                throw new Exception("not empty");
             mData.clear();
             int max = initMax();
             if (max <= 0) {
@@ -170,7 +170,7 @@ public abstract class ListTvGridPresenter<T extends TvPresenterRowBean> extends 
         }
     }
 
-    private final void initAdapter(@NonNull Context context, @NonNull View inflate) {
+    private void initAdapter(@NonNull Context context, @NonNull View inflate) {
         try {
             RecyclerView recyclerView = inflate.findViewById(R.id.module_leanback_lgp_list);
             RecyclerView.Adapter adapter = recyclerView.getAdapter();
