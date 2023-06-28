@@ -138,7 +138,7 @@ public abstract class ListTvRadioGroupListPresenter<T extends TvRadioGroupItemBe
                 mData.add(t);
             }
             mData.get(0).setChecked(true);
-            recyclerView.getAdapter().notifyItemRangeChanged(0, mData.size());
+            recyclerView.getAdapter().notifyItemRangeInserted(0, mData.size());
             View viewById = viewGroup.findViewById(R.id.module_leanback_lrgl_contont);
             playerPosition = 0;
             onBindHolderBackground(viewGroup, viewById, 0, mData.get(0), isFromUser, false);
