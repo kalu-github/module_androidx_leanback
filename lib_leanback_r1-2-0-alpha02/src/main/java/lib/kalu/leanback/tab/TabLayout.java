@@ -233,7 +233,7 @@ public final class TabLayout extends HorizontalScrollView {
             // 1
             addAllItem(list);
             // 2
-            scrollRequest(0x9999, position, position);
+            scrollRequest(0x9999, position, position, true);
         } catch (Exception e) {
             LeanBackUtil.log("TabLayout => update => " + e.getMessage());
         }
@@ -388,6 +388,11 @@ public final class TabLayout extends HorizontalScrollView {
 
     @Keep
     private boolean scrollRequest(int direction, int position, int next) {
+        return scrollRequest(direction, position, next, false);
+    }
+
+    @Keep
+    private boolean scrollRequest(int direction, int position, int next, boolean init) {
         try {
             int childCount = getChildCount();
             if (childCount != 1) throw new Exception("childCount is not 1");
@@ -408,7 +413,11 @@ public final class TabLayout extends HorizontalScrollView {
                 }
                 ((TabLinearLayout) getChildAt(0)).requestChild(next);
                 if (null != mListener) {
-                    mListener.onChecked(next, position);
+                    if (next != position) {
+                        mListener.onChecked(next, position);
+                    } else if (init) {
+                        mListener.onChecked(next, position);
+                    }
                 }
 
             } else if (direction == View.FOCUS_LEFT) {
@@ -425,7 +434,11 @@ public final class TabLayout extends HorizontalScrollView {
                 }
                 ((TabLinearLayout) getChildAt(0)).requestChild(next);
                 if (null != mListener) {
-                    mListener.onChecked(next, position);
+                    if (next != position) {
+                        mListener.onChecked(next, position);
+                    } else if (init) {
+                        mListener.onChecked(next, position);
+                    }
                 }
             } else if (direction == 0x9999) {
                 if (position != next) {
@@ -433,7 +446,11 @@ public final class TabLayout extends HorizontalScrollView {
                 }
                 ((TabLinearLayout) getChildAt(0)).requestChild(next);
                 if (null != mListener) {
-                    mListener.onChecked(next, position);
+                    if (next != position) {
+                        mListener.onChecked(next, position);
+                    } else if (init) {
+                        mListener.onChecked(next, position);
+                    }
                 }
             }
             return true;
