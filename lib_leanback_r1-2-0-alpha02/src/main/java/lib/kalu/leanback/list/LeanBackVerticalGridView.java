@@ -9,6 +9,8 @@ import android.view.ViewParent;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import lib.kalu.leanback.util.LeanBackUtil;
+
 public class LeanBackVerticalGridView extends BaseLeanBackGridViewVertical {
     public LeanBackVerticalGridView(@NonNull Context context) {
         super(context);
@@ -124,7 +126,7 @@ public class LeanBackVerticalGridView extends BaseLeanBackGridViewVertical {
             while (true) {
                 View focusedChild = getFocusedChild();
                 if (null == focusedChild)
-                    throw new Exception();
+                    throw new Exception("focusedChild error: null");
                 int focusPosition = findFocusedChildPosition();
                 if (focusPosition <= 0) {
                     if (!hasFocus) {
@@ -146,6 +148,7 @@ public class LeanBackVerticalGridView extends BaseLeanBackGridViewVertical {
                 nextFocus.requestFocus();
             }
         } catch (Exception e) {
+            LeanBackUtil.log("LeanBackVerticalGridView => scrollTop => " + e.getMessage());
             int itemCount = getAdapterItemCount();
             if (itemCount > 0) {
                 scrollToPosition(0);
@@ -159,7 +162,7 @@ public class LeanBackVerticalGridView extends BaseLeanBackGridViewVertical {
             while (true) {
                 View focusedChild = getFocusedChild();
                 if (null == focusedChild)
-                    throw new Exception();
+                    throw new Exception("focusedChild error: null");
                 int focusPosition = findFocusedChildPosition();
                 int adapterItemCount = getAdapterItemCount();
                 if (focusPosition + 1 >= adapterItemCount) {
@@ -182,6 +185,7 @@ public class LeanBackVerticalGridView extends BaseLeanBackGridViewVertical {
                 nextFocus.requestFocus();
             }
         } catch (Exception e) {
+            LeanBackUtil.log("LeanBackVerticalGridView => scrollBottom => " + e.getMessage());
             int itemCount = getAdapterItemCount();
             if (itemCount > 0) {
                 scrollToPosition(itemCount - 1);
