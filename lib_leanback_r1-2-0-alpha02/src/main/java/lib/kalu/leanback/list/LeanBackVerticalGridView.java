@@ -8,6 +8,7 @@ import android.view.ViewParent;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.view.ViewCompat;
 
 import lib.kalu.leanback.util.LeanBackUtil;
 
@@ -121,6 +122,19 @@ public class LeanBackVerticalGridView extends BaseLeanBackGridViewVertical {
         }
     }
 
+//    public void scrollTopCompat() {
+//        try {
+//            View focusedChild = getFocusedChild();
+//            if (null == focusedChild)
+//                throw new Exception("focusedChild error: null");
+//            int paddingTop = getPaddingTop();
+//            scrollBy(0, -paddingTop);
+//            scrollBy(0, -Integer.MAX_VALUE);
+//        } catch (Exception e) {
+//            LeanBackUtil.log("LeanBackVerticalGridView => scrollTopCompat => " + e.getMessage());
+//        }
+//    }
+
     public void scrollTop(boolean hasFocus) {
         try {
             while (true) {
@@ -155,6 +169,19 @@ public class LeanBackVerticalGridView extends BaseLeanBackGridViewVertical {
             }
         }
     }
+
+//    public void scrollBottomCompat() {
+//        try {
+//            View focusedChild = getFocusedChild();
+//            if (null == focusedChild)
+//                throw new Exception("focusedChild error: null");
+//            int paddingBottom = getPaddingBottom();
+//            scrollBy(0, paddingBottom);
+//            scrollBy(0, Integer.MAX_VALUE);
+//        } catch (Exception e) {
+//            LeanBackUtil.log("LeanBackVerticalGridView => scrollBottomCompat => " + e.getMessage());
+//        }
+//    }
 
     public void scrollBottom(boolean hasFocus) {
 
