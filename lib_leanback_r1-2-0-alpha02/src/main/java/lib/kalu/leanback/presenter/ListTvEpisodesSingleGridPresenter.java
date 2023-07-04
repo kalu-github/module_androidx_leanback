@@ -217,27 +217,36 @@ public abstract class ListTvEpisodesSingleGridPresenter<T extends TvEpisodesGrid
                             view.setOnKeyListener(new View.OnKeyListener() {
                                 @Override
                                 public boolean onKey(View v, int keyCode, KeyEvent event) {
-                                    LeanBackUtil.log("ListTvEpisodesGridPresenter => onKey => aition = " + event.getAction() + ", keyCode = " + keyCode);
-                                    // up-leave
+                                    // action_down => keycode_dpad_up
                                     if (event.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_DPAD_UP) {
-                                        int cur = holder.getAbsoluteAdapterPosition();
-                                        LeanBackUtil.log("ListTvEpisodesGridPresenter => onKey => up-leave => cur = " + cur);
-                                        if (cur >= 0 && cur % 2 == 0) {
-                                            v.setTag(R.id.lb_presenter_episodes_grid, true);
-                                            T t = mData.get(cur);
+                                        try {
+                                            int adapterPosition = holder.getAbsoluteAdapterPosition();
+                                            if (adapterPosition < 0 || adapterPosition % 2 != 0)
+                                                throw new Exception("adapterPosition error: " + adapterPosition);
+                                            T t = mData.get(adapterPosition);
+                                            if (null == t)
+                                                throw new Exception("t error: null");
                                             t.setChecked(true);
                                             t.setFocus(false);
+                                            v.setTag(R.id.lb_presenter_episodes_grid, true);
+                                        } catch (Exception e) {
+                                            LeanBackUtil.log("ListTvEpisodesGridPresenter => onKey => action_down => keycode_dpad_down => " + e.getMessage());
                                         }
                                     }
-                                    // down-leave
+                                    // action_down => keycode_dpad_down
                                     else if (event.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_DPAD_DOWN) {
-                                        int cur = holder.getAbsoluteAdapterPosition();
-                                        LeanBackUtil.log("ListTvEpisodesGridPresenter => onKey => down-leave => cur = " + cur);
-                                        if (cur >= 0 && cur % 2 == 1) {
-                                            T t = mData.get(cur);
+                                        try {
+                                            int adapterPosition = holder.getAbsoluteAdapterPosition();
+                                            if (adapterPosition < 0 || adapterPosition % 2 != 1)
+                                                throw new Exception("adapterPosition error: " + adapterPosition);
+                                            T t = mData.get(adapterPosition);
+                                            if (null == t)
+                                                throw new Exception("t error: null");
                                             t.setChecked(true);
                                             t.setFocus(false);
                                             v.setTag(R.id.lb_presenter_episodes_grid, true);
+                                        } catch (Exception e) {
+                                            LeanBackUtil.log("ListTvEpisodesGridPresenter => onKey => action_down => keycode_dpad_down => " + e.getMessage());
                                         }
                                     }
                                     // action_up => keycode_dpad_down
