@@ -229,38 +229,6 @@ public abstract class ListTvEpisodesSingleGridPresenter<T extends TvEpisodesGrid
                                             t.setFocus(false);
                                         }
                                     }
-                                    // up-into up-move
-                                    else if (event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_DPAD_UP) {
-
-                                        int adapterPosition = holder.getAbsoluteAdapterPosition();
-                                        // into
-                                        if (adapterPosition % 2 == 1) {
-                                            LeanBackUtil.log("ListTvEpisodesGridPresenter => onKey => up-into => adapterPosition = " + adapterPosition);
-
-                                            int checkedPosition = -1;
-                                            for (T t : mData) {
-                                                if (null == t)
-                                                    continue;
-                                                if (t.isChecked()) {
-                                                    checkedPosition = mData.indexOf(t);
-                                                }
-                                            }
-
-                                            if (checkedPosition >= 0) {
-                                                RecyclerView.ViewHolder viewHolder = recyclerView.findViewHolderForAdapterPosition(checkedPosition);
-                                                LeanBackUtil.log("ListTvEpisodesGridPresenter => onKey => up-into => viewHolder = " + viewHolder);
-                                                if (null != viewHolder) {
-                                                    viewHolder.itemView.requestFocus();
-                                                }
-                                            }
-
-                                        }
-                                        // move
-                                        else {
-                                            LeanBackUtil.log("ListTvEpisodesGridPresenter => onKey => up-move => adapterPosition = " + adapterPosition);
-                                        }
-                                        return true;
-                                    }
                                     // down-leave
                                     else if (event.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_DPAD_DOWN) {
                                         int cur = holder.getAbsoluteAdapterPosition();
@@ -272,35 +240,119 @@ public abstract class ListTvEpisodesSingleGridPresenter<T extends TvEpisodesGrid
                                             v.setTag(R.id.lb_presenter_episodes_grid, true);
                                         }
                                     }
-                                    // down-into down-move
+                                    // action_up => keycode_dpad_down
                                     else if (event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_DPAD_DOWN) {
 
-                                        int adapterPosition = holder.getAbsoluteAdapterPosition();
-                                        // into
-                                        if (adapterPosition % 2 == 0) {
-                                            LeanBackUtil.log("ListTvEpisodesGridPresenter => onKey => down-into => adapterPosition = " + adapterPosition);
-                                            int checkedPosition = -1;
-                                            for (T t : mData) {
+                                        try {
+                                            int adapterPosition = holder.getAbsoluteAdapterPosition();
+                                            if (adapterPosition < 0)
+                                                throw new Exception("adapterPosition error: " + adapterPosition);
+                                            int size = mData.size();
+                                            for (int i = 0; i < size; i++) {
+                                                T t = mData.get(i);
                                                 if (null == t)
                                                     continue;
-                                                if (t.isChecked()) {
-                                                    checkedPosition = mData.indexOf(t);
+                                                boolean checked = t.isChecked();
+                                                if (!checked)
+                                                    continue;
+                                                if (i == adapterPosition) {
+                                                    t.setChecked(true);
+                                                    t.setFocus(true);
+                                                    recyclerView.getAdapter().notifyItemRangeChanged(i, 1);
+                                                } else {
+                                                    t.setChecked(false);
+                                                    t.setFocus(false);
+                                                    recyclerView.getAdapter().notifyItemRangeChanged(i, 1);
                                                 }
                                             }
-                                            LeanBackUtil.log("ListTvEpisodesGridPresenter => onKey => down-into => checkedPosition = " + checkedPosition);
+                                        } catch (Exception e) {
+                                            LeanBackUtil.log("ListTvEpisodesGridPresenter => onKey => action_up => keycode_dpad_down => " + e.getMessage());
+                                        }
 
-                                            if (checkedPosition >= 0) {
-                                                RecyclerView.ViewHolder viewHolder = recyclerView.findViewHolderForAdapterPosition(checkedPosition);
-                                                LeanBackUtil.log("ListTvEpisodesGridPresenter => onKey => down-into => viewHolder = " + viewHolder);
-                                                if (null != viewHolder) {
-                                                    viewHolder.itemView.requestFocus();
+//                                        int adapterPosition = holder.getAbsoluteAdapterPosition();
+//                                        // into
+//                                        if (adapterPosition % 2 == 0) {
+//                                            LeanBackUtil.log("ListTvEpisodesGridPresenter => onKey => down-into => adapterPosition = " + adapterPosition);
+//                                            int checkedPosition = -1;
+//                                            for (T t : mData) {
+//                                                if (null == t)
+//                                                    continue;
+//                                                if (t.isChecked()) {
+//                                                    checkedPosition = mData.indexOf(t);
+//                                                }
+//                                            }
+//                                            LeanBackUtil.log("ListTvEpisodesGridPresenter => onKey => down-into => checkedPosition = " + checkedPosition);
+//
+//                                            if (checkedPosition >= 0) {
+//                                                RecyclerView.ViewHolder viewHolder = recyclerView.findViewHolderForAdapterPosition(checkedPosition);
+//                                                LeanBackUtil.log("ListTvEpisodesGridPresenter => onKey => down-into => viewHolder = " + viewHolder);
+//                                                if (null != viewHolder) {
+//                                                    viewHolder.itemView.requestFocus();
+//                                                }
+//                                            }
+//                                        }
+//                                        // move
+//                                        else {
+//                                            LeanBackUtil.log("ListTvEpisodesGridPresenter => onKey => down-move => adapterPosition = " + adapterPosition);
+//                                        }
+//                                        return true;
+                                    }
+                                    // action_up => keycode_dpad_up
+                                    else if (event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_DPAD_UP) {
+
+                                        try {
+                                            int adapterPosition = holder.getAbsoluteAdapterPosition();
+                                            if (adapterPosition < 0)
+                                                throw new Exception("adapterPosition error: " + adapterPosition);
+                                            int size = mData.size();
+                                            for (int i = 0; i < size; i++) {
+                                                T t = mData.get(i);
+                                                if (null == t)
+                                                    continue;
+                                                boolean checked = t.isChecked();
+                                                if (!checked)
+                                                    continue;
+                                                if (i == adapterPosition) {
+                                                    t.setChecked(true);
+                                                    t.setFocus(true);
+                                                    recyclerView.getAdapter().notifyItemRangeChanged(i, 1);
+                                                } else {
+                                                    t.setChecked(false);
+                                                    t.setFocus(false);
+                                                    recyclerView.getAdapter().notifyItemRangeChanged(i, 1);
                                                 }
                                             }
+                                        } catch (Exception e) {
+                                            LeanBackUtil.log("ListTvEpisodesGridPresenter => onKey => action_up => keycode_dpad_up => " + e.getMessage());
                                         }
-                                        // move
-                                        else {
-                                            LeanBackUtil.log("ListTvEpisodesGridPresenter => onKey => down-move => adapterPosition = " + adapterPosition);
-                                        }
+
+//                                        int adapterPosition = holder.getAbsoluteAdapterPosition();
+//                                        // into
+//                                        if (adapterPosition % 2 == 1) {
+//                                            LeanBackUtil.log("ListTvEpisodesGridPresenter => onKey => up-into => adapterPosition = " + adapterPosition);
+//
+//                                            int checkedPosition = -1;
+//                                            for (T t : mData) {
+//                                                if (null == t)
+//                                                    continue;
+//                                                if (t.isChecked()) {
+//                                                    checkedPosition = mData.indexOf(t);
+//                                                }
+//                                            }
+//
+//                                            if (checkedPosition >= 0) {
+//                                                RecyclerView.ViewHolder viewHolder = recyclerView.findViewHolderForAdapterPosition(checkedPosition);
+//                                                LeanBackUtil.log("ListTvEpisodesGridPresenter => onKey => up-into => viewHolder = " + viewHolder);
+//                                                if (null != viewHolder) {
+//                                                    viewHolder.itemView.requestFocus();
+//                                                }
+//                                            }
+//
+//                                        }
+//                                        // move
+//                                        else {
+//                                            LeanBackUtil.log("ListTvEpisodesGridPresenter => onKey => up-move => adapterPosition = " + adapterPosition);
+//                                        }
                                         return true;
                                     }
                                     return false;
