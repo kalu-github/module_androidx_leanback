@@ -5,8 +5,7 @@
     android:layout_height="440dp"
     android:clipChildren="false"
     android:clipToPadding="false"
-    android:focusable="false"
-    android:orientation="vertical">
+    android:focusable="false">
 
     <RelativeLayout
         android:id="@+id/module_leanback_lrgl_contont"

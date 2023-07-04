@@ -3,6 +3,7 @@ package lib.kalu.leanback.presenter;
 import android.content.Context;
 import android.graphics.Rect;
 import android.os.Looper;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -172,10 +173,29 @@ public abstract class ListTvRadioGroupListPresenter<T extends TvRadioGroupItemBe
                 radioGroup.setPadding(headPadding[0], headPadding[1], headPadding[2], headPadding[3]);
             }
             LayoutInflater.from(context).inflate(initLayoutRadioGroup(), radioGroup, true);
+            int count = radioGroup.getChildCount();
+            for (int i = 0; i < count; i++) {
+                View childAt = radioGroup.getChildAt(i);
+                if (null == childAt)
+                    continue;
+                childAt.setOnKeyListener(new View.OnKeyListener() {
+                    @Override
+                    public boolean onKey(View view, int i, KeyEvent keyEvent) {
+                        if (keyEvent.getAction() == KeyEvent.ACTION_DOWN && keyEvent.getKeyCode() == KeyEvent.KEYCODE_DPAD_DOWN) {
+                            int itemCount = getItemCount();
+                            if (itemCount <= 0)
+                                return true;
+                        }
+                        return false;
+                    }
+                });
+            }
             onCreateHolderRadioGroup(viewGroup, radioGroup);
-        } catch (Exception e) {
+        } catch (
+                Exception e) {
             LeanBackUtil.log("ListTvRadioGroupListPresenter => initRadioGroup => " + e.getMessage());
         }
+
     }
 
     private void initAdapter(Context context, View viewGroup) {
@@ -298,7 +318,9 @@ public abstract class ListTvRadioGroupListPresenter<T extends TvRadioGroupItemBe
                                         try {
                                             int position = holder.getAbsoluteAdapterPosition();
                                             if (position < 0)
-                                                throw new Exception();
+                                                throw new Exception("position error: " + position);
+                                            if (position + 1 >= mData.size())
+                                                throw new Exception("position error: " + position + ", count error: " + mData.size());
                                             T t = mData.get(position);
                                             t.setChecked(false);
                                             onBindHolderItem(holder, position, t);
@@ -310,8 +332,10 @@ public abstract class ListTvRadioGroupListPresenter<T extends TvRadioGroupItemBe
                                     else if (keyEvent.getAction() == KeyEvent.ACTION_DOWN && keyEvent.getKeyCode() == KeyEvent.KEYCODE_DPAD_UP) {
                                         try {
                                             int position = holder.getAbsoluteAdapterPosition();
-                                            if (position <= 0)
-                                                throw new Exception();
+                                            if (position < 0)
+                                                throw new Exception("position error: " + position);
+                                            if (position + 1 >= mData.size())
+                                                throw new Exception("position error: " + position + ", count error: " + mData.size());
                                             T t = mData.get(position);
                                             t.setChecked(false);
                                             onBindHolderItem(holder, position, t);
@@ -657,5 +681,9 @@ public abstract class ListTvRadioGroupListPresenter<T extends TvRadioGroupItemBe
             LeanBackUtil.log("ListTvRadioGroupListPresenter => getDataFromPlaying => " + e.getMessage());
             return null;
         }
+    }
+
+    public final int getItemCount() {
+        return mData.size();
     }
 }

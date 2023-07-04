@@ -28,6 +28,10 @@ public class RecyclerViewVertical extends BaseRecyclerView {
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
 
+        int adapterItemCount = getAdapterItemCount();
+        if (adapterItemCount <= 0)
+            return false;
+
         if (event.getRepeatCount() > 0)
             return true;
 

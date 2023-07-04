@@ -78,9 +78,9 @@ public final class RadioGroupHorizontal extends android.widget.RadioGroup {
                         return true;
                     }
                     break;
-                case KeyEvent.KEYCODE_DPAD_UP:
-                case KeyEvent.KEYCODE_DPAD_DOWN:
-                    return false;
+//                case KeyEvent.KEYCODE_DPAD_UP:
+//                case KeyEvent.KEYCODE_DPAD_DOWN:
+//                    return false;
             }
         }
         return super.dispatchKeyEvent(event);
