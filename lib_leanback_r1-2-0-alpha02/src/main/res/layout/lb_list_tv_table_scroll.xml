@@ -32,10 +32,10 @@
             android:id="@+id/module_leanback_lghp_content"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:clipChildren="false"
             android:clipToPadding="false"
-            android:focusable="false"
+            android:descendantFocusability="blocksDescendants"
+            android:focusable="true"
             android:orientation="vertical" />
 
         <ImageView

@@ -108,37 +108,150 @@ public abstract class ListTvTableScrollPresenter<T extends TvEpisodesGridItemBea
             ViewGroup viewContent = viewGroup.findViewById(R.id.module_leanback_lghp_content);
             if (null == viewContent)
                 throw new Exception("viewContent error: null");
+            viewContent.setOnKeyListener(new View.OnKeyListener() {
+                @Override
+                public boolean onKey(View view, int i, KeyEvent keyEvent) {
+                    LeanBackUtil.log("ListTvGridHorizontalPresenter => initContent => onKey => action = " + keyEvent.getAction() + ", code = " + keyEvent.getKeyCode());
+                    // action_up => keycode_dpad_down
+                    if (keyEvent.getAction() == KeyEvent.ACTION_UP && keyEvent.getKeyCode() == KeyEvent.KEYCODE_DPAD_DOWN) {
+                        try {
+                            int count = ((LinearLayout) view).getChildCount();
+                            if (count <= 0)
+                                throw new Exception("count error: " + count);
+                            ViewGroup layoutHorizontal = (ViewGroup) ((LinearLayout) view).getChildAt(0);
+                            if (null == layoutHorizontal)
+                                throw new Exception("layoutHorizontal error: null");
+                            int childCount = layoutHorizontal.getChildCount();
+                            if (childCount <= 0)
+                                throw new Exception("childCount error: " + childCount);
+                            for (int m = 0; m < childCount; m++) {
+                                View childAt = layoutHorizontal.getChildAt(m);
+                                if (null == childAt)
+                                    continue;
+                                if (childAt instanceof Space)
+                                    continue;
+                                Object tag = childAt.getTag(R.id.lb_presenter_grid_horizontal_data);
+                                if (null == tag)
+                                    continue;
+                                if (((T) tag).isPlaying()) {
+                                    ((LinearLayout) view).setDescendantFocusability(ViewGroup.FOCUS_AFTER_DESCENDANTS);
+                                    childAt.requestFocus();
+                                    return true;
+                                }
+                            }
+                            for (int m = 0; m < childCount; m++) {
+                                View childAt = layoutHorizontal.getChildAt(m);
+                                if (null == childAt)
+                                    continue;
+                                if (childAt instanceof Space)
+                                    continue;
+                                Object tag = childAt.getTag(R.id.lb_presenter_grid_horizontal_data);
+                                if (null == tag)
+                                    continue;
+                                if (((T) tag).isChecked()) {
+                                    ((LinearLayout) view).setDescendantFocusability(ViewGroup.FOCUS_AFTER_DESCENDANTS);
+                                    childAt.requestFocus();
+                                    return true;
+                                }
+                            }
+                        } catch (Exception e) {
+                            LeanBackUtil.log("ListTvGridHorizontalPresenter => initContent => onKey => " + e.getMessage(), e);
+                        }
+                    }
+                    // action_up => keycode_dpad_up
+                    else if (keyEvent.getAction() == KeyEvent.ACTION_UP && keyEvent.getKeyCode() == KeyEvent.KEYCODE_DPAD_UP) {
+                        try {
+                            int count = ((LinearLayout) view).getChildCount();
+                            if (count <= 0)
+                                throw new Exception("count error: " + count);
+                            ViewGroup layoutHorizontal = (ViewGroup) ((LinearLayout) view).getChildAt(count - 1);
+                            if (null == layoutHorizontal)
+                                throw new Exception("layoutHorizontal error: null");
+                            int childCount = layoutHorizontal.getChildCount();
+                            if (childCount <= 0)
+                                throw new Exception("childCount error: " + childCount);
+                            for (int m = 0; m < childCount; m++) {
+                                View childAt = layoutHorizontal.getChildAt(m);
+                                if (null == childAt)
+                                    continue;
+                                if (childAt instanceof Space)
+                                    continue;
+                                Object tag = childAt.getTag(R.id.lb_presenter_grid_horizontal_data);
+                                if (null == tag)
+                                    continue;
+                                if (((T) tag).isPlaying()) {
+                                    ((LinearLayout) view).setDescendantFocusability(ViewGroup.FOCUS_AFTER_DESCENDANTS);
+                                    childAt.requestFocus();
+                                    return true;
+                                }
+                            }
+                            for (int m = 0; m < childCount; m++) {
+                                View childAt = layoutHorizontal.getChildAt(m);
+                                if (null == childAt)
+                                    continue;
+                                if (childAt instanceof Space)
+                                    continue;
+                                Object tag = childAt.getTag(R.id.lb_presenter_grid_horizontal_data);
+                                if (null == tag)
+                                    continue;
+                                if (((T) tag).isChecked()) {
+                                    ((LinearLayout) view).setDescendantFocusability(ViewGroup.FOCUS_AFTER_DESCENDANTS);
+                                    childAt.requestFocus();
+                                    return true;
+                                }
+                            }
+                        } catch (Exception e) {
+                            LeanBackUtil.log("ListTvGridHorizontalPresenter => initContent => onKey => " + e.getMessage(), e);
+                        }
+                    }
+                    return false;
+                }
+            });
             int childCount = viewContent.getChildCount();
             if (childCount > 0) {
                 viewContent.removeAllViews();
             }
             for (int i = 0; i < row; i++) {
-                LinearLayout layoutGroup = new LinearLayout(context);
+                LinearLayout layoutHorizontal = new LinearLayout(context);
+                layoutHorizontal.setFocusable(false);
                 LinearLayout.LayoutParams layoutGroupLayoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
                 if (i + 1 < row) {
                     layoutGroupLayoutParams.bottomMargin = initSpaceVertical(context);
                 } else {
                     layoutGroupLayoutParams.bottomMargin = 0;
                 }
-                layoutGroup.setLayoutParams(layoutGroupLayoutParams);
-                layoutGroup.setWeightSum(column);
+                layoutHorizontal.setLayoutParams(layoutGroupLayoutParams);
+                layoutHorizontal.setWeightSum(column);
                 for (int n = 0; n < column; n++) {
-                    LayoutInflater.from(context).inflate(initLayout(), layoutGroup, true);
+                    LayoutInflater.from(context).inflate(initLayout(), layoutHorizontal, true);
                     if (i + 1 < column) {
                         Space space = new Space(context);
                         space.setFocusable(false);
                         space.setLayoutParams(new LinearLayout.LayoutParams(initSpaceHorizontal(context), LinearLayout.LayoutParams.MATCH_PARENT));
-                        layoutGroup.addView(space);
+                        layoutHorizontal.addView(space);
                     }
-                    int count = layoutGroup.getChildCount();
+                    int count = layoutHorizontal.getChildCount();
                     if (count <= 0)
                         continue;
-                    View childAt = layoutGroup.getChildAt(count - 2);
+                    View childAt = layoutHorizontal.getChildAt(count - 2);
                     if (null == childAt)
                         continue;
                     childAt.setOnFocusChangeListener(new View.OnFocusChangeListener() {
                         @Override
-                        public void onFocusChange(View view, boolean hasFocus) {
+                        public void onFocusChange(View v, boolean hasFocus) {
+                            try {
+                                if (!hasFocus)
+                                    throw new Exception("hasFocus warning: false");
+                                Object tag = v.getTag(R.id.lb_presenter_grid_horizontal_data);
+                                if (null == tag)
+                                    throw new Exception("tag error: null");
+                                int episodeIndex = ((T) tag).getEpisodeIndex();
+                                resetChild(viewGroup, v, true);
+                                ((T) tag).setChecked(true);
+                                onBindHolder(v.getContext(), v, ((T) tag), episodeIndex);
+                            } catch (Exception e) {
+                                LeanBackUtil.log("ListTvGridHorizontalPresenter => initContent => onFocusChange => " + e.getMessage());
+                            }
                         }
                     });
                     childAt.setOnClickListener(new View.OnClickListener() {
@@ -153,7 +266,7 @@ public abstract class ListTvTableScrollPresenter<T extends TvEpisodesGridItemBea
                                 if (playing) {
                                     onClickHolder(v.getContext(), v, ((T) tag), episodeIndex, episodeIndex, true);
                                 } else {
-                                    resetChild(viewGroup, v);
+                                    resetChild(viewGroup, v, false);
                                     ((T) tag).setPlaying(true);
                                     ((T) tag).setChecked(true);
                                     onBindHolder(v.getContext(), v, ((T) tag), episodeIndex);
@@ -170,7 +283,7 @@ public abstract class ListTvTableScrollPresenter<T extends TvEpisodesGridItemBea
                             // action_down => keycode_dpad_left
                             if (keyEvent.getAction() == KeyEvent.ACTION_DOWN && keyEvent.getKeyCode() == KeyEvent.KEYCODE_DPAD_LEFT) {
                                 try {
-                                    int indexOfChild = layoutGroup.indexOfChild(view);
+                                    int indexOfChild = layoutHorizontal.indexOfChild(view);
                                     if (indexOfChild > 0)
                                         throw new Exception("indexOfChild warning: " + indexOfChild);
                                     if (startPosition <= 0)
@@ -184,7 +297,7 @@ public abstract class ListTvTableScrollPresenter<T extends TvEpisodesGridItemBea
                             // action_down => keycode_dpad_right
                             else if (keyEvent.getAction() == KeyEvent.ACTION_DOWN && keyEvent.getKeyCode() == KeyEvent.KEYCODE_DPAD_RIGHT) {
                                 try {
-                                    int indexOfChild = layoutGroup.indexOfChild(view);
+                                    int indexOfChild = layoutHorizontal.indexOfChild(view);
                                     int max = 2 * column - 1;
                                     if (indexOfChild + 1 < max)
                                         throw new Exception("indexOfChild warning: " + indexOfChild);
@@ -201,22 +314,37 @@ public abstract class ListTvTableScrollPresenter<T extends TvEpisodesGridItemBea
                             // action_down => keycode_dpad_up
                             else if (keyEvent.getAction() == KeyEvent.ACTION_DOWN && keyEvent.getKeyCode() == KeyEvent.KEYCODE_DPAD_UP) {
                                 try {
+                                    Object tag = view.getTag(R.id.lb_presenter_grid_horizontal_data);
+                                    if (null == tag)
+                                        throw new Exception("tag error: null");
+                                    int episodeIndex = ((T) tag).getEpisodeIndex();
+                                    if (episodeIndex % row != 0)
+                                        throw new Exception("episodeIndex warning: " + episodeIndex);
+                                    viewContent.setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
                                 } catch (Exception e) {
-                                    LeanBackUtil.log("ListTvGridHorizontalPresenter => initContent => onKey => " + e.getMessage(), e);
+                                    LeanBackUtil.log("ListTvGridHorizontalPresenter => initContent => onKey => " + e.getMessage());
                                 }
                             }
                             // action_down => keycode_dpad_down
                             else if (keyEvent.getAction() == KeyEvent.ACTION_DOWN && keyEvent.getKeyCode() == KeyEvent.KEYCODE_DPAD_DOWN) {
                                 try {
+                                    Object tag = view.getTag(R.id.lb_presenter_grid_horizontal_data);
+                                    if (null == tag)
+                                        throw new Exception("tag error: null");
+                                    int episodeIndex = ((T) tag).getEpisodeIndex();
+                                    int v = row - 1;
+                                    if (episodeIndex % row != v)
+                                        throw new Exception("episodeIndex warning: " + episodeIndex);
+                                    viewContent.setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
                                 } catch (Exception e) {
-                                    LeanBackUtil.log("ListTvGridHorizontalPresenter => initContent => onKey => " + e.getMessage(), e);
+                                    LeanBackUtil.log("ListTvGridHorizontalPresenter => initContent => onKey => " + e.getMessage());
                                 }
                             }
                             return false;
                         }
                     });
                 }
-                viewContent.addView(layoutGroup, i);
+                viewContent.addView(layoutHorizontal, i);
             }
         } catch (Exception e) {
             LeanBackUtil.log("ListTvGridHorizontalPresenter => initContent => " + e.getMessage(), e);
@@ -368,7 +496,7 @@ public abstract class ListTvTableScrollPresenter<T extends TvEpisodesGridItemBea
         }
     }
 
-    private void resetChild(View viewGroup, View view) {
+    private void resetChild(View viewGroup, View view, boolean onlyChecked) {
         try {
             if (null == viewGroup)
                 throw new Exception("viewGroup error: null");
@@ -396,14 +524,31 @@ public abstract class ListTvTableScrollPresenter<T extends TvEpisodesGridItemBea
                     Object tag = childAt.getTag(R.id.lb_presenter_grid_horizontal_data);
                     if (null == tag)
                         continue;
-                    boolean checked = ((T) tag).isChecked();
-                    boolean playing = ((T) tag).isPlaying();
-                    if (!checked && !playing)
-                        continue;
-                    ((T) tag).setChecked(false);
-                    ((T) tag).setPlaying(false);
-                    onBindHolder(childAt.getContext(), childAt, ((T) tag), ((T) tag).getEpisodeIndex());
+
+                    if (onlyChecked) {
+                        if (!((T) tag).isChecked())
+                            continue;
+                        ((T) tag).setChecked(false);
+                        onBindHolder(childAt.getContext(), childAt, ((T) tag), ((T) tag).getEpisodeIndex());
+                    } else {
+                        if (!((T) tag).isChecked() && !((T) tag).isPlaying())
+                            continue;
+                        ((T) tag).setChecked(false);
+                        ((T) tag).setPlaying(false);
+                        onBindHolder(childAt.getContext(), childAt, ((T) tag), ((T) tag).getEpisodeIndex());
+                    }
                 }
+            }
+        } catch (Exception e) {
+            LeanBackUtil.log("ListTvGridHorizontalPresenter => resetChild => " + e.getMessage());
+        }
+
+        try {
+            for (T t : mData) {
+                if (null == t)
+                    continue;
+                t.setChecked(false);
+                t.setPlaying(false);
             }
         } catch (Exception e) {
             LeanBackUtil.log("ListTvGridHorizontalPresenter => resetChild => " + e.getMessage());
@@ -505,7 +650,7 @@ public abstract class ListTvTableScrollPresenter<T extends TvEpisodesGridItemBea
             }
             if (null == childAt)
                 throw new Exception("childAt error: null");
-            resetChild(viewGroup, null);
+            resetChild(viewGroup, null, false);
             updatePlayingCheckedIndex(checkedPosition);
             T t = mData.get(checkedPosition);
             childAt.setTag(R.id.lb_presenter_grid_horizontal_data, t);
