@@ -1,5 +1,7 @@
 package lib.kalu.leanback.presenter.bean;
 
+import android.widget.LinearLayout;
+
 import androidx.annotation.Keep;
 
 import java.io.Serializable;
