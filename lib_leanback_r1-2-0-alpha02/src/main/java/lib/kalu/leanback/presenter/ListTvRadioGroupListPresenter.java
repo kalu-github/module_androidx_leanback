@@ -319,8 +319,10 @@ public abstract class ListTvRadioGroupListPresenter<T extends TvRadioGroupItemBe
                                             int position = holder.getAbsoluteAdapterPosition();
                                             if (position < 0)
                                                 throw new Exception("position error: " + position);
-                                            if (position + 1 >= mData.size())
+                                            if (position + 1 >= mData.size()) {
+                                                onEnd(viewGroup);
                                                 throw new Exception("position error: " + position + ", count error: " + mData.size());
+                                            }
                                             T t = mData.get(position);
                                             t.setChecked(false);
                                             onBindHolderItem(holder, position, t);
@@ -408,6 +410,9 @@ public abstract class ListTvRadioGroupListPresenter<T extends TvRadioGroupItemBe
     }
 
     protected void onSwitchHolderItem(@NonNull View rootGroup, int oldPosition, int newPosition) {
+    }
+
+    protected void onEnd(@NonNull View rootGroup) {
     }
 
     /**************/
