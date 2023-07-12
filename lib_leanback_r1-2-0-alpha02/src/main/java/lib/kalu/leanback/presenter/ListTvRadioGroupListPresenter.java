@@ -261,23 +261,16 @@ public abstract class ListTvRadioGroupListPresenter<T extends TvRadioGroupItemBe
                                     }
                                 }
                             });
+                            boolean[] mPressBack = new boolean[]{false};
                             view.setOnFocusChangeListener(new View.OnFocusChangeListener() {
                                 @Override
                                 public void onFocusChange(View v, boolean hasFocus) {
                                     try {
                                         int position = holder.getAbsoluteAdapterPosition();
-                                        if (playerPosition == -1 && position <= 0)
-                                            throw new Exception("position error: " + position);
-                                        if (position == playerPosition) {
-                                            if (!hasFocus && playerPosition > 0) {
-                                                T t = mData.get(position);
-                                                t.setChecked(false);
-                                                onBindHolderItem(holder, position, t);
-                                            }
-                                            throw new Exception("playerPosition warning: " + playerPosition + ", hasFocus = " + hasFocus);
-                                        } else {
-                                            if (!hasFocus)
-                                                throw new Exception("hasFocus warning: false");
+                                        // 获焦
+                                        if (hasFocus) {
+                                            if (playerPosition == -1 && position <= 0)
+                                                throw new Exception("position error: " + position);
                                             T t = mData.get(position);
                                             t.setChecked(true);
                                             onBindHolderItem(holder, position, t);
@@ -286,18 +279,33 @@ public abstract class ListTvRadioGroupListPresenter<T extends TvRadioGroupItemBe
                                             View viewById = viewGroup.findViewById(R.id.module_leanback_lrgl_contont);
                                             onBindHolderBackground(viewGroup, viewById, position, mData.get(position), true, false);
                                         }
+                                        // 失焦
+                                        else {
+                                            if (!mPressBack[0]) {
+                                                mPressBack[0] = false;
+                                                throw new Exception("mPressBack[0] error: " + mPressBack[0]);
+                                            }
+                                            if (playerPosition == 0 && position == 0)
+                                                throw new Exception("position error: " + position);
+                                            T t = mData.get(position);
+                                            t.setChecked(false);
+                                            onBindHolderItem(holder, position, t);
+                                        }
                                     } catch (Exception e) {
                                         LeanBackUtil.log("ListTvRadioGroupListPresenter => initAdapter => onFocusChange => " + e.getMessage());
                                     }
                                 }
                             });
-
                             onCreateHolderItem(holder, mData);
                             holder.itemView.setOnKeyListener(new View.OnKeyListener() {
                                 @Override
                                 public boolean onKey(View view, int i, KeyEvent keyEvent) {
                                     // action_down => keycode_dpad_left
-                                    if (keyEvent.getAction() == KeyEvent.ACTION_DOWN && keyEvent.getKeyCode() == KeyEvent.KEYCODE_DPAD_LEFT) {
+                                    if (keyEvent.getAction() == KeyEvent.ACTION_DOWN && keyEvent.getKeyCode() == KeyEvent.KEYCODE_BACK) {
+                                        mPressBack[0] = true;
+                                    }
+                                    // action_down => keycode_dpad_left
+                                    else if (keyEvent.getAction() == KeyEvent.ACTION_DOWN && keyEvent.getKeyCode() == KeyEvent.KEYCODE_DPAD_LEFT) {
                                         int checkedIndex = getCheckedIndexFromRadioGroup(viewGroup);
                                         if (checkedIndex > 0) {
                                             setCheckedIndexFromRadioGroup(viewGroup, checkedIndex - 1);
@@ -319,32 +327,40 @@ public abstract class ListTvRadioGroupListPresenter<T extends TvRadioGroupItemBe
                                             int position = holder.getAbsoluteAdapterPosition();
                                             if (position < 0)
                                                 throw new Exception("position error: " + position);
-                                            if (position + 1 >= mData.size()) {
-                                                onEnd(viewGroup);
-                                                throw new Exception("position error: " + position + ", count error: " + mData.size());
-                                            }
-                                            T t = mData.get(position);
-                                            t.setChecked(false);
-                                            onBindHolderItem(holder, position, t);
+                                            int nextPosition = position + 1;
+                                            if (nextPosition >= mData.size())
+                                                throw new Exception("nextPosition error: " + nextPosition + ", count error: " + mData.size());
                                         } catch (Exception e) {
+                                            onLast(viewGroup);
                                             LeanBackUtil.log("ListTvRadioGroupListPresenter => initAdapter => onKey => " + e.getMessage());
                                         }
                                     }
-                                    // action_down => keycode_dpad_up
-                                    else if (keyEvent.getAction() == KeyEvent.ACTION_DOWN && keyEvent.getKeyCode() == KeyEvent.KEYCODE_DPAD_UP) {
-                                        try {
-                                            int position = holder.getAbsoluteAdapterPosition();
-                                            if (position < 0)
-                                                throw new Exception("position error: " + position);
-                                            if (position + 1 >= mData.size())
-                                                throw new Exception("position error: " + position + ", count error: " + mData.size());
-                                            T t = mData.get(position);
-                                            t.setChecked(false);
-                                            onBindHolderItem(holder, position, t);
-                                        } catch (Exception e) {
-                                            LeanBackUtil.log("ListTvRadioGroupListPresenter => initAdapter => onKey => " + e.getMessage());
-                                        }
-                                    }
+//                                    // action_down => keycode_dpad_up
+//                                    else if (keyEvent.getAction() == KeyEvent.ACTION_DOWN && keyEvent.getKeyCode() == KeyEvent.KEYCODE_DPAD_UP) {
+//                                        try {
+//                                            int position = holder.getAbsoluteAdapterPosition();
+//                                            if (position < 0)
+//                                                throw new Exception("position error: " + position);
+//                                            int nextPosition = position - 1;
+//                                            if (nextPosition < 0)
+//                                                throw new Exception("nextPosition error: " + nextPosition);
+//                                            // old
+//                                            T t1 = mData.get(position);
+//                                            t1.setChecked(false);
+//                                            onBindHolderItem(holder, position, t1);
+//                                            // new
+//                                            RecyclerView.ViewHolder nextHolder = recyclerView.findViewHolderForAdapterPosition(nextPosition);
+//                                            T t2 = mData.get(nextPosition);
+//                                            t2.setChecked(true);
+//                                            onBindHolderItem(nextHolder, nextPosition, t2);
+//                                            onSwitchHolderItem(viewGroup, playerPosition, nextPosition);
+//                                            playerPosition = nextPosition;
+//                                            View viewById = viewGroup.findViewById(R.id.module_leanback_lrgl_contont);
+//                                            onBindHolderBackground(viewGroup, viewById, nextPosition, t2, true, false);
+//                                        } catch (Exception e) {
+//                                            LeanBackUtil.log("ListTvRadioGroupListPresenter => initAdapter => onKey => " + e.getMessage());
+//                                        }
+//                                    }
                                     return false;
                                 }
                             });
@@ -412,7 +428,10 @@ public abstract class ListTvRadioGroupListPresenter<T extends TvRadioGroupItemBe
     protected void onSwitchHolderItem(@NonNull View rootGroup, int oldPosition, int newPosition) {
     }
 
-    protected void onEnd(@NonNull View rootGroup) {
+    protected void onLast(@NonNull View rootGroup) {
+    }
+
+    protected void onFirst(@NonNull View rootGroup) {
     }
 
     /**************/
