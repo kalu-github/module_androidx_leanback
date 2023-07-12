@@ -185,6 +185,19 @@ public abstract class ListTvRadioGroupListPresenter<T extends TvRadioGroupItemBe
                             int itemCount = getItemCount();
                             if (itemCount <= 0)
                                 return true;
+                            else if (playerPosition > 0) {
+                                try {
+                                    RecyclerView recyclerView = viewGroup.findViewById(R.id.module_leanback_lrgl_list);
+                                    if (null == recyclerView)
+                                        throw new Exception("recyclerView error: null");
+                                    RecyclerView.ViewHolder viewHolder = recyclerView.findViewHolderForAdapterPosition(playerPosition);
+                                    if (null == viewGroup)
+                                        throw new Exception("viewHolder error: null");
+                                    viewHolder.itemView.requestFocus();
+                                    return true;
+                                } catch (Exception e) {
+                                }
+                            }
                         }
                         return false;
                     }
