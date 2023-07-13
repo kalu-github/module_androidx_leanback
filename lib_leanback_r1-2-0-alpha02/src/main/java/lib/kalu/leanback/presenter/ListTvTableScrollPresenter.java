@@ -57,7 +57,7 @@ public abstract class ListTvTableScrollPresenter<T extends TvEpisodesGridItemBea
         // title
         updateTitle(mData, viewHolder.view, R.id.module_leanback_lghp_title);
         // show
-        updateData(viewHolder.view.getContext(), viewHolder.view, 0);
+        updateData(viewHolder.view.getContext(), viewHolder.view, 0, null);
     }
 
     @Override
@@ -292,7 +292,7 @@ public abstract class ListTvTableScrollPresenter<T extends TvEpisodesGridItemBea
                                     if (startPosition <= 0)
                                         throw new Exception("startPosition warning: " + startPosition);
                                     int start = startPosition - row;
-                                    updateData(context, viewGroup, start);
+                                    updateData(context, viewGroup, start, view);
                                 } catch (Exception e) {
                                     LeanBackUtil.log("ListTvGridHorizontalPresenter => initContent => onKey => " + e.getMessage());
                                 }
@@ -309,7 +309,7 @@ public abstract class ListTvTableScrollPresenter<T extends TvEpisodesGridItemBea
                                     if (last + 1 > size)
                                         throw new Exception("last warning: " + last + ", size = " + size);
                                     int start = startPosition + row;
-                                    updateData(context, viewGroup, start);
+                                    updateData(context, viewGroup, start, view);
                                 } catch (Exception e) {
                                     LeanBackUtil.log("ListTvGridHorizontalPresenter => initContent => onKey => " + e.getMessage());
                                 }
@@ -325,7 +325,6 @@ public abstract class ListTvTableScrollPresenter<T extends TvEpisodesGridItemBea
                                         throw new Exception("episodeIndex warning: " + episodeIndex);
                                     ((T) tag).setChecked(true);
                                     onBindHolder(view.getContext(), view, ((T) tag), episodeIndex);
-                                    viewContent.setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
                                     viewContent.setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
                                 } catch (Exception e) {
                                     LeanBackUtil.log("ListTvGridHorizontalPresenter => initContent => onKey => " + e.getMessage());
@@ -411,7 +410,7 @@ public abstract class ListTvTableScrollPresenter<T extends TvEpisodesGridItemBea
         }
     }
 
-    private void updateData(Context context, View viewGroup, int startPosition) {
+    private void updateData(Context context, View viewGroup, int startPosition, View focusView) {
         try {
             int column = initColumn();
             int row = initRow();
@@ -449,6 +448,11 @@ public abstract class ListTvTableScrollPresenter<T extends TvEpisodesGridItemBea
                     } else {
                         view.setVisibility(View.VISIBLE);
                         T t = mData.get(index);
+                        if (null != focusView && view == focusView) {
+                            t.setFocus(true);
+                        } else {
+                            t.setFocus(false);
+                        }
                         view.setTag(R.id.lb_presenter_grid_horizontal_data, t);
                         onBindHolder(context, view, t, index);
                     }
@@ -474,20 +478,20 @@ public abstract class ListTvTableScrollPresenter<T extends TvEpisodesGridItemBea
 //        }
 //    }
 
-    private int getCheckedIndex() {
-        try {
-            for (T t : mData) {
-                if (null == t)
-                    continue;
-                if (t.isChecked())
-                    return mData.indexOf(t);
-            }
-            throw new Exception("not find");
-        } catch (Exception e) {
-            LeanBackUtil.log("ListTvGridHorizontalPresenter => getCheckedIndex => " + e.getMessage());
-            return -1;
-        }
-    }
+//    private int getCheckedIndex() {
+//        try {
+//            for (T t : mData) {
+//                if (null == t)
+//                    continue;
+//                if (t.isChecked())
+//                    return mData.indexOf(t);
+//            }
+//            throw new Exception("not find");
+//        } catch (Exception e) {
+//            LeanBackUtil.log("ListTvGridHorizontalPresenter => getCheckedIndex => " + e.getMessage());
+//            return -1;
+//        }
+//    }
 
     private void updatePlayingCheckedIndex(int index) {
         try {
