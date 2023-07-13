@@ -274,18 +274,22 @@ public abstract class ListTvRadioGroupListPresenter<T extends TvRadioGroupItemBe
                                     }
                                 }
                             });
-//                            boolean[] mUp = new boolean[]{false};
-//                            boolean[] mDown = new boolean[]{false};
                             view.setOnFocusChangeListener(new View.OnFocusChangeListener() {
                                 @Override
                                 public void onFocusChange(View v, boolean hasFocus) {
                                     try {
+                                        if (!hasFocus)
+                                            throw new Exception("hasFocus warning: false");
                                         int position = holder.getAbsoluteAdapterPosition();
                                         if (position < 0)
                                             throw new Exception("position error: " + position);
-                                        if (hasFocus) {
-                                            if (playerPosition == -1 && position == 0)
-                                                throw new Exception("mInit[0] warning: true");
+                                        if (playerPosition == -1 && position == 0) {
+                                            T t = mData.get(position);
+                                            onCheckedRepeat(holder, position, t);
+                                        } else if (position == playerPosition) {
+                                            T t = mData.get(position);
+                                            onCheckedRepeat(holder, position, t);
+                                        } else {
                                             T t = mData.get(position);
                                             t.setChecked(true);
                                             onBindHolderItem(holder, position, t);
@@ -293,20 +297,6 @@ public abstract class ListTvRadioGroupListPresenter<T extends TvRadioGroupItemBe
                                             playerPosition = position;
                                             View viewById = viewGroup.findViewById(R.id.module_leanback_lrgl_contont);
                                             onBindHolderBackground(viewGroup, viewById, position, mData.get(position), true, false);
-                                        } else {
-//                                            if (mUp[0]) {
-//                                                mUp[0] = false;
-//                                                if (position == 0) {
-//                                                    playerPosition = -1;
-//                                                    throw new Exception("position warning: " + position);
-//                                                }
-//                                            }
-//                                            if (!mUp[0] && !mDown[0]) {
-//                                                throw new Exception("focus warning: null");
-//                                            }
-//                                            T t = mData.get(position);
-//                                            t.setChecked(false);
-//                                            onBindHolderItem(holder, position, t);
                                         }
                                     } catch (Exception e) {
                                         LeanBackUtil.log("ListTvRadioGroupListPresenter => initAdapter => onFocusChange => " + e.getMessage());
@@ -498,6 +488,9 @@ public abstract class ListTvRadioGroupListPresenter<T extends TvRadioGroupItemBe
     }
 
     protected void onFirst(@NonNull View rootGroup) {
+    }
+
+    protected void onCheckedRepeat(@NonNull RecyclerView.ViewHolder holder, int position, T t) {
     }
 
     /**************/

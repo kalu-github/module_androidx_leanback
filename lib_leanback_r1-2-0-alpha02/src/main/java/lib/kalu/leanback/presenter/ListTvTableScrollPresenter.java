@@ -306,7 +306,7 @@ public abstract class ListTvTableScrollPresenter<T extends TvEpisodesGridItemBea
                                         throw new Exception("indexOfChild warning: " + indexOfChild);
                                     int last = startPosition + row * column;
                                     int size = mData.size();
-                                    if (last + 1 >= size)
+                                    if (last + 1 > size)
                                         throw new Exception("last warning: " + last + ", size = " + size);
                                     int start = startPosition + row;
                                     updateData(context, viewGroup, start);
@@ -443,7 +443,7 @@ public abstract class ListTvTableScrollPresenter<T extends TvEpisodesGridItemBea
                     }
                     mReal += 1;
                     int size = mData.size();
-                    if (index + 1 >= size) {
+                    if (index + 1 > size) {
                         view.setTag(R.id.lb_presenter_grid_horizontal_data, null);
                         view.setVisibility(View.INVISIBLE);
                     } else {
@@ -702,7 +702,7 @@ public abstract class ListTvTableScrollPresenter<T extends TvEpisodesGridItemBea
             T t = mData.get(checkedPosition);
             childAt.setTag(R.id.lb_presenter_grid_horizontal_data, t);
             onBindHolder(childAt.getContext(), childAt, t, checkedPosition);
-            onClickHolder(childAt.getContext(), childAt, t, checkedPosition, t.getEpisodeIndex(), false);
+            onClickHolder(childAt.getContext(), childAt, t, checkedPosition, -1, false);
         } catch (Exception e) {
             LeanBackUtil.log("ListTvGridHorizontalPresenter => checkedPlayingPosition => " + e.getMessage());
         }
