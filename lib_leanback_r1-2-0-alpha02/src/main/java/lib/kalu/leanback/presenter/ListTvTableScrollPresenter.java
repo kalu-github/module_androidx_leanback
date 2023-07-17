@@ -156,6 +156,22 @@ public abstract class ListTvTableScrollPresenter<T extends TvEpisodesGridItemBea
                                     return true;
                                 }
                             }
+
+                            for (int m = 0; m < childCount; m++) {
+                                View childAt = layoutHorizontal.getChildAt(m);
+                                if (null == childAt)
+                                    continue;
+                                if (childAt instanceof Space)
+                                    continue;
+                                Object tag = childAt.getTag(R.id.lb_presenter_grid_horizontal_data);
+                                if (null == tag)
+                                    continue;
+                                ((T) tag).setChecked(true);
+                                ((LinearLayout) view).setDescendantFocusability(ViewGroup.FOCUS_AFTER_DESCENDANTS);
+                                childAt.requestFocus();
+                                return true;
+                            }
+
                         } catch (Exception e) {
                             LeanBackUtil.log("ListTvGridHorizontalPresenter => initContent => onKey => " + e.getMessage(), e);
                         }
