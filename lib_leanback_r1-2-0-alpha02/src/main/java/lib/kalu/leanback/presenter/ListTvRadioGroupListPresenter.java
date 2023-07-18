@@ -204,8 +204,7 @@ public abstract class ListTvRadioGroupListPresenter<T extends TvRadioGroupItemBe
                 });
             }
             onCreateHolderRadioGroup(viewGroup, radioGroup);
-        } catch (
-                Exception e) {
+        } catch (Exception e) {
             LeanBackUtil.log("ListTvRadioGroupListPresenter => initRadioGroup => " + e.getMessage());
         }
 
@@ -738,19 +737,19 @@ public abstract class ListTvRadioGroupListPresenter<T extends TvRadioGroupItemBe
         }
     }
 
-    public T getDataForPlaying() {
-        try {
-            if (playerPosition < 0)
-                throw new Exception("playerPosition error: " + playerPosition);
-            int size = mData.size();
-            if (playerPosition + 1 > size)
-                throw new Exception("playerPosition error: " + playerPosition + ", size error: " + size);
-            return getDataForAdapterPosition(playerPosition);
-        } catch (Exception e) {
-            LeanBackUtil.log("ListTvRadioGroupListPresenter => getDataForPlaying => " + e.getMessage());
-            return null;
-        }
-    }
+//    public T getDataForPlaying() {
+//        try {
+//            if (playerPosition < 0)
+//                throw new Exception("playerPosition error: " + playerPosition);
+//            int size = mData.size();
+//            if (playerPosition + 1 > size)
+//                throw new Exception("playerPosition error: " + playerPosition + ", size error: " + size);
+//            return getDataForAdapterPosition(playerPosition);
+//        } catch (Exception e) {
+//            LeanBackUtil.log("ListTvRadioGroupListPresenter => getDataForPlaying => " + e.getMessage());
+//            return null;
+//        }
+//    }
 
     public T getDataForAdapterPosition(int index) {
         try {
@@ -768,5 +767,21 @@ public abstract class ListTvRadioGroupListPresenter<T extends TvRadioGroupItemBe
 
     public final int getItemCount() {
         return mData.size();
+    }
+
+    public final void requestRadioGroup(@NonNull View viewGroup) {
+        try {
+            if (null == viewGroup)
+                throw new Exception("viewGroup error: null");
+            int id = viewGroup.getId();
+            if (id != R.id.module_leanback_lep_root)
+                throw new Exception("id error: not R.id.module_leanback_lep_root");
+            RadioGroupHorizontal radioGroupHorizontal = viewGroup.findViewById(R.id.module_leanback_lrgl_radio);
+            if (null == radioGroupHorizontal)
+                throw new Exception("radioGroupHorizontal error: null");
+            radioGroupHorizontal.requestFocus();
+        } catch (Exception e) {
+            LeanBackUtil.log("ListTvRadioGroupListPresenter => requestRadioGroup => " + e.getMessage());
+        }
     }
 }
