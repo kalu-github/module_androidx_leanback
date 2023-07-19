@@ -311,6 +311,13 @@ public abstract class ListTvRadioGroupListPresenter<T extends TvRadioGroupItemBe
                                     if (keyEvent.getAction() == KeyEvent.ACTION_DOWN && keyEvent.getKeyCode() == KeyEvent.KEYCODE_DPAD_LEFT) {
                                         int checkedIndex = getCheckedIndexFromRadioGroup(viewGroup);
                                         if (checkedIndex > 0) {
+                                            try {
+                                                int position = holder.getAbsoluteAdapterPosition();
+                                                if (position < 0)
+                                                    throw new Exception("position error: " + position);
+                                                onFocusChangeItem(viewGroup, position, false);
+                                            } catch (Exception e) {
+                                            }
                                             setCheckedIndexFromRadioGroup(viewGroup, checkedIndex - 1);
                                             return true;
                                         }
@@ -320,6 +327,13 @@ public abstract class ListTvRadioGroupListPresenter<T extends TvRadioGroupItemBe
                                         int checkedIndex = getCheckedIndexFromRadioGroup(viewGroup);
                                         int childCount = getChildCountFromRadioGroup(viewGroup);
                                         if (checkedIndex + 1 < childCount) {
+                                            try {
+                                                int position = holder.getAbsoluteAdapterPosition();
+                                                if (position < 0)
+                                                    throw new Exception("position error: " + position);
+                                                onFocusChangeItem(viewGroup, position, false);
+                                            } catch (Exception e) {
+                                            }
                                             setCheckedIndexFromRadioGroup(viewGroup, checkedIndex + 1);
                                             return true;
                                         }
@@ -333,6 +347,7 @@ public abstract class ListTvRadioGroupListPresenter<T extends TvRadioGroupItemBe
                                             int nextPosition = position + 1;
                                             if (nextPosition >= mData.size())
                                                 throw new Exception("nextPosition error: " + nextPosition + ", count error: " + mData.size());
+                                            onFocusChangeItem(viewGroup, position, false);
 //                                            // old
 //                                            T t1 = mData.get(position);
 //                                            t1.setChecked(false);
@@ -363,6 +378,7 @@ public abstract class ListTvRadioGroupListPresenter<T extends TvRadioGroupItemBe
                                             RecyclerView.ViewHolder viewHolder = recyclerView.findViewHolderForAdapterPosition(beforePosition);
                                             if (null == viewHolder)
                                                 throw new Exception("viewHolder error: null");
+                                            onFocusChangeItem(viewGroup, position, false);
                                             T t = mData.get(beforePosition);
                                             t.setChecked(false);
                                             onBindHolderItem(viewHolder, beforePosition, t);
@@ -379,6 +395,7 @@ public abstract class ListTvRadioGroupListPresenter<T extends TvRadioGroupItemBe
                                             int nextPosition = position - 1;
                                             if (nextPosition < 0)
                                                 throw new Exception("nextPosition error: " + nextPosition);
+                                            onFocusChangeItem(viewGroup, position, false);
 //                                            // old
 //                                            T t1 = mData.get(position);
 //                                            t1.setChecked(false);
@@ -409,6 +426,7 @@ public abstract class ListTvRadioGroupListPresenter<T extends TvRadioGroupItemBe
                                             RecyclerView.ViewHolder viewHolder = recyclerView.findViewHolderForAdapterPosition(beforePosition);
                                             if (null == viewHolder)
                                                 throw new Exception("viewHolder error: null");
+                                            onFocusChangeItem(viewGroup, position, false);
                                             T t = mData.get(beforePosition);
                                             t.setChecked(false);
                                             onBindHolderItem(viewHolder, beforePosition, t);
@@ -469,6 +487,9 @@ public abstract class ListTvRadioGroupListPresenter<T extends TvRadioGroupItemBe
     }
 
     protected void onBindHolderItem(@NonNull RecyclerView.ViewHolder holder, int position, T t) {
+    }
+
+    protected void onFocusChangeItem(@NonNull View viewGroup, @NonNull int position, @NonNull boolean hasFocus) {
     }
 
     protected void onCreateHolderBackground(@NonNull View rootGroup, @NonNull View contentGroup) {
