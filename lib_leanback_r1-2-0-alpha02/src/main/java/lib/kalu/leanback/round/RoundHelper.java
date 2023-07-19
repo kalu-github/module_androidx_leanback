@@ -15,6 +15,8 @@ import android.os.Build;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.ScaleAnimation;
 
 import androidx.annotation.NonNull;
 import androidx.core.view.ViewCompat;
@@ -164,6 +166,11 @@ final class RoundHelper {
     protected void onFocusChanged(@NonNull View view, boolean gainFocus) {
         if (mScale < 1F)
             return;
+//        Animation animation = new ScaleAnimation(0, 1.0f, 0f, 1.0f);
+//        animation.setDuration(mDuration);//动画时间
+//        animation.setRepeatCount(1);//动画的重复次数
+//        animation.setFillAfter(false);//设置为true，动画转化结束后被应用
+//        imageView1.startAnimation(animation);//开始动画
         ViewCompat.animate(view).scaleX(gainFocus ? mScale : 1f).scaleY(gainFocus ? mScale : 1f).setDuration(mDuration).start();
     }
 
