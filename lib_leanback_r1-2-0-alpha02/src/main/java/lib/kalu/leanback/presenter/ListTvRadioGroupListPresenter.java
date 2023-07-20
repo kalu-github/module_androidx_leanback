@@ -306,6 +306,12 @@ public abstract class ListTvRadioGroupListPresenter<T extends TvRadioGroupItemBe
                             holder.itemView.setOnKeyListener(new View.OnKeyListener() {
                                 @Override
                                 public boolean onKey(View view, int i, KeyEvent keyEvent) {
+
+                                    int repeatCount = keyEvent.getRepeatCount();
+                                    if (repeatCount > 0) {
+                                        return true;
+                                    }
+
                                     LeanBackUtil.log("ListTvRadioGroupListPresenter => initAdapter => onKey => action = " + keyEvent.getAction() + ", code = " + keyEvent.getKeyCode());
                                     // action_down => keycode_dpad_left
                                     if (keyEvent.getAction() == KeyEvent.ACTION_DOWN && keyEvent.getKeyCode() == KeyEvent.KEYCODE_DPAD_LEFT) {
