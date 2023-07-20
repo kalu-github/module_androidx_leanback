@@ -58,8 +58,8 @@ public abstract class ListTvTableScrollPresenter<T extends TvEpisodesGridItemBea
         formatData(item);
         // title
         updateTitle(mData, viewHolder.view, R.id.module_leanback_lghp_title);
-        // show
-//        updateData(viewHolder.view.getContext(), viewHolder.view, 0, null);
+        // icon
+        updateIconVisibility(viewHolder.view, 0);
     }
 
     @Override
@@ -326,6 +326,7 @@ public abstract class ListTvTableScrollPresenter<T extends TvEpisodesGridItemBea
                                     if (startPosition <= 0)
                                         throw new Exception("startPosition warning: " + startPosition);
                                     int start = startPosition - row;
+                                    updateIconVisibility(viewGroup, start);
                                     updateData(context, viewGroup, start, view, -1);
                                 } catch (Exception e) {
                                     LeanBackUtil.log("ListTvGridHorizontalPresenter => initContent => onKey => " + e.getMessage());
@@ -343,6 +344,7 @@ public abstract class ListTvTableScrollPresenter<T extends TvEpisodesGridItemBea
                                     if (last + 1 > size)
                                         throw new Exception("last warning: " + last + ", size = " + size);
                                     int start = startPosition + row;
+                                    updateIconVisibility(viewGroup, start);
                                     updateData(context, viewGroup, start, view, -1);
                                 } catch (Exception e) {
                                     LeanBackUtil.log("ListTvGridHorizontalPresenter => initContent => onKey => " + e.getMessage());
@@ -389,6 +391,62 @@ public abstract class ListTvTableScrollPresenter<T extends TvEpisodesGridItemBea
             }
         } catch (Exception e) {
             LeanBackUtil.log("ListTvGridHorizontalPresenter => initContent => " + e.getMessage(), e);
+        }
+    }
+
+    private void updateIconVisibility(View viewGroup, int startIndex) {
+        try {
+            int row = initRow();
+            if (row <= 0)
+                throw new Exception("row error: " + row);
+            int column = initColumn();
+            if (column <= 0)
+                throw new Exception("column error: " + column);
+            if (null == mData)
+                throw new Exception("mData error: null");
+            int size = mData.size();
+            if (size == 0)
+                throw new Exception("size error: " + size);
+            ImageView imageView = viewGroup.findViewById(R.id.module_leanback_lghp_icon_left);
+            if (null == imageView)
+                throw new Exception("imageView error: null");
+            int num = row * column;
+            if (size <= num) {
+                imageView.setVisibility(View.INVISIBLE);
+            } else if (startIndex <= 0) {
+                imageView.setVisibility(View.INVISIBLE);
+            } else {
+                imageView.setVisibility(View.VISIBLE);
+            }
+        } catch (Exception e) {
+            LeanBackUtil.log("ListTvGridHorizontalPresenter => updateIconVisibility => " + e.getMessage(), e);
+        }
+        try {
+            int row = initRow();
+            if (row <= 0)
+                throw new Exception("row error: " + row);
+            int column = initColumn();
+            if (column <= 0)
+                throw new Exception("column error: " + column);
+            if (null == mData)
+                throw new Exception("mData error: null");
+            int size = mData.size();
+            if (size == 0)
+                throw new Exception("size error: " + size);
+            ImageView imageView = viewGroup.findViewById(R.id.module_leanback_lghp_icon_right);
+            if (null == imageView)
+                throw new Exception("imageView error: null");
+            int num = row * column;
+            int lastIndex = startIndex + num;
+            if (size <= num) {
+                imageView.setVisibility(View.INVISIBLE);
+            } else if (lastIndex >= size) {
+                imageView.setVisibility(View.INVISIBLE);
+            } else {
+                imageView.setVisibility(View.VISIBLE);
+            }
+        } catch (Exception e) {
+            LeanBackUtil.log("ListTvGridHorizontalPresenter => updateIconVisibility => " + e.getMessage(), e);
         }
     }
 
@@ -748,6 +806,7 @@ public abstract class ListTvTableScrollPresenter<T extends TvEpisodesGridItemBea
             } else {
                 startIndex = v * num;
             }
+            updateIconVisibility(viewGroup, startIndex);
             updateData(viewGroup.getContext(), viewGroup, startIndex, childAt, checkedIndex);
         } catch (Exception e) {
             LeanBackUtil.log("ListTvGridHorizontalPresenter => checkedPlayingPosition => " + e.getMessage());
