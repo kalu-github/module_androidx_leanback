@@ -812,4 +812,47 @@ public abstract class ListTvTableScrollPresenter<T extends TvEpisodesGridItemBea
             LeanBackUtil.log("ListTvGridHorizontalPresenter => checkedPlayingPosition => " + e.getMessage());
         }
     }
+
+    /******************************/
+
+    public int getEpisodeLength() {
+        return mData.size();
+    }
+
+    public int getPlayingPosition(@NonNull View viewGroup) {
+        try {
+            if (null == viewGroup)
+                throw new Exception("viewGroup error: null");
+            ViewGroup layoutVertical = viewGroup.findViewById(R.id.module_leanback_lghp_content);
+            if (null == layoutVertical)
+                throw new Exception("layoutVertical error: null");
+            if (!(layoutVertical instanceof LinearLayout))
+                throw new Exception("layoutVertical error: not instanceof LinearLayout");
+            int childCount = layoutVertical.getChildCount();
+            for (int m = 0; m < childCount; m++) {
+                View layoutHorizontal = layoutVertical.getChildAt(m);
+                if (null == layoutHorizontal)
+                    continue;
+                if (!(layoutHorizontal instanceof LinearLayout))
+                    continue;
+                int count = ((LinearLayout) layoutHorizontal).getChildCount();
+                for (int n = 0; n < count; n++) {
+                    View childAt = ((LinearLayout) layoutHorizontal).getChildAt(n);
+                    if (null == childAt)
+                        continue;
+                    if (childAt instanceof Space)
+                        continue;
+                    Object tag = childAt.getTag(R.id.lb_presenter_grid_horizontal_data);
+                    if (null == tag)
+                        continue;
+                    if (((T) tag).isPlaying())
+                        return ((T) tag).getEpisodeIndex();
+                }
+            }
+            throw new Exception("not find");
+        } catch (Exception e) {
+            LeanBackUtil.log("ListTvGridHorizontalPresenter => getPlayingPosition => " + e.getMessage());
+            return -1;
+        }
+    }
 }
