@@ -282,27 +282,6 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
         }
     }
 
-    private int getEpisodeLength() {
-        try {
-            int length = 0;
-            for (Map.Entry<T, List<T>> entry : mMap.entrySet()) {
-                List<T> value = entry.getValue();
-                if (null == value)
-                    continue;
-                int size = value.size();
-                if (size == 0)
-                    continue;
-                length += size;
-            }
-            if (length <= 0)
-                throw new Exception("length error: " + length);
-            return length;
-        } catch (Exception e) {
-            LeanBackUtil.log("ListTvEpisodesDoubleRowPresenter => getEpisodeLength => " + e.getMessage());
-            return -1;
-        }
-    }
-
     private int getRangeLength() {
         try {
             return mMap.size();
@@ -1610,6 +1589,27 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
         } catch (Exception e) {
             LeanBackUtil.log("ListTvEpisodesDoubleRowPresenter => checkedPlayingPositionRepeat => " + e.getMessage());
             return false;
+        }
+    }
+
+    public int getEpisodeLength() {
+        try {
+            int length = 0;
+            for (Map.Entry<T, List<T>> entry : mMap.entrySet()) {
+                List<T> value = entry.getValue();
+                if (null == value)
+                    continue;
+                int size = value.size();
+                if (size == 0)
+                    continue;
+                length += size;
+            }
+            if (length <= 0)
+                throw new Exception("length error: " + length);
+            return length;
+        } catch (Exception e) {
+            LeanBackUtil.log("ListTvEpisodesDoubleRowPresenter => getEpisodeLength => " + e.getMessage());
+            return -1;
         }
     }
 
