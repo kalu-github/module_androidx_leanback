@@ -756,6 +756,43 @@ public abstract class ListTvTableScrollPresenter<T extends TvEpisodesGridItemBea
 //        }
 //    }
 
+    private View findFocusView(View viewGroup) {
+        try {
+            if (null == viewGroup)
+                throw new Exception("viewGroup error: null");
+            if (viewGroup.getId() != R.id.module_leanback_lghp_root)
+                throw new Exception("viewGroup.getId error: not R.id.module_leanback_lghp_root");
+            int row = initRow();
+            if (row <= 0)
+                throw new Exception("row error: " + row);
+            int column = initColumn();
+            if (column <= 0)
+                throw new Exception("column error: " + column);
+            ViewGroup layoutVertical = viewGroup.findViewById(R.id.module_leanback_lghp_content);
+            if (null == layoutVertical)
+                throw new Exception("layoutVertical error: null");
+            int verticalChildCount = layoutVertical.getChildCount();
+            for (int i = 0; i < verticalChildCount; i++) {
+                ViewGroup layoutHorizontal = (ViewGroup) layoutVertical.getChildAt(i);
+                if (null == layoutHorizontal)
+                    continue;
+                int horizontalChildCount = layoutHorizontal.getChildCount();
+                for (int n = 0; n < horizontalChildCount; n++) {
+                    View childAt = layoutHorizontal.getChildAt(n);
+                    if (null == childAt)
+                        continue;
+                    if (childAt.hasFocus()) {
+                        return childAt;
+                    }
+                }
+            }
+            throw new Exception("not find");
+        } catch (Exception e) {
+            LeanBackUtil.log("ListTvGridHorizontalPresenter => findFocusView => " + e.getMessage());
+            return null;
+        }
+    }
+
     /********************/
 
     public void checkedPlayingPosition(@NonNull View viewGroup, @NonNull int checkedIndex) {
@@ -798,6 +835,10 @@ public abstract class ListTvTableScrollPresenter<T extends TvEpisodesGridItemBea
             View childAt = layoutHorizontal.getChildAt(columnIndex);
             if (null == childAt)
                 throw new Exception("childAt error: null");
+            View focusView = findFocusView(viewGroup);
+            if (null == focusView) {
+                focusView = childAt;
+            }
             resetChild(viewGroup, null);
             int startIndex;
             int v = checkedIndex / num;
@@ -807,7 +848,7 @@ public abstract class ListTvTableScrollPresenter<T extends TvEpisodesGridItemBea
                 startIndex = v * num;
             }
             updateIconVisibility(viewGroup, startIndex);
-            updateData(viewGroup.getContext(), viewGroup, startIndex, childAt, checkedIndex);
+            updateData(viewGroup.getContext(), viewGroup, startIndex, focusView, checkedIndex);
         } catch (Exception e) {
             LeanBackUtil.log("ListTvGridHorizontalPresenter => checkedPlayingPosition => " + e.getMessage());
         }
