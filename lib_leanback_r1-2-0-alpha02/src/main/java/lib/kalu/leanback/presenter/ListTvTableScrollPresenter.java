@@ -327,7 +327,7 @@ public abstract class ListTvTableScrollPresenter<T extends TvEpisodesGridItemBea
                                         throw new Exception("startPosition warning: " + startPosition);
                                     int start = startPosition - row;
                                     updateIconVisibility(viewGroup, start);
-                                    updateData(context, viewGroup, start, view, -1);
+                                    updateData(context, viewGroup, start, view, -1, false);
                                 } catch (Exception e) {
                                     LeanBackUtil.log("ListTvGridHorizontalPresenter => initContent => onKey => " + e.getMessage());
                                 }
@@ -345,7 +345,7 @@ public abstract class ListTvTableScrollPresenter<T extends TvEpisodesGridItemBea
                                         throw new Exception("last warning: " + last + ", size = " + size);
                                     int start = startPosition + row;
                                     updateIconVisibility(viewGroup, start);
-                                    updateData(context, viewGroup, start, view, -1);
+                                    updateData(context, viewGroup, start, view, -1, false);
                                 } catch (Exception e) {
                                     LeanBackUtil.log("ListTvGridHorizontalPresenter => initContent => onKey => " + e.getMessage());
                                 }
@@ -502,7 +502,7 @@ public abstract class ListTvTableScrollPresenter<T extends TvEpisodesGridItemBea
         }
     }
 
-    private void updateData(Context context, View viewGroup, int startPosition, View focusView, int checkIndex) {
+    private void updateData(Context context, View viewGroup, int startPosition, View focusView, int checkIndex, boolean isFromUser) {
         try {
             int column = initColumn();
             int row = initRow();
@@ -541,6 +541,8 @@ public abstract class ListTvTableScrollPresenter<T extends TvEpisodesGridItemBea
                         view.setVisibility(View.VISIBLE);
                         T t = mData.get(index);
                         if (checkIndex == -1 && null != focusView && view == focusView) {
+                            t.setFocus(true);
+                        } else if (isFromUser && null != focusView && view == focusView) {
                             t.setFocus(true);
                         } else {
                             t.setFocus(false);
@@ -848,7 +850,7 @@ public abstract class ListTvTableScrollPresenter<T extends TvEpisodesGridItemBea
                 startIndex = v * num;
             }
             updateIconVisibility(viewGroup, startIndex);
-            updateData(viewGroup.getContext(), viewGroup, startIndex, focusView, checkedIndex);
+            updateData(viewGroup.getContext(), viewGroup, startIndex, focusView, checkedIndex, true);
         } catch (Exception e) {
             LeanBackUtil.log("ListTvGridHorizontalPresenter => checkedPlayingPosition => " + e.getMessage());
         }
