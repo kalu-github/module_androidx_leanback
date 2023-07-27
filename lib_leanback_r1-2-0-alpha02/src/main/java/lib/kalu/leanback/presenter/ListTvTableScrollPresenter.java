@@ -542,7 +542,7 @@ public abstract class ListTvTableScrollPresenter<T extends TvEpisodesGridItemBea
                         T t = mData.get(index);
                         if (checkIndex == -1 && null != focusView && view == focusView) {
                             t.setFocus(true);
-                        } else if (isFromUser && null != focusView && view == focusView) {
+                        } else if (t.isPlaying() && isFromUser && null != focusView && view == focusView) {
                             t.setFocus(true);
                         } else {
                             t.setFocus(false);
