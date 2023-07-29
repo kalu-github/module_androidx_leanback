@@ -223,9 +223,15 @@ class TabImageView extends ImageView {
         }
 
         try {
-            String s = mTabModel.getImageUrl(focus, checked);
-            if (null != s && s.length() > 0) {
-                show(s, false);
+            String imgPath = mTabModel.getImagePath(focus, checked);
+            if (null != imgPath && imgPath.length() > 0) {
+                Drawable drawable = decodeDrawable(getContext(), imgPath, false);
+                setImageDrawable(drawable);
+            } else {
+                String imgUrl = mTabModel.getImageUrl(focus, checked);
+                if (null != imgUrl && imgUrl.length() > 0) {
+                    show(imgUrl, false);
+                }
             }
         } catch (Exception e) {
         }

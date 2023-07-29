@@ -93,6 +93,15 @@ public abstract class TabModel implements Serializable {
     String backgroundImageAssetsChecked;
 
     @Nullable
+    String imagePathNormal;
+
+    @Nullable
+    String imagePathFocus;
+
+    @Nullable
+    String imagePathChecked;
+
+    @Nullable
     String imageUrlNormal;
 
     @Nullable
@@ -340,6 +349,33 @@ public abstract class TabModel implements Serializable {
         this.imageUrlChecked = imageUrlChecked;
     }
 
+    @Nullable
+    public String getImagePathNormal() {
+        return imagePathNormal;
+    }
+
+    public void setImagePathNormal(@Nullable String imagePathNormal) {
+        this.imagePathNormal = imagePathNormal;
+    }
+
+    @Nullable
+    public String getImagePathFocus() {
+        return imagePathFocus;
+    }
+
+    public void setImagePathFocus(@Nullable String imagePathFocus) {
+        this.imagePathFocus = imagePathFocus;
+    }
+
+    @Nullable
+    public String getImagePathChecked() {
+        return imagePathChecked;
+    }
+
+    public void setImagePathChecked(@Nullable String imagePathChecked) {
+        this.imagePathChecked = imagePathChecked;
+    }
+
     public int getImagePlaceholderResource() {
         return imagePlaceholderResource;
     }
@@ -432,6 +468,17 @@ public abstract class TabModel implements Serializable {
             return getImageUrlChecked();
         } else {
             return getImageUrlNormal();
+        }
+    }
+
+    @NonNull
+    public String getImagePath(boolean focus, boolean checked) {
+        if (focus) {
+            return getImagePathFocus();
+        } else if (checked) {
+            return getImagePathChecked();
+        } else {
+            return getImagePathNormal();
         }
     }
 }
