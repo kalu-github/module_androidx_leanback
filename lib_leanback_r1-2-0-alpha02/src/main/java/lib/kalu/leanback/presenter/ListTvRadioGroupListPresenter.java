@@ -333,12 +333,12 @@ public abstract class ListTvRadioGroupListPresenter<T extends TvRadioGroupItemBe
                                     else if (keyEvent.getAction() == KeyEvent.ACTION_UP && keyEvent.getKeyCode() == KeyEvent.KEYCODE_DPAD_DOWN) {
                                         try {
                                             int position = holder.getAbsoluteAdapterPosition();
-                                            LeanBackUtil.log("ListTvRadioGroupListPresenter => initAdapter => onKey => position = " + position);
+                                            LeanBackUtil.log("ListTvRadioGroupListPresenter => initAdapter => onKey => position = " + position + ", playerPosition = " + playerPosition);
                                             if (position < 0)
                                                 throw new Exception("position error: " + position);
                                             // init
                                             int beforePosition = position - 1;
-                                            if (beforePosition < 0) {
+                                            if (beforePosition < 0 || position == playerPosition) {
                                                 playerPosition = position;
                                                 T t2 = mData.get(position);
                                                 t2.setChecked(true);
@@ -347,7 +347,7 @@ public abstract class ListTvRadioGroupListPresenter<T extends TvRadioGroupItemBe
                                             // sample
                                             else {
                                                 int size = mData.size();
-                                                if (position + 1 >= size)
+                                                if (position + 1 > size)
                                                     throw new Exception("position error: " + position + ", count error: " + mData.size());
                                                 RecyclerView.ViewHolder viewHolder = recyclerView.findViewHolderForAdapterPosition(beforePosition);
                                                 if (null == viewHolder)
@@ -361,9 +361,9 @@ public abstract class ListTvRadioGroupListPresenter<T extends TvRadioGroupItemBe
                                                 playerPosition = position;
                                                 T t2 = mData.get(position);
                                                 t2.setChecked(true);
+                                                onCheckedHolderItem(holder, position, t2);
                                                 onBindHolderBackground(viewGroup, position, t2, true);
                                                 onBindHolderItem(holder, position, t2, true);
-                                                onCheckedHolderItem(holder, position, t2);
                                             }
                                         } catch (Exception e) {
                                             LeanBackUtil.log("ListTvRadioGroupListPresenter => initAdapter => onKey => action_up-keycode_dpad_down " + e.getMessage());
@@ -404,9 +404,9 @@ public abstract class ListTvRadioGroupListPresenter<T extends TvRadioGroupItemBe
                                             playerPosition = position;
                                             T t2 = mData.get(position);
                                             t2.setChecked(true);
+                                            onCheckedHolderItem(holder, position, t2);
                                             onBindHolderBackground(viewGroup, position, t2, true);
                                             onBindHolderItem(holder, position, t2, true);
-                                            onCheckedHolderItem(holder, position, t2);
                                         } catch (Exception e) {
                                             LeanBackUtil.log("ListTvRadioGroupListPresenter => initAdapter => onKey => action_up-keycode_dpad_up => " + e.getMessage());
                                         }
