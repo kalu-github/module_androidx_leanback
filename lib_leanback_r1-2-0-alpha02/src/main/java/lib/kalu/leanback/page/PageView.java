@@ -9,12 +9,17 @@ import android.util.AttributeSet;
 import android.view.FocusFinder;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.animation.Animation;
 import android.view.animation.CycleInterpolator;
+import android.view.animation.TranslateAnimation;
 import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
+import androidx.core.view.ViewCompat;
+
+import lib.kalu.leanback.util.LeanBackUtil;
 
 public class PageView extends FrameLayout {
     public PageView(@NonNull Context context) {
@@ -44,11 +49,13 @@ public class PageView extends FrameLayout {
                 View focus = findFocus();
                 View nextFocus = FocusFinder.getInstance().findNextFocus(this, focus, View.FOCUS_LEFT);
                 if (null != focus && null == nextFocus) {
+                    focus.clearAnimation();
                     if (mPressNumLeft >= 1) {
                         if (null != mListener) {
                             mPressNumLeft = 0;
                             mPressNumRight = 0;
                             mListener.onLeft();
+                            return true;
                         }
                     } else {
                         mPressNumLeft++;
@@ -64,11 +71,13 @@ public class PageView extends FrameLayout {
                 View focus = findFocus();
                 View nextFocus = FocusFinder.getInstance().findNextFocus(this, focus, View.FOCUS_RIGHT);
                 if (null != focus && null == nextFocus) {
+                    focus.clearAnimation();
                     if (mPressNumRight >= 1) {
                         if (null != mListener) {
                             mPressNumLeft = 0;
                             mPressNumRight = 0;
                             mListener.onRight();
+                            return true;
                         }
                     } else {
                         mPressNumRight++;
@@ -90,41 +99,58 @@ public class PageView extends FrameLayout {
         return dispatchKeyEvent;
     }
 
-    private ObjectAnimator mObjectAnimator;
+//    private ObjectAnimator mObjectAnimator;
 
-    private final void shakeAnim() {
-
-        if (null != mObjectAnimator) {
-            mObjectAnimator.removeAllListeners();
-            mObjectAnimator.cancel();
-            mObjectAnimator = null;
+    private void shakeAnim() {
+        try {
+            View focus = findFocus();
+            if (null == focus)
+                throw new Exception("focus error: null");
+            focus.clearAnimation();
+            Animation animation = new TranslateAnimation(-4F, 0F, 4F, 0F);
+            CycleInterpolator cycleInterpolator = new CycleInterpolator(1);
+            animation.setInterpolator(cycleInterpolator);
+            animation.setDuration(40);
+            focus.startAnimation(animation);
+        } catch (Exception e) {
+            LeanBackUtil.log("PageView => shakeAnim => " + e.getMessage());
         }
 
-        View focus = findFocus();
-        if (null == focus)
-            return;
 
-        mObjectAnimator = ObjectAnimator.ofFloat(focus, "translationX", -4F, 0F, 4F, 0F);
-        mObjectAnimator.setDuration(40);
-        mObjectAnimator.setRepeatCount(1);
-        mObjectAnimator.setInterpolator(new CycleInterpolator(2));
-        mObjectAnimator.addListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                focus.requestFocus();
-            }
-
-            @Override
-            public void onAnimationCancel(Animator animation) {
-                focus.requestFocus();
-            }
-
-            @Override
-            public void onAnimationPause(Animator animation) {
-                focus.requestFocus();
-            }
-        });
-        mObjectAnimator.start();
+//        if (null != mObjectAnimator) {
+//            mObjectAnimator.removeAllListeners();
+//            mObjectAnimator.cancel();
+//            mObjectAnimator = null;
+//        }
+//
+//        View focus = findFocus();
+//        if (null == focus)
+//            return;
+//
+//        mObjectAnimator = ObjectAnimator.ofFloat(focus, "translationX", -4F, 0F, 4F, 0F);
+//        mObjectAnimator.setDuration(40);
+//        mObjectAnimator.setRepeatCount(1);
+//        mObjectAnimator.setInterpolator(new CycleInterpolator(2));
+//        mObjectAnimator.addListener(new AnimatorListenerAdapter() {
+//            @Override
+//            public void onAnimationEnd(Animator animation) {
+//                focus.requestFocus();
+//                focus.clearAnimation();
+//            }
+//
+//            @Override
+//            public void onAnimationCancel(Animator animation) {
+//                focus.requestFocus();
+//                focus.clearAnimation();
+//            }
+//
+//            @Override
+//            public void onAnimationPause(Animator animation) {
+//                focus.requestFocus();
+//                focus.clearAnimation();
+//            }
+//        });
+//        mObjectAnimator.start();
     }
 
     private int mPressNumLeft = 0;

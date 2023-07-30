@@ -176,33 +176,23 @@ final class RoundHelper {
                     .scaleX(gainFocus ? mScale : 1f)
                     .scaleY(gainFocus ? mScale : 1f)
                     .setDuration(mDuration)
-                    .setListener(new ViewPropertyAnimatorListener() {
-                        @Override
-                        public void onAnimationStart(@NonNull View view) {
-                        }
-
-                        @Override
-                        public void onAnimationEnd(@NonNull View view) {
-                            view.clearAnimation();
-                        }
-
-                        @Override
-                        public void onAnimationCancel(@NonNull View view) {
-                            view.clearAnimation();
-                        }
-                    })
-//                .withEndAction(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        ViewCompat.setScaleX(view, 1f);
-//                    }
-//                })
-//                .withStartAction(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        ViewCompat.setScaleX(view, 1f);
-//                    }
-//                })
+//                    .setListener(new ViewPropertyAnimatorListener() {
+//                        @Override
+//                        public void onAnimationStart(@NonNull View view) {
+//                        }
+//
+//                        @Override
+//                        public void onAnimationEnd(@NonNull View view) {
+//                            view.clearAnimation();
+//                            view.invalidate();
+//                        }
+//
+//                        @Override
+//                        public void onAnimationCancel(@NonNull View view) {
+//                            view.clearAnimation();
+//                            view.invalidate();
+//                        }
+//                    })
                     .start();
         } catch (Exception e) {
             LeanBackUtil.log("RoundHelper => onFocusChanged => " + e.getMessage());
