@@ -104,8 +104,8 @@ public class PageView extends FrameLayout {
             View focus = findFocus();
             if (null == focus)
                 throw new Exception("focus error: null");
-            Animation animation = new TranslateAnimation(-4F, 0F, 4F, 0F);
-            CycleInterpolator cycleInterpolator = new CycleInterpolator(1);
+            Animation animation = new TranslateAnimation(-10F, 10F, 0, 0);
+            CycleInterpolator cycleInterpolator = new CycleInterpolator(4);
             animation.setInterpolator(cycleInterpolator);
             animation.setDuration(40);
             focus.clearAnimation();
