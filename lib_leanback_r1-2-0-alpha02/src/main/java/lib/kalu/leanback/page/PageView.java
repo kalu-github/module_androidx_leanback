@@ -99,58 +99,20 @@ public class PageView extends FrameLayout {
         return dispatchKeyEvent;
     }
 
-//    private ObjectAnimator mObjectAnimator;
-
     private void shakeAnim() {
         try {
             View focus = findFocus();
             if (null == focus)
                 throw new Exception("focus error: null");
-            focus.clearAnimation();
             Animation animation = new TranslateAnimation(-4F, 0F, 4F, 0F);
             CycleInterpolator cycleInterpolator = new CycleInterpolator(1);
             animation.setInterpolator(cycleInterpolator);
             animation.setDuration(40);
+            focus.clearAnimation();
             focus.startAnimation(animation);
         } catch (Exception e) {
             LeanBackUtil.log("PageView => shakeAnim => " + e.getMessage());
         }
-
-
-//        if (null != mObjectAnimator) {
-//            mObjectAnimator.removeAllListeners();
-//            mObjectAnimator.cancel();
-//            mObjectAnimator = null;
-//        }
-//
-//        View focus = findFocus();
-//        if (null == focus)
-//            return;
-//
-//        mObjectAnimator = ObjectAnimator.ofFloat(focus, "translationX", -4F, 0F, 4F, 0F);
-//        mObjectAnimator.setDuration(40);
-//        mObjectAnimator.setRepeatCount(1);
-//        mObjectAnimator.setInterpolator(new CycleInterpolator(2));
-//        mObjectAnimator.addListener(new AnimatorListenerAdapter() {
-//            @Override
-//            public void onAnimationEnd(Animator animation) {
-//                focus.requestFocus();
-//                focus.clearAnimation();
-//            }
-//
-//            @Override
-//            public void onAnimationCancel(Animator animation) {
-//                focus.requestFocus();
-//                focus.clearAnimation();
-//            }
-//
-//            @Override
-//            public void onAnimationPause(Animator animation) {
-//                focus.requestFocus();
-//                focus.clearAnimation();
-//            }
-//        });
-//        mObjectAnimator.start();
     }
 
     private int mPressNumLeft = 0;
