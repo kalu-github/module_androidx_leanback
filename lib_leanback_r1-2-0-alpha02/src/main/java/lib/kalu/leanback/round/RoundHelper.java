@@ -172,6 +172,7 @@ final class RoundHelper {
                 throw new Exception("mScale error: " + mScale);
             if (mDuration <= 0)
                 throw new Exception("mDuration error: " + mDuration);
+            view.clearAnimation();
             ViewCompat.animate(view)
                     .scaleX(gainFocus ? mScale : 1f)
                     .scaleY(gainFocus ? mScale : 1f)
