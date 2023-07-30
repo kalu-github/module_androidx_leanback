@@ -20,7 +20,10 @@ import android.view.animation.ScaleAnimation;
 
 import androidx.annotation.NonNull;
 import androidx.core.view.ViewCompat;
+import androidx.core.view.ViewPropertyAnimatorListener;
 import androidx.leanback.R;
+
+import lib.kalu.leanback.util.LeanBackUtil;
 
 final class RoundHelper {
     public float[] mRadii = new float[8];   // top-left, top-right, bottom-right, bottom-left
@@ -164,14 +167,46 @@ final class RoundHelper {
     }
 
     protected void onFocusChanged(@NonNull View view, boolean gainFocus) {
-        if (mScale < 1F)
-            return;
-//        Animation animation = new ScaleAnimation(0, 1.0f, 0f, 1.0f);
-//        animation.setDuration(mDuration);//动画时间
-//        animation.setRepeatCount(1);//动画的重复次数
-//        animation.setFillAfter(false);//设置为true，动画转化结束后被应用
-//        imageView1.startAnimation(animation);//开始动画
-        ViewCompat.animate(view).scaleX(gainFocus ? mScale : 1f).scaleY(gainFocus ? mScale : 1f).setDuration(mDuration).start();
+        try {
+            if (mScale == 1f)
+                throw new Exception("mScale error: " + mScale);
+            if (mDuration <= 0)
+                throw new Exception("mDuration error: " + mDuration);
+            ViewCompat.animate(view)
+                    .scaleX(gainFocus ? mScale : 1f)
+                    .scaleY(gainFocus ? mScale : 1f)
+                    .setDuration(mDuration)
+                    .setListener(new ViewPropertyAnimatorListener() {
+                        @Override
+                        public void onAnimationStart(@NonNull View view) {
+                        }
+
+                        @Override
+                        public void onAnimationEnd(@NonNull View view) {
+                            view.clearAnimation();
+                        }
+
+                        @Override
+                        public void onAnimationCancel(@NonNull View view) {
+                            view.clearAnimation();
+                        }
+                    })
+//                .withEndAction(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        ViewCompat.setScaleX(view, 1f);
+//                    }
+//                })
+//                .withStartAction(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        ViewCompat.setScaleX(view, 1f);
+//                    }
+//                })
+                    .start();
+        } catch (Exception e) {
+            LeanBackUtil.log("RoundHelper => onFocusChanged => " + e.getMessage());
+        }
     }
 
     protected float getRateW() {
