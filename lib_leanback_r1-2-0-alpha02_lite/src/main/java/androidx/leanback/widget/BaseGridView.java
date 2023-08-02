@@ -1477,7 +1477,7 @@ public abstract class BaseGridView extends RecyclerView {
 
     public final ViewHolder findViewHolderForAdapterObject(Class<?> cls) {
         try {
-            String simpleName = cls.getSimpleName();
+            String simpleName = cls.();
             if (null == simpleName || simpleName.length() <= 0)
                 throw new Exception("simpleName error: " + simpleName);
             ItemBridgeAdapter itemBridgeAdapter = (ItemBridgeAdapter) getAdapter();
@@ -1487,7 +1487,7 @@ public abstract class BaseGridView extends RecyclerView {
                 Object o = objectAdapter.get(i);
                 if (null == o)
                     continue;
-                if (simpleName.equals(o.getClass().getSimpleName())) {
+                if (simpleName.equals(o.getClass().())) {
                     return findViewHolderForAdapterPosition(i);
                 }
             }

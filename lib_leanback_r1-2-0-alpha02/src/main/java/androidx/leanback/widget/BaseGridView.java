@@ -35,6 +35,9 @@ import androidx.leanback.R;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SimpleItemAnimator;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import lib.kalu.leanback.util.LeanBackUtil;
 
 /**
@@ -1475,10 +1478,10 @@ public abstract class BaseGridView extends RecyclerView {
         }
     }
 
-    public final ViewHolder findViewHolderForAdapterObject(Class<?> cls) {
+    public final ViewHolder findViewHolderForAdapterObjectFirst(@NonNull Class<?> cls) {
         try {
-            String simpleName = cls.getSimpleName();
-            if (null == simpleName || simpleName.length() <= 0)
+            String simpleName = cls.getName();
+            if (null == simpleName || simpleName.length() == 0)
                 throw new Exception("simpleName error: " + simpleName);
             ItemBridgeAdapter itemBridgeAdapter = (ItemBridgeAdapter) getAdapter();
             ArrayObjectAdapter objectAdapter = (ArrayObjectAdapter) itemBridgeAdapter.getAdapter();
@@ -1487,14 +1490,40 @@ public abstract class BaseGridView extends RecyclerView {
                 Object o = objectAdapter.get(i);
                 if (null == o)
                     continue;
-                String oName = o.getClass().getSimpleName();
+                String oName = o.getClass().getName();
                 if (simpleName.equals(oName)) {
                     return findViewHolderForAdapterPosition(i);
                 }
             }
             throw new Exception("not find");
         } catch (Exception e) {
-            LeanBackUtil.log("BaseGridView => findViewHolderForAdapterObject => " + e.getMessage());
+            LeanBackUtil.log("BaseGridView => findViewHolderForAdapterObjectFirst => " + e.getMessage());
+            return null;
+        }
+    }
+
+    public final List<ViewHolder> findViewHolderForAdapterObjectAll(@NonNull Class<?> cls) {
+        try {
+            String simpleName = cls.getName();
+            if (null == simpleName || simpleName.length() == 0)
+                throw new Exception("simpleName error: " + simpleName);
+            ArrayList<ViewHolder> viewHolders = new ArrayList<>();
+            ItemBridgeAdapter itemBridgeAdapter = (ItemBridgeAdapter) getAdapter();
+            ArrayObjectAdapter objectAdapter = (ArrayObjectAdapter) itemBridgeAdapter.getAdapter();
+            int size = objectAdapter.size();
+            for (int i = 0; i < size; i++) {
+                Object o = objectAdapter.get(i);
+                if (null == o)
+                    continue;
+                String oName = o.getClass().getName();
+                if (simpleName.equals(oName)) {
+                    ViewHolder forAdapterPosition = findViewHolderForAdapterPosition(i);
+                    viewHolders.add(forAdapterPosition);
+                }
+            }
+            return viewHolders;
+        } catch (Exception e) {
+            LeanBackUtil.log("BaseGridView => findViewHolderForAdapterObjectAll => " + e.getMessage());
             return null;
         }
     }
