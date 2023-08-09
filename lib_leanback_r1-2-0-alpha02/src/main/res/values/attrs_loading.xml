@@ -3,7 +3,6 @@
         <attr name="lv_radius" format="dimension|reference" />
         <attr name="lv_rate" format="float|reference" />
         <attr name="lv_count" format="integer|reference" />
-        <attr name="lv_color_canvas" format="color|reference" />
         <attr name="lv_color_background" format="color|reference" />
         <attr name="lv_color_round" format="color|reference" />
     </declare-styleable>
