@@ -674,7 +674,7 @@ public final class GridLayoutManager extends RecyclerView.LayoutManager {
     /**
      * Focus Scroll strategy.
      */
-    private int mFocusScrollStrategy = BaseGridView.FOCUS_SCROLL_ALIGNED;
+    private int mFocusScrollStrategy = BaseGridView.FOCUS_SCROLL_ITEM;
     /**
      * Defines how item view is aligned in the window.
      */
