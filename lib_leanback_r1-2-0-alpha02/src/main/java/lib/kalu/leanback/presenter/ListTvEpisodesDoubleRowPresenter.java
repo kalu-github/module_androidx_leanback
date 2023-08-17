@@ -655,7 +655,8 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
     }
 
     private void setPlayingEpisode(@NonNull View viewGroup,
-                                   @NonNull int indexOfChild) {
+                                   @NonNull int indexOfChild,
+                                   @NonNull int playingIndexOfChild) {
         try {
             if (null == viewGroup)
                 throw new Exception("viewGroup error: null");
@@ -678,7 +679,6 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
             T t = (T) child.getTag(R.id.lb_presenter_episode);
             if (null == t)
                 throw new Exception("t error: null");
-            int playingIndexOfChild = getEpisodeCurrentPlayingIndexOfChild(viewGroup);
             t.setPlaying(true);
             t.setChecked(true);
             child.setTag(R.id.lb_presenter_episode_playing, t);
@@ -712,11 +712,13 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
                 throw new Exception("rangeChildCount error: " + rangeChildCount);
             for (int i = 0; i < rangeChildCount; i++) {
                 View child = rangeGroup.getChildAt(i);
-                if (null == child || child.getVisibility() != View.VISIBLE)
-                    throw new Exception("child error: null");
+                if (null == child)
+                    continue;
+                if (child.getVisibility() != View.VISIBLE)
+                    continue;
                 T t = (T) child.getTag(R.id.lb_presenter_range);
                 if (null == t)
-                    throw new Exception("t error: null");
+                    continue;
                 if (t.getRangeIndex() == checkedIndex) {
                     t.setPlaying(true);
                     t.setChecked(true);
@@ -728,7 +730,6 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
                     onBindHolderRange(child.getContext(), child, t, i);
                 }
             }
-            throw new Exception("not find");
         } catch (Exception e) {
             LeanBackUtil.log("ListTvEpisodesDoubleRowPresenter => setPlayingRange => " + e.getMessage());
         }
@@ -1006,6 +1007,7 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
                 child.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
+                        int playingIndexOfChild = getEpisodeCurrentPlayingIndexOfChild(viewGroup);
                         try {
                             T t1 = (T) view.getTag(R.id.lb_presenter_episode);
                             if (null == t1)
@@ -1034,7 +1036,6 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
                             T t = (T) view.getTag(R.id.lb_presenter_episode);
                             if (null == t)
                                 throw new Exception("t error: null");
-                            int playingIndexOfChild = getEpisodeCurrentPlayingIndexOfChild(viewGroup);
                             int indexOfChild = episodeGroup.indexOfChild(child);
                             t.setPlaying(true);
                             view.setTag(R.id.lb_presenter_episode_playing, t);
@@ -1548,12 +1549,13 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
             if (!(rootGroup instanceof LinearLayout))
                 throw new Exception("rootGroup error: not instanceof LinearLayout");
 
+            int playingIndexOfChild = getEpisodeCurrentPlayingIndexOfChild(viewGroup);
             resetRange(rootGroup);
             resetEpisode(rootGroup);
             updateRange(viewGroup, startRangeIndex, checkedRangeIndex, -1);
             updateEpisode(viewGroup, checkedRangeIndex, checkedEpisodeIndex, true, true);
             setPlayingRange(viewGroup, checkedRangeIndex);
-            setPlayingEpisode(viewGroup, checkedEpisodeIndex);
+            setPlayingEpisode(viewGroup, checkedEpisodeIndex, playingIndexOfChild);
         } catch (Exception e) {
             LeanBackUtil.log("ListTvEpisodesDoubleRowPresenter => checkedPlayingPosition => " + e.getMessage());
         }
