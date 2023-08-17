@@ -35,9 +35,9 @@ public abstract class ListTvGridPresenter<T extends TvPresenterRowBean> extends 
         return mSimpleArrayMap.get(viewHolder);
     }
 
-    public List<T> getViewHolderData(@NonNull ViewHolder viewHolder) {
-        return getValue(viewHolder);
-    }
+//    public List<T> getViewHolderData(@NonNull ViewHolder viewHolder) {
+//        return getValue(viewHolder);
+//    }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent) {
