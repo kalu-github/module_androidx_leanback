@@ -164,6 +164,37 @@ public abstract class ListTvRowHeadPresenter<T extends TvPresenterRowBean> exten
                         }
                     }
 
+                    private void cleanData() {
+                        try {
+                            mData.clear();
+                        } catch (Exception e) {
+                        }
+                    }
+
+                    @Override
+                    public void onViewDetachedFromWindow(@NonNull RecyclerView.ViewHolder holder) {
+                        super.onViewDetachedFromWindow(holder);
+                        cleanData();
+                    }
+
+                    @Override
+                    public void onDetachedFromRecyclerView(@NonNull RecyclerView recyclerView) {
+                        super.onDetachedFromRecyclerView(recyclerView);
+                        cleanData();
+                    }
+
+                    @Override
+                    public void onViewAttachedToWindow(@NonNull RecyclerView.ViewHolder holder) {
+                        super.onViewAttachedToWindow(holder);
+                        checkData();
+                    }
+
+                    @Override
+                    public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
+                        super.onAttachedToRecyclerView(recyclerView);
+                        checkData();
+                    }
+
                     @NonNull
                     @Override
                     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
