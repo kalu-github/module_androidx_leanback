@@ -16,6 +16,7 @@ package androidx.leanback.widget;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
 import androidx.collection.ArrayMap;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -70,12 +71,24 @@ import java.util.Map;
  * {@link VerticalGridView} to customize child alignment.
  */
 public abstract class Presenter implements FacetProvider {
+
     /**
      * ViewHolder can be subclassed and used to cache any view accessors needed
      * to improve binding performance (for example, results of findViewById)
      * without needing to subclass a View.
      */
     public static class ViewHolder implements FacetProvider {
+
+        private Object mObject;
+
+        public Object getObject() {
+            return mObject;
+        }
+
+        public void setObject(Object mObject) {
+            this.mObject = mObject;
+        }
+
         public final View view;
         private Map<Class<?>, Object> mFacets;
 
@@ -104,13 +117,17 @@ public abstract class Presenter implements FacetProvider {
             mFacets.put(facetClass, facetImpl);
         }
 
-        public final int getChildAdapterPosition() {
-            try {
-                return ((BaseGridView) (this.view).getParent()).getChildAdapterPosition(this.view);
-            } catch (Exception e) {
-                return -1;
-            }
+        public Map<Class<?>, Object> getFacets() {
+            return mFacets;
         }
+
+//        public final int getChildAdapterPosition() {
+//            try {
+//                return ((BaseGridView) (this.view).getParent()).getChildAdapterPosition(this.view);
+//            } catch (Exception e) {
+//                return -1;
+//            }
+//        }
     }
 
     /**
