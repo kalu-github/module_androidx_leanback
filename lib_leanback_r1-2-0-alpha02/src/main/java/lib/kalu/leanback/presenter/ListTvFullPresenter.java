@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -25,7 +26,15 @@ import lib.kalu.leanback.util.LeanBackUtil;
 
 public abstract class ListTvFullPresenter<T extends TvPresenterRowBean> extends Presenter implements ListTvPresenterImpl {
 
-    private final LinkedList<T> mData = new LinkedList<>();
+    private final HashMap<ViewHolder, List<T>> mSimpleArrayMap = new HashMap<>();
+
+    private void putValue(@NonNull ViewHolder viewHolder, @NonNull List<T> list) {
+        mSimpleArrayMap.put(viewHolder, list);
+    }
+
+    private List<T> getValue(@NonNull ViewHolder viewHolder) {
+        return mSimpleArrayMap.get(viewHolder);
+    }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent) {
@@ -41,8 +50,9 @@ public abstract class ListTvFullPresenter<T extends TvPresenterRowBean> extends 
             setTitleTextSize(context, inflate, R.id.module_leanback_llf_title);
             setTitleAssetTTF(context, inflate, R.id.module_leanback_llf_title);
             setTitleBackgroundColor(context, inflate, R.id.module_leanback_llf_title);
-            initAdapter(context, inflate);
-            return new ViewHolder(inflate);
+            ViewHolder viewHolder = new ViewHolder(inflate);
+            initAdapter(context, inflate, viewHolder);
+            return viewHolder;
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -51,13 +61,10 @@ public abstract class ListTvFullPresenter<T extends TvPresenterRowBean> extends 
 
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, Object item) {
-
         // data
-        formatData(item);
-
+        formatData(viewHolder, item);
         // header
-        updateTitle(viewHolder.view);
-
+        updateTitle(viewHolder);
         // list
         updateAdapter(viewHolder.view);
     }
@@ -66,7 +73,7 @@ public abstract class ListTvFullPresenter<T extends TvPresenterRowBean> extends 
     public void onUnbindViewHolder(ViewHolder viewHolder) {
     }
 
-    private final void updateAdapter(View view) {
+    private void updateAdapter(View view) {
         try {
             RecyclerView recyclerView = view.findViewById(R.id.module_leanback_llf_list);
             recyclerView.getAdapter().notifyDataSetChanged();
@@ -75,36 +82,35 @@ public abstract class ListTvFullPresenter<T extends TvPresenterRowBean> extends 
         }
     }
 
-    private final void formatData(Object item) {
+    private void formatData(ViewHolder viewHolder, Object item) {
         try {
-//            int size = mData.size();
-//            if (size > 0)
-//                throw new Exception("not empty");
-            mData.clear();
-            mData.addAll((Collection<? extends T>) item);
+            List<T> value = getValue(viewHolder);
+            if (null != value)
+                throw new Exception("value warning: not null");
+            putValue(viewHolder, (List<T>) item);
         } catch (Exception e) {
             LeanBackUtil.log("ListTvFullPresenter => formatData => " + e.getMessage(), e);
         }
     }
 
-    private final void updateTitle(View view) {
+    private void updateTitle(@NonNull ViewHolder viewHolder) {
 
         String rowTitle;
         try {
-            rowTitle = initRowTitle(view.getContext());
+            rowTitle = initRowTitle(viewHolder.view.getContext());
         } catch (Exception e) {
             rowTitle = null;
         }
         try {
             if (null == rowTitle || rowTitle.length() <= 0) {
-                T t = mData.get(0);
+                T t = getValue(viewHolder).get(0);
                 rowTitle = t.getRowTitle();
             }
         } catch (Exception e) {
         }
 
         try {
-            TextView textView = view.findViewById(R.id.module_leanback_llf_title);
+            TextView textView = viewHolder.view.findViewById(R.id.module_leanback_llf_title);
             textView.setText(rowTitle);
             textView.setVisibility(View.VISIBLE);
         } catch (Exception e) {
@@ -112,7 +118,7 @@ public abstract class ListTvFullPresenter<T extends TvPresenterRowBean> extends 
         }
     }
 
-    private final void initAdapter(@NonNull Context context, @NonNull View inflate) {
+    private void initAdapter(@NonNull Context context, @NonNull View inflate, @NonNull ViewHolder viewHolder) {
         try {
 
             // 1
@@ -137,7 +143,7 @@ public abstract class ListTvFullPresenter<T extends TvPresenterRowBean> extends 
                 LinearLayoutManager manager = new LinearLayoutManager(context) {
                     @Override
                     public boolean canScrollHorizontally() {
-                        int size = mData.size();
+                        int size = getValue(viewHolder).size();
                         return ListTvFullPresenter.this.canScrollHorizontally(size);
                     }
 
@@ -170,7 +176,7 @@ public abstract class ListTvFullPresenter<T extends TvPresenterRowBean> extends 
                             View view = LayoutInflater.from(context).inflate(initLayout(viewType), parent, false);
                             RecyclerView.ViewHolder holder = new RecyclerView.ViewHolder(view) {
                             };
-                            onCreateHolder(context, holder, view, mData);
+                            onCreateHolder(context, holder, view, getValue(viewHolder));
                             return holder;
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -181,7 +187,7 @@ public abstract class ListTvFullPresenter<T extends TvPresenterRowBean> extends 
                     @Override
                     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
                         try {
-                            T t = mData.get(position);
+                            T t = getValue(viewHolder).get(position);
                             int itemViewType = holder.getItemViewType();
                             onBindHolder(holder.itemView, t, position, itemViewType);
                         } catch (Exception e) {
@@ -191,13 +197,13 @@ public abstract class ListTvFullPresenter<T extends TvPresenterRowBean> extends 
 
                     @Override
                     public int getItemViewType(int position) {
-                        T t = mData.get(position);
+                        T t = getValue(viewHolder).get(position);
                         return initItemViewType(position, t);
                     }
 
                     @Override
                     public int getItemCount() {
-                        return mData.size();
+                        return getValue(viewHolder).size();
                     }
                 });
             }

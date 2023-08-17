@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -24,7 +25,15 @@ import lib.kalu.leanback.util.LeanBackUtil;
 
 public abstract class ListTvRowHeadPresenter<T extends TvPresenterRowBean> extends Presenter implements ListTvPresenterImpl {
 
-    private final LinkedList<T> mData = new LinkedList<>();
+    private final HashMap<ViewHolder, List<T>> mSimpleArrayMap = new HashMap<>();
+
+    private void putValue(@NonNull ViewHolder viewHolder, @NonNull List<T> list) {
+        mSimpleArrayMap.put(viewHolder, list);
+    }
+
+    private List<T> getValue(@NonNull ViewHolder viewHolder) {
+        return mSimpleArrayMap.get(viewHolder);
+    }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent) {
@@ -41,8 +50,9 @@ public abstract class ListTvRowHeadPresenter<T extends TvPresenterRowBean> exten
             setTitleAssetTTF(context, inflate, R.id.module_leanback_llr_head_title);
             setTitleBackgroundColor(context, inflate, R.id.module_leanback_llr_head_title);
             initHeadAdapter(context, inflate);
-            initItemAdapter(context, inflate);
-            return new ViewHolder(inflate);
+            ViewHolder viewHolder = new ViewHolder(inflate);
+            initItemAdapter(context, inflate, viewHolder);
+            return viewHolder;
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -53,31 +63,30 @@ public abstract class ListTvRowHeadPresenter<T extends TvPresenterRowBean> exten
     public void onBindViewHolder(ViewHolder viewHolder, Object item) {
 
         // data
-        formatData(item);
+        formatData(viewHolder, item);
 
         // title
-        updateTitle(mData, viewHolder.view, R.id.module_leanback_llr_head_title);
+        updateTitle(getValue(viewHolder), viewHolder.view, R.id.module_leanback_llr_head_title);
 
         // list
         updateAdapter(viewHolder.view);
 
         // head
-        onCreateHeadHolder(viewHolder.view.getContext(), viewHolder.view, mData);
+        onCreateHeadHolder(viewHolder.view.getContext(), viewHolder.view, getValue(viewHolder));
     }
 
     @Override
     public void onUnbindViewHolder(ViewHolder viewHolder) {
     }
 
-    private final void formatData(Object item) {
+    private final void formatData(ViewHolder viewHolder, Object item) {
         try {
-//            int size = mData.size();
-//            if (size > 0)
-//                throw new Exception("not empty");
-            mData.clear();
-            mData.addAll((Collection<? extends T>) item);
+            List<T> value = getValue(viewHolder);
+            if (null != value)
+                throw new Exception("value warning: not null");
+            putValue(viewHolder, (List<T>) item);
         } catch (Exception e) {
-            LeanBackUtil.log("ListTvRowHeadPresenter => formatData => " + e.getMessage());
+            LeanBackUtil.log("ListTvRowHeadPresenter => formatData => " + e.getMessage(), e);
         }
     }
 
@@ -110,7 +119,7 @@ public abstract class ListTvRowHeadPresenter<T extends TvPresenterRowBean> exten
         }
     }
 
-    private final void initItemAdapter(@NonNull Context context, @NonNull ViewGroup viewGroup) {
+    private void initItemAdapter(@NonNull Context context, @NonNull View viewGroup, @NonNull ViewHolder viewHolder) {
         try {
 
             ViewGroup headLayout = viewGroup.findViewById(R.id.module_leanback_llr_head_content);
@@ -120,7 +129,7 @@ public abstract class ListTvRowHeadPresenter<T extends TvPresenterRowBean> exten
                 LinearLayoutManager manager = new LinearLayoutManager(context) {
                     @Override
                     public boolean canScrollHorizontally() {
-                        int size = mData.size();
+                        int size = getValue(viewHolder).size();
                         return ListTvRowHeadPresenter.this.canScrollHorizontally(size);
                     }
 
@@ -153,7 +162,7 @@ public abstract class ListTvRowHeadPresenter<T extends TvPresenterRowBean> exten
                             View view = LayoutInflater.from(context).inflate(initLayout(), parent, false);
                             RecyclerView.ViewHolder holder = new RecyclerView.ViewHolder(view) {
                             };
-                            onCreateItemHolder(context, headLayout, view, mData, holder);
+                            onCreateItemHolder(context, headLayout, view, getValue(viewHolder), holder);
                             return holder;
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -164,7 +173,7 @@ public abstract class ListTvRowHeadPresenter<T extends TvPresenterRowBean> exten
                     @Override
                     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
                         try {
-                            T t = mData.get(position);
+                            T t = getValue(viewHolder).get(position);
                             onBindItemHolder(holder.itemView.getContext(), headLayout, holder.itemView, t, position);
                         } catch (Exception e) {
                         }
@@ -172,7 +181,7 @@ public abstract class ListTvRowHeadPresenter<T extends TvPresenterRowBean> exten
 
                     @Override
                     public int getItemCount() {
-                        return mData.size();
+                        return getValue(viewHolder).size();
                     }
                 });
             }
