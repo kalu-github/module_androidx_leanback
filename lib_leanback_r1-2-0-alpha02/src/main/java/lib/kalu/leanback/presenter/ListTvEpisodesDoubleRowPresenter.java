@@ -271,14 +271,14 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
             if (null == episodeData)
                 throw new Exception("episodeData error: null");
             int episodeSize = episodeData.size();
-            if (episodeSize >= episodeChildCount)
+            if (episodeSize > episodeChildCount)
                 throw new Exception("episodeSize warning: " + episodeSize + ", episodeChildCount = " + episodeChildCount);
             for (int i = 0; i < episodeChildCount; i++) {
                 View child = episodeGroup.getChildAt(i);
                 child.setVisibility(i >= episodeSize ? View.INVISIBLE : View.VISIBLE);
             }
         } catch (Exception e) {
-            LeanBackUtil.log("ListTvEpisodesDoubleRowPresenter => updateDefaultEpisode => " + e.getMessage());
+            LeanBackUtil.log("ListTvEpisodesDoubleRowPresenter => updateDefaultEpisodeUI => " + e.getMessage());
         }
     }
 
