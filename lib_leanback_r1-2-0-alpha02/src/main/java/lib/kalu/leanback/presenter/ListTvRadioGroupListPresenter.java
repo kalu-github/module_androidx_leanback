@@ -657,8 +657,8 @@ public abstract class ListTvRadioGroupListPresenter<T extends TvRadioGroupItemBe
         try {
             if (null == viewGroup)
                 throw new Exception("parent error: null");
-            if (viewGroup.getId() != R.id.module_leanback_lep_root)
-                throw new Exception("id error: != R.id.module_leanback_lep_root");
+            if (viewGroup.getId() != R.id.module_leanback_lrgl_root)
+                throw new Exception("id error: != R.id.module_leanback_lrgl_root");
             RadioGroupHorizontal radioGroup = viewGroup.findViewById(R.id.module_leanback_lrgl_radio);
             if (null == radioGroup)
                 throw new Exception("radioGroup error: null");
@@ -686,8 +686,8 @@ public abstract class ListTvRadioGroupListPresenter<T extends TvRadioGroupItemBe
         try {
             if (null == viewGroup)
                 throw new Exception("parent error: null");
-            if (viewGroup.getId() != R.id.module_leanback_lep_root)
-                throw new Exception("id error: != R.id.module_leanback_lep_root");
+            if (viewGroup.getId() != R.id.module_leanback_lrgl_root)
+                throw new Exception("id error: != R.id.module_leanback_lrgl_root");
             RadioGroupHorizontal radioGroup = viewGroup.findViewById(R.id.module_leanback_lrgl_radio);
             if (null == radioGroup)
                 throw new Exception("radioGroup error: null");
@@ -703,8 +703,8 @@ public abstract class ListTvRadioGroupListPresenter<T extends TvRadioGroupItemBe
         try {
             if (null == viewGroup)
                 throw new Exception("parent error: null");
-            if (viewGroup.getId() != R.id.module_leanback_lep_root)
-                throw new Exception("id error: != R.id.module_leanback_lep_root");
+            if (viewGroup.getId() != R.id.module_leanback_lrgl_root)
+                throw new Exception("id error: != R.id.module_leanback_lrgl_root");
             RadioGroupHorizontal radioGroup = viewGroup.findViewById(R.id.module_leanback_lrgl_radio);
             if (null == radioGroup)
                 throw new Exception("radioGroup error: null");
@@ -762,8 +762,8 @@ public abstract class ListTvRadioGroupListPresenter<T extends TvRadioGroupItemBe
             if (null == viewGroup)
                 throw new Exception("viewGroup error: null");
             int id = viewGroup.getId();
-            if (id != R.id.module_leanback_lep_root)
-                throw new Exception("id error: not R.id.module_leanback_lep_root");
+            if (id != R.id.module_leanback_lrgl_root)
+                throw new Exception("id error: not R.id.module_leanback_lrgl_root");
             RadioGroupHorizontal radioGroupHorizontal = viewGroup.findViewById(R.id.module_leanback_lrgl_radio);
             if (null == radioGroupHorizontal)
                 throw new Exception("radioGroupHorizontal error: null");

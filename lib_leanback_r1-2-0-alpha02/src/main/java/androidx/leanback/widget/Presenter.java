@@ -13,6 +13,7 @@
  */
 package androidx.leanback.widget;
 
+import android.annotation.SuppressLint;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -22,6 +23,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 import java.util.Map;
+
+import lib.kalu.leanback.util.LeanBackUtil;
 
 /**
  * A Presenter is used to generate {@link View}s and bind Objects to them on
@@ -117,17 +120,19 @@ public abstract class Presenter implements FacetProvider {
             mFacets.put(facetClass, facetImpl);
         }
 
+        public final void clearFacet() {
+            try {
+                if (mFacets == null)
+                    throw new Exception("mFacets error: null");
+                mFacets.clear();
+            } catch (Exception e) {
+                LeanBackUtil.log("Presenter => ViewHolder => clearFacet => " + e.getMessage());
+            }
+        }
+
         public Map<Class<?>, Object> getFacets() {
             return mFacets;
         }
-
-//        public final int getChildAdapterPosition() {
-//            try {
-//                return ((BaseGridView) (this.view).getParent()).getChildAdapterPosition(this.view);
-//            } catch (Exception e) {
-//                return -1;
-//            }
-//        }
     }
 
     /**
@@ -208,6 +213,7 @@ public abstract class Presenter implements FacetProvider {
     /**
      * Utility method for removing all running animations on a view.
      */
+    @SuppressLint("NewApi")
     protected static void cancelAnimationsRecursive(View view) {
         if (view != null && view.hasTransientState()) {
             view.animate().cancel();
@@ -255,7 +261,20 @@ public abstract class Presenter implements FacetProvider {
         mFacets.put(facetClass, facetImpl);
     }
 
+    public final void clearFacet() {
+        try {
+            if (mFacets == null)
+                throw new Exception("mFacets error: null");
+            mFacets.clear();
+        } catch (Exception e) {
+            LeanBackUtil.log("Presenter => clearFacet => " + e.getMessage());
+        }
+    }
+
     public boolean isRecyclable() {
         return true;
+    }
+
+    public void clearAdapter(@NonNull View viewGroup) {
     }
 }
