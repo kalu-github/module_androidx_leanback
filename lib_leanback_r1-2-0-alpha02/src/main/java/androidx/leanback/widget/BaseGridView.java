@@ -1493,7 +1493,7 @@ public abstract class BaseGridView extends RecyclerView {
 //            LeanBackUtil.log("BaseGridView => notifyItemChanged => " + e.getMessage());
 //        }
 //    }
-    public final void removePresenterSelector() {
+    public final void clearAdapter() {
         try {
             ItemBridgeAdapter itemBridgeAdapter = (ItemBridgeAdapter) getAdapter();
             if (null == itemBridgeAdapter)
@@ -1512,7 +1512,7 @@ public abstract class BaseGridView extends RecyclerView {
             PresenterSelector newPresenterSelector = aClass.newInstance();
             objectAdapter.setPresenterSelector(newPresenterSelector);
         } catch (Exception e) {
-            LeanBackUtil.log("BaseGridView => removePresenterSelector => " + e.getMessage());
+            LeanBackUtil.log("BaseGridView => clearAdapter => " + e.getMessage());
         }
     }
 
