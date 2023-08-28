@@ -138,7 +138,6 @@ public abstract class ListTvRadioGroupListPresenter<T extends TvRadioGroupItemBe
             }
             mData.get(0).setChecked(true);
             recyclerView.getAdapter().notifyItemRangeInserted(0, mData.size());
-            View viewById = viewGroup.findViewById(R.id.module_leanback_lrgl_contont);
             playerPosition = 0;
             onBindHolderBackground(viewGroup, 0, mData.get(0), isFromUser);
         } catch (Exception e) {
@@ -557,14 +556,40 @@ public abstract class ListTvRadioGroupListPresenter<T extends TvRadioGroupItemBe
             RecyclerViewVertical recyclerViewVertical = viewGroup.findViewById(R.id.module_leanback_lrgl_list);
             if (null == recyclerViewVertical)
                 throw new Exception("recyclerViewVertical error: null");
-            recyclerViewVertical.scrollToPosition(playerPosition);
-            new Handler(Looper.getMainLooper()).post(new Runnable() {
-                @Override
-                public void run() {
+            if (playerPosition < 0)
+                throw new Exception("playerPosition error: " + playerPosition);
+            int itemCount = recyclerViewVertical.getAdapterItemCount();
+            if (itemCount <= 0)
+                throw new Exception("itemCount error: " + itemCount);
+            if (playerPosition + 1 > itemCount)
+                throw new Exception("playerPosition error: " + playerPosition + ", itemCount error: " + itemCount);
+            int first = ((LinearLayoutManager) recyclerViewVertical.getLayoutManager()).findFirstVisibleItemPosition();
+            int last = ((LinearLayoutManager) recyclerViewVertical.getLayoutManager()).findLastVisibleItemPosition();
+
+            if (playerPosition < first) {
+                while (true) {
                     RecyclerView.ViewHolder viewHolder = recyclerViewVertical.findViewHolderForAdapterPosition(playerPosition);
-                    viewHolder.itemView.requestFocus();
+                    if (null != viewHolder) {
+                        viewHolder.itemView.requestFocus();
+                        break;
+                    } else {
+                        recyclerViewVertical.scrollBy(0, -10);
+                    }
                 }
-            });
+            } else if (playerPosition > last) {
+                while (true) {
+                    RecyclerView.ViewHolder viewHolder = recyclerViewVertical.findViewHolderForAdapterPosition(playerPosition);
+                    if (null != viewHolder) {
+                        viewHolder.itemView.requestFocus();
+                        break;
+                    } else {
+                        recyclerViewVertical.scrollBy(0, 10);
+                    }
+                }
+            } else {
+                RecyclerView.ViewHolder viewHolder = recyclerViewVertical.findViewHolderForAdapterPosition(playerPosition);
+                viewHolder.itemView.requestFocus();
+            }
         } catch (Exception e) {
             LeanBackUtil.log("ListTvRadioGroupListPresenter => clearFull => " + e.getMessage());
         }
