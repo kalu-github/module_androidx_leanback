@@ -2,6 +2,9 @@ package lib.kalu.leanback.presenter;
 
 import android.content.Context;
 import android.graphics.Rect;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.SystemClock;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +17,7 @@ import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.leanback.R;
 import androidx.leanback.widget.Presenter;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.LinkedList;
@@ -342,7 +346,7 @@ public abstract class ListTvRadioGroupListPresenter<T extends TvRadioGroupItemBe
                                                 playerPosition = position;
                                                 T t2 = mData.get(position);
                                                 t2.setChecked(true);
-                                                onCheckedHolderItem(holder, position, t2);
+                                                onCheckedHolderItem(viewGroup, holder, position, t2);
                                             }
                                             // sample
                                             else {
@@ -361,7 +365,7 @@ public abstract class ListTvRadioGroupListPresenter<T extends TvRadioGroupItemBe
                                                 playerPosition = position;
                                                 T t2 = mData.get(position);
                                                 t2.setChecked(true);
-                                                onCheckedHolderItem(holder, position, t2);
+                                                onCheckedHolderItem(viewGroup, holder, position, t2);
                                                 onBindHolderBackground(viewGroup, position, t2, true);
                                                 onBindHolderItem(holder, position, t2, true);
                                             }
@@ -404,7 +408,7 @@ public abstract class ListTvRadioGroupListPresenter<T extends TvRadioGroupItemBe
                                             playerPosition = position;
                                             T t2 = mData.get(position);
                                             t2.setChecked(true);
-                                            onCheckedHolderItem(holder, position, t2);
+                                            onCheckedHolderItem(viewGroup, holder, position, t2);
                                             onBindHolderBackground(viewGroup, position, t2, true);
                                             onBindHolderItem(holder, position, t2, true);
                                         } catch (Exception e) {
@@ -477,7 +481,7 @@ public abstract class ListTvRadioGroupListPresenter<T extends TvRadioGroupItemBe
     protected void onClickHolderItem(@NonNull View rootGroup, @NonNull RecyclerView.ViewHolder holder, int position, T t) {
     }
 
-    protected void onCheckedHolderItem(@NonNull RecyclerView.ViewHolder holder, int position, T t) {
+    protected void onCheckedHolderItem(@NonNull View rootGroup, @NonNull RecyclerView.ViewHolder holder, int position, T t) {
     }
 
     protected void onUnCheckedHolderItem(@NonNull View rootGroup, @NonNull RecyclerView.ViewHolder holder, int position, int count) {
@@ -547,6 +551,23 @@ public abstract class ListTvRadioGroupListPresenter<T extends TvRadioGroupItemBe
         } catch (Exception e) {
             LeanBackUtil.log("ListTvRadioGroupListPresenter => clearFull => " + e.getMessage());
         }
+        try {
+            if (null == viewGroup)
+                throw new Exception("viewGroup error: null");
+            RecyclerViewVertical recyclerViewVertical = viewGroup.findViewById(R.id.module_leanback_lrgl_list);
+            if (null == recyclerViewVertical)
+                throw new Exception("recyclerViewVertical error: null");
+            recyclerViewVertical.scrollToPosition(playerPosition);
+            new Handler(Looper.getMainLooper()).post(new Runnable() {
+                @Override
+                public void run() {
+                    RecyclerView.ViewHolder viewHolder = recyclerViewVertical.findViewHolderForAdapterPosition(playerPosition);
+                    viewHolder.itemView.requestFocus();
+                }
+            });
+        } catch (Exception e) {
+            LeanBackUtil.log("ListTvRadioGroupListPresenter => clearFull => " + e.getMessage());
+        }
     }
 
     public boolean switchUp(@NonNull View viewGroup) {
@@ -556,14 +577,21 @@ public abstract class ListTvRadioGroupListPresenter<T extends TvRadioGroupItemBe
             RecyclerViewVertical recyclerView = viewGroup.findViewById(R.id.module_leanback_lrgl_list);
             if (null == recyclerView)
                 throw new Exception("recyclerView error: null");
+            int firstPosition = ((LinearLayoutManager) recyclerView.getLayoutManager()).findFirstVisibleItemPosition();
+            RecyclerView.ViewHolder firstViewHolder = recyclerView.findViewHolderForAdapterPosition(firstPosition);
+            if (null == firstViewHolder)
+                throw new Exception("firstViewHolder error: null");
+            int measuredHeight = firstViewHolder.itemView.getMeasuredHeight();
             int itemCount = recyclerView.getAdapterItemCount();
             if (itemCount <= 0)
                 throw new Exception("itemCount error: " + itemCount);
             if (playerPosition <= 0)
                 throw new Exception("up error: not next");
+            int scrollBy = measuredHeight * (playerPosition - 1);
+            recyclerView.scrollTo(0, scrollBy);
             RecyclerView.ViewHolder viewHolder = recyclerView.findViewHolderForAdapterPosition(playerPosition);
-            int measuredHeight = viewHolder.itemView.getMeasuredHeight();
-            recyclerView.scrollBy(0, -measuredHeight);
+            if (null == viewGroup)
+                throw new Exception("viewGroup error: null");
             T t1 = mData.get(playerPosition);
             t1.setChecked(false);
             onBindHolderItem(viewHolder, playerPosition, t1, true);
@@ -585,14 +613,21 @@ public abstract class ListTvRadioGroupListPresenter<T extends TvRadioGroupItemBe
             RecyclerViewVertical recyclerView = viewGroup.findViewById(R.id.module_leanback_lrgl_list);
             if (null == recyclerView)
                 throw new Exception("recyclerView error: null");
+            int firstPosition = ((LinearLayoutManager) recyclerView.getLayoutManager()).findFirstVisibleItemPosition();
+            RecyclerView.ViewHolder firstViewHolder = recyclerView.findViewHolderForAdapterPosition(firstPosition);
+            if (null == firstViewHolder)
+                throw new Exception("firstViewHolder error: null");
+            int measuredHeight = firstViewHolder.itemView.getMeasuredHeight();
             int itemCount = recyclerView.getAdapterItemCount();
             if (itemCount <= 0)
                 throw new Exception("itemCount error: " + itemCount);
-            if (playerPosition + 1 >= itemCount)
+            if (playerPosition + 1 > itemCount)
                 throw new Exception("down error: not next");
+            int scrollBy = measuredHeight * (playerPosition - 1);
+            recyclerView.scrollTo(0, scrollBy);
             RecyclerView.ViewHolder viewHolder = recyclerView.findViewHolderForAdapterPosition(playerPosition);
-            int measuredHeight = viewHolder.itemView.getMeasuredHeight();
-            recyclerView.scrollBy(0, measuredHeight);
+            if (null == viewGroup)
+                throw new Exception("viewGroup error: null");
             T t1 = mData.get(playerPosition);
             t1.setChecked(false);
             onBindHolderItem(viewHolder, playerPosition, t1, true);
