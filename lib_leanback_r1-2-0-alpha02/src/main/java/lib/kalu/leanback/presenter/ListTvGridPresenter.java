@@ -85,6 +85,10 @@ public abstract class ListTvGridPresenter<T extends TvPresenterRowBean> extends 
                 list.addAll((Collection<? extends T>) item);
             } else {
                 List<T> collection = (List<T>) item;
+                int size = collection.size();
+                if (size < max) {
+                    max = size;
+                }
                 for (int i = 0; i < max; i++) {
                     T t = collection.get(i);
                     if (null == t)
