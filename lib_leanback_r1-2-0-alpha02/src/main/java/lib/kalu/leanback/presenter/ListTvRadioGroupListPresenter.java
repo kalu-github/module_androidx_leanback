@@ -646,7 +646,7 @@ public abstract class ListTvRadioGroupListPresenter<T extends TvRadioGroupItemBe
             int itemCount = recyclerView.getAdapterItemCount();
             if (itemCount <= 0)
                 throw new Exception("itemCount error: " + itemCount);
-            if (playerPosition + 1 > itemCount)
+            if (playerPosition + 1 >= itemCount)
                 throw new Exception("down error: not next");
             int scrollBy = measuredHeight * (playerPosition - 1);
             recyclerView.scrollTo(0, scrollBy);
