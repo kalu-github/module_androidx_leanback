@@ -327,7 +327,7 @@ public abstract class ListTvRadioGroupListPresenter<T extends TvRadioGroupItemBe
                                             int size = mData.size();
                                             if (position + 1 < size)
                                                 throw new Exception("position error: " + position + ", count error: " + mData.size());
-                                            onUnCheckedHolderItem(viewGroup, holder, position, size);
+                                            onUnCheckedHolderItem(viewGroup, holder, position, size, KeyEvent.KEYCODE_DPAD_DOWN);
                                         } catch (Exception e) {
                                             LeanBackUtil.log("ListTvRadioGroupListPresenter => initAdapter => onKey => " + e.getMessage());
                                         }
@@ -359,7 +359,7 @@ public abstract class ListTvRadioGroupListPresenter<T extends TvRadioGroupItemBe
                                                 T t1 = mData.get(beforePosition);
                                                 t1.setChecked(false);
                                                 onBindHolderItem(viewHolder, beforePosition, t1, true);
-                                                onUnCheckedHolderItem(viewGroup, holder, beforePosition, size);
+                                                onUnCheckedHolderItem(viewGroup, holder, beforePosition, size, KeyEvent.KEYCODE_DPAD_DOWN);
                                                 // next
                                                 playerPosition = position;
                                                 T t2 = mData.get(position);
@@ -382,7 +382,7 @@ public abstract class ListTvRadioGroupListPresenter<T extends TvRadioGroupItemBe
                                             if (nextPosition < 0)
                                                 throw new Exception("nextPosition error: " + nextPosition);
                                         } catch (Exception e) {
-                                            onUnCheckedHolderItem(viewGroup, holder, playerPosition, mData.size());
+                                            onUnCheckedHolderItem(viewGroup, holder, playerPosition, mData.size(), KeyEvent.KEYCODE_DPAD_UP);
                                             LeanBackUtil.log("ListTvRadioGroupListPresenter => initAdapter => onKey => " + e.getMessage());
                                         }
                                     }
@@ -402,7 +402,7 @@ public abstract class ListTvRadioGroupListPresenter<T extends TvRadioGroupItemBe
                                             T t1 = mData.get(beforePosition);
                                             t1.setChecked(false);
                                             onBindHolderItem(viewHolder, beforePosition, t1, true);
-                                            onUnCheckedHolderItem(viewGroup, holder, beforePosition, mData.size());
+                                            onUnCheckedHolderItem(viewGroup, holder, beforePosition, mData.size(), KeyEvent.KEYCODE_DPAD_UP);
                                             // next
                                             playerPosition = position;
                                             T t2 = mData.get(position);
@@ -483,7 +483,7 @@ public abstract class ListTvRadioGroupListPresenter<T extends TvRadioGroupItemBe
     protected void onCheckedHolderItem(@NonNull View rootGroup, @NonNull RecyclerView.ViewHolder holder, int position, T t) {
     }
 
-    protected void onUnCheckedHolderItem(@NonNull View rootGroup, @NonNull RecyclerView.ViewHolder holder, int position, int count) {
+    protected void onUnCheckedHolderItem(@NonNull View rootGroup, @NonNull RecyclerView.ViewHolder holder, int position, int count, int keyCode) {
     }
 
     /**************/
