@@ -19,7 +19,6 @@ import lib.kalu.leanback.util.LeanBackUtil;
 public class WebView extends android.webkit.WebView {
     public WebView(@NonNull Context context) {
         super(context);
-        initJavascriptInterface();
         initListener();
         initConfig();
         initSetting();
@@ -27,7 +26,6 @@ public class WebView extends android.webkit.WebView {
 
     public WebView(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
-        initJavascriptInterface();
         initListener();
         initConfig();
         initSetting();
@@ -35,7 +33,6 @@ public class WebView extends android.webkit.WebView {
 
     public WebView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        initJavascriptInterface();
         initListener();
         initConfig();
         initSetting();
@@ -44,7 +41,6 @@ public class WebView extends android.webkit.WebView {
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public WebView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
-        initJavascriptInterface();
         initListener();
         initConfig();
         initSetting();
@@ -52,7 +48,6 @@ public class WebView extends android.webkit.WebView {
 
     public WebView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr, boolean privateBrowsing) {
         super(context, attrs, defStyleAttr, privateBrowsing);
-        initJavascriptInterface();
         initListener();
         initConfig();
         initSetting();
@@ -72,16 +67,6 @@ public class WebView extends android.webkit.WebView {
             });
         } catch (Exception e) {
             LeanBackUtil.log("WebView => initListener => " + e.getMessage());
-        }
-    }
-
-    @SuppressLint("JavascriptInterface")
-    private void initJavascriptInterface() {
-        try {
-            removeJavascriptInterface("android");
-            addJavascriptInterface(this, "android");
-        } catch (Exception e) {
-            LeanBackUtil.log("WebView => initJavascriptInterface => " + e.getMessage());
         }
     }
 
@@ -184,6 +169,20 @@ public class WebView extends android.webkit.WebView {
             }
         } catch (Exception e) {
             LeanBackUtil.log("WebView => initSetting => " + e.getMessage());
+        }
+    }
+
+    /*****************/
+
+    @SuppressLint("JavascriptInterface")
+    public final void addJavascriptInterface(@NonNull Object object) {
+        try {
+            if (null == object)
+                throw new Exception("object error: " + null);
+            removeJavascriptInterface("android");
+            addJavascriptInterface(object, "android");
+        } catch (Exception e) {
+            LeanBackUtil.log("WebView => addJavascriptInterface => " + e.getMessage());
         }
     }
 }
