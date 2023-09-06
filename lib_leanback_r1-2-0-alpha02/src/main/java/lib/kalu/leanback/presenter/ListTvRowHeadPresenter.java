@@ -226,7 +226,7 @@ public abstract class ListTvRowHeadPresenter<T extends TvPresenterRowBean> exten
                                             if (position <= 0) {
                                                 onUnCheckedItemHolder(view.getContext(), headLayout, view, t, position, keyCode);
                                             } else {
-                                                onBindHeadHolder(view.getContext(), headLayout, position, t);
+                                                onBindHeadHolder(view.getContext(), headLayout, position - 1, t);
                                             }
                                         } catch (Exception e) {
                                         }
@@ -242,7 +242,7 @@ public abstract class ListTvRowHeadPresenter<T extends TvPresenterRowBean> exten
                                             if (position + 1 >= size) {
                                                 onUnCheckedItemHolder(view.getContext(), headLayout, view, t, position, keyCode);
                                             } else {
-                                                onBindHeadHolder(view.getContext(), headLayout, position, t);
+                                                onBindHeadHolder(view.getContext(), headLayout, position + 1, t);
                                             }
                                         } catch (Exception e) {
                                         }
