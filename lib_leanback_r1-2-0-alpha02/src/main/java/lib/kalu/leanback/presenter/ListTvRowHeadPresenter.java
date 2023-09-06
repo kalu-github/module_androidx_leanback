@@ -106,7 +106,7 @@ public abstract class ListTvRowHeadPresenter<T extends TvPresenterRowBean> exten
         }
     }
 
-    private final void initHeadAdapter(@NonNull Context context, @NonNull View inflate) {
+    private void initHeadAdapter(@NonNull Context context, @NonNull View inflate) {
         try {
             RelativeLayout headLayout = inflate.findViewById(R.id.module_leanback_llr_head_content);
             int childCount = headLayout.getChildCount();
@@ -217,45 +217,88 @@ public abstract class ListTvRowHeadPresenter<T extends TvPresenterRowBean> exten
                                 @Override
                                 public boolean onKey(View view, int keyCode, KeyEvent keyEvent) {
                                     LeanBackUtil.log("ListTvRowHeadPresenter => initItemAdapter => setOnKeyListener => action = " + keyEvent.getAction() + ", keyCode = " + keyCode);
-                                    // action_down
-                                    if (keyEvent.getAction() == KeyEvent.ACTION_UP) {
-                                        switch (keyCode) {
-                                            case KeyEvent.KEYCODE_DPAD_DOWN:
-                                            case KeyEvent.KEYCODE_DPAD_UP:
-                                            case KeyEvent.KEYCODE_DPAD_LEFT:
-                                            case KeyEvent.KEYCODE_DPAD_RIGHT:
-                                                try {
-                                                    int position = recyclerView.getChildAdapterPosition(view);
-                                                    if (position < 0)
-                                                        throw new Exception();
-                                                    if (keyCode == KeyEvent.KEYCODE_DPAD_LEFT && position == 0)
-                                                        throw new Exception();
-                                                    int size = mData.size();
-                                                    if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT && position + 1 >= size)
-                                                        throw new Exception();
-                                                    T t = mData.get(position);
-                                                    onBindHeadHolder(view.getContext(), headLayout, position, t);
-                                                } catch (Exception e) {
-                                                }
-                                                break;
+
+                                    // action_down => keycode_dpad_left
+                                    if (keyEvent.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
+                                        try {
+                                            int position = recyclerView.getChildAdapterPosition(view);
+                                            T t = mData.get(position);
+                                            if (position <= 0) {
+                                                onUnCheckedItemHolder(view.getContext(), headLayout, view, t, position, keyCode);
+                                            } else {
+                                                onBindHeadHolder(view.getContext(), headLayout, position, t);
+                                            }
+                                        } catch (Exception e) {
                                         }
                                     }
-                                    // action_down
-                                    else if (keyEvent.getAction() == KeyEvent.ACTION_DOWN) {
-                                        switch (keyCode) {
-                                            case KeyEvent.KEYCODE_DPAD_DOWN:
-                                            case KeyEvent.KEYCODE_DPAD_UP:
-                                            case KeyEvent.KEYCODE_DPAD_LEFT:
-                                            case KeyEvent.KEYCODE_DPAD_RIGHT:
-                                                try {
-                                                    int position = recyclerView.getChildAdapterPosition(view);
-                                                    if (position < 0)
-                                                        throw new Exception();
-                                                    T t = mData.get(position);
-                                                    onUnCheckedItemHolder(view.getContext(), headLayout, view, t, position, keyCode);
-                                                } catch (Exception e) {
-                                                }
-                                                break;
+                                    // action_down => keycode_dpad_right
+                                    else if (keyEvent.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_DPAD_RIGHT) {
+                                        try {
+                                            int position = recyclerView.getChildAdapterPosition(view);
+                                            if (position <= 0)
+                                                throw new Exception();
+                                            int size = mData.size();
+                                            T t = mData.get(position);
+                                            if (position + 1 >= size) {
+                                                onUnCheckedItemHolder(view.getContext(), headLayout, view, t, position, keyCode);
+                                            } else {
+                                                onBindHeadHolder(view.getContext(), headLayout, position, t);
+                                            }
+                                        } catch (Exception e) {
+                                        }
+                                    }
+                                    // action_down => keycode_dpad_down
+                                    else if (keyEvent.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_DPAD_DOWN) {
+                                        try {
+                                            int position = recyclerView.getChildAdapterPosition(view);
+                                            if (position < 0)
+                                                throw new Exception();
+                                            T t = mData.get(position);
+                                            onUnCheckedItemHolder(view.getContext(), headLayout, view, t, position, keyCode);
+                                        } catch (Exception e) {
+                                        }
+                                    }
+                                    // action_down => keycode_dpad_up
+                                    else if (keyEvent.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_DPAD_UP) {
+                                        try {
+                                            int position = recyclerView.getChildAdapterPosition(view);
+                                            if (position < 0)
+                                                throw new Exception();
+                                            T t = mData.get(position);
+                                            onUnCheckedItemHolder(view.getContext(), headLayout, view, t, position, keyCode);
+                                        } catch (Exception e) {
+                                        }
+                                    }
+                                    // action_up => keycode_dpad_down
+                                    else if (keyEvent.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_DPAD_DOWN) {
+                                        try {
+                                            int position = recyclerView.getChildAdapterPosition(view);
+                                            if (position < 0)
+                                                throw new Exception();
+                                            if (keyCode == KeyEvent.KEYCODE_DPAD_LEFT && position == 0)
+                                                throw new Exception();
+                                            int size = mData.size();
+                                            if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT && position + 1 > size)
+                                                throw new Exception();
+                                            T t = mData.get(position);
+                                            onBindHeadHolder(view.getContext(), headLayout, position, t);
+                                        } catch (Exception e) {
+                                        }
+                                    }
+                                    // action_up => keycode_dpad_up
+                                    else if (keyEvent.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_DPAD_UP) {
+                                        try {
+                                            int position = recyclerView.getChildAdapterPosition(view);
+                                            if (position < 0)
+                                                throw new Exception();
+                                            if (keyCode == KeyEvent.KEYCODE_DPAD_LEFT && position == 0)
+                                                throw new Exception();
+                                            int size = mData.size();
+                                            if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT && position + 1 > size)
+                                                throw new Exception();
+                                            T t = mData.get(position);
+                                            onBindHeadHolder(view.getContext(), headLayout, position, t);
+                                        } catch (Exception e) {
                                         }
                                     }
                                     return false;
