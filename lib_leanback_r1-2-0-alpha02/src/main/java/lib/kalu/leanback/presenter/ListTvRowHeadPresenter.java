@@ -222,11 +222,13 @@ public abstract class ListTvRowHeadPresenter<T extends TvPresenterRowBean> exten
                                     if (keyEvent.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
                                         try {
                                             int position = recyclerView.getChildAdapterPosition(view);
-                                            T t = mData.get(position);
                                             if (position <= 0) {
+                                                T t = mData.get(position);
                                                 onUnCheckedItemHolder(view.getContext(), headLayout, view, t, position, keyCode);
                                             } else {
-                                                onBindHeadHolder(view.getContext(), headLayout, position - 1, t);
+                                                int nextPosition = position - 1;
+                                                T t = mData.get(nextPosition);
+                                                onBindHeadHolder(view.getContext(), headLayout, nextPosition, t);
                                             }
                                         } catch (Exception e) {
                                         }
@@ -238,11 +240,13 @@ public abstract class ListTvRowHeadPresenter<T extends TvPresenterRowBean> exten
                                             if (position <= 0)
                                                 throw new Exception();
                                             int size = mData.size();
-                                            T t = mData.get(position);
                                             if (position + 1 >= size) {
+                                                T t = mData.get(position);
                                                 onUnCheckedItemHolder(view.getContext(), headLayout, view, t, position, keyCode);
                                             } else {
-                                                onBindHeadHolder(view.getContext(), headLayout, position + 1, t);
+                                                int nextPosition = position + 1;
+                                                T t = mData.get(nextPosition);
+                                                onBindHeadHolder(view.getContext(), headLayout, nextPosition, t);
                                             }
                                         } catch (Exception e) {
                                         }
