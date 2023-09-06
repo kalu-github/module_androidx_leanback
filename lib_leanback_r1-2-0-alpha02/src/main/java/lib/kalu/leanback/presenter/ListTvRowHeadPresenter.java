@@ -2,6 +2,7 @@ package lib.kalu.leanback.presenter;
 
 import android.content.Context;
 import android.graphics.Rect;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -71,7 +72,17 @@ public abstract class ListTvRowHeadPresenter<T extends TvPresenterRowBean> exten
         updateAdapter(viewHolder.view);
 
         // head
-        onCreateHeadHolder(viewHolder.view.getContext(), viewHolder.view, getValue(viewHolder));
+        try {
+            List<T> list = getValue(viewHolder);
+            onCreateHeadHolder(viewHolder.view.getContext(), viewHolder.view, list);
+        } catch (Exception e) {
+        }
+        try {
+            List<T> list = getValue(viewHolder);
+            T t = list.get(0);
+            onBindHeadHolder(viewHolder.view.getContext(), viewHolder.view, 0, t);
+        } catch (Exception e) {
+        }
     }
 
     @Override
@@ -202,6 +213,54 @@ public abstract class ListTvRowHeadPresenter<T extends TvPresenterRowBean> exten
                             Context context = parent.getContext();
                             onLife(context);
                             View view = LayoutInflater.from(context).inflate(initLayout(), parent, false);
+                            view.setOnKeyListener(new View.OnKeyListener() {
+                                @Override
+                                public boolean onKey(View view, int keyCode, KeyEvent keyEvent) {
+                                    LeanBackUtil.log("ListTvRowHeadPresenter => initItemAdapter => setOnKeyListener => action = " + keyEvent.getAction() + ", keyCode = " + keyCode);
+                                    // action_down
+                                    if (keyEvent.getAction() == KeyEvent.ACTION_UP) {
+                                        switch (keyCode) {
+                                            case KeyEvent.KEYCODE_DPAD_DOWN:
+                                            case KeyEvent.KEYCODE_DPAD_UP:
+                                            case KeyEvent.KEYCODE_DPAD_LEFT:
+                                            case KeyEvent.KEYCODE_DPAD_RIGHT:
+                                                try {
+                                                    int position = recyclerView.getChildAdapterPosition(view);
+                                                    if (position < 0)
+                                                        throw new Exception();
+                                                    if (keyCode == KeyEvent.KEYCODE_DPAD_LEFT && position == 0)
+                                                        throw new Exception();
+                                                    int size = mData.size();
+                                                    if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT && position + 1 >= size)
+                                                        throw new Exception();
+                                                    T t = mData.get(position);
+                                                    onBindHeadHolder(view.getContext(), headLayout, position, t);
+                                                } catch (Exception e) {
+                                                }
+                                                break;
+                                        }
+                                    }
+                                    // action_down
+                                    else if (keyEvent.getAction() == KeyEvent.ACTION_DOWN) {
+                                        switch (keyCode) {
+                                            case KeyEvent.KEYCODE_DPAD_DOWN:
+                                            case KeyEvent.KEYCODE_DPAD_UP:
+                                            case KeyEvent.KEYCODE_DPAD_LEFT:
+                                            case KeyEvent.KEYCODE_DPAD_RIGHT:
+                                                try {
+                                                    int position = recyclerView.getChildAdapterPosition(view);
+                                                    if (position < 0)
+                                                        throw new Exception();
+                                                    T t = mData.get(position);
+                                                    onUnCheckedItemHolder(view.getContext(), headLayout, view, t, position, keyCode);
+                                                } catch (Exception e) {
+                                                }
+                                                break;
+                                        }
+                                    }
+                                    return false;
+                                }
+                            });
                             RecyclerView.ViewHolder holder = new RecyclerView.ViewHolder(view) {
                             };
                             onCreateItemHolder(context, headLayout, view, mData, holder);
@@ -251,10 +310,16 @@ public abstract class ListTvRowHeadPresenter<T extends TvPresenterRowBean> exten
     protected void onCreateHeadHolder(@NonNull Context context, @NonNull View headView, @NonNull List<T> data) {
     }
 
+    protected void onBindHeadHolder(@NonNull Context context, @NonNull View headView, int position, T data) {
+    }
+
     protected void onCreateItemHolder(@NonNull Context context, @NonNull View headView, @NonNull View itemView, @NonNull List<T> data, @NonNull RecyclerView.ViewHolder holder) {
     }
 
     protected void onBindItemHolder(@NonNull Context context, @NonNull View headView, @NonNull View itemView, @NonNull T item, @NonNull int position) {
+    }
+
+    protected void onUnCheckedItemHolder(@NonNull Context context, @NonNull View headView, @NonNull View itemView, @NonNull T item, @NonNull int position, @NonNull int keyCode) {
     }
 
     @LayoutRes
