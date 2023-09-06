@@ -27,6 +27,8 @@ import lib.kalu.leanback.util.LeanBackUtil;
 
 public abstract class ListTvRowHeadPresenter<T extends TvPresenterRowBean> extends Presenter implements ListTvPresenterImpl {
 
+    private int checkedPosition = -1;
+
     private void putValue(@NonNull ViewHolder viewHolder, @NonNull List<T> list) {
         viewHolder.setObject(list);
     }
@@ -81,6 +83,7 @@ public abstract class ListTvRowHeadPresenter<T extends TvPresenterRowBean> exten
             List<T> list = getValue(viewHolder);
             T t = list.get(0);
             onBindHeadHolder(viewHolder.view.getContext(), viewHolder.view, 0, t);
+            checkedPosition = 0;
         } catch (Exception e) {
         }
     }
@@ -222,14 +225,10 @@ public abstract class ListTvRowHeadPresenter<T extends TvPresenterRowBean> exten
                                     if (keyEvent.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
                                         try {
                                             int position = recyclerView.getChildAdapterPosition(view);
-                                            if (position <= 0) {
-                                                T t = mData.get(position);
-                                                onUnCheckedItemHolder(view.getContext(), headLayout, view, t, position, keyCode);
-                                            } else {
-                                                int nextPosition = position - 1;
-                                                T t = mData.get(nextPosition);
-                                                onBindHeadHolder(view.getContext(), headLayout, nextPosition, t);
-                                            }
+                                            if (position > 0)
+                                                throw new Exception();
+                                            T t = mData.get(position);
+                                            onUnCheckedItemHolder(view.getContext(), headLayout, view, t, position, keyCode);
                                         } catch (Exception e) {
                                         }
                                     }
@@ -240,14 +239,10 @@ public abstract class ListTvRowHeadPresenter<T extends TvPresenterRowBean> exten
                                             if (position <= 0)
                                                 throw new Exception();
                                             int size = mData.size();
-                                            if (position + 1 >= size) {
-                                                T t = mData.get(position);
-                                                onUnCheckedItemHolder(view.getContext(), headLayout, view, t, position, keyCode);
-                                            } else {
-                                                int nextPosition = position + 1;
-                                                T t = mData.get(nextPosition);
-                                                onBindHeadHolder(view.getContext(), headLayout, nextPosition, t);
-                                            }
+                                            if (position + 1 < size)
+                                                throw new Exception();
+                                            T t = mData.get(position);
+                                            onUnCheckedItemHolder(view.getContext(), headLayout, view, t, position, keyCode);
                                         } catch (Exception e) {
                                         }
                                     }
@@ -279,13 +274,9 @@ public abstract class ListTvRowHeadPresenter<T extends TvPresenterRowBean> exten
                                             int position = recyclerView.getChildAdapterPosition(view);
                                             if (position < 0)
                                                 throw new Exception();
-                                            if (keyCode == KeyEvent.KEYCODE_DPAD_LEFT && position == 0)
-                                                throw new Exception();
-                                            int size = mData.size();
-                                            if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT && position + 1 > size)
-                                                throw new Exception();
                                             T t = mData.get(position);
                                             onBindHeadHolder(view.getContext(), headLayout, position, t);
+                                            checkedPosition = position;
                                         } catch (Exception e) {
                                         }
                                     }
@@ -295,13 +286,42 @@ public abstract class ListTvRowHeadPresenter<T extends TvPresenterRowBean> exten
                                             int position = recyclerView.getChildAdapterPosition(view);
                                             if (position < 0)
                                                 throw new Exception();
-                                            if (keyCode == KeyEvent.KEYCODE_DPAD_LEFT && position == 0)
+                                            T t = mData.get(position);
+                                            onBindHeadHolder(view.getContext(), headLayout, position, t);
+                                            checkedPosition = position;
+                                        } catch (Exception e) {
+                                        }
+                                    }
+                                    // action_up => keycode_dpad_left
+                                    else if (keyEvent.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
+                                        try {
+                                            int position = recyclerView.getChildAdapterPosition(view);
+                                            LeanBackUtil.log("ListTvRowHeadPresenter => initItemAdapter => setOnKeyListener => position = " + position + ", checkedPosition = " + checkedPosition);
+                                            if (position < 0)
                                                 throw new Exception();
-                                            int size = mData.size();
-                                            if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT && position + 1 > size)
+                                            if (checkedPosition == position)
                                                 throw new Exception();
                                             T t = mData.get(position);
                                             onBindHeadHolder(view.getContext(), headLayout, position, t);
+                                            checkedPosition = position;
+                                        } catch (Exception e) {
+                                        }
+                                    }
+                                    // action_up => keycode_dpad_right
+                                    else if (keyEvent.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_DPAD_RIGHT) {
+                                        try {
+                                            int position = recyclerView.getChildAdapterPosition(view);
+                                            LeanBackUtil.log("ListTvRowHeadPresenter => initItemAdapter => setOnKeyListener => position = " + position + ", checkedPosition = " + checkedPosition);
+                                            if (position < 0)
+                                                throw new Exception();
+                                            if (checkedPosition == position)
+                                                throw new Exception();
+                                            int size = mData.size();
+                                            if (position + 1 > size)
+                                                throw new Exception();
+                                            T t = mData.get(position);
+                                            onBindHeadHolder(view.getContext(), headLayout, position, t);
+                                            checkedPosition = position;
                                         } catch (Exception e) {
                                         }
                                     }
