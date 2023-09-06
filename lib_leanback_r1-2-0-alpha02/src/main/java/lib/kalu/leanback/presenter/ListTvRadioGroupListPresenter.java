@@ -563,33 +563,41 @@ public abstract class ListTvRadioGroupListPresenter<T extends TvRadioGroupItemBe
                 throw new Exception("itemCount error: " + itemCount);
             if (playerPosition + 1 > itemCount)
                 throw new Exception("playerPosition error: " + playerPosition + ", itemCount error: " + itemCount);
-            int first = ((LinearLayoutManager) recyclerViewVertical.getLayoutManager()).findFirstVisibleItemPosition();
-            int last = ((LinearLayoutManager) recyclerViewVertical.getLayoutManager()).findLastVisibleItemPosition();
-
-            if (playerPosition < first) {
+            // 滚动
+            int firstPosition = ((LinearLayoutManager) recyclerViewVertical.getLayoutManager()).findFirstVisibleItemPosition();
+            RecyclerView.ViewHolder firstViewHolder = recyclerViewVertical.findViewHolderForAdapterPosition(firstPosition);
+            if (null == firstViewHolder)
+                throw new Exception("firstViewHolder error: null");
+            int itemHeight = firstViewHolder.itemView.getMeasuredHeight();
+            if (itemHeight <= 0)
+                throw new Exception("itemHeight error: " + itemHeight);
+            int lastPosition = ((LinearLayoutManager) recyclerViewVertical.getLayoutManager()).findLastVisibleItemPosition();
+            if (playerPosition < firstPosition) {
                 while (true) {
                     RecyclerView.ViewHolder viewHolder = recyclerViewVertical.findViewHolderForAdapterPosition(playerPosition);
                     if (null != viewHolder) {
-                        viewHolder.itemView.requestFocus();
                         break;
                     } else {
-                        recyclerViewVertical.scrollBy(0, -10);
+                        recyclerViewVertical.scrollBy(0, -itemHeight);
                     }
                 }
-            } else if (playerPosition > last) {
+            } else if (playerPosition > lastPosition) {
                 while (true) {
                     RecyclerView.ViewHolder viewHolder = recyclerViewVertical.findViewHolderForAdapterPosition(playerPosition);
                     if (null != viewHolder) {
-                        viewHolder.itemView.requestFocus();
                         break;
                     } else {
-                        recyclerViewVertical.scrollBy(0, 10);
+                        recyclerViewVertical.scrollBy(0, itemHeight);
                     }
                 }
-            } else {
-                RecyclerView.ViewHolder viewHolder = recyclerViewVertical.findViewHolderForAdapterPosition(playerPosition);
-                viewHolder.itemView.requestFocus();
             }
+            RecyclerView.ViewHolder viewHolder = recyclerViewVertical.findViewHolderForAdapterPosition(playerPosition);
+            if (null == viewHolder)
+                throw new Exception("viewHolder error: null");
+            viewHolder.itemView.requestFocus();
+            T t = mData.get(playerPosition);
+            t.setChecked(true);
+            onBindHolderItem(viewHolder, playerPosition, t, false);
         } catch (Exception e) {
             LeanBackUtil.log("ListTvRadioGroupListPresenter => clearFull => " + e.getMessage());
         }
@@ -606,17 +614,26 @@ public abstract class ListTvRadioGroupListPresenter<T extends TvRadioGroupItemBe
             RecyclerView.ViewHolder firstViewHolder = recyclerView.findViewHolderForAdapterPosition(firstPosition);
             if (null == firstViewHolder)
                 throw new Exception("firstViewHolder error: null");
-            int measuredHeight = firstViewHolder.itemView.getMeasuredHeight();
+            int itemHeight = firstViewHolder.itemView.getMeasuredHeight();
+            if (itemHeight <= 0)
+                throw new Exception("itemHeight error: " + itemHeight);
             int itemCount = recyclerView.getAdapterItemCount();
             if (itemCount <= 0)
                 throw new Exception("itemCount error: " + itemCount);
             if (playerPosition <= 0)
                 throw new Exception("up error: not next");
-            int scrollBy = measuredHeight * (playerPosition - 1);
-            recyclerView.scrollTo(0, scrollBy);
+            // 滚动
+            while (true) {
+                RecyclerView.ViewHolder viewHolder = recyclerView.findViewHolderForAdapterPosition(playerPosition);
+                if (null != viewHolder) {
+                    break;
+                } else {
+                    recyclerView.scrollBy(0, -itemHeight);
+                }
+            }
             RecyclerView.ViewHolder viewHolder = recyclerView.findViewHolderForAdapterPosition(playerPosition);
-            if (null == viewGroup)
-                throw new Exception("viewGroup error: null");
+            if (null == viewHolder)
+                throw new Exception("viewHolder error: null");
             T t1 = mData.get(playerPosition);
             t1.setChecked(false);
             onBindHolderItem(viewHolder, playerPosition, t1, true);
@@ -642,17 +659,26 @@ public abstract class ListTvRadioGroupListPresenter<T extends TvRadioGroupItemBe
             RecyclerView.ViewHolder firstViewHolder = recyclerView.findViewHolderForAdapterPosition(firstPosition);
             if (null == firstViewHolder)
                 throw new Exception("firstViewHolder error: null");
-            int measuredHeight = firstViewHolder.itemView.getMeasuredHeight();
+            int itemHeight = firstViewHolder.itemView.getMeasuredHeight();
+            if (itemHeight <= 0)
+                throw new Exception("itemHeight error: " + itemHeight);
             int itemCount = recyclerView.getAdapterItemCount();
             if (itemCount <= 0)
                 throw new Exception("itemCount error: " + itemCount);
             if (playerPosition + 1 >= itemCount)
                 throw new Exception("down error: not next");
-            int scrollBy = measuredHeight * (playerPosition - 1);
-            recyclerView.scrollTo(0, scrollBy);
+            // 滚动
+            while (true) {
+                RecyclerView.ViewHolder viewHolder = recyclerView.findViewHolderForAdapterPosition(playerPosition);
+                if (null != viewHolder) {
+                    break;
+                } else {
+                    recyclerView.scrollBy(0, itemHeight);
+                }
+            }
             RecyclerView.ViewHolder viewHolder = recyclerView.findViewHolderForAdapterPosition(playerPosition);
-            if (null == viewGroup)
-                throw new Exception("viewGroup error: null");
+            if (null == viewHolder)
+                throw new Exception("viewHolder error: null");
             T t1 = mData.get(playerPosition);
             t1.setChecked(false);
             onBindHolderItem(viewHolder, playerPosition, t1, true);
