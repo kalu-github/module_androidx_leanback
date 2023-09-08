@@ -78,12 +78,16 @@ public class WebView extends android.webkit.WebView {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 CookieManager cookieManager = CookieManager.getInstance();
                 cookieManager.setAcceptThirdPartyCookies(this, true);
+            }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+            }
+            // fix h5网页视频有声音没图像
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                setLayerType(View.LAYER_TYPE_HARDWARE, null);
             }
             // drawing cache
             setDrawingCacheEnabled(false);
-            // fix h5网页视频有声音没图像
-            setLayerType(View.LAYER_TYPE_HARDWARE, null);
             // 设置是否显示水平滚动条
             setHorizontalScrollBarEnabled(false);
             // 设置垂直滚动条是否有叠加样式
