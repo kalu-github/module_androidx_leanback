@@ -3,9 +3,12 @@ package lib.kalu.leanback.web;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
+import android.net.http.SslError;
 import android.os.Build;
 import android.util.AttributeSet;
 import android.view.View;
+import android.webkit.CookieManager;
+import android.webkit.SslErrorHandler;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebViewClient;
@@ -72,6 +75,13 @@ public class WebView extends android.webkit.WebView {
 
     private void initConfig() {
         try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                CookieManager cookieManager = CookieManager.getInstance();
+                cookieManager.setAcceptThirdPartyCookies(this, true);
+                setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+            }
+            // drawing cache
+            setDrawingCacheEnabled(false);
             // fix h5网页视频有声音没图像
             setLayerType(View.LAYER_TYPE_HARDWARE, null);
             // 设置是否显示水平滚动条
@@ -81,8 +91,37 @@ public class WebView extends android.webkit.WebView {
             // 设置滚动条的样式
             setScrollBarStyle(android.webkit.WebView.SCROLLBARS_OUTSIDE_OVERLAY);
             setWebViewClient(new WebViewClient() {
+                @Override
+                public void onReceivedSslError(android.webkit.WebView view, SslErrorHandler handler, SslError error) {
+                    super.onReceivedSslError(view, handler, error);
+                    try {
+                        handler.proceed();
+                    } catch (Exception e) {
+                        LeanBackUtil.log("WebView => initConfig => setWebViewClient => onReceivedSslError => " + e.getMessage());
+                    }
+                }
+
+                @Override
+                public boolean shouldOverrideUrlLoading(android.webkit.WebView view, String url) {
+                    try {
+                        view.loadUrl(url);
+                    } catch (Exception e) {
+                        LeanBackUtil.log("WebView => initConfig => setWebViewClient => shouldOverrideUrlLoading => " + e.getMessage());
+                    }
+                    return true;
+                }
+
+                @Override
+                public void onPageFinished(android.webkit.WebView view, String url) {
+                    super.onPageFinished(view, url);
+                }
             });
             setWebChromeClient(new WebChromeClient() {
+
+                @Override
+                public void onProgressChanged(android.webkit.WebView view, int newProgress) {
+                    super.onProgressChanged(view, newProgress);
+                }
             });
         } catch (Exception e) {
             LeanBackUtil.log("WebView => initConfig => " + e.getMessage());
@@ -95,11 +134,16 @@ public class WebView extends android.webkit.WebView {
             WebSettings settings = getSettings();
             if (null == settings)
                 throw new Exception("settings error: null");
+
+            // 支持Javascript
+            settings.setJavaScriptEnabled(true);
+
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                 settings.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.TEXT_AUTOSIZING);
             } else {
                 settings.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.NORMAL);
             }
+
 //        settings.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.SINGLE_COLUMN);
 
             // 提高网页渲染的优先级
@@ -151,8 +195,6 @@ public class WebView extends android.webkit.WebView {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
                 settings.setMediaPlaybackRequiresUserGesture(false);
             }
-            // 支持Javascript
-            settings.setJavaScriptEnabled(true);
             //设置webview支持插件
             settings.setPluginState(WebSettings.PluginState.ON);
             settings.setSupportMultipleWindows(true);// 新加
