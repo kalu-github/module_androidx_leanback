@@ -17,6 +17,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 
+import java.io.File;
+import java.nio.charset.StandardCharsets;
+
 import lib.kalu.leanback.util.LeanBackUtil;
 
 public class WebView extends android.webkit.WebView {
@@ -141,6 +144,10 @@ public class WebView extends android.webkit.WebView {
 
             // 支持Javascript
             settings.setJavaScriptEnabled(true);
+            // 支持通过JS打开新窗口
+            settings.setJavaScriptCanOpenWindowsAutomatically(true);
+            // 提高网页渲染的优先级
+            settings.setRenderPriority(WebSettings.RenderPriority.HIGH);
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                 settings.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.TEXT_AUTOSIZING);
@@ -148,12 +155,25 @@ public class WebView extends android.webkit.WebView {
                 settings.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.NORMAL);
             }
 
-//        settings.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.SINGLE_COLUMN);
-
-            // 提高网页渲染的优先级
-            settings.setRenderPriority(WebSettings.RenderPriority.HIGH);
             // 启用还H5的地理定位服务
-            settings.setGeolocationEnabled(false);
+            settings.setGeolocationEnabled(true);
+            // 设置定位的数据库路径，不设置无法定位
+            try {
+                String dir = getContext().getDir("database", Context.MODE_PRIVATE).getPath();
+                settings.setGeolocationDatabasePath(dir);
+            } catch (Exception e) {
+            }
+
+            // 缓存模式
+            settings.setCacheMode(WebSettings.LOAD_NO_CACHE);
+            // 开启 database storage API 功能
+            settings.setDatabaseEnabled(false);
+            // 缓存路径
+            try {
+                String path = getContext().getFilesDir().getAbsolutePath() + "webview_database_file";
+                settings.setDatabasePath(path);
+            } catch (Exception e) {
+            }
 
             // 是否保存密码
             settings.setSavePassword(false);
@@ -161,14 +181,6 @@ public class WebView extends android.webkit.WebView {
             settings.setSaveFormData(false);
             // 开启 DOM storage API 功能
             settings.setDomStorageEnabled(true);
-            // 开启 database storage API 功能
-            settings.setDatabaseEnabled(false);
-            // 开启 Application Caches 功能
-//            settings.setAppCacheEnabled(false);
-            // 关闭webview中缓存
-            // String path = getContext().getFilesDir().getAbsolutePath() + "/caweb"; // 无效果
-            // settings.setAppCachePath(path); // 无效果
-            settings.setCacheMode(WebSettings.LOAD_NO_CACHE);
             // 设置可以访问文件
             settings.setAllowFileAccess(true);
             // 设置编码格式
@@ -202,16 +214,13 @@ public class WebView extends android.webkit.WebView {
             //设置webview支持插件
             settings.setPluginState(WebSettings.PluginState.ON);
             settings.setSupportMultipleWindows(true);// 新加
-            // 支持通过JS打开新窗口
-            settings.setJavaScriptCanOpenWindowsAutomatically(true);
             // 设置WebView是否以http、https方式访问从网络加载图片资源，默认false
             settings.setBlockNetworkImage(false);
             // 不立即加载图片, 等页面加载完成后设置加载图片
             settings.setLoadsImagesAutomatically(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT);
             // 处理http 和 https 图片混合的问题
-            // settings.setMixedContentMode(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP ? WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE : WebSettings.LOAD_DEFAULT);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                settings.setMixedContentMode(WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE);
+                settings.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
             }
         } catch (Exception e) {
             LeanBackUtil.log("WebView => initSetting => " + e.getMessage());
