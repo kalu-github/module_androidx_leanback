@@ -66,7 +66,7 @@ public class LoadingView extends View {
     private void init(@Nullable AttributeSet attrs) {
         TypedArray typedArray = null;
         try {
-            typedArray = getContext().getApplicationContext().obtainStyledAttributes(attrs, R.styleable.MPLoadingView);
+            typedArray = getContext().getApplicationContext().obtainStyledAttributes(attrs, R.styleable.LoadingView);
             mCount = typedArray.getInt(R.styleable.LoadingView_lv_count, 8);
             mDelayMillis = typedArray.getInt(R.styleable.LoadingView_lv_delay_millis, 120);
             mRate = typedArray.getFloat(R.styleable.LoadingView_lv_rate, 0.9f);
