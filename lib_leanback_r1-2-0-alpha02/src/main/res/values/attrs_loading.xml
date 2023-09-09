@@ -5,5 +5,6 @@
         <attr name="lv_count" format="integer|reference" />
         <attr name="lv_color_background" format="color|reference" />
         <attr name="lv_color_round" format="color|reference" />
+        <attr name="lv_delay_millis" format="integer" />
     </declare-styleable>
 </resources>

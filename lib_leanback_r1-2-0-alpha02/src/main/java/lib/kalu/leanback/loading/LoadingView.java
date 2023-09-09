@@ -5,7 +5,7 @@ import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.PorterDuff;
+import android.graphics.Rect;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
@@ -24,14 +24,16 @@ import androidx.leanback.R;
 import lib.kalu.leanback.util.LeanBackUtil;
 
 @Keep
-public final class LoadingView extends View {
+public class LoadingView extends View {
 
+    private int mDelayMillis = 120;
     private int mLoop = 0;
 
     private int mCount = 8;
     private float mRadius = 0f;
     private float mRate = 0f;
     private Paint mPaint = new Paint();
+    private Rect mRect = new Rect();
 
     @ColorInt
     private int mColorBackground = Color.TRANSPARENT;
@@ -62,60 +64,83 @@ public final class LoadingView extends View {
     }
 
     private void init(@Nullable AttributeSet attrs) {
-//        setEnabled(true);
-
         TypedArray typedArray = null;
-
         try {
-            typedArray = getContext().getApplicationContext().obtainStyledAttributes(attrs, R.styleable.LoadingView);
+            typedArray = getContext().getApplicationContext().obtainStyledAttributes(attrs, R.styleable.MPLoadingView);
             mCount = typedArray.getInt(R.styleable.LoadingView_lv_count, 8);
+            mDelayMillis = typedArray.getInt(R.styleable.LoadingView_lv_delay_millis, 120);
             mRate = typedArray.getFloat(R.styleable.LoadingView_lv_rate, 0.9f);
             mRadius = typedArray.getDimension(R.styleable.LoadingView_lv_radius, 0f);
             mColorBackground = typedArray.getColor(R.styleable.LoadingView_lv_color_background, Color.TRANSPARENT);
             mColorRound = typedArray.getColor(R.styleable.LoadingView_lv_color_round, Color.GRAY);
         } catch (Exception e) {
         }
-
         if (null != typedArray) {
             typedArray.recycle();
         }
     }
 
     @Override
+    public final void setVisibility(int visibility) {
+        setEnabled(visibility == View.VISIBLE);
+        super.setVisibility(visibility);
+        if (visibility != View.VISIBLE) {
+            cleanMessage();
+        }
+    }
+
+    @Override
     protected void onVisibilityChanged(@NonNull View changedView, int visibility) {
+        setEnabled(visibility == View.VISIBLE);
         super.onVisibilityChanged(changedView, visibility);
-        cleanMessage();
-        if (visibility == View.VISIBLE) {
-            startMessageDelayed();
-        } else {
-            releaseMessage();
+        LeanBackUtil.log("LoadingView => onVisibilityChanged => visibility = " + visibility);
+        if (visibility != View.VISIBLE) {
+            cleanMessage();
         }
     }
 
     @Override
     protected void onWindowVisibilityChanged(int visibility) {
+        setEnabled(visibility == View.VISIBLE);
         super.onWindowVisibilityChanged(visibility);
-        cleanMessage();
-        if (visibility == View.VISIBLE) {
-            startMessageDelayed();
-        } else {
-            releaseMessage();
+        LeanBackUtil.log("LoadingView => onWindowVisibilityChanged => visibility = " + visibility);
+        if (visibility != View.VISIBLE) {
+            cleanMessage();
         }
     }
 
     @Override
     protected void onDetachedFromWindow() {
+        setEnabled(false);
         super.onDetachedFromWindow();
-        cleanMessage();
-        releaseMessage();
+        clearHandler();
+    }
+
+
+    @Override
+    protected void onAttachedToWindow() {
+        setEnabled(true);
+        super.onAttachedToWindow();
+        checkHandler();
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
+        clearLoading(canvas);
+        drawLoading(canvas);
+    }
+
+    private void clearLoading(@NonNull Canvas canvas) {
         try {
-            //  方法一：
-            canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.SRC_OVER);
+            mPaint.reset();
+            mPaint.setColor(Color.TRANSPARENT);
+            int width = getWidth();
+            int height = getHeight();
+            mRect.set(0, 0, width, height);
+            canvas.drawRect(mRect, mPaint);
+//            // 方法一：
+//            canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.SRC_OVER);
 //            //  方法二：
 //            canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
 //            //  方法三：
@@ -124,8 +149,19 @@ public final class LoadingView extends View {
 //            canvas.drawPaint(paint);
 //            paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC));
         } catch (Exception e) {
+            LeanBackUtil.log("LoadingView => clearLoading => " + e.getMessage());
         }
+    }
+
+    private void drawLoading(@NonNull Canvas canvas) {
         try {
+            boolean enabled = isEnabled();
+            if (!enabled)
+                throw new Exception("enabled warning: false");
+            int visibility = getVisibility();
+            LeanBackUtil.log("LoadingView => onDraw => mLoop = " + mLoop + ", mCount = " + mCount + ", visibility = " + visibility);
+            if (visibility != View.VISIBLE)
+                throw new Exception("visibility warning: " + visibility);
             // 循环次数
             if (mLoop + 1 >= mCount) {
                 mLoop = 0;
@@ -182,7 +218,10 @@ public final class LoadingView extends View {
 
             // delay
             mLoop = mLoop + 1;
+            // update
+            updateMessage();
         } catch (Exception e) {
+            LeanBackUtil.log("LoadingView => drawLoading => " + e.getMessage());
         }
     }
 
@@ -196,18 +235,7 @@ public final class LoadingView extends View {
         }
     }
 
-    private void releaseMessage() {
-        try {
-            if (null == mHandler)
-                throw new Exception("mHandler warning: null");
-            mHandler.removeCallbacksAndMessages(null);
-            mHandler = null;
-        } catch (Exception e) {
-            LeanBackUtil.log("LoadingView => releaseMessage => " + e.getMessage());
-        }
-    }
-
-    private void initMessage() {
+    private void checkHandler() {
         try {
             if (null != mHandler)
                 throw new Exception("mHandler warning: null");
@@ -221,31 +249,45 @@ public final class LoadingView extends View {
                         if (visibility != View.VISIBLE)
                             throw new Exception();
                         if (msg.what != 9001)
-                            throw new Exception();
-//                        MPLogUtil.log("LoadingView => initMessage => handleMessage => " + this);
-                        startMessageDelayed();
+                            throw new Exception("msg.what error: " + msg.what);
                         postInvalidate();
                     } catch (Exception e) {
+                        LeanBackUtil.log("LoadingView => checkHandler => handleMessage => " + e.getMessage());
                     }
                 }
             };
         } catch (Exception e) {
-            LeanBackUtil.log("LoadingView => initMessage => " + e.getMessage());
+            LeanBackUtil.log("LoadingView => checkHandler => " + e.getMessage());
         }
     }
 
-    private void startMessageDelayed() {
+    private void clearHandler() {
         try {
-            if (null == mHandler) {
-                initMessage();
-            }
-            mHandler.sendEmptyMessageDelayed(9001, 100);
+            if (null == mHandler)
+                throw new Exception("mHandler warning: null");
+            mHandler.removeCallbacksAndMessages(null);
+            mHandler = null;
         } catch (Exception e) {
-            LeanBackUtil.log("LoadingView => startMessageDelayed => " + e.getMessage());
+            LeanBackUtil.log("LoadingView => clearHandler => " + e.getMessage());
+        }
+    }
+
+    private void updateMessage() {
+        checkHandler();
+        try {
+            mHandler.sendEmptyMessageDelayed(9001, mDelayMillis);
+            LeanBackUtil.log("LoadingView => updateMessage => succ");
+        } catch (Exception e) {
+            LeanBackUtil.log("LoadingView => updateMessage => " + e.getMessage());
         }
     }
 
     /*************/
+
+    @Keep
+    public void setDelayMillis(@NonNull int delayMillis) {
+        this.mDelayMillis = delayMillis;
+    }
 
     @Keep
     public void setCount(@NonNull int count) {
@@ -263,6 +305,7 @@ public final class LoadingView extends View {
             float dimension = getResources().getDimension(resId);
             this.mRadius = dimension;
         } catch (Exception e) {
+            LeanBackUtil.log("LoadingView => setRadius => " + e.getMessage());
         }
     }
 }
