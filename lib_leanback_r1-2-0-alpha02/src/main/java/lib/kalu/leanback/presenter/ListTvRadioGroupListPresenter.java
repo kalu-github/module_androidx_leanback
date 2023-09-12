@@ -2,6 +2,8 @@ package lib.kalu.leanback.presenter;
 
 import android.content.Context;
 import android.graphics.Rect;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,8 +19,11 @@ import androidx.leanback.widget.Presenter;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.sql.Array;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 import lib.kalu.leanback.list.RecyclerViewVertical;
 import lib.kalu.leanback.list.layoutmanager.BaseLinearLayoutManager;
@@ -550,24 +555,50 @@ public abstract class ListTvRadioGroupListPresenter<T extends TvRadioGroupItemBe
         try {
             if (null == viewGroup)
                 throw new Exception("viewGroup error: null");
-            RecyclerViewVertical recyclerViewVertical = viewGroup.findViewById(R.id.module_leanback_lrgl_list);
-            if (null == recyclerViewVertical)
-                throw new Exception("recyclerViewVertical error: null");
+            RecyclerViewVertical recyclerView = viewGroup.findViewById(R.id.module_leanback_lrgl_list);
+            if (null == recyclerView)
+                throw new Exception("recyclerView error: null");
             if (checkedPosition < 0)
                 throw new Exception("checkedPosition error: " + checkedPosition);
-            int itemCount = recyclerViewVertical.getAdapterItemCount();
+            int itemCount = recyclerView.getAdapterItemCount();
             if (itemCount <= 0)
                 throw new Exception("itemCount error: " + itemCount);
             if (checkedPosition + 1 > itemCount)
                 throw new Exception("checkedPosition error: " + checkedPosition + ", itemCount error: " + itemCount);
-            // news
-            if (checkedPosition != -1) {
-                T t = mData.get(checkedPosition);
-                t.setChecked(true);
-                RecyclerView.ViewHolder vHolder = recyclerViewVertical.findViewHolderForAdapterPosition(checkedPosition);
-                if (null != vHolder) {
-                    onBindHolderItem(vHolder, checkedPosition, t, false);
-                    vHolder.itemView.requestFocus();
+            // scroll
+            while (true) {
+                int first = ((LinearLayoutManager) recyclerView.getLayoutManager()).findFirstVisibleItemPosition();
+                int last = ((LinearLayoutManager) recyclerView.getLayoutManager()).findLastVisibleItemPosition();
+                if (checkedPosition >= first && checkedPosition <= last)
+                    break;
+                if (checkedPosition < first) {
+                    RecyclerView.ViewHolder viewHolder = recyclerView.findViewHolderForAdapterPosition(last);
+                    int height = viewHolder.itemView.getHeight();
+                    recyclerView.scrollBy(0, -height);
+                } else if (checkedPosition > last) {
+                    RecyclerView.ViewHolder viewHolder = recyclerView.findViewHolderForAdapterPosition(last);
+                    int height = viewHolder.itemView.getHeight();
+                    recyclerView.scrollBy(0, height);
+                } else {
+                    break;
+                }
+            }
+            // update
+            for (int i = 0; i < itemCount; i++) {
+                T t = mData.get(i);
+                if (i == checkedPosition) {
+                    t.setChecked(true);
+                    RecyclerView.ViewHolder viewHolder = recyclerView.findViewHolderForAdapterPosition(i);
+                    if (null != viewHolder) {
+                        onBindHolderItem(viewHolder, i, t, false);
+                        viewHolder.itemView.requestFocus();
+                    }
+                } else if (t.isChecked()) {
+                    t.setChecked(false);
+                    RecyclerView.ViewHolder viewHolder = recyclerView.findViewHolderForAdapterPosition(i);
+                    if (null != viewHolder) {
+                        onBindHolderItem(viewHolder, i, t, true);
+                    }
                 }
             }
         } catch (Exception e) {
@@ -582,22 +613,22 @@ public abstract class ListTvRadioGroupListPresenter<T extends TvRadioGroupItemBe
             RecyclerViewVertical recyclerView = viewGroup.findViewById(R.id.module_leanback_lrgl_list);
             if (null == recyclerView)
                 throw new Exception("recyclerView error: null");
+            recyclerView.stopScroll();
             int itemCount = recyclerView.getAdapterItemCount();
             if (itemCount <= 0)
                 throw new Exception("itemCount error: " + itemCount);
             if (checkedPosition <= 0)
                 throw new Exception("up error: not next");
-            // olds
-            RecyclerView.ViewHolder viewHolder = recyclerView.findViewHolderForAdapterPosition(checkedPosition);
-            if (null != viewHolder) {
-                T t = mData.get(checkedPosition);
-                t.setChecked(false);
-                onBindHolderItem(viewHolder, checkedPosition, t, true);
-                // scroll
-                int height = viewHolder.itemView.getHeight();
-                recyclerView.scrollBy(0, -height);
-//                ((LinearLayoutManager) recyclerView.getLayoutManager()).scrollToPositionWithOffset(checkedPosition, -height);
-            }
+//            // olds
+//            RecyclerView.ViewHolder viewHolder = recyclerView.findViewHolderForAdapterPosition(checkedPosition);
+//            if (null != viewHolder) {
+//                T t = mData.get(checkedPosition);
+//                t.setChecked(false);
+//                onBindHolderItem(viewHolder, checkedPosition, t, true);
+//                // scroll
+//                int height = viewHolder.itemView.getHeight();
+//                recyclerView.scrollBy(0, -height);
+//            }
             // update
             checkedPosition = checkedPosition - 1;
             T t = mData.get(checkedPosition);
@@ -615,24 +646,24 @@ public abstract class ListTvRadioGroupListPresenter<T extends TvRadioGroupItemBe
             RecyclerViewVertical recyclerView = viewGroup.findViewById(R.id.module_leanback_lrgl_list);
             if (null == recyclerView)
                 throw new Exception("recyclerView error: null");
+            recyclerView.stopScroll();
             int itemCount = recyclerView.getAdapterItemCount();
             if (itemCount <= 0)
                 throw new Exception("itemCount error: " + itemCount);
             if (checkedPosition + 1 >= itemCount)
                 throw new Exception("down error: not next");
-            // olds
-            RecyclerView.ViewHolder viewHolder = recyclerView.findViewHolderForAdapterPosition(checkedPosition);
-            if (null != viewHolder) {
-                T t = mData.get(checkedPosition);
-                if (t.isChecked()) {
-                    t.setChecked(false);
-                    onBindHolderItem(viewHolder, checkedPosition, t, true);
-                }
-                // scroll
-                int height = viewHolder.itemView.getHeight();
-                recyclerView.scrollBy(0, height);
-//                ((LinearLayoutManager) recyclerView.getLayoutManager()).scrollToPositionWithOffset(checkedPosition, height);
-            }
+//            // olds
+//            RecyclerView.ViewHolder viewHolder = recyclerView.findViewHolderForAdapterPosition(checkedPosition);
+//            if (null != viewHolder) {
+//                T t = mData.get(checkedPosition);
+//                if (t.isChecked()) {
+//                    t.setChecked(false);
+//                    onBindHolderItem(viewHolder, checkedPosition, t, true);
+//                }
+//                // scroll
+//                int height = viewHolder.itemView.getHeight();
+//                recyclerView.scrollBy(0, height);
+//            }
             // update
             checkedPosition = checkedPosition + 1;
             T t = mData.get(checkedPosition);
