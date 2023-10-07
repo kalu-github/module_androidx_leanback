@@ -179,7 +179,7 @@ interface ClassLayoutImpl {
         }
     }
 
-    default CharSequence getCheckedCode() {
+    default String getCheckedCode() {
         try {
             RadioGroup radioGroup = getRadioGroup(true);
             if (null == radioGroup)
