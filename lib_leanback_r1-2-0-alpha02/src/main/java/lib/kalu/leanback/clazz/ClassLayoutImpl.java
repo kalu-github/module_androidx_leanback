@@ -21,16 +21,6 @@ import lib.kalu.leanback.util.LeanBackUtil;
 
 interface ClassLayoutImpl {
 
-    /*************/
-
-    OnCheckedChangeListener[] mListener = new OnCheckedChangeListener[1];
-
-    default void setOnCheckedChangeListener(@NonNull OnCheckedChangeListener listener) {
-        this.mListener[0] = null;
-        this.mListener[0] = listener;
-    }
-
-    /*************/
 
     default RadioGroup getRadioGroup(boolean checkCount) {
         try {
@@ -70,34 +60,6 @@ interface ClassLayoutImpl {
         } catch (Exception e) {
             LeanBackUtil.log("ClassLayoutImpl => getRadioButton => " + e.getMessage());
             return null;
-        }
-    }
-
-    default void callListener(boolean isFromUser) {
-        try {
-            if (null == mListener[0])
-                throw new Exception("mListener error: null");
-            RadioGroup radioGroup = getRadioGroup(true);
-            if (null == radioGroup)
-                throw new Exception("radioGroup error: null");
-            int itemCount = getItemCount();
-            if (itemCount <= 0)
-                throw new Exception("itemCount error: " + itemCount);
-            for (int i = 0; i < itemCount; i++) {
-                RadioButton radioButton = (RadioButton) radioGroup.getChildAt(i);
-                if (null == radioButton)
-                    continue;
-                Object tag = radioButton.getTag(R.id.lb_classlayout_data);
-                if (null == tag || !(tag instanceof ClassBean))
-                    continue;
-                if (((ClassBean) tag).isChecked()) {
-                    mListener[0].onChecked(isFromUser, i, ((ClassBean) tag).getText(), ((ClassBean) tag).getCode());
-                    break;
-                }
-            }
-            throw new Exception("not find");
-        } catch (Exception e) {
-            LeanBackUtil.log("ClassLayoutImpl => callListener => " + e.getMessage());
         }
     }
 
@@ -271,7 +233,7 @@ interface ClassLayoutImpl {
             if (null == data)
                 throw new Exception("data error: " + data);
             int size = data.size();
-            if (size <= 0)
+            if (size == 0)
                 throw new Exception("size error: " + size);
             if (chechedIndex >= size)
                 throw new Exception("chechedIndex error: " + chechedIndex + ", size = " + size);
@@ -440,4 +402,8 @@ interface ClassLayoutImpl {
             LeanBackUtil.log("ClassLayoutImpl => setText => " + e.getMessage());
         }
     }
+
+    /***************/
+
+    void callListener(boolean isFromUser);
 }

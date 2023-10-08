@@ -11,6 +11,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.ScrollView;
 
@@ -253,5 +254,42 @@ public final class ClassScrollView extends ScrollView implements ClassLayoutImpl
 
     public void update(@NonNull List<? extends ClassBean> data, int checkedIndex) {
         update(data, checkedIndex, mItemMargin, mItemWidth, mItemHeight, mTextSize, mOrientation, mTextColor, mTextColorFocus, mTextColorChecked, mBackgroundResource, mBackgroundResourceFocus, mBackgroundResourceChecked, true);
+    }
+
+    /*****************/
+
+    OnCheckedChangeListener mOnCheckedChangeListener = null;
+
+    public void setOnCheckedChangeListener(@NonNull OnCheckedChangeListener listener) {
+        this.mOnCheckedChangeListener = listener;
+    }
+
+    @Override
+    public void callListener(boolean isFromUser) {
+        try {
+            if (null == mOnCheckedChangeListener)
+                throw new Exception("mOnCheckedChangeListener error: null");
+            RadioGroup radioGroup = getRadioGroup(true);
+            if (null == radioGroup)
+                throw new Exception("radioGroup error: null");
+            int itemCount = getItemCount();
+            if (itemCount <= 0)
+                throw new Exception("itemCount error: " + itemCount);
+            for (int i = 0; i < itemCount; i++) {
+                RadioButton radioButton = (RadioButton) radioGroup.getChildAt(i);
+                if (null == radioButton)
+                    continue;
+                Object tag = radioButton.getTag(R.id.lb_classlayout_data);
+                if (null == tag || !(tag instanceof ClassBean))
+                    continue;
+                if (((ClassBean) tag).isChecked()) {
+                    mOnCheckedChangeListener.onChecked(isFromUser, i, ((ClassBean) tag).getText(), ((ClassBean) tag).getCode());
+                    break;
+                }
+            }
+            throw new Exception("not find");
+        } catch (Exception e) {
+            LeanBackUtil.log("ClassScrollView => callListener => " + e.getMessage());
+        }
     }
 }
