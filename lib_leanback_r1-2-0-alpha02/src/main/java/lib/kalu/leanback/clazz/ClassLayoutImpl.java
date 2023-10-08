@@ -427,4 +427,17 @@ interface ClassLayoutImpl {
             LeanBackUtil.log("ClassLayoutImpl => scrollNext => " + e.getMessage());
         }
     }
+
+    default void setText(@NonNull int index, @NonNull String s) {
+        try {
+            if (null == s || s.length() == 0)
+                throw new Exception("s error: " + s);
+            RadioButton radioButton = getRadioButton(index);
+            if (null == radioButton)
+                throw new Exception("radioButton error: null");
+            radioButton.setText(s);
+        } catch (Exception e) {
+            LeanBackUtil.log("ClassLayoutImpl => setText => " + e.getMessage());
+        }
+    }
 }
