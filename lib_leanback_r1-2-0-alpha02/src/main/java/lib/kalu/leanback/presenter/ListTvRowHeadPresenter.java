@@ -49,7 +49,7 @@ public abstract class ListTvRowHeadPresenter<T extends TvPresenterRowBean> exten
             setTitlePadding(context, inflate, R.id.module_leanback_llr_head_title);
             setTitleTextColor(context, inflate, R.id.module_leanback_llr_head_title);
             setTitleTextSize(context, inflate, R.id.module_leanback_llr_head_title);
-            setTitleAssetTTF(context, inflate, R.id.module_leanback_llr_head_title);
+            setTitleTTF(context, inflate, R.id.module_leanback_llr_head_title);
             setTitleBackgroundColor(context, inflate, R.id.module_leanback_llr_head_title);
             initHeadAdapter(context, inflate);
             ViewHolder viewHolder = new ViewHolder(inflate);

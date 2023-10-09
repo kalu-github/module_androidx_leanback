@@ -15,6 +15,7 @@ import androidx.annotation.NonNull;
 import androidx.leanback.R;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.io.File;
 import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -80,6 +81,10 @@ public interface ListTvPresenterImpl<T extends TvPresenterRowBean> {
     }
 
     default String initTitleAssetTTF(@NonNull Context context) {
+        return null;
+    }
+
+    default String initTitleAbsolutePathTTF(@NonNull Context context) {
         return null;
     }
 
@@ -179,15 +184,25 @@ public interface ListTvPresenterImpl<T extends TvPresenterRowBean> {
         }
     }
 
-    default void setTitleAssetTTF(@NonNull Context context, @NonNull ViewGroup viewGroup, @IdRes int id) {
+    default void setTitleTTF(@NonNull Context context, @NonNull ViewGroup viewGroup, @IdRes int id) {
         try {
             View view = viewGroup.findViewById(id);
             if (null == view)
                 throw new Exception("not find");
-            String titleAssetTTF = initTitleAssetTTF(context);
-            if (null == titleAssetTTF || titleAssetTTF.length() <= 0)
-                throw new Exception("titleAssetTTF is null");
-            ((TextView) view).setTypeface(Typeface.createFromAsset(context.getAssets(), titleAssetTTF));
+            String assetTTF = initTitleAssetTTF(context);
+            String absolutePathTTF = initTitleAbsolutePathTTF(context);
+            if (null != assetTTF && assetTTF.length() > 0) {
+                ((TextView) view).setTypeface(Typeface.createFromAsset(context.getAssets(), assetTTF));
+            } else if (null != absolutePathTTF && absolutePathTTF.length() > 0) {
+                File fileTTF = new File(absolutePathTTF);
+                if (!fileTTF.exists())
+                    throw new Exception("fileTTF error: not exists");
+                if (fileTTF.isDirectory())
+                    throw new Exception("fileTTF error: is directory");
+                ((TextView) view).setTypeface(Typeface.createFromFile(fileTTF));
+            } else {
+                throw new Exception("assetTTF error: " + assetTTF + ", absolutePathTTF error: " + absolutePathTTF);
+            }
         } catch (Exception e) {
             LeanBackUtil.log("ListTvPresenterImpl => setTitleAssetTTF => " + e.getMessage());
         }

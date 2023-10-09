@@ -40,7 +40,7 @@ public abstract class ListTvEpisodesSingleGridPresenter<T extends TvEpisodesGrid
             setTitlePadding(context, inflate, R.id.module_leanback_legp_title);
             setTitleTextColor(context, inflate, R.id.module_leanback_legp_title);
             setTitleTextSize(context, inflate, R.id.module_leanback_legp_title);
-            setTitleAssetTTF(context, inflate, R.id.module_leanback_legp_title);
+            setTitleTTF(context, inflate, R.id.module_leanback_legp_title);
             setTitleBackgroundColor(context, inflate, R.id.module_leanback_legp_title);
             initAdapter(context, inflate);
             return new ViewHolder(inflate);

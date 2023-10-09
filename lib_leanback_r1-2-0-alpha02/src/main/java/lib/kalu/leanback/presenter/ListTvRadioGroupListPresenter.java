@@ -51,7 +51,7 @@ public abstract class ListTvRadioGroupListPresenter<T extends TvRadioGroupItemBe
             setTitlePadding(context, inflate, R.id.module_leanback_lrgl_title);
             setTitleTextColor(context, inflate, R.id.module_leanback_lrgl_title);
             setTitleTextSize(context, inflate, R.id.module_leanback_lrgl_title);
-            setTitleAssetTTF(context, inflate, R.id.module_leanback_lrgl_title);
+            setTitleTTF(context, inflate, R.id.module_leanback_lrgl_title);
             setTitleBackgroundColor(context, inflate, R.id.module_leanback_lrgl_title);
             initBackground(context, inflate);
             initRadioGroup(context, inflate);

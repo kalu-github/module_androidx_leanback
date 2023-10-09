@@ -112,7 +112,7 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
             setTitlePadding(context, viewGroup, R.id.module_leanback_lep_title);
             setTitleTextColor(context, viewGroup, R.id.module_leanback_lep_title);
             setTitleTextSize(context, viewGroup, R.id.module_leanback_lep_title);
-            setTitleAssetTTF(context, viewGroup, R.id.module_leanback_lep_title);
+            setTitleTTF(context, viewGroup, R.id.module_leanback_lep_title);
             setTitleBackgroundColor(context, viewGroup, R.id.module_leanback_lep_title);
             initLayoutEpisode(context, viewGroup);
             initLayoutRange(context, viewGroup);

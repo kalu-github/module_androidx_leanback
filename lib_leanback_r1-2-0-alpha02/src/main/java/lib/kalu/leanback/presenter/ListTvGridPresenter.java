@@ -45,7 +45,7 @@ public abstract class ListTvGridPresenter<T extends TvPresenterRowBean> extends 
             setTitlePadding(context, inflate, R.id.module_leanback_lgp_title);
             setTitleTextColor(context, inflate, R.id.module_leanback_lgp_title);
             setTitleTextSize(context, inflate, R.id.module_leanback_lgp_title);
-            setTitleAssetTTF(context, inflate, R.id.module_leanback_lgp_title);
+            setTitleTTF(context, inflate, R.id.module_leanback_lgp_title);
             setTitleBackgroundColor(context, inflate, R.id.module_leanback_lgp_title);
             ViewHolder viewHolder = new ViewHolder(inflate);
             initAdapter(context, inflate, viewHolder);

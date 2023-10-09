@@ -40,7 +40,7 @@ public abstract class ListTvTableScrollPresenter<T extends TvEpisodesGridItemBea
             setTitlePadding(context, inflate, R.id.module_leanback_lghp_title);
             setTitleTextColor(context, inflate, R.id.module_leanback_lghp_title);
             setTitleTextSize(context, inflate, R.id.module_leanback_lghp_title);
-            setTitleAssetTTF(context, inflate, R.id.module_leanback_lghp_title);
+            setTitleTTF(context, inflate, R.id.module_leanback_lghp_title);
             setTitleBackgroundColor(context, inflate, R.id.module_leanback_lghp_title);
             initContent(context, inflate);
             initIconLeft(context, inflate);
