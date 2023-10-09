@@ -105,12 +105,12 @@ public abstract class ListTvRowPresenter<T extends TvPresenterRowBean> extends P
                     }
                 };
                 manager.setOrientation(LinearLayoutManager.HORIZONTAL);
-                    recyclerView.addItemDecoration(new RecyclerView.ItemDecoration() {
-                        @Override
-                        public void getItemOffsets(@NonNull Rect outRect, @NonNull View view, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
-                            initItemOffsets(outRect, view, parent, state);
-                        }
-                    });
+                recyclerView.addItemDecoration(new RecyclerView.ItemDecoration() {
+                    @Override
+                    public void getItemOffsets(@NonNull Rect outRect, @NonNull View view, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
+                        initItemOffsets(outRect, view, parent, state);
+                    }
+                });
                 recyclerView.setLayoutManager(manager);
             }
 
@@ -180,9 +180,9 @@ public abstract class ListTvRowPresenter<T extends TvPresenterRowBean> extends P
 //            }
     }
 
-    protected abstract void onCreateHolder(@NonNull Context context, @NonNull RecyclerView.ViewHolder holder, @NonNull View view, @NonNull List<T> datas);
+    protected abstract void onCreateHolder(@NonNull Context context, @NonNull RecyclerView.ViewHolder holder, @NonNull View itemView, @NonNull List<T> list, @NonNull int viewType);
 
-    protected abstract void onBindHolder(@NonNull View view, @NonNull T item, @NonNull int position, @NonNull int viewType);
+    protected abstract void onBindHolder(@NonNull View itemView, @NonNull T item, @NonNull int position, @NonNull int viewType);
 
     @LayoutRes
     protected abstract int initLayout(int viewType);

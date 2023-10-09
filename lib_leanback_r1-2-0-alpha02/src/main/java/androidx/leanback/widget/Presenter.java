@@ -99,6 +99,14 @@ public abstract class Presenter implements FacetProvider {
             this.view = view;
         }
 
+        public final int getChildAdapterPosition() {
+            try {
+                return ((BaseGridView) (this.view).getParent()).getChildAdapterPosition(this.view);
+            } catch (Exception e) {
+                return -1;
+            }
+        }
+
         @Override
         public final Object getFacet(Class<?> facetClass) {
             if (mFacets == null) {
