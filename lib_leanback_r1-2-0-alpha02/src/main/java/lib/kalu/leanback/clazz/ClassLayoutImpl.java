@@ -390,13 +390,19 @@ interface ClassLayoutImpl {
         }
     }
 
-    default void setText(@NonNull int index, @NonNull String s) {
+    default void updateText(@NonNull int index, @NonNull String s) {
         try {
             if (null == s || s.length() == 0)
                 throw new Exception("s error: " + s);
             RadioButton radioButton = getRadioButton(index);
             if (null == radioButton)
                 throw new Exception("radioButton error: null");
+            Object tag = radioButton.getTag(R.id.lb_classlayout_data);
+            if (null == tag)
+                throw new Exception("tag error: null");
+            if (!(tag instanceof ClassBean))
+                throw new Exception("tag error: not instanceof ClassBean");
+            ((ClassBean) tag).setText(s);
             radioButton.setText(s);
         } catch (Exception e) {
             LeanBackUtil.log("ClassLayoutImpl => setText => " + e.getMessage());
