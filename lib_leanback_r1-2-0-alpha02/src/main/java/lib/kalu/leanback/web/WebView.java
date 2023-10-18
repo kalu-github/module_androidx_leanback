@@ -115,7 +115,7 @@ public class WebView extends android.webkit.WebView {
                     } catch (Exception e) {
                         LeanBackUtil.log("WebView => initConfig => setWebViewClient => shouldOverrideUrlLoading => " + e.getMessage());
                     }
-                    return true;
+                    return false;
                 }
 
                 @Override
