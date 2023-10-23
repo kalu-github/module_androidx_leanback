@@ -109,22 +109,17 @@ public class WebView extends android.webkit.WebView {
                 }
 
                 @Override
-                public boolean shouldOverrideUrlLoading(android.webkit.WebView view, String url) {
+                public boolean shouldOverrideUrlLoading(android.webkit.WebView webView, String url) {
 
                     try {
                         if (null == mOnInterceptShouldOverrideUrl)
                             throw new Exception("mOnInterceptShouldOverrideUrl warning: null");
                         boolean interceptUrl = mOnInterceptShouldOverrideUrl.onInterceptUrl(url);
                         if (!interceptUrl)
-                            throw new Exception("interceptUrl warning: false");
-                        return true;
+                            throw new Exception("interceptUrl error: false");
                     } catch (Exception e) {
                         LeanBackUtil.log("WebView => initConfig => setWebViewClient => shouldOverrideUrlLoading => " + e.getMessage());
-                    }
-                    try {
-                        view.loadUrl(url);
-                    } catch (Exception e) {
-                        LeanBackUtil.log("WebView => initConfig => setWebViewClient => shouldOverrideUrlLoading => " + e.getMessage());
+                        webView.loadUrl(url);
                     }
                     return false;
                 }
@@ -255,9 +250,11 @@ public class WebView extends android.webkit.WebView {
     /**********************/
 
     private OnInterceptShouldOverrideUrlUrlListener mOnInterceptShouldOverrideUrl;
+
     public interface OnInterceptShouldOverrideUrlUrlListener {
         boolean onInterceptUrl(@NonNull String url);
     }
+
     public void setOnInterceptShouldOverrideUrlListener(@NonNull OnInterceptShouldOverrideUrlUrlListener l) {
         this.mOnInterceptShouldOverrideUrl = l;
     }
