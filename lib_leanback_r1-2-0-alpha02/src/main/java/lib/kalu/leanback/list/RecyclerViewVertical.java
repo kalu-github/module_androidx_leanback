@@ -8,6 +8,7 @@ import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
 import lib.kalu.leanback.util.LeanBackUtil;
 
@@ -185,6 +186,40 @@ public class RecyclerViewVertical extends BaseRecyclerView {
             if (itemCount > 0) {
                 scrollToPosition(itemCount - 1);
             }
+        }
+    }
+
+    @Override
+    public boolean fastScrollToPosition(@NonNull int checkedPosition) {
+
+        try {
+            while (true) {
+                LayoutManager layoutManager = getLayoutManager();
+                if (null == layoutManager)
+                    throw new Exception("layoutManager error: null");
+                int firstPosition = ((LinearLayoutManager) layoutManager).findFirstVisibleItemPosition();
+                if (firstPosition < 0)
+                    throw new Exception("firstPosition error: " + firstPosition);
+                int lastPosition = ((LinearLayoutManager) layoutManager).findLastVisibleItemPosition();
+                if (lastPosition < 0)
+                    throw new Exception("lastPosition error: " + lastPosition);
+                if (checkedPosition < firstPosition) {
+                    fastScrollRange(View.FOCUS_UP);
+                } else if (checkedPosition > lastPosition) {
+                    fastScrollRange(View.FOCUS_DOWN);
+                }
+                ViewHolder viewHolder = findViewHolderForAdapterPosition(checkedPosition);
+                if (null == viewHolder)
+                    continue;
+                if (null == viewHolder.itemView)
+                    continue;
+                viewHolder.itemView.requestFocus();
+                break;
+            }
+            return true;
+        } catch (Exception e) {
+            LeanBackUtil.log("RecyclerViewVertical => fastScrollToPosition => " + e.getMessage());
+            return false;
         }
     }
 }

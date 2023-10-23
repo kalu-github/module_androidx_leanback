@@ -9,6 +9,7 @@ import android.view.ViewParent;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
 import lib.kalu.leanback.list.listener.OnBaseRecyclerViewChangeListener;
 import lib.kalu.leanback.util.LeanBackUtil;
@@ -103,6 +104,10 @@ class BaseRecyclerView extends androidx.recyclerview.widget.RecyclerView {
         }
     }
 
+    public boolean fastScrollToPosition(int position) {
+        return false;
+    }
+
     public void scrollFocusedChild(int direction) {
     }
 
@@ -177,6 +182,30 @@ class BaseRecyclerView extends androidx.recyclerview.widget.RecyclerView {
             scrollToPosition(position);
         } catch (Exception e) {
             LeanBackUtil.log("BaseRecyclerView => leaveScrollFocusedChild => " + e.getMessage());
+        }
+    }
+
+    protected void fastScrollRange(int direction) {
+        try {
+            if (direction != View.FOCUS_UP && direction != View.FOCUS_DOWN)
+                throw new Exception("direction error: " + direction);
+            LayoutManager layoutManager = getLayoutManager();
+            if (null == layoutManager)
+                throw new Exception("layoutManager error: null");
+            int firstPosition = ((LinearLayoutManager) layoutManager).findFirstVisibleItemPosition();
+            if (firstPosition < 0)
+                throw new Exception("firstPosition error: " + firstPosition);
+            ViewHolder viewHolder = findViewHolderForAdapterPosition(firstPosition);
+            if (null == viewHolder)
+                throw new Exception("viewHolder error: null");
+            if (null == viewHolder.itemView)
+                throw new Exception("viewHolder.itemView error: null");
+            int measuredHeight = viewHolder.itemView.getMeasuredHeight();
+            if (measuredHeight <= 0)
+                throw new Exception("measuredHeight error: " + measuredHeight);
+            scrollBy(0, direction == View.FOCUS_UP ? -measuredHeight : measuredHeight);
+        } catch (Exception e) {
+            LeanBackUtil.log("BaseRecyclerView => fastScrollChild => " + e.getMessage());
         }
     }
 }
