@@ -390,11 +390,11 @@ interface ClassLayoutImpl {
         }
     }
 
-    default void updateText(@NonNull int index, @NonNull String s) {
+    default void updateText(@NonNull int checkedIndex, @NonNull String s) {
         try {
             if (null == s || s.length() == 0)
                 throw new Exception("s error: " + s);
-            RadioButton radioButton = getRadioButton(index);
+            RadioButton radioButton = getRadioButton(checkedIndex);
             if (null == radioButton)
                 throw new Exception("radioButton error: null");
             Object tag = radioButton.getTag(R.id.lb_classlayout_data);
@@ -406,6 +406,18 @@ interface ClassLayoutImpl {
             radioButton.setText(s);
         } catch (Exception e) {
             LeanBackUtil.log("ClassLayoutImpl => setText => " + e.getMessage());
+        }
+    }
+
+    default String getText(@NonNull int checkedIndex) {
+        try {
+            RadioButton radioButton = getRadioButton(checkedIndex);
+            if (null == radioButton)
+                throw new Exception("radioButton error: null");
+            return (String) radioButton.getText();
+        } catch (Exception e) {
+            LeanBackUtil.log("ClassLayoutImpl => getText => " + e.getMessage());
+            return null;
         }
     }
 
