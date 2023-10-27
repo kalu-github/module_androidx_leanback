@@ -249,11 +249,19 @@ public final class ClassScrollView extends ScrollView implements ClassLayoutImpl
     }
 
     public void update(@NonNull List<? extends ClassBean> data) {
-        update(data, 0, mItemMargin, mItemWidth, mItemHeight, mTextSize, mOrientation, mTextColor, mTextColorFocus, mTextColorChecked, mBackgroundResource, mBackgroundResourceFocus, mBackgroundResourceChecked, true);
+        update(data, 0, mItemMargin, mItemWidth, mItemHeight, mTextSize, mOrientation, mTextColor, mTextColorFocus, mTextColorChecked, mBackgroundResource, mBackgroundResourceFocus, mBackgroundResourceChecked, true, false);
+    }
+
+    public void update(@NonNull List<? extends ClassBean> data, boolean checkedRequestFocus) {
+        update(data, 0, mItemMargin, mItemWidth, mItemHeight, mTextSize, mOrientation, mTextColor, mTextColorFocus, mTextColorChecked, mBackgroundResource, mBackgroundResourceFocus, mBackgroundResourceChecked, true, checkedRequestFocus);
     }
 
     public void update(@NonNull List<? extends ClassBean> data, int checkedIndex) {
-        update(data, checkedIndex, mItemMargin, mItemWidth, mItemHeight, mTextSize, mOrientation, mTextColor, mTextColorFocus, mTextColorChecked, mBackgroundResource, mBackgroundResourceFocus, mBackgroundResourceChecked, true);
+        update(data, checkedIndex, mItemMargin, mItemWidth, mItemHeight, mTextSize, mOrientation, mTextColor, mTextColorFocus, mTextColorChecked, mBackgroundResource, mBackgroundResourceFocus, mBackgroundResourceChecked, true, false);
+    }
+
+    public void update(@NonNull List<? extends ClassBean> data, int checkedIndex, boolean checkedRequestFocus) {
+        update(data, checkedIndex, mItemMargin, mItemWidth, mItemHeight, mTextSize, mOrientation, mTextColor, mTextColorFocus, mTextColorChecked, mBackgroundResource, mBackgroundResourceFocus, mBackgroundResourceChecked, true, checkedRequestFocus);
     }
 
     /*****************/

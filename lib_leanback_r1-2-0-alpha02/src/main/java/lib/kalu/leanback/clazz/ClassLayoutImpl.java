@@ -227,7 +227,8 @@ interface ClassLayoutImpl {
                         @DrawableRes int backgroundResource,
                         @DrawableRes int backgroundResourceFocus,
                         @DrawableRes int backgroundResourceChecked,
-                        @NonNull boolean callListener) {
+                        @NonNull boolean callListener,
+                        @NonNull boolean checkedRequestFoxus) {
 
         try {
             if (null == data)
@@ -286,6 +287,9 @@ interface ClassLayoutImpl {
             if (!callListener)
                 throw new Exception("not callListener");
             callListener(false);
+            if (checkedRequestFoxus) {
+                setCheckedRadioButton(true, true, false);
+            }
         } catch (Exception e) {
             LeanBackUtil.log("ClassLayoutImpl => update => " + e.getMessage());
         }
