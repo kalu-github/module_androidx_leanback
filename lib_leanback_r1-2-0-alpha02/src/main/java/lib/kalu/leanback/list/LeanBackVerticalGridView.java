@@ -8,11 +8,10 @@ import android.view.ViewParent;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.view.ViewCompat;
 
 import lib.kalu.leanback.util.LeanBackUtil;
 
-public class LeanBackVerticalGridView extends BaseLeanBackGridViewVertical {
+public class LeanBackVerticalGridView extends BaseVerticalGridView {
     public LeanBackVerticalGridView(@NonNull Context context) {
         super(context);
     }

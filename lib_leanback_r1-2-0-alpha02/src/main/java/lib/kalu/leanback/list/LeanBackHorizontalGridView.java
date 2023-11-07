@@ -6,7 +6,7 @@ import android.util.AttributeSet;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-public class LeanBackHorizontalGridView extends BaseLeanBackGridViewHorizontal {
+public class LeanBackHorizontalGridView extends BaseHorizontalGridView {
 
     public LeanBackHorizontalGridView(@NonNull Context context) {
         super(context);
