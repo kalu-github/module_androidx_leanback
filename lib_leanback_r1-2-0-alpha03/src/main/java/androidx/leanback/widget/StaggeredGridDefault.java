@@ -17,7 +17,7 @@ package androidx.leanback.widget;
 
 /**
  * A default implementation of {@link StaggeredGrid}.
- *
+ * <p>
  * This implementation tries to fill items in consecutive row order. The next
  * item is always in same row or in the next row.
  */

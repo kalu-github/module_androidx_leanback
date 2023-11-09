@@ -15,6 +15,13 @@ public abstract class BasePresenterSelector extends PresenterSelector {
 
     /*******/
 
+    /*******/
+
+
+    public BasePresenterSelector() {
+        init();
+    }
+
     /**
      * 定制Presenter
      *
@@ -29,13 +36,6 @@ public abstract class BasePresenterSelector extends PresenterSelector {
     }
 
     protected abstract void init();
-
-    /*******/
-
-
-    public BasePresenterSelector() {
-        init();
-    }
 
     @Override
     public Presenter getPresenter(Object item) {

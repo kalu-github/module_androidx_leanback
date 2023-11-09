@@ -29,22 +29,22 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.util.ArrayList;
-import java.util.List;
-
 import androidx.annotation.IntDef;
 import androidx.annotation.Nullable;
 import androidx.core.view.ViewCompat;
 import androidx.leanback.R;
+
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A layout that arranges its children in a way its attributes can be specified like the
  * CSS Flexible Box Layout Module.
  * This class extends the {@link ViewGroup} like other layout classes such as {@link LinearLayout}
  * or {@link RelativeLayout}, the attributes can be specified from a layout XML or from code.
- *
+ * <p>
  * The supported attributes that you can use are:
  * <ul>
  * <li>{@code flexDirection}</li>
@@ -61,7 +61,7 @@ import androidx.leanback.R;
  * <li>{@code maxLine}</li>
  * </ul>
  * for the FlexboxLayout.
- *
+ * <p>
  * And for the children of the FlexboxLayout, you can use:
  * <ul>
  * <li>{@code layout_order}</li>
@@ -79,20 +79,34 @@ import androidx.leanback.R;
 public class FlexboxLayout extends ViewGroup implements FlexContainer {
 
     /**
+     * Constant to show no dividers
+     */
+    public static final int SHOW_DIVIDER_NONE = 0;
+    /**
+     * Constant to show a divider at the beginning of the flex lines (or flex items).
+     */
+    public static final int SHOW_DIVIDER_BEGINNING = 1;
+    /**
+     * Constant to show dividers between flex lines or flex items.
+     */
+    public static final int SHOW_DIVIDER_MIDDLE = 1 << 1;
+    /**
+     * Constant to show a divider at the end of the flex lines or flex items.
+     */
+    public static final int SHOW_DIVIDER_END = 1 << 2;
+    /**
      * The current value of the {@link FlexDirection}, the default value is {@link
      * FlexDirection#ROW}.
      *
      * @see FlexDirection
      */
     private int mFlexDirection;
-
     /**
      * The current value of the {@link FlexWrap}, the default value is {@link FlexWrap#NOWRAP}.
      *
      * @see FlexWrap
      */
     private int mFlexWrap;
-
     /**
      * The current value of the {@link JustifyContent}, the default value is
      * {@link JustifyContent#FLEX_START}.
@@ -100,7 +114,6 @@ public class FlexboxLayout extends ViewGroup implements FlexContainer {
      * @see JustifyContent
      */
     private int mJustifyContent;
-
     /**
      * The current value of the {@link AlignItems}, the default value is
      * {@link AlignItems#FLEX_START}.
@@ -108,7 +121,6 @@ public class FlexboxLayout extends ViewGroup implements FlexContainer {
      * @see AlignItems
      */
     private int mAlignItems;
-
     /**
      * The current value of the {@link AlignContent}, the default value is
      * {@link AlignContent#FLEX_START}.
@@ -116,78 +128,45 @@ public class FlexboxLayout extends ViewGroup implements FlexContainer {
      * @see AlignContent
      */
     private int mAlignContent;
-
     /**
      * The current value of the maxLine attribute, which specifies the maximum number of flex lines.
      */
     private int mMaxLine = NOT_SET;
-
     /**
-     * The int definition to be used as the arguments for the {@link #setShowDivider(int)},
-     * {@link #setShowDividerHorizontal(int)} or {@link #setShowDividerVertical(int)}.
-     * One or more of the values (such as
-     * {@link #SHOW_DIVIDER_BEGINNING} | {@link #SHOW_DIVIDER_MIDDLE}) can be passed to those set
-     * methods.
+     * The drawable to be drawn for the horizontal dividers.
      */
-    @IntDef(flag = true,
-            value = {
-                    SHOW_DIVIDER_NONE,
-                    SHOW_DIVIDER_BEGINNING,
-                    SHOW_DIVIDER_MIDDLE,
-                    SHOW_DIVIDER_END
-            })
-    @Retention(RetentionPolicy.SOURCE)
-    @SuppressWarnings("WeakerAccess")
-    public @interface DividerMode {
-
-    }
-
-    /** Constant to show no dividers */
-    public static final int SHOW_DIVIDER_NONE = 0;
-
-    /** Constant to show a divider at the beginning of the flex lines (or flex items). */
-    public static final int SHOW_DIVIDER_BEGINNING = 1;
-
-    /** Constant to show dividers between flex lines or flex items. */
-    public static final int SHOW_DIVIDER_MIDDLE = 1 << 1;
-
-    /** Constant to show a divider at the end of the flex lines or flex items. */
-    public static final int SHOW_DIVIDER_END = 1 << 2;
-
-    /** The drawable to be drawn for the horizontal dividers. */
     @Nullable
     private Drawable mDividerDrawableHorizontal;
-
-    /** The drawable to be drawn for the vertical dividers. */
+    /**
+     * The drawable to be drawn for the vertical dividers.
+     */
     @Nullable
     private Drawable mDividerDrawableVertical;
-
     /**
      * Indicates the divider mode for the {@link #mDividerDrawableHorizontal}. The value needs to
      * be the combination of the value of {@link #SHOW_DIVIDER_NONE},
      * {@link #SHOW_DIVIDER_BEGINNING}, {@link #SHOW_DIVIDER_MIDDLE} and {@link #SHOW_DIVIDER_END}
      */
     private int mShowDividerHorizontal;
-
     /**
      * Indicates the divider mode for the {@link #mDividerDrawableVertical}. The value needs to
      * be the combination of the value of {@link #SHOW_DIVIDER_NONE},
      * {@link #SHOW_DIVIDER_BEGINNING}, {@link #SHOW_DIVIDER_MIDDLE} and {@link #SHOW_DIVIDER_END}
      */
     private int mShowDividerVertical;
-
-    /** The height of the {@link #mDividerDrawableHorizontal}. */
+    /**
+     * The height of the {@link #mDividerDrawableHorizontal}.
+     */
     private int mDividerHorizontalHeight;
-
-    /** The width of the {@link #mDividerDrawableVertical}. */
+    /**
+     * The width of the {@link #mDividerDrawableVertical}.
+     */
     private int mDividerVerticalWidth;
-
     /**
      * Holds reordered indices, which {@link FlexItem#getOrder()} parameters are taken
      * into account
      */
     private int[] mReorderedIndices;
-
     /**
      * Caches the {@link FlexItem#getOrder()} attributes for children views.
      * Key: the index of the view reordered indices using the {@link FlexItem#getOrder()}
@@ -195,11 +174,8 @@ public class FlexboxLayout extends ViewGroup implements FlexContainer {
      * Value: the value for the order attribute
      */
     private SparseIntArray mOrderCache;
-
     private FlexboxHelper mFlexboxHelper = new FlexboxHelper(this);
-
     private List<FlexLine> mFlexLines = new ArrayList<>();
-
     /**
      * Used for receiving the calculation of the flex results to avoid creating a new instance
      * every time flex lines are calculated.
@@ -433,7 +409,7 @@ public class FlexboxLayout extends ViewGroup implements FlexContainer {
      * @see #setFlexDirection(int)
      */
     private void setMeasuredDimensionForFlex(@FlexDirection int flexDirection, int widthMeasureSpec,
-            int heightMeasureSpec, int childState) {
+                                             int heightMeasureSpec, int childState) {
         int widthMode = MeasureSpec.getMode(widthMeasureSpec);
         int widthSize = MeasureSpec.getSize(widthMeasureSpec);
         int heightMode = MeasureSpec.getMode(heightMeasureSpec);
@@ -767,7 +743,7 @@ public class FlexboxLayout extends ViewGroup implements FlexContainer {
      * @see LayoutParams#mAlignSelf
      */
     private void layoutVertical(boolean isRtl, boolean fromBottomToTop, int left, int top,
-            int right, int bottom) {
+                                int right, int bottom) {
         int paddingTop = getPaddingTop();
         int paddingBottom = getPaddingBottom();
 
@@ -899,7 +875,6 @@ public class FlexboxLayout extends ViewGroup implements FlexContainer {
             childRight -= flexLine.mCrossSize;
         }
     }
-
 
     @Override
     protected void onDraw(Canvas canvas) {
@@ -1246,6 +1221,11 @@ public class FlexboxLayout extends ViewGroup implements FlexContainer {
     }
 
     @Override
+    public void setFlexLines(List<FlexLine> flexLines) {
+        mFlexLines = flexLines;
+    }
+
+    @Override
     public int getDecorationLengthMainAxis(View view, int index, int indexInFlexLine) {
         int decorationLength = 0;
         if (isMainAxisDirectionHorizontal()) {
@@ -1315,11 +1295,6 @@ public class FlexboxLayout extends ViewGroup implements FlexContainer {
     }
 
     @Override
-    public void setFlexLines(List<FlexLine> flexLines) {
-        mFlexLines = flexLines;
-    }
-
-    @Override
     public List<FlexLine> getFlexLinesInternal() {
         return mFlexLines;
     }
@@ -1338,29 +1313,6 @@ public class FlexboxLayout extends ViewGroup implements FlexContainer {
     @SuppressWarnings("UnusedDeclaration")
     public Drawable getDividerDrawableHorizontal() {
         return mDividerDrawableHorizontal;
-    }
-
-    /**
-     * @return the vertical divider drawable that will divide each item.
-     * @see #setDividerDrawable(Drawable)
-     * @see #setDividerDrawableVertical(Drawable)
-     */
-    @Nullable
-    @SuppressWarnings("UnusedDeclaration")
-    public Drawable getDividerDrawableVertical() {
-        return mDividerDrawableVertical;
-    }
-
-    /**
-     * Set a drawable to be used as a divider between items. The drawable is used for both
-     * horizontal and vertical dividers.
-     *
-     * @param divider Drawable that will divide each item for both horizontally and vertically.
-     * @see #setShowDivider(int)
-     */
-    public void setDividerDrawable(Drawable divider) {
-        setDividerDrawableHorizontal(divider);
-        setDividerDrawableVertical(divider);
     }
 
     /**
@@ -1386,6 +1338,17 @@ public class FlexboxLayout extends ViewGroup implements FlexContainer {
     }
 
     /**
+     * @return the vertical divider drawable that will divide each item.
+     * @see #setDividerDrawable(Drawable)
+     * @see #setDividerDrawableVertical(Drawable)
+     */
+    @Nullable
+    @SuppressWarnings("UnusedDeclaration")
+    public Drawable getDividerDrawableVertical() {
+        return mDividerDrawableVertical;
+    }
+
+    /**
      * Set a drawable to be used as a vertical divider between items.
      *
      * @param divider Drawable that will divide each item.
@@ -1407,29 +1370,21 @@ public class FlexboxLayout extends ViewGroup implements FlexContainer {
         requestLayout();
     }
 
+    /**
+     * Set a drawable to be used as a divider between items. The drawable is used for both
+     * horizontal and vertical dividers.
+     *
+     * @param divider Drawable that will divide each item for both horizontally and vertically.
+     * @see #setShowDivider(int)
+     */
+    public void setDividerDrawable(Drawable divider) {
+        setDividerDrawableHorizontal(divider);
+        setDividerDrawableVertical(divider);
+    }
+
     @FlexboxLayout.DividerMode
     public int getShowDividerVertical() {
         return mShowDividerVertical;
-    }
-
-    @FlexboxLayout.DividerMode
-    public int getShowDividerHorizontal() {
-        return mShowDividerHorizontal;
-    }
-
-    /**
-     * Set how dividers should be shown between items in this layout. This method sets the
-     * divider mode for both horizontally and vertically.
-     *
-     * @param dividerMode One or more of {@link #SHOW_DIVIDER_BEGINNING},
-     *                    {@link #SHOW_DIVIDER_MIDDLE}, or {@link #SHOW_DIVIDER_END},
-     *                    or {@link #SHOW_DIVIDER_NONE} to show no dividers.
-     * @see #setShowDividerVertical(int)
-     * @see #setShowDividerHorizontal(int)
-     */
-    public void setShowDivider(@DividerMode int dividerMode) {
-        setShowDividerVertical(dividerMode);
-        setShowDividerHorizontal(dividerMode);
     }
 
     /**
@@ -1447,6 +1402,11 @@ public class FlexboxLayout extends ViewGroup implements FlexContainer {
         }
     }
 
+    @FlexboxLayout.DividerMode
+    public int getShowDividerHorizontal() {
+        return mShowDividerHorizontal;
+    }
+
     /**
      * Set how horizontal dividers should be shown between items in this layout.
      *
@@ -1460,6 +1420,21 @@ public class FlexboxLayout extends ViewGroup implements FlexContainer {
             mShowDividerHorizontal = dividerMode;
             requestLayout();
         }
+    }
+
+    /**
+     * Set how dividers should be shown between items in this layout. This method sets the
+     * divider mode for both horizontally and vertically.
+     *
+     * @param dividerMode One or more of {@link #SHOW_DIVIDER_BEGINNING},
+     *                    {@link #SHOW_DIVIDER_MIDDLE}, or {@link #SHOW_DIVIDER_END},
+     *                    or {@link #SHOW_DIVIDER_NONE} to show no dividers.
+     * @see #setShowDividerVertical(int)
+     * @see #setShowDividerHorizontal(int)
+     */
+    public void setShowDivider(@DividerMode int dividerMode) {
+        setShowDividerVertical(dividerMode);
+        setShowDividerHorizontal(dividerMode);
     }
 
     private void setWillNotDrawFlag() {
@@ -1563,59 +1538,82 @@ public class FlexboxLayout extends ViewGroup implements FlexContainer {
     }
 
     /**
+     * The int definition to be used as the arguments for the {@link #setShowDivider(int)},
+     * {@link #setShowDividerHorizontal(int)} or {@link #setShowDividerVertical(int)}.
+     * One or more of the values (such as
+     * {@link #SHOW_DIVIDER_BEGINNING} | {@link #SHOW_DIVIDER_MIDDLE}) can be passed to those set
+     * methods.
+     */
+    @IntDef(flag = true,
+            value = {
+                    SHOW_DIVIDER_NONE,
+                    SHOW_DIVIDER_BEGINNING,
+                    SHOW_DIVIDER_MIDDLE,
+                    SHOW_DIVIDER_END
+            })
+    @Retention(RetentionPolicy.SOURCE)
+    @SuppressWarnings("WeakerAccess")
+    public @interface DividerMode {
+
+    }
+
+    /**
      * Per child parameters for children views of the {@link FlexboxLayout}.
-     *
+     * <p>
      * Note that some parent fields (which are not primitive nor a class implements
      * {@link Parcelable}) are not included as the stored/restored fields after this class
      * is serialized/de-serialized as an {@link Parcelable}.
      */
     public static class LayoutParams extends ViewGroup.MarginLayoutParams implements FlexItem {
 
+        public static final Parcelable.Creator<LayoutParams> CREATOR
+                = new Parcelable.Creator<LayoutParams>() {
+            @Override
+            public LayoutParams createFromParcel(Parcel source) {
+                return new LayoutParams(source);
+            }
+
+            @Override
+            public LayoutParams[] newArray(int size) {
+                return new LayoutParams[size];
+            }
+        };
         /**
          * @see FlexItem#getOrder()
          */
         private int mOrder = FlexItem.ORDER_DEFAULT;
-
         /**
          * @see FlexItem#getFlexGrow()
          */
         private float mFlexGrow = FlexItem.FLEX_GROW_DEFAULT;
-
         /**
          * @see FlexItem#getFlexShrink()
          */
         private float mFlexShrink = FlexItem.FLEX_SHRINK_DEFAULT;
-
         /**
          * @see FlexItem#getAlignSelf()
          */
         private int mAlignSelf = AlignSelf.AUTO;
-
         /**
          * @see FlexItem#getFlexBasisPercent()
          */
         private float mFlexBasisPercent = FlexItem.FLEX_BASIS_PERCENT_DEFAULT;
-
         /**
          * @see FlexItem#getMinWidth()
          */
         private int mMinWidth = NOT_SET;
-
         /**
          * @see FlexItem#getMinHeight()
          */
         private int mMinHeight = NOT_SET;
-
         /**
          * @see FlexItem#getMaxWidth()
          */
         private int mMaxWidth = MAX_SIZE;
-
         /**
          * @see FlexItem#getMaxHeight()
          */
         private int mMaxHeight = MAX_SIZE;
-
         /**
          * @see FlexItem#isWrapBefore()
          */
@@ -1673,6 +1671,28 @@ public class FlexboxLayout extends ViewGroup implements FlexContainer {
 
         public LayoutParams(MarginLayoutParams source) {
             super(source);
+        }
+
+        protected LayoutParams(Parcel in) {
+            // Passing a resolved value to resolve a lint warning
+            // height and width are set in this method anyway.
+            super(0, 0);
+            this.mOrder = in.readInt();
+            this.mFlexGrow = in.readFloat();
+            this.mFlexShrink = in.readFloat();
+            this.mAlignSelf = in.readInt();
+            this.mFlexBasisPercent = in.readFloat();
+            this.mMinWidth = in.readInt();
+            this.mMinHeight = in.readInt();
+            this.mMaxWidth = in.readInt();
+            this.mMaxHeight = in.readInt();
+            this.mWrapBefore = in.readByte() != 0;
+            this.bottomMargin = in.readInt();
+            this.leftMargin = in.readInt();
+            this.rightMargin = in.readInt();
+            this.topMargin = in.readInt();
+            this.height = in.readInt();
+            this.width = in.readInt();
         }
 
         @Override
@@ -1840,40 +1860,5 @@ public class FlexboxLayout extends ViewGroup implements FlexContainer {
             dest.writeInt(this.height);
             dest.writeInt(this.width);
         }
-
-        protected LayoutParams(Parcel in) {
-            // Passing a resolved value to resolve a lint warning
-            // height and width are set in this method anyway.
-            super(0, 0);
-            this.mOrder = in.readInt();
-            this.mFlexGrow = in.readFloat();
-            this.mFlexShrink = in.readFloat();
-            this.mAlignSelf = in.readInt();
-            this.mFlexBasisPercent = in.readFloat();
-            this.mMinWidth = in.readInt();
-            this.mMinHeight = in.readInt();
-            this.mMaxWidth = in.readInt();
-            this.mMaxHeight = in.readInt();
-            this.mWrapBefore = in.readByte() != 0;
-            this.bottomMargin = in.readInt();
-            this.leftMargin = in.readInt();
-            this.rightMargin = in.readInt();
-            this.topMargin = in.readInt();
-            this.height = in.readInt();
-            this.width = in.readInt();
-        }
-
-        public static final Parcelable.Creator<LayoutParams> CREATOR
-                = new Parcelable.Creator<LayoutParams>() {
-            @Override
-            public LayoutParams createFromParcel(Parcel source) {
-                return new LayoutParams(source);
-            }
-
-            @Override
-            public LayoutParams[] newArray(int size) {
-                return new LayoutParams[size];
-            }
-        };
     }
 }

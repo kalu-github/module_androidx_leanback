@@ -34,16 +34,17 @@ import lib.kalu.leanback.util.LeanBackUtil;
  */
 public final class TabLayout extends HorizontalScrollView {
 
+    /************************************/
+
+    public OnTabChangeListener mListener;
     private float mScale = 1f;
     private int mMargin = 0;
     private int mBackgroundColorsRadius = 0;
-
     private int mTextUnderlineColor = Color.TRANSPARENT;
     private int mTextUnderlineWidth = 0;
     private int mTextUnderlineHeight = 0;
     private int mTextSize = 10;
     private int mTextPadding = 0;
-
     private int mImageWidthMax = 0;
     private int mImageWidthMin = 0;
     private int mImageHeight = 0;
@@ -316,18 +317,6 @@ public final class TabLayout extends HorizontalScrollView {
         }
     }
 
-    @Keep
-    public int getItemCount() {
-        try {
-            int childCount = getChildCount();
-            if (childCount != 1) throw new Exception("childCount is not 1");
-            return ((TabLinearLayout) getChildAt(0)).getChildCount();
-        } catch (Exception e) {
-            LeanBackUtil.log("TabLayout => getItemCount => " + e.getMessage());
-            return -1;
-        }
-    }
-
 //    private ViewGroup findDecorView(View view) {
 //        try {
 //            View parent = (View) view.getParent();
@@ -359,6 +348,18 @@ public final class TabLayout extends HorizontalScrollView {
 //        }
 //        return nextFocus;
 //    }
+
+    @Keep
+    public int getItemCount() {
+        try {
+            int childCount = getChildCount();
+            if (childCount != 1) throw new Exception("childCount is not 1");
+            return ((TabLinearLayout) getChildAt(0)).getChildCount();
+        } catch (Exception e) {
+            LeanBackUtil.log("TabLayout => getItemCount => " + e.getMessage());
+            return -1;
+        }
+    }
 
     @Keep
     private int findNextPosition(int direction, int position) {
@@ -512,7 +513,6 @@ public final class TabLayout extends HorizontalScrollView {
         }
     }
 
-
     @Keep
     public boolean checkedPosition(int position) {
         return checkedPosition(position, false);
@@ -628,10 +628,6 @@ public final class TabLayout extends HorizontalScrollView {
             LeanBackUtil.log("TabLayout => addItem => " + e.getMessage());
         }
     }
-
-    /************************************/
-
-    public OnTabChangeListener mListener;
 
     public void setOnTabChangeListener(@NonNull OnTabChangeListener listener) {
         this.mListener = listener;

@@ -17,12 +17,13 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 
-import java.io.File;
-import java.nio.charset.StandardCharsets;
-
 import lib.kalu.leanback.util.LeanBackUtil;
 
 public class WebView extends android.webkit.WebView {
+    /**********************/
+
+    private OnInterceptShouldOverrideUrlUrlListener mOnInterceptShouldOverrideUrl;
+
     public WebView(@NonNull Context context) {
         super(context);
         initListener();
@@ -247,15 +248,11 @@ public class WebView extends android.webkit.WebView {
         }
     }
 
-    /**********************/
-
-    private OnInterceptShouldOverrideUrlUrlListener mOnInterceptShouldOverrideUrl;
+    public void setOnInterceptShouldOverrideUrlListener(@NonNull OnInterceptShouldOverrideUrlUrlListener l) {
+        this.mOnInterceptShouldOverrideUrl = l;
+    }
 
     public interface OnInterceptShouldOverrideUrlUrlListener {
         boolean onInterceptUrl(@NonNull String url);
-    }
-
-    public void setOnInterceptShouldOverrideUrlListener(@NonNull OnInterceptShouldOverrideUrlUrlListener l) {
-        this.mOnInterceptShouldOverrideUrl = l;
     }
 }

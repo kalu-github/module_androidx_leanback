@@ -3,22 +3,11 @@ package lib.kalu.leanback.round.news;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.Path;
-import android.graphics.PointF;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
-import android.graphics.RectF;
-import android.graphics.Region;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.util.AttributeSet;
-import android.view.View;
 import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
@@ -30,10 +19,10 @@ import androidx.leanback.R;
 
 @SuppressLint("AppCompatCustomView")
 public class RoundImageView extends ImageView {
-    private int mRadius = 0;
     public boolean mFocus = false;
     public float mScale = 1.05f;
     public int mDuration = 100;
+    private int mRadius = 0;
 
     public RoundImageView(Context context) {
         super(context);

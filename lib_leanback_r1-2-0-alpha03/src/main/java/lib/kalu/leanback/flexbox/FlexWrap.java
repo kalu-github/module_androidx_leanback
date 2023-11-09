@@ -16,10 +16,10 @@
 
 package lib.kalu.leanback.flexbox;
 
+import androidx.annotation.IntDef;
+
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
-
-import androidx.annotation.IntDef;
 
 /**
  * This attribute controls whether the flex container is single-line or multi-line, and the
@@ -29,10 +29,14 @@ import androidx.annotation.IntDef;
 @Retention(RetentionPolicy.SOURCE)
 public @interface FlexWrap {
 
-    /** The flex container is single-line. */
+    /**
+     * The flex container is single-line.
+     */
     int NOWRAP = 0;
 
-    /** The flex container is multi-line. */
+    /**
+     * The flex container is multi-line.
+     */
     int WRAP = 1;
 
     /**

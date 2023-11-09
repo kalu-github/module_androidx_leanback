@@ -1,8 +1,5 @@
 package lib.kalu.leanback.page;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.os.Build;
 import android.util.AttributeSet;
@@ -17,11 +14,14 @@ import android.widget.FrameLayout;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
-import androidx.core.view.ViewCompat;
 
 import lib.kalu.leanback.util.LeanBackUtil;
 
 public class PageView extends FrameLayout {
+    private int mPressNumLeft = 0;
+    private int mPressNumRight = 0;
+    private OnPageChangeListener mListener;
+
     public PageView(@NonNull Context context) {
         super(context);
     }
@@ -114,10 +114,6 @@ public class PageView extends FrameLayout {
             LeanBackUtil.log("PageView => shakeAnim => " + e.getMessage());
         }
     }
-
-    private int mPressNumLeft = 0;
-    private int mPressNumRight = 0;
-    private OnPageChangeListener mListener;
 
     public void setOnPageChangeListener(OnPageChangeListener l) {
         mListener = l;

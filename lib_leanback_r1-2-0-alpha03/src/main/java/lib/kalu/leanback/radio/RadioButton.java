@@ -18,6 +18,11 @@ import androidx.leanback.R;
 
 @SuppressLint("AppCompatCustomView")
 public final class RadioButton extends android.widget.RadioButton {
+    @ColorInt
+    private int mUnderlineColor = Color.TRANSPARENT;
+    private int mUnderlineWidth = 0;
+    private int mUnderlineHeight = 0;
+
     public RadioButton(Context context) {
         super(context);
         init(null);
@@ -27,22 +32,15 @@ public final class RadioButton extends android.widget.RadioButton {
         super(context, attrs);
         init(attrs);
     }
-
     public RadioButton(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init(attrs);
     }
-
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public RadioButton(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
         init(attrs);
     }
-
-    @ColorInt
-    private int mUnderlineColor = Color.TRANSPARENT;
-    private int mUnderlineWidth = 0;
-    private int mUnderlineHeight = 0;
 
     private void init(AttributeSet attrs) {
         Bitmap bitmap = null;

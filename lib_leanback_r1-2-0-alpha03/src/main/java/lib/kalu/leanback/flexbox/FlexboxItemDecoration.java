@@ -25,15 +25,15 @@ import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.view.View;
 
-import java.util.List;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import java.util.List;
 
 /**
  * {@link RecyclerView.ItemDecoration} implementation that can be used as item decorations between
  * view holders within the {@link FlexboxLayoutManager}.
- *
+ * <p>
  * Orientation for the decoration can be either of:
  * <ul>
  * <li>Horizontal (setOrientation(HORIZONTAL)</li>
@@ -118,7 +118,7 @@ public class FlexboxItemDecoration extends RecyclerView.ItemDecoration {
     }
 
     private void setOffsetAlongCrossAxis(Rect outRect, int position,
-            FlexboxLayoutManager layoutManager, List<FlexLine> flexLines) {
+                                         FlexboxLayoutManager layoutManager, List<FlexLine> flexLines) {
         if (flexLines.size() == 0) {
             return;
         }
@@ -151,7 +151,7 @@ public class FlexboxItemDecoration extends RecyclerView.ItemDecoration {
     }
 
     private void setOffsetAlongMainAxis(Rect outRect, int position,
-            FlexboxLayoutManager layoutManager, List<FlexLine> flexLines, int flexDirection) {
+                                        FlexboxLayoutManager layoutManager, List<FlexLine> flexLines, int flexDirection) {
         if (isFirstItemInLine(position, flexLines, layoutManager)) {
             return;
         }
@@ -284,7 +284,7 @@ public class FlexboxItemDecoration extends RecyclerView.ItemDecoration {
      * @return {@code true} if the given position is the first item in a flex line.
      */
     private boolean isFirstItemInLine(int position, List<FlexLine> flexLines,
-            FlexboxLayoutManager layoutManager) {
+                                      FlexboxLayoutManager layoutManager) {
         int flexLineIndex = layoutManager.getPositionToFlexLineIndex(position);
         if (flexLineIndex != NO_POSITION &&
                 flexLineIndex < layoutManager.getFlexLinesInternal().size() &&

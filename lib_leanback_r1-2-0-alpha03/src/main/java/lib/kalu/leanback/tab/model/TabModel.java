@@ -6,7 +6,6 @@ import androidx.annotation.DrawableRes;
 import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.StringRes;
 
 import java.io.File;
 import java.io.Serializable;
@@ -16,6 +15,63 @@ public abstract class TabModel implements Serializable {
 
     public int TYPE_TXT = 1001;
     public int TYPE_IMG = 1002;
+    String text;
+    @ColorInt
+    int textColorNormal;
+    @ColorInt
+    int textColorFocus;
+    @ColorInt
+    int textColorChecked;
+    @ColorRes
+    int textColorResourceNormal;
+    @ColorRes
+    int textColorResourceFocus;
+    @ColorRes
+    int textColorResourceChecked;
+    @DrawableRes
+    int backgroundResourceNormal;
+    @DrawableRes
+    int backgroundResourceFocus;
+    @DrawableRes
+    int backgroundResourceChecked;
+    @ColorInt
+    int backgroundColorNormal;
+    @ColorInt
+    int backgroundColorFocus;
+    @ColorInt
+    int backgroundColorChecked;
+    @Nullable
+    String backgroundImageUrlNormal;
+    @Nullable
+    String backgroundImageUrlFocus;
+    @Nullable
+    String backgroundImageUrlChecked;
+    @Nullable
+    String backgroundImagePathNormal;
+    @Nullable
+    String backgroundImagePathFocus;
+    @Nullable
+    String backgroundImagePathChecked;
+    @Nullable
+    String backgroundImageAssetsNormal;
+    @Nullable
+    String backgroundImageAssetsFocus;
+    @Nullable
+    String backgroundImageAssetsChecked;
+    @Nullable
+    String imagePathNormal;
+    @Nullable
+    String imagePathFocus;
+    @Nullable
+    String imagePathChecked;
+    @Nullable
+    String imageUrlNormal;
+    @Nullable
+    String imageUrlFocus;
+    @Nullable
+    String imageUrlChecked;
+    @DrawableRes
+    int imagePlaceholderResource;
 
     abstract int getType();
 
@@ -26,92 +82,6 @@ public abstract class TabModel implements Serializable {
     public boolean isImg() {
         return getType() == TYPE_IMG;
     }
-
-    String text;
-
-    @ColorInt
-    int textColorNormal;
-
-    @ColorInt
-    int textColorFocus;
-
-    @ColorInt
-    int textColorChecked;
-
-    @ColorRes
-    int textColorResourceNormal;
-
-    @ColorRes
-    int textColorResourceFocus;
-
-    @ColorRes
-    int textColorResourceChecked;
-
-    @DrawableRes
-    int backgroundResourceNormal;
-
-    @DrawableRes
-    int backgroundResourceFocus;
-
-    @DrawableRes
-    int backgroundResourceChecked;
-
-    @ColorInt
-    int backgroundColorNormal;
-
-    @ColorInt
-    int backgroundColorFocus;
-
-    @ColorInt
-    int backgroundColorChecked;
-
-    @Nullable
-    String backgroundImageUrlNormal;
-
-    @Nullable
-    String backgroundImageUrlFocus;
-
-    @Nullable
-    String backgroundImageUrlChecked;
-
-    @Nullable
-    String backgroundImagePathNormal;
-
-    @Nullable
-    String backgroundImagePathFocus;
-
-    @Nullable
-    String backgroundImagePathChecked;
-
-    @Nullable
-    String backgroundImageAssetsNormal;
-
-    @Nullable
-    String backgroundImageAssetsFocus;
-
-    @Nullable
-    String backgroundImageAssetsChecked;
-
-    @Nullable
-    String imagePathNormal;
-
-    @Nullable
-    String imagePathFocus;
-
-    @Nullable
-    String imagePathChecked;
-
-    @Nullable
-    String imageUrlNormal;
-
-    @Nullable
-    String imageUrlFocus;
-
-    @Nullable
-    String imageUrlChecked;
-
-    @DrawableRes
-    int imagePlaceholderResource;
 
     public String getText() {
         return text;

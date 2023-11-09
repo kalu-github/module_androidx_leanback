@@ -2,16 +2,9 @@ package lib.kalu.leanback.tags;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.graphics.Color;
 import android.graphics.Rect;
 import android.view.Gravity;
 import android.widget.TextView;
-
-import androidx.annotation.NonNull;
-import androidx.leanback.R;
-
-import lib.kalu.leanback.tags.model.TagBean;
-import lib.kalu.leanback.util.LeanBackUtil;
 
 @SuppressLint("AppCompatCustomView")
 final class TagsTextView extends TextView {

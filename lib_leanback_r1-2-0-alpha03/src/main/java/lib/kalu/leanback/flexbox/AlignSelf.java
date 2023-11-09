@@ -16,10 +16,10 @@
 
 package lib.kalu.leanback.flexbox;
 
+import androidx.annotation.IntDef;
+
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
-
-import androidx.annotation.IntDef;
 
 /**
  * This attribute controls the alignment along the cross axis.
@@ -38,18 +38,28 @@ public @interface AlignSelf {
      */
     int AUTO = -1;
 
-    /** This item's edge is placed on the cross start line. */
+    /**
+     * This item's edge is placed on the cross start line.
+     */
     int FLEX_START = AlignItems.FLEX_START;
 
-    /** This item's edge is placed on the cross end line. */
+    /**
+     * This item's edge is placed on the cross end line.
+     */
     int FLEX_END = AlignItems.FLEX_END;
 
-    /** This item's edge is centered along the cross axis. */
+    /**
+     * This item's edge is centered along the cross axis.
+     */
     int CENTER = AlignItems.CENTER;
 
-    /** This items is aligned based on their text's baselines. */
+    /**
+     * This items is aligned based on their text's baselines.
+     */
     int BASELINE = AlignItems.BASELINE;
 
-    /** This item is stretched to fill the flex line's cross size. */
+    /**
+     * This item is stretched to fill the flex line's cross size.
+     */
     int STRETCH = AlignItems.STRETCH;
 }

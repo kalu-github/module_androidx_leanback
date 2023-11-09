@@ -25,7 +25,7 @@ public class BaseGridLayoutManager extends androidx.recyclerview.widget.GridLayo
     public void onLayoutChildren(RecyclerView.Recycler recycler, RecyclerView.State state) {
         try {
             super.onLayoutChildren(recycler, state);
-        }catch (Exception e){
+        } catch (Exception e) {
         }
     }
 
@@ -33,7 +33,7 @@ public class BaseGridLayoutManager extends androidx.recyclerview.widget.GridLayo
     public void onMeasure(@NonNull RecyclerView.Recycler recycler, @NonNull RecyclerView.State state, int widthSpec, int heightSpec) {
         try {
             super.onMeasure(recycler, state, widthSpec, heightSpec);
-        }catch (Exception e){
+        } catch (Exception e) {
         }
     }
 }

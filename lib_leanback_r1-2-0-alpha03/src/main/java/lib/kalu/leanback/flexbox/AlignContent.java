@@ -16,24 +16,32 @@
 
 package lib.kalu.leanback.flexbox;
 
+import androidx.annotation.IntDef;
+
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
-import androidx.annotation.IntDef;
-
-/** This attribute controls the alignment of the flex lines in the flex container. */
+/**
+ * This attribute controls the alignment of the flex lines in the flex container.
+ */
 @IntDef({AlignContent.FLEX_START, AlignContent.FLEX_END, AlignContent.CENTER,
         AlignContent.SPACE_BETWEEN, AlignContent.SPACE_AROUND, AlignContent.STRETCH})
 @Retention(RetentionPolicy.SOURCE)
 public @interface AlignContent {
 
-    /** Flex lines are packed to the start of the flex container. */
+    /**
+     * Flex lines are packed to the start of the flex container.
+     */
     int FLEX_START = 0;
 
-    /** Flex lines are packed to the end of the flex container. */
+    /**
+     * Flex lines are packed to the end of the flex container.
+     */
     int FLEX_END = 1;
 
-    /** Flex lines are centered in the flex container. */
+    /**
+     * Flex lines are centered in the flex container.
+     */
     int CENTER = 2;
 
     /**

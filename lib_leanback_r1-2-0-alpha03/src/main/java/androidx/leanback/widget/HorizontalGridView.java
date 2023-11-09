@@ -57,9 +57,9 @@ import androidx.recyclerview.widget.RecyclerView;
  */
 public class HorizontalGridView extends BaseGridView {
 
+    private final Rect mTempRect = new Rect();
     private boolean mFadingLowEdge;
     private boolean mFadingHighEdge;
-
     private Paint mTempPaint = new Paint();
     private Bitmap mTempBitmapLow;
     private LinearGradient mLowFadeShader;
@@ -69,7 +69,6 @@ public class HorizontalGridView extends BaseGridView {
     private LinearGradient mHighFadeShader;
     private int mHighFadeShaderLength;
     private int mHighFadeShaderOffset;
-    private final Rect mTempRect = new Rect();
 
     public HorizontalGridView(@NonNull Context context) {
         this(context, null);
@@ -80,7 +79,7 @@ public class HorizontalGridView extends BaseGridView {
     }
 
     public HorizontalGridView(@NonNull Context context, @Nullable AttributeSet attrs,
-            int defStyle) {
+                              int defStyle) {
         super(context, attrs, defStyle);
         mLayoutManager.setOrientation(RecyclerView.HORIZONTAL);
         initAttributes(context, attrs);
@@ -129,6 +128,14 @@ public class HorizontalGridView extends BaseGridView {
     }
 
     /**
+     * Returns true if left edge fading is enabled.
+     */
+    @SuppressLint("GetterSetterNames")
+    public final boolean getFadingLeftEdge() {
+        return mFadingLowEdge;
+    }
+
+    /**
      * Sets the fade out left edge to transparent.   Note turn on fading edge is very expensive
      * that you should turn off when HorizontalGridView is scrolling.
      */
@@ -144,11 +151,10 @@ public class HorizontalGridView extends BaseGridView {
     }
 
     /**
-     * Returns true if left edge fading is enabled.
+     * Returns the left edge fading length in pixels.
      */
-    @SuppressLint("GetterSetterNames")
-    public final boolean getFadingLeftEdge() {
-        return mFadingLowEdge;
+    public final int getFadingLeftEdgeLength() {
+        return mLowFadeShaderLength;
     }
 
     /**
@@ -168,10 +174,12 @@ public class HorizontalGridView extends BaseGridView {
     }
 
     /**
-     * Returns the left edge fading length in pixels.
+     * Returns the distance in pixels between fading start position and left padding edge.
+     * The fading start position is positive when start position is inside left padding
+     * area.  Default value is 0, means that the fading starts from left padding edge.
      */
-    public final int getFadingLeftEdgeLength() {
-        return mLowFadeShaderLength;
+    public final int getFadingLeftEdgeOffset() {
+        return mLowFadeShaderOffset;
     }
 
     /**
@@ -187,12 +195,11 @@ public class HorizontalGridView extends BaseGridView {
     }
 
     /**
-     * Returns the distance in pixels between fading start position and left padding edge.
-     * The fading start position is positive when start position is inside left padding
-     * area.  Default value is 0, means that the fading starts from left padding edge.
+     * Returns true if fading right edge is enabled.
      */
-    public final int getFadingLeftEdgeOffset() {
-        return mLowFadeShaderOffset;
+    @SuppressLint("GetterSetterNames")
+    public final boolean getFadingRightEdge() {
+        return mFadingHighEdge;
     }
 
     /**
@@ -211,11 +218,10 @@ public class HorizontalGridView extends BaseGridView {
     }
 
     /**
-     * Returns true if fading right edge is enabled.
+     * Returns the right edge fading length in pixels.
      */
-    @SuppressLint("GetterSetterNames")
-    public final boolean getFadingRightEdge() {
-        return mFadingHighEdge;
+    public final int getFadingRightEdgeLength() {
+        return mHighFadeShaderLength;
     }
 
     /**
@@ -235,10 +241,12 @@ public class HorizontalGridView extends BaseGridView {
     }
 
     /**
-     * Returns the right edge fading length in pixels.
+     * Sets the distance in pixels between fading start position and right padding edge.
+     * The fading start position is positive when start position is inside right padding
+     * area.  Default value is 0, means that the fading starts from right padding edge.
      */
-    public final int getFadingRightEdgeLength() {
-        return mHighFadeShaderLength;
+    public final int getFadingRightEdgeOffset() {
+        return mHighFadeShaderOffset;
     }
 
     /**
@@ -251,15 +259,6 @@ public class HorizontalGridView extends BaseGridView {
             mHighFadeShaderOffset = fadeOffset;
             invalidate();
         }
-    }
-
-    /**
-     * Sets the distance in pixels between fading start position and right padding edge.
-     * The fading start position is positive when start position is inside right padding
-     * area.  Default value is 0, means that the fading starts from right padding edge.
-     */
-    public final int getFadingRightEdgeOffset() {
-        return mHighFadeShaderOffset;
     }
 
     private boolean needsFadingLowEdge() {

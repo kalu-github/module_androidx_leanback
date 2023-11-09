@@ -1,9 +1,6 @@
 package lib.kalu.leanback.list;
 
 import android.content.Context;
-import android.os.Handler;
-import android.os.Looper;
-import android.os.Message;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
 import android.view.View;
@@ -20,6 +17,10 @@ import lib.kalu.leanback.list.listener.OnBaseRecyclerViewChangeListener;
 import lib.kalu.leanback.util.LeanBackUtil;
 
 class BaseRecyclerView extends androidx.recyclerview.widget.RecyclerView {
+
+    /******************/
+
+    private OnBaseRecyclerViewChangeListener mOnBaseRecyclerViewChangeListener;
 
     public BaseRecyclerView(@NonNull Context context) {
         super(context);
@@ -118,10 +119,6 @@ class BaseRecyclerView extends androidx.recyclerview.widget.RecyclerView {
 
     public void into(int direction) {
     }
-
-    /******************/
-
-    private OnBaseRecyclerViewChangeListener mOnBaseRecyclerViewChangeListener;
 
     public final void setOnBaseRecyclerViewChangeListener(@NonNull OnBaseRecyclerViewChangeListener listener) {
         this.mOnBaseRecyclerViewChangeListener = listener;

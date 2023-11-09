@@ -57,6 +57,10 @@ final class ViewsStateBundle {
         mLimitNumber = LIMIT_DEFAULT;
     }
 
+    static String getSaveStatesKey(int id) {
+        return Integer.toString(id);
+    }
+
     void clear() {
         if (mChildStates != null) {
             mChildStates.evictAll();
@@ -79,7 +83,7 @@ final class ViewsStateBundle {
         Map<String, SparseArray<Parcelable>> snapshot = mChildStates.snapshot();
         Bundle bundle = new Bundle();
         for (Iterator<Map.Entry<String, SparseArray<Parcelable>>> i =
-                snapshot.entrySet().iterator(); i.hasNext(); ) {
+             snapshot.entrySet().iterator(); i.hasNext(); ) {
             Map.Entry<String, SparseArray<Parcelable>> e = i.next();
             bundle.putSparseParcelableArray(e.getKey(), e.getValue());
         }
@@ -106,19 +110,19 @@ final class ViewsStateBundle {
     }
 
     /**
-     * @return the limitNumber, only works when {@link #getSavePolicy()} is
-     * {@link #SAVE_LIMITED_CHILD}
-     */
-    int getLimitNumber() {
-        return mLimitNumber;
-    }
-
-    /**
      * @see ViewsStateBundle#getSavePolicy()
      */
     void setSavePolicy(int savePolicy) {
         this.mSavePolicy = savePolicy;
         applyPolicyChanges();
+    }
+
+    /**
+     * @return the limitNumber, only works when {@link #getSavePolicy()} is
+     * {@link #SAVE_LIMITED_CHILD}
+     */
+    int getLimitNumber() {
+        return mLimitNumber;
     }
 
     /**
@@ -218,9 +222,5 @@ final class ViewsStateBundle {
             view.saveHierarchyState(container);
             mChildStates.put(key, container);
         }
-    }
-
-    static String getSaveStatesKey(int id) {
-        return Integer.toString(id);
     }
 }

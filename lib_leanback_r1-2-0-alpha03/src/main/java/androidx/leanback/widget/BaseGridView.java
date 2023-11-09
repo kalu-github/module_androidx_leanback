@@ -165,96 +165,23 @@ public abstract class BaseGridView extends RecyclerView {
     public static final int SAVE_ALL_CHILD = 3;
 
     private static final int PFLAG_RETAIN_FOCUS_FOR_CHILD = 1;
-
-    /**
-     * Defines behavior of duration and interpolator for smoothScrollBy().
-     */
-    public interface SmoothScrollByBehavior {
-        /**
-         * Defines duration in milliseconds of smoothScrollBy().
-         *
-         * @param dx x distance in pixels.
-         * @param dy y distance in pixels.
-         * @return Duration in milliseconds or UNDEFINED_DURATION for default value.
-         */
-        int configSmoothScrollByDuration(int dx, int dy);
-
-        /**
-         * Defines interpolator of smoothScrollBy().
-         *
-         * @param dx x distance in pixels.
-         * @param dy y distance in pixels.
-         * @return Interpolator to be used or null for default interpolator.
-         */
-        @Nullable
-        Interpolator configSmoothScrollByInterpolator(int dx, int dy);
-    }
-
-    /**
-     * Listener for intercepting touch dispatch events.
-     */
-    public interface OnTouchInterceptListener {
-        /**
-         * Returns true if the touch dispatch event should be consumed.
-         */
-        boolean onInterceptTouchEvent(@NonNull MotionEvent event);
-    }
-
-    /**
-     * Listener for intercepting generic motion dispatch events.
-     */
-    public interface OnMotionInterceptListener {
-        /**
-         * Returns true if the touch dispatch event should be consumed.
-         */
-        boolean onInterceptMotionEvent(@NonNull MotionEvent event);
-    }
-
-    /**
-     * Listener for intercepting key dispatch events.
-     */
-    public interface OnKeyInterceptListener {
-        /**
-         * Returns true if the key dispatch event should be consumed.
-         */
-        boolean onInterceptKeyEvent(@NonNull KeyEvent event);
-    }
-
-    /**
-     * Listener for intercepting unhandled key events.
-     */
-    public interface OnUnhandledKeyListener {
-        /**
-         * Returns true if the key event should be consumed.
-         */
-        boolean onUnhandledKey(@NonNull KeyEvent event);
-    }
-
     GridLayoutManager mLayoutManager;
-
-    private SmoothScrollByBehavior mSmoothScrollByBehavior;
-
-    /**
-     * Animate layout changes from a child resizing or adding/removing a child.
-     */
-    private boolean mAnimateChildLayout = true;
-
-    private boolean mHasOverlappingRendering = true;
-
-    private RecyclerView.ItemAnimator mSavedItemAnimator;
-
-    private OnTouchInterceptListener mOnTouchInterceptListener;
-    private OnMotionInterceptListener mOnMotionInterceptListener;
-    private OnKeyInterceptListener mOnKeyInterceptListener;
-    private OnUnhandledKeyListener mOnUnhandledKeyListener;
-
     /**
      * Number of items to prefetch when first coming on screen with new data.
      */
     int mInitialPrefetchItemCount = 4;
-
+    private SmoothScrollByBehavior mSmoothScrollByBehavior;
+    /**
+     * Animate layout changes from a child resizing or adding/removing a child.
+     */
+    private boolean mAnimateChildLayout = true;
+    private boolean mHasOverlappingRendering = true;
+    private RecyclerView.ItemAnimator mSavedItemAnimator;
+    private OnTouchInterceptListener mOnTouchInterceptListener;
+    private OnMotionInterceptListener mOnMotionInterceptListener;
+    private OnKeyInterceptListener mOnKeyInterceptListener;
+    private OnUnhandledKeyListener mOnUnhandledKeyListener;
     private int mPrivateFlag;
-
     BaseGridView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         mLayoutManager = new GridLayoutManager(this);
@@ -300,6 +227,19 @@ public abstract class BaseGridView extends RecyclerView {
     }
 
     /**
+     * Returns the strategy used to scroll in response to item focus changing.
+     * <ul>
+     * <li>{@link #FOCUS_SCROLL_ALIGNED} (default) </li>
+     * <li>{@link #FOCUS_SCROLL_ITEM}</li>
+     * <li>{@link #FOCUS_SCROLL_PAGE}</li>
+     * </ul>
+     */
+    @RestrictTo(LIBRARY_GROUP_PREFIX)
+    public int getFocusScrollStrategy() {
+        return mLayoutManager.getFocusScrollStrategy();
+    }
+
+    /**
      * Sets the strategy used to scroll in response to item focus changing:
      * <ul>
      * <li>{@link #FOCUS_SCROLL_ALIGNED} (default) </li>
@@ -318,16 +258,13 @@ public abstract class BaseGridView extends RecyclerView {
     }
 
     /**
-     * Returns the strategy used to scroll in response to item focus changing.
-     * <ul>
-     * <li>{@link #FOCUS_SCROLL_ALIGNED} (default) </li>
-     * <li>{@link #FOCUS_SCROLL_ITEM}</li>
-     * <li>{@link #FOCUS_SCROLL_PAGE}</li>
-     * </ul>
+     * Returns the method for focused item alignment in the view.
+     *
+     * @return {@link #WINDOW_ALIGN_BOTH_EDGE}, {@link #WINDOW_ALIGN_LOW_EDGE},
+     * {@link #WINDOW_ALIGN_HIGH_EDGE} or {@link #WINDOW_ALIGN_NO_EDGE}.
      */
-    @RestrictTo(LIBRARY_GROUP_PREFIX)
-    public int getFocusScrollStrategy() {
-        return mLayoutManager.getFocusScrollStrategy();
+    public int getWindowAlignment() {
+        return mLayoutManager.getWindowAlignment();
     }
 
     /**
@@ -343,13 +280,15 @@ public abstract class BaseGridView extends RecyclerView {
     }
 
     /**
-     * Returns the method for focused item alignment in the view.
+     * Returns whether prefer key line over low edge when {@link #WINDOW_ALIGN_LOW_EDGE} is used.
+     * When true, if there are very few items between low edge and key line, align items to key
+     * line instead of align items to low edge.
+     * Default value is false (aka prefer align to low edge).
      *
-     * @return {@link #WINDOW_ALIGN_BOTH_EDGE}, {@link #WINDOW_ALIGN_LOW_EDGE},
-     * {@link #WINDOW_ALIGN_HIGH_EDGE} or {@link #WINDOW_ALIGN_NO_EDGE}.
+     * @return True to prefer key line over low edge, false otherwise.
      */
-    public int getWindowAlignment() {
-        return mLayoutManager.getWindowAlignment();
+    public boolean isWindowAlignmentPreferKeyLineOverLowEdge() {
+        return mLayoutManager.mWindowAlignment.mainAxis().isPreferKeylineOverLowEdge();
     }
 
     /**
@@ -366,34 +305,6 @@ public abstract class BaseGridView extends RecyclerView {
         requestLayout();
     }
 
-
-    /**
-     * Returns whether prefer key line over high edge when {@link #WINDOW_ALIGN_HIGH_EDGE} is used.
-     * When true, if there are very few items between high edge and key line, align items to key
-     * line instead of align items to high edge.
-     * Default value is true (aka prefer align to key line).
-     *
-     * @param preferKeyLineOverHighEdge True to prefer key line over high edge, false otherwise.
-     */
-    public void setWindowAlignmentPreferKeyLineOverHighEdge(boolean preferKeyLineOverHighEdge) {
-        mLayoutManager.mWindowAlignment.mainAxis()
-                .setPreferKeylineOverHighEdge(preferKeyLineOverHighEdge);
-        requestLayout();
-    }
-
-    /**
-     * Returns whether prefer key line over low edge when {@link #WINDOW_ALIGN_LOW_EDGE} is used.
-     * When true, if there are very few items between low edge and key line, align items to key
-     * line instead of align items to low edge.
-     * Default value is false (aka prefer align to low edge).
-     *
-     * @return True to prefer key line over low edge, false otherwise.
-     */
-    public boolean isWindowAlignmentPreferKeyLineOverLowEdge() {
-        return mLayoutManager.mWindowAlignment.mainAxis().isPreferKeylineOverLowEdge();
-    }
-
-
     /**
      * Returns whether prefer key line over high edge when {@link #WINDOW_ALIGN_HIGH_EDGE} is used.
      * When true, if there are very few items between high edge and key line, align items to key
@@ -406,18 +317,17 @@ public abstract class BaseGridView extends RecyclerView {
         return mLayoutManager.mWindowAlignment.mainAxis().isPreferKeylineOverHighEdge();
     }
 
-
     /**
-     * Sets the offset in pixels for window alignment key line.
+     * Returns whether prefer key line over high edge when {@link #WINDOW_ALIGN_HIGH_EDGE} is used.
+     * When true, if there are very few items between high edge and key line, align items to key
+     * line instead of align items to high edge.
+     * Default value is true (aka prefer align to key line).
      *
-     * @param offset The number of pixels to offset.  If the offset is positive,
-     *               it is distance from low edge (see {@link #WINDOW_ALIGN_LOW_EDGE});
-     *               if the offset is negative, the absolute value is distance from high
-     *               edge (see {@link #WINDOW_ALIGN_HIGH_EDGE}).
-     *               Default value is 0.
+     * @param preferKeyLineOverHighEdge True to prefer key line over high edge, false otherwise.
      */
-    public void setWindowAlignmentOffset(int offset) {
-        mLayoutManager.setWindowAlignmentOffset(offset);
+    public void setWindowAlignmentPreferKeyLineOverHighEdge(boolean preferKeyLineOverHighEdge) {
+        mLayoutManager.mWindowAlignment.mainAxis()
+                .setPreferKeylineOverHighEdge(preferKeyLineOverHighEdge);
         requestLayout();
     }
 
@@ -435,16 +345,16 @@ public abstract class BaseGridView extends RecyclerView {
     }
 
     /**
-     * Sets the offset percent for window alignment key line in addition to {@link
-     * #getWindowAlignmentOffset()}.
+     * Sets the offset in pixels for window alignment key line.
      *
-     * @param offsetPercent Percentage to offset. E.g., 40 means 40% of the
-     *                      width from low edge. Use
-     *                      {@link #WINDOW_ALIGN_OFFSET_PERCENT_DISABLED} to disable.
-     *                      Default value is 50.
+     * @param offset The number of pixels to offset.  If the offset is positive,
+     *               it is distance from low edge (see {@link #WINDOW_ALIGN_LOW_EDGE});
+     *               if the offset is negative, the absolute value is distance from high
+     *               edge (see {@link #WINDOW_ALIGN_HIGH_EDGE}).
+     *               Default value is 0.
      */
-    public void setWindowAlignmentOffsetPercent(float offsetPercent) {
-        mLayoutManager.setWindowAlignmentOffsetPercent(offsetPercent);
+    public void setWindowAlignmentOffset(int offset) {
+        mLayoutManager.setWindowAlignmentOffset(offset);
         requestLayout();
     }
 
@@ -461,15 +371,16 @@ public abstract class BaseGridView extends RecyclerView {
     }
 
     /**
-     * Sets number of pixels to the end of low edge. Supports right to left layout direction.
-     * Item alignment settings are ignored for the child if {@link ItemAlignmentFacet}
-     * is provided by {@link RecyclerView.ViewHolder} or {@link FacetProviderAdapter}.
+     * Sets the offset percent for window alignment key line in addition to {@link
+     * #getWindowAlignmentOffset()}.
      *
-     * @param offset In left to right or vertical case, it's the offset added to left/top edge.
-     *               In right to left case, it's the offset subtracted from right edge.
+     * @param offsetPercent Percentage to offset. E.g., 40 means 40% of the
+     *                      width from low edge. Use
+     *                      {@link #WINDOW_ALIGN_OFFSET_PERCENT_DISABLED} to disable.
+     *                      Default value is 50.
      */
-    public void setItemAlignmentOffset(int offset) {
-        mLayoutManager.setItemAlignmentOffset(offset);
+    public void setWindowAlignmentOffsetPercent(float offsetPercent) {
+        mLayoutManager.setWindowAlignmentOffsetPercent(offsetPercent);
         requestLayout();
     }
 
@@ -487,17 +398,15 @@ public abstract class BaseGridView extends RecyclerView {
     }
 
     /**
-     * Sets whether applies padding to item alignment when {@link #getItemAlignmentOffsetPercent()}
-     * is 0 or 100.
-     * <p>When true:
-     * Applies start/top padding if {@link #getItemAlignmentOffsetPercent()} is 0.
-     * Applies end/bottom padding if {@link #getItemAlignmentOffsetPercent()} is 100.
-     * Does not apply padding if {@link #getItemAlignmentOffsetPercent()} is neither 0 nor 100.
-     * </p>
-     * <p>When false: does not apply padding</p>
+     * Sets number of pixels to the end of low edge. Supports right to left layout direction.
+     * Item alignment settings are ignored for the child if {@link ItemAlignmentFacet}
+     * is provided by {@link RecyclerView.ViewHolder} or {@link FacetProviderAdapter}.
+     *
+     * @param offset In left to right or vertical case, it's the offset added to left/top edge.
+     *               In right to left case, it's the offset subtracted from right edge.
      */
-    public void setItemAlignmentOffsetWithPadding(boolean withPadding) {
-        mLayoutManager.setItemAlignmentOffsetWithPadding(withPadding);
+    public void setItemAlignmentOffset(int offset) {
+        mLayoutManager.setItemAlignmentOffset(offset);
         requestLayout();
     }
 
@@ -516,17 +425,17 @@ public abstract class BaseGridView extends RecyclerView {
     }
 
     /**
-     * Sets the offset percent for item alignment in addition to {@link
-     * #getItemAlignmentOffset()}.
-     * Item alignment settings are ignored for the child if {@link ItemAlignmentFacet}
-     * is provided by {@link RecyclerView.ViewHolder} or {@link FacetProviderAdapter}.
-     *
-     * @param offsetPercent Percentage to offset. E.g., 40 means 40% of the
-     *                      width from the low edge. Use
-     *                      {@link #ITEM_ALIGN_OFFSET_PERCENT_DISABLED} to disable.
+     * Sets whether applies padding to item alignment when {@link #getItemAlignmentOffsetPercent()}
+     * is 0 or 100.
+     * <p>When true:
+     * Applies start/top padding if {@link #getItemAlignmentOffsetPercent()} is 0.
+     * Applies end/bottom padding if {@link #getItemAlignmentOffsetPercent()} is 100.
+     * Does not apply padding if {@link #getItemAlignmentOffsetPercent()} is neither 0 nor 100.
+     * </p>
+     * <p>When false: does not apply padding</p>
      */
-    public void setItemAlignmentOffsetPercent(float offsetPercent) {
-        mLayoutManager.setItemAlignmentOffsetPercent(offsetPercent);
+    public void setItemAlignmentOffsetWithPadding(boolean withPadding) {
+        mLayoutManager.setItemAlignmentOffsetWithPadding(withPadding);
         requestLayout();
     }
 
@@ -543,13 +452,18 @@ public abstract class BaseGridView extends RecyclerView {
     }
 
     /**
-     * Sets the id of the view to align with. Use {@link android.view.View#NO_ID} (default)
-     * for the root {@link RecyclerView.ViewHolder#itemView}.
-     * Item alignment settings on BaseGridView are if {@link ItemAlignmentFacet}
+     * Sets the offset percent for item alignment in addition to {@link
+     * #getItemAlignmentOffset()}.
+     * Item alignment settings are ignored for the child if {@link ItemAlignmentFacet}
      * is provided by {@link RecyclerView.ViewHolder} or {@link FacetProviderAdapter}.
+     *
+     * @param offsetPercent Percentage to offset. E.g., 40 means 40% of the
+     *                      width from the low edge. Use
+     *                      {@link #ITEM_ALIGN_OFFSET_PERCENT_DISABLED} to disable.
      */
-    public void setItemAlignmentViewId(int viewId) {
-        mLayoutManager.setItemAlignmentViewId(viewId);
+    public void setItemAlignmentOffsetPercent(float offsetPercent) {
+        mLayoutManager.setItemAlignmentOffsetPercent(offsetPercent);
+        requestLayout();
     }
 
     /**
@@ -561,6 +475,16 @@ public abstract class BaseGridView extends RecyclerView {
      */
     public int getItemAlignmentViewId() {
         return mLayoutManager.getItemAlignmentViewId();
+    }
+
+    /**
+     * Sets the id of the view to align with. Use {@link android.view.View#NO_ID} (default)
+     * for the root {@link RecyclerView.ViewHolder#itemView}.
+     * Item alignment settings on BaseGridView are if {@link ItemAlignmentFacet}
+     * is provided by {@link RecyclerView.ViewHolder} or {@link FacetProviderAdapter}.
+     */
+    public void setItemAlignmentViewId(int viewId) {
+        mLayoutManager.setItemAlignmentViewId(viewId);
     }
 
     /**
@@ -584,16 +508,6 @@ public abstract class BaseGridView extends RecyclerView {
     }
 
     /**
-     * Sets the spacing in pixels between two child items vertically.
-     *
-     * @deprecated Use {@link #setVerticalSpacing(int)}
-     */
-    @Deprecated
-    public void setVerticalMargin(int margin) {
-        setVerticalSpacing(margin);
-    }
-
-    /**
      * Returns the spacing in pixels between two child items vertically.
      *
      * @deprecated Use {@link #getVerticalSpacing()}
@@ -604,13 +518,13 @@ public abstract class BaseGridView extends RecyclerView {
     }
 
     /**
-     * Sets the spacing in pixels between two child items horizontally.
+     * Sets the spacing in pixels between two child items vertically.
      *
-     * @deprecated Use {@link #setHorizontalSpacing(int)}
+     * @deprecated Use {@link #setVerticalSpacing(int)}
      */
     @Deprecated
-    public void setHorizontalMargin(int margin) {
-        setHorizontalSpacing(margin);
+    public void setVerticalMargin(int margin) {
+        setVerticalSpacing(margin);
     }
 
     /**
@@ -624,13 +538,13 @@ public abstract class BaseGridView extends RecyclerView {
     }
 
     /**
-     * Sets the vertical spacing in pixels between two child items.
+     * Sets the spacing in pixels between two child items horizontally.
      *
-     * @param spacing Vertical spacing between two child items.
+     * @deprecated Use {@link #setHorizontalSpacing(int)}
      */
-    public void setVerticalSpacing(int spacing) {
-        mLayoutManager.setVerticalSpacing(spacing);
-        requestLayout();
+    @Deprecated
+    public void setHorizontalMargin(int margin) {
+        setHorizontalSpacing(margin);
     }
 
     /**
@@ -643,12 +557,12 @@ public abstract class BaseGridView extends RecyclerView {
     }
 
     /**
-     * Sets the horizontal spacing in pixels between two child items.
+     * Sets the vertical spacing in pixels between two child items.
      *
-     * @param spacing Horizontal spacing in pixels between two child items.
+     * @param spacing Vertical spacing between two child items.
      */
-    public void setHorizontalSpacing(int spacing) {
-        mLayoutManager.setHorizontalSpacing(spacing);
+    public void setVerticalSpacing(int spacing) {
+        mLayoutManager.setVerticalSpacing(spacing);
         requestLayout();
     }
 
@@ -662,10 +576,13 @@ public abstract class BaseGridView extends RecyclerView {
     }
 
     /**
-     * Changes the selected item immediately without animation.
+     * Sets the horizontal spacing in pixels between two child items.
+     *
+     * @param spacing Horizontal spacing in pixels between two child items.
      */
-    public void setSelectedPosition(int position) {
-        mLayoutManager.setSelection(position, 0);
+    public void setHorizontalSpacing(int spacing) {
+        mLayoutManager.setHorizontalSpacing(spacing);
+        requestLayout();
     }
 
     /**
@@ -721,6 +638,13 @@ public abstract class BaseGridView extends RecyclerView {
      */
     public int getSelectedPosition() {
         return mLayoutManager.getSelection();
+    }
+
+    /**
+     * Changes the selected item immediately without animation.
+     */
+    public void setSelectedPosition(int position) {
+        mLayoutManager.setSelection(position, 0);
     }
 
     /**
@@ -843,6 +767,15 @@ public abstract class BaseGridView extends RecyclerView {
     }
 
     /**
+     * Returns true if focus search is disabled.
+     *
+     * @return True if focus search is disabled.
+     */
+    public final boolean isFocusSearchDisabled() {
+        return mLayoutManager.isFocusSearchDisabled();
+    }
+
+    /**
      * Disables or enables focus search.
      *
      * @param disabled True to disable focus search, false to enable.
@@ -852,15 +785,6 @@ public abstract class BaseGridView extends RecyclerView {
         // re-gain focus after a BACK key pressed, so block children focus during transition.
         setDescendantFocusability(disabled ? FOCUS_BLOCK_DESCENDANTS : FOCUS_AFTER_DESCENDANTS);
         mLayoutManager.setFocusSearchDisabled(disabled);
-    }
-
-    /**
-     * Returns true if focus search is disabled.
-     *
-     * @return True if focus search is disabled.
-     */
-    public final boolean isFocusSearchDisabled() {
-        return mLayoutManager.isFocusSearchDisabled();
     }
 
     /**
@@ -892,21 +816,21 @@ public abstract class BaseGridView extends RecyclerView {
     }
 
     /**
-     * Enables or disables scrolling.  Disable is useful during transition.
-     *
-     * @param scrollEnabled True to enable scroll, false to disable.
-     */
-    public void setScrollEnabled(boolean scrollEnabled) {
-        mLayoutManager.setScrollEnabled(scrollEnabled);
-    }
-
-    /**
      * Returns true if scrolling is enabled, false otherwise.
      *
      * @return True if scrolling is enabled, false otherwise.
      */
     public boolean isScrollEnabled() {
         return mLayoutManager.isScrollEnabled();
+    }
+
+    /**
+     * Enables or disables scrolling.  Disable is useful during transition.
+     *
+     * @param scrollEnabled True to enable scroll, false to disable.
+     */
+    public void setScrollEnabled(boolean scrollEnabled) {
+        mLayoutManager.setScrollEnabled(scrollEnabled);
     }
 
     /**
@@ -921,21 +845,21 @@ public abstract class BaseGridView extends RecyclerView {
     }
 
     /**
-     * Enables or disables the default "focus draw at last" order rule. Default is enabled.
-     *
-     * @param enabled True to draw the selected child at last, false otherwise.
-     */
-    public void setFocusDrawingOrderEnabled(boolean enabled) {
-        super.setChildrenDrawingOrderEnabled(enabled);
-    }
-
-    /**
      * Returns true if draws selected child at last, false otherwise. Default is enabled.
      *
      * @return True if draws selected child at last, false otherwise.
      */
     public boolean isFocusDrawingOrderEnabled() {
         return super.isChildrenDrawingOrderEnabled();
+    }
+
+    /**
+     * Enables or disables the default "focus draw at last" order rule. Default is enabled.
+     *
+     * @param enabled True to draw the selected child at last, false otherwise.
+     */
+    public void setFocusDrawingOrderEnabled(boolean enabled) {
+        super.setChildrenDrawingOrderEnabled(enabled);
     }
 
     /**
@@ -966,15 +890,6 @@ public abstract class BaseGridView extends RecyclerView {
     }
 
     /**
-     * Sets the unhandled key listener.
-     *
-     * @param listener The unhandled key intercept listener.
-     */
-    public void setOnUnhandledKeyListener(@Nullable OnUnhandledKeyListener listener) {
-        mOnUnhandledKeyListener = listener;
-    }
-
-    /**
      * Returns the unhandled key listener.
      *
      * @return The unhandled key listener.
@@ -982,6 +897,15 @@ public abstract class BaseGridView extends RecyclerView {
     @Nullable
     public OnUnhandledKeyListener getOnUnhandledKeyListener() {
         return mOnUnhandledKeyListener;
+    }
+
+    /**
+     * Sets the unhandled key listener.
+     *
+     * @param listener The unhandled key intercept listener.
+     */
+    public void setOnUnhandledKeyListener(@Nullable OnUnhandledKeyListener listener) {
+        mOnUnhandledKeyListener = listener;
     }
 
     @Override
@@ -1026,14 +950,6 @@ public abstract class BaseGridView extends RecyclerView {
     }
 
     /**
-     * Returns the limit used when when {@link #getSaveChildrenPolicy()} is
-     * {@link #SAVE_LIMITED_CHILD}
-     */
-    public final int getSaveChildrenLimitNumber() {
-        return mLayoutManager.mChildrenStates.getLimitNumber();
-    }
-
-    /**
      * Sets the policy for saving children.
      *
      * @param savePolicy One of {@link #SAVE_NO_CHILD} {@link #SAVE_ON_SCREEN_CHILD}
@@ -1041,6 +957,14 @@ public abstract class BaseGridView extends RecyclerView {
      */
     public final void setSaveChildrenPolicy(int savePolicy) {
         mLayoutManager.mChildrenStates.setSavePolicy(savePolicy);
+    }
+
+    /**
+     * Returns the limit used when when {@link #getSaveChildrenPolicy()} is
+     * {@link #SAVE_LIMITED_CHILD}
+     */
+    public final int getSaveChildrenLimitNumber() {
+        return mLayoutManager.mChildrenStates.getLimitNumber();
     }
 
     /**
@@ -1070,6 +994,14 @@ public abstract class BaseGridView extends RecyclerView {
     }
 
     /**
+     * Returns pixels of extra space for layout child in invisible area.
+     */
+    @RestrictTo(LIBRARY_GROUP_PREFIX)
+    public int getExtraLayoutSpace() {
+        return mLayoutManager.getExtraLayoutSpace();
+    }
+
+    /**
      * Sets pixels of extra space for layout child in invisible area.
      *
      * @param extraLayoutSpace Pixels of extra space for layout invisible child.
@@ -1078,14 +1010,6 @@ public abstract class BaseGridView extends RecyclerView {
     @RestrictTo(LIBRARY_GROUP_PREFIX)
     public void setExtraLayoutSpace(int extraLayoutSpace) {
         mLayoutManager.setExtraLayoutSpace(extraLayoutSpace);
-    }
-
-    /**
-     * Returns pixels of extra space for layout child in invisible area.
-     */
-    @RestrictTo(LIBRARY_GROUP_PREFIX)
-    public int getExtraLayoutSpace() {
-        return mLayoutManager.getExtraLayoutSpace();
     }
 
     /**
@@ -1125,15 +1049,6 @@ public abstract class BaseGridView extends RecyclerView {
     }
 
     /**
-     * Set custom behavior for smoothScrollBy().
-     *
-     * @param behavior Custom behavior of SmoothScrollBy(). Null for default behavior.
-     */
-    public final void setSmoothScrollByBehavior(@Nullable SmoothScrollByBehavior behavior) {
-        mSmoothScrollByBehavior = behavior;
-    }
-
-    /**
      * Returns custom behavior for smoothScrollBy().
      *
      * @return Custom behavior for SmoothScrollBy(). Null for default behavior.
@@ -1141,6 +1056,15 @@ public abstract class BaseGridView extends RecyclerView {
     @Nullable
     public SmoothScrollByBehavior getSmoothScrollByBehavior() {
         return mSmoothScrollByBehavior;
+    }
+
+    /**
+     * Set custom behavior for smoothScrollBy().
+     *
+     * @param behavior Custom behavior of SmoothScrollBy(). Null for default behavior.
+     */
+    public final void setSmoothScrollByBehavior(@Nullable SmoothScrollByBehavior behavior) {
+        mSmoothScrollByBehavior = behavior;
     }
 
     @Override
@@ -1166,6 +1090,13 @@ public abstract class BaseGridView extends RecyclerView {
     }
 
     /**
+     * @return Factor of how slow the smoothScroller runs. Default value is 1f.
+     */
+    public final float getSmoothScrollSpeedFactor() {
+        return mLayoutManager.mSmoothScrollSpeedFactor;
+    }
+
+    /**
      * Set factor of how slow the smoothScroller should run. For example when set to 2f, the smooth
      * scroller is twice slower. The value is 1f by default.
      *
@@ -1176,10 +1107,18 @@ public abstract class BaseGridView extends RecyclerView {
     }
 
     /**
-     * @return Factor of how slow the smoothScroller runs. Default value is 1f.
+     * When holding DPAD, DPAD events are generated faster than the grid view can scroll. The
+     * grid view counts unhandled DPAD events and complete the movement after user release DPAD.
+     * If the value is set too high, the scrolling will last very long after DPAD is released. If
+     * the value is set too low, it may miss many DPAD events. The default value is 10. If app
+     * increases {@link #setSmoothScrollSpeedFactor(float)}, it may need decrease the max pending
+     * DPAD events to avoid scrolling too long after DPAD release.
+     *
+     * @return Maximum number of pending DPAD events to be remembered when smooth scroll cannot
+     * catch up speed of DPAD events being sent.
      */
-    public final float getSmoothScrollSpeedFactor() {
-        return mLayoutManager.mSmoothScrollSpeedFactor;
+    public final int getSmoothScrollMaxPendingMoves() {
+        return mLayoutManager.mMaxPendingMoves;
     }
 
     /**
@@ -1197,18 +1136,19 @@ public abstract class BaseGridView extends RecyclerView {
     }
 
     /**
-     * When holding DPAD, DPAD events are generated faster than the grid view can scroll. The
-     * grid view counts unhandled DPAD events and complete the movement after user release DPAD.
-     * If the value is set too high, the scrolling will last very long after DPAD is released. If
-     * the value is set too low, it may miss many DPAD events. The default value is 10. If app
-     * increases {@link #setSmoothScrollSpeedFactor(float)}, it may need decrease the max pending
-     * DPAD events to avoid scrolling too long after DPAD release.
+     * Gets the number of items to prefetch in
+     * {@link RecyclerView.LayoutManager#collectInitialPrefetchPositions(int, RecyclerView.LayoutManager.LayoutPrefetchRegistry)},
+     * which defines how many inner items should be prefetched when this GridView is nested inside
+     * another RecyclerView.
      *
-     * @return Maximum number of pending DPAD events to be remembered when smooth scroll cannot
-     * catch up speed of DPAD events being sent.
+     * @return number of items to prefetch.
+     * @see RecyclerView.LayoutManager#isItemPrefetchEnabled()
+     * @see #setInitialPrefetchItemCount(int)
+     * @see RecyclerView.LayoutManager#collectInitialPrefetchPositions(int,
+     * RecyclerView.LayoutManager.LayoutPrefetchRegistry)
      */
-    public final int getSmoothScrollMaxPendingMoves() {
-        return mLayoutManager.mMaxPendingMoves;
+    public int getInitialPrefetchItemCount() {
+        return mInitialPrefetchItemCount;
     }
 
     /**
@@ -1242,22 +1182,6 @@ public abstract class BaseGridView extends RecyclerView {
      */
     public void setInitialPrefetchItemCount(int itemCount) {
         mInitialPrefetchItemCount = itemCount;
-    }
-
-    /**
-     * Gets the number of items to prefetch in
-     * {@link RecyclerView.LayoutManager#collectInitialPrefetchPositions(int, RecyclerView.LayoutManager.LayoutPrefetchRegistry)},
-     * which defines how many inner items should be prefetched when this GridView is nested inside
-     * another RecyclerView.
-     *
-     * @return number of items to prefetch.
-     * @see RecyclerView.LayoutManager#isItemPrefetchEnabled()
-     * @see #setInitialPrefetchItemCount(int)
-     * @see RecyclerView.LayoutManager#collectInitialPrefetchPositions(int,
-     * RecyclerView.LayoutManager.LayoutPrefetchRegistry)
-     */
-    public int getInitialPrefetchItemCount() {
-        return mInitialPrefetchItemCount;
     }
 
     @Override
@@ -1351,7 +1275,6 @@ public abstract class BaseGridView extends RecyclerView {
             LeanBackUtil.log("BaseGridView => clearAdapter => " + e.getMessage());
         }
     }
-
 
     @Deprecated
     public final ViewHolder findViewHolder(@NonNull Class<?> cls) {
@@ -1557,5 +1480,69 @@ public abstract class BaseGridView extends RecyclerView {
             LeanBackUtil.log("BaseGridView => findViewHolderForAdapterObjectAll => " + e.getMessage());
             return null;
         }
+    }
+
+    /**
+     * Defines behavior of duration and interpolator for smoothScrollBy().
+     */
+    public interface SmoothScrollByBehavior {
+        /**
+         * Defines duration in milliseconds of smoothScrollBy().
+         *
+         * @param dx x distance in pixels.
+         * @param dy y distance in pixels.
+         * @return Duration in milliseconds or UNDEFINED_DURATION for default value.
+         */
+        int configSmoothScrollByDuration(int dx, int dy);
+
+        /**
+         * Defines interpolator of smoothScrollBy().
+         *
+         * @param dx x distance in pixels.
+         * @param dy y distance in pixels.
+         * @return Interpolator to be used or null for default interpolator.
+         */
+        @Nullable
+        Interpolator configSmoothScrollByInterpolator(int dx, int dy);
+    }
+
+    /**
+     * Listener for intercepting touch dispatch events.
+     */
+    public interface OnTouchInterceptListener {
+        /**
+         * Returns true if the touch dispatch event should be consumed.
+         */
+        boolean onInterceptTouchEvent(@NonNull MotionEvent event);
+    }
+
+    /**
+     * Listener for intercepting generic motion dispatch events.
+     */
+    public interface OnMotionInterceptListener {
+        /**
+         * Returns true if the touch dispatch event should be consumed.
+         */
+        boolean onInterceptMotionEvent(@NonNull MotionEvent event);
+    }
+
+    /**
+     * Listener for intercepting key dispatch events.
+     */
+    public interface OnKeyInterceptListener {
+        /**
+         * Returns true if the key dispatch event should be consumed.
+         */
+        boolean onInterceptKeyEvent(@NonNull KeyEvent event);
+    }
+
+    /**
+     * Listener for intercepting unhandled key events.
+     */
+    public interface OnUnhandledKeyListener {
+        /**
+         * Returns true if the key event should be consumed.
+         */
+        boolean onUnhandledKey(@NonNull KeyEvent event);
     }
 }

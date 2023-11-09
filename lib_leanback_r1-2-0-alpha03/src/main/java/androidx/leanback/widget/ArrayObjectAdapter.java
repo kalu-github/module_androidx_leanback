@@ -32,13 +32,11 @@ public class ArrayObjectAdapter extends ObjectAdapter {
 
     private static final Boolean DEBUG = false;
     private static final String TAG = "ArrayObjectAdapter";
-
-    private final List<Object> mItems = new ArrayList<>();
-
     // To compute the payload correctly, we should use a temporary list to hold all the old items.
     @SuppressWarnings("WeakerAccess") /* synthetic access */
     final List<Object> mOldItems = new ArrayList<>();
-
+    private final List<Object> mItems = new ArrayList<>();
+    ListUpdateCallback mListUpdateCallback;
     // Un modifiable version of mItems;
     private List<?> mUnmodifiableItems;
 
@@ -108,7 +106,7 @@ public class ArrayObjectAdapter extends ObjectAdapter {
 
     public void add(int index, @NonNull Object item, @NonNull boolean notifyUI) {
         mItems.add(index, item);
-        if(!notifyUI)
+        if (!notifyUI)
             return;
         notifyItemRangeInserted(index, 1);
     }
@@ -116,13 +114,14 @@ public class ArrayObjectAdapter extends ObjectAdapter {
     public void addAll(int index, @NonNull Collection<?> items) {
         addAll(index, items, false);
     }
+
     public void addAll(int index, @NonNull Collection<?> items, @NonNull boolean notifyUI) {
         int itemsCount = items.size();
         if (itemsCount == 0) {
             return;
         }
         mItems.addAll(index, items);
-        if(!notifyUI)
+        if (!notifyUI)
             return;
         notifyItemRangeInserted(index, itemsCount);
     }
@@ -222,8 +221,6 @@ public class ArrayObjectAdapter extends ObjectAdapter {
     public boolean isImmediateNotifySupported() {
         return true;
     }
-
-    ListUpdateCallback mListUpdateCallback;
 
     /**
      * Set a new item list to adapter. The DiffUtil will compute the difference and dispatch it to

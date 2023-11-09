@@ -1,29 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <declare-styleable name="lbBaseGridView">
-        <attr format="boolean" name="focusOutFront"/>
-        <attr format="boolean" name="focusOutEnd"/>
-        <attr format="boolean" name="focusOutSideStart"/>
-        <attr format="boolean" name="focusOutSideEnd"/>
-        <attr format="dimension" name="horizontalMargin"/>
-        <attr format="dimension" name="verticalMargin"/>
-        <attr name="android:horizontalSpacing"/>
-        <attr name="android:verticalSpacing"/>
-        <attr name="android:gravity"/>
+        <attr name="focusOutFront" format="boolean" />
+        <attr name="focusOutEnd" format="boolean" />
+        <attr name="focusOutSideStart" format="boolean" />
+        <attr name="focusOutSideEnd" format="boolean" />
+        <attr name="horizontalMargin" format="dimension" />
+        <attr name="verticalMargin" format="dimension" />
+        <attr name="android:horizontalSpacing" />
+        <attr name="android:verticalSpacing" />
+        <attr name="android:gravity" />
     </declare-styleable>
     <declare-styleable name="lbHorizontalGridView">
 
-        <attr format="dimension" name="rowHeight">
-            <enum name="wrap_content" value="-2"/>
+        <attr name="rowHeight" format="dimension">
+            <enum name="wrap_content" value="-2" />
         </attr>
 
-        <attr format="integer" name="numberOfRows"/>
+        <attr name="numberOfRows" format="integer" />
     </declare-styleable>
     <declare-styleable name="lbVerticalGridView">
-        <attr format="dimension" name="columnWidth">
-            <enum name="wrap_content" value="-2"/>
+        <attr name="columnWidth" format="dimension">
+            <enum name="wrap_content" value="-2" />
         </attr>
-        <attr format="integer" name="numberOfColumns"/>
+        <attr name="numberOfColumns" format="integer" />
     </declare-styleable>
     <declare-styleable name="RoundLayout">
         <attr name="rl_clip_path" format="reference|boolean" />

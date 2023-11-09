@@ -8,14 +8,12 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Space;
-import android.widget.Toast;
 
 import androidx.annotation.DrawableRes;
 import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
 import androidx.leanback.R;
 import androidx.leanback.widget.Presenter;
-import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -26,8 +24,8 @@ import lib.kalu.leanback.util.LeanBackUtil;
 
 public abstract class ListTvTableScrollPresenter<T extends TvEpisodesGridItemBean> extends Presenter implements ListTvPresenterImpl {
 
-    private int startPosition = 0;
     private final List<T> mData = new LinkedList<>();
+    private int startPosition = 0;
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent) {

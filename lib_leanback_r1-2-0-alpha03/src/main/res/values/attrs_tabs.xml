@@ -1,4 +1,4 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
     <declare-styleable name="TabLayout">
         <!-- 导航缩放 -->
         <attr name="tab_scale" format="reference|float" />

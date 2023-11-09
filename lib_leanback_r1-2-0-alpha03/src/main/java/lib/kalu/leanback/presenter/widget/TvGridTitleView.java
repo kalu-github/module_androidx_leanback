@@ -26,7 +26,7 @@ public class TvGridTitleView extends TextView {
     public TvGridTitleView(Context context, @Nullable AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
     }
-    
+
     @Override
     public void setText(CharSequence text, BufferType type) {
         super.setText(text, type);

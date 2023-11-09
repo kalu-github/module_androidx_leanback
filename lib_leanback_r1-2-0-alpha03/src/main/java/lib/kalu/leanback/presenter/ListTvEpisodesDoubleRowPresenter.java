@@ -1,7 +1,6 @@
 package lib.kalu.leanback.presenter;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.FocusFinder;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;

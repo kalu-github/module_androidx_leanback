@@ -31,11 +31,14 @@ class ItemAlignmentFacetHelper {
 
     private static final Rect sRect = new Rect();
 
+    private ItemAlignmentFacetHelper() {
+    }
+
     /**
      * get alignment position relative to optical left/top of itemView.
      */
     static int getAlignmentPosition(View itemView, ItemAlignmentFacet.ItemAlignmentDef facet,
-            int orientation) {
+                                    int orientation) {
         LayoutParams p = (LayoutParams) itemView.getLayoutParams();
         View view = itemView;
         if (facet.mViewId != 0) {
@@ -105,8 +108,5 @@ class ItemAlignmentFacetHelper {
             }
         }
         return alignPos;
-    }
-
-    private ItemAlignmentFacetHelper() {
     }
 }

@@ -28,41 +28,39 @@ import java.util.List;
  */
 public class FlexLine {
 
-    FlexLine() {
-    }
-
     int mLeft = Integer.MAX_VALUE;
-
     int mTop = Integer.MAX_VALUE;
-
     int mRight = Integer.MIN_VALUE;
-
     int mBottom = Integer.MIN_VALUE;
-
-    /** @see #getMainSize() */
+    /**
+     * @see #getMainSize()
+     */
     int mMainSize;
-
     /**
      * The sum of the lengths of dividers along the main axis. This value should be lower
      * than the value of {@link #mMainSize}.
      */
     int mDividerLengthInMainSize;
-
-    /** @see #getCrossSize() */
+    /**
+     * @see #getCrossSize()
+     */
     int mCrossSize;
-
-    /** @see #getItemCount() */
+    /**
+     * @see #getItemCount()
+     */
     int mItemCount;
-
-    /** Holds the count of the views whose visibilities are gone */
+    /**
+     * Holds the count of the views whose visibilities are gone
+     */
     int mGoneItemCount;
-
-    /** @see #getTotalFlexGrow() */
+    /**
+     * @see #getTotalFlexGrow()
+     */
     float mTotalFlexGrow;
-
-    /** @see #getTotalFlexShrink() */
+    /**
+     * @see #getTotalFlexShrink()
+     */
     float mTotalFlexShrink;
-
     /**
      * The largest value of the individual child's baseline (obtained by View#getBaseline()
      * if the {@link FlexContainer#getAlignItems()} value is not {@link AlignItems#BASELINE}
@@ -73,34 +71,31 @@ public class FlexLine {
      * (Calculated as view.getMeasuredHeight() - view.getBaseline - LayoutParams.bottomMargin)
      */
     int mMaxBaseline;
-
     /**
      * The sum of the cross size used before this flex line.
      */
     int mSumCrossSizeBefore;
-
     /**
      * Store the indices of the children views whose alignSelf property is stretch.
      * The stored indices are the absolute indices including all children in the Flexbox,
      * not the relative indices in this flex line.
      */
     List<Integer> mIndicesAlignSelfStretch = new ArrayList<>();
-
     int mFirstIndex;
-
     int mLastIndex;
-
     /**
      * Set to true if any {@link FlexItem}s in this line have {@link FlexItem#getFlexGrow()}
      * attributes set (have the value other than {@link FlexItem#FLEX_GROW_DEFAULT})
      */
     boolean mAnyItemsHaveFlexGrow;
-
     /**
      * Set to true if any {@link FlexItem}s in this line have {@link FlexItem#getFlexShrink()}
      * attributes set (have the value other than {@link FlexItem#FLEX_SHRINK_NOT_SET})
      */
     boolean mAnyItemsHaveFlexShrink;
+
+    FlexLine() {
+    }
 
     /**
      * @return the size of the flex line in pixels along the main axis of the flex container.
@@ -166,7 +161,7 @@ public class FlexLine {
      * @param bottomDecoration the length of the decoration on the bottom of the view
      */
     void updatePositionFromView(View view, int leftDecoration, int topDecoration,
-            int rightDecoration, int bottomDecoration) {
+                                int rightDecoration, int bottomDecoration) {
         FlexItem flexItem = (FlexItem) view.getLayoutParams();
         mLeft = Math.min(mLeft, view.getLeft() - flexItem.getMarginLeft() - leftDecoration);
         mTop = Math.min(mTop, view.getTop() - flexItem.getMarginTop() - topDecoration);

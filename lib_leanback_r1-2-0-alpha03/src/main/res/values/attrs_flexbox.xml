@@ -2,16 +2,16 @@
 <resources>
     <declare-styleable name="FlexboxLayout">
         <attr name="flexDirection">
-            <enum name="row" value="0"/>
-            <enum name="row_reverse" value="1"/>
-            <enum name="column" value="2"/>
-            <enum name="column_reverse" value="3"/>
+            <enum name="row" value="0" />
+            <enum name="row_reverse" value="1" />
+            <enum name="column" value="2" />
+            <enum name="column_reverse" value="3" />
         </attr>
 
         <attr name="flexWrap">
-            <enum name="nowrap" value="0"/>
-            <enum name="wrap" value="1"/>
-            <enum name="wrap_reverse" value="2"/>
+            <enum name="nowrap" value="0" />
+            <enum name="wrap" value="1" />
+            <enum name="wrap_reverse" value="2" />
         </attr>
 
         <!--
@@ -21,69 +21,69 @@
          -->
 
         <attr name="justifyContent">
-            <enum name="flex_start" value="0"/>
-            <enum name="flex_end" value="1"/>
-            <enum name="center" value="2"/>
-            <enum name="space_between" value="3"/>
-            <enum name="space_around" value="4"/>
-            <enum name="space_evenly" value="5"/>
+            <enum name="flex_start" value="0" />
+            <enum name="flex_end" value="1" />
+            <enum name="center" value="2" />
+            <enum name="space_between" value="3" />
+            <enum name="space_around" value="4" />
+            <enum name="space_evenly" value="5" />
         </attr>
 
         <attr name="alignItems">
-            <enum name="flex_start" value="0"/>
-            <enum name="flex_end" value="1"/>
-            <enum name="center" value="2"/>
-            <enum name="baseline" value="3"/>
-            <enum name="stretch" value="4"/>
+            <enum name="flex_start" value="0" />
+            <enum name="flex_end" value="1" />
+            <enum name="center" value="2" />
+            <enum name="baseline" value="3" />
+            <enum name="stretch" value="4" />
         </attr>
 
         <attr name="alignContent">
-            <enum name="flex_start" value="0"/>
-            <enum name="flex_end" value="1"/>
-            <enum name="center" value="2"/>
-            <enum name="space_between" value="3"/>
-            <enum name="space_around" value="4"/>
-            <enum name="stretch" value="5"/>
+            <enum name="flex_start" value="0" />
+            <enum name="flex_end" value="1" />
+            <enum name="center" value="2" />
+            <enum name="space_between" value="3" />
+            <enum name="space_around" value="4" />
+            <enum name="stretch" value="5" />
         </attr>
 
-        <attr format="reference" name="dividerDrawable"/>
-        <attr format="reference" name="dividerDrawableHorizontal"/>
-        <attr format="reference" name="dividerDrawableVertical"/>
+        <attr name="dividerDrawable" format="reference" />
+        <attr name="dividerDrawableHorizontal" format="reference" />
+        <attr name="dividerDrawableVertical" format="reference" />
 
         <attr name="showDivider">
-            <flag name="none" value="0"/>
-            <flag name="beginning" value="1"/>
-            <flag name="middle" value="2"/>
-            <flag name="end" value="4"/>
+            <flag name="none" value="0" />
+            <flag name="beginning" value="1" />
+            <flag name="middle" value="2" />
+            <flag name="end" value="4" />
         </attr>
         <attr name="showDividerHorizontal">
-            <flag name="none" value="0"/>
-            <flag name="beginning" value="1"/>
-            <flag name="middle" value="2"/>
-            <flag name="end" value="4"/>
+            <flag name="none" value="0" />
+            <flag name="beginning" value="1" />
+            <flag name="middle" value="2" />
+            <flag name="end" value="4" />
         </attr>
         <attr name="showDividerVertical">
-            <flag name="none" value="0"/>
-            <flag name="beginning" value="1"/>
-            <flag name="middle" value="2"/>
-            <flag name="end" value="4"/>
+            <flag name="none" value="0" />
+            <flag name="beginning" value="1" />
+            <flag name="middle" value="2" />
+            <flag name="end" value="4" />
         </attr>
 
         <!--
             The attribute that specifies the maximum number of flex lines. This attribute is
             effective only when the flexWrap attribute is "wrap" or "wrap_reverse".
         -->
-        <attr format="integer" name="maxLine"/>
+        <attr name="maxLine" format="integer" />
 
     </declare-styleable>
     <declare-styleable name="FlexboxLayout_Layout">
-        <attr format="integer" name="layout_order"/>
+        <attr name="layout_order" format="integer" />
 
         <!-- Negative numbers are invalid. -->
-        <attr format="float" name="layout_flexGrow"/>
+        <attr name="layout_flexGrow" format="float" />
 
         <!-- Negative numbers are invalid. -->
-        <attr format="float" name="layout_flexShrink"/>
+        <attr name="layout_flexShrink" format="float" />
 
         <!--
             The initial length in a percentage format relative to its parent. This is similar to the
@@ -99,7 +99,7 @@
             Thus, this attribute only accepts fraction values, which can't be done through
             layout_width (or layout_height) for simplicity.
         -->
-        <attr format="fraction" name="layout_flexBasisPercent"/>
+        <attr name="layout_flexBasisPercent" format="fraction" />
 
         <!--
             Omitting flex property since it's a shorthand for layout_flexGrow and layout_flexShrink
@@ -107,19 +107,19 @@
         -->
 
         <attr name="layout_alignSelf">
-            <enum name="auto" value="-1"/>
+            <enum name="auto" value="-1" />
             <!-- The values below need to match the values of alignItems -->
-            <enum name="flex_start" value="0"/>
-            <enum name="flex_end" value="1"/>
-            <enum name="center" value="2"/>
-            <enum name="baseline" value="3"/>
-            <enum name="stretch" value="4"/>
+            <enum name="flex_start" value="0" />
+            <enum name="flex_end" value="1" />
+            <enum name="center" value="2" />
+            <enum name="baseline" value="3" />
+            <enum name="stretch" value="4" />
         </attr>
 
-        <attr format="dimension" name="layout_minWidth"/>
-        <attr format="dimension" name="layout_minHeight"/>
-        <attr format="dimension" name="layout_maxWidth"/>
-        <attr format="dimension" name="layout_maxHeight"/>
+        <attr name="layout_minWidth" format="dimension" />
+        <attr name="layout_minHeight" format="dimension" />
+        <attr name="layout_maxWidth" format="dimension" />
+        <attr name="layout_maxHeight" format="dimension" />
 
         <!--
             This attribute forces a flex line wrapping. i.e. if this is set to true for a
@@ -131,6 +131,6 @@
             the layouts when building a grid like layout or for a situation where developers want
             to put a new flex line to make a semantic difference from the previous one, etc.
         -->
-        <attr format="boolean" name="layout_wrapBefore"/>
+        <attr name="layout_wrapBefore" format="boolean" />
     </declare-styleable>
 </resources>

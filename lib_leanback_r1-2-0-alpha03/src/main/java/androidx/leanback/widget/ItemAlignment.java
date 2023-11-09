@@ -29,29 +29,10 @@ import android.view.View;
  */
 class ItemAlignment {
 
-    static final class Axis extends ItemAlignmentFacet.ItemAlignmentDef {
-        private final int mOrientation;
-
-        Axis(int orientation) {
-            mOrientation = orientation;
-        }
-
-        /**
-         * get alignment position relative to optical left/top of itemView.
-         */
-        public int getAlignmentPosition(View itemView) {
-            return ItemAlignmentFacetHelper.getAlignmentPosition(itemView, this, mOrientation);
-        }
-    }
-
-    private int mOrientation = HORIZONTAL;
-
     public final Axis vertical = new Axis(VERTICAL);
-
     public final Axis horizontal = new Axis(HORIZONTAL);
-
+    private int mOrientation = HORIZONTAL;
     private Axis mMainAxis = horizontal;
-
     private Axis mSecondAxis = vertical;
 
     public final Axis mainAxis() {
@@ -60,6 +41,10 @@ class ItemAlignment {
 
     public final Axis secondAxis() {
         return mSecondAxis;
+    }
+
+    public final int getOrientation() {
+        return mOrientation;
     }
 
     public final void setOrientation(int orientation) {
@@ -73,7 +58,18 @@ class ItemAlignment {
         }
     }
 
-    public final int getOrientation() {
-        return mOrientation;
+    static final class Axis extends ItemAlignmentFacet.ItemAlignmentDef {
+        private final int mOrientation;
+
+        Axis(int orientation) {
+            mOrientation = orientation;
+        }
+
+        /**
+         * get alignment position relative to optical left/top of itemView.
+         */
+        public int getAlignmentPosition(View itemView) {
+            return ItemAlignmentFacetHelper.getAlignmentPosition(itemView, this, mOrientation);
+        }
     }
 }

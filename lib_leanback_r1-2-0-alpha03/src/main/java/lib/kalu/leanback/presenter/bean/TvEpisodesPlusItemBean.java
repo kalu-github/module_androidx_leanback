@@ -7,13 +7,12 @@ import java.io.Serializable;
 @Keep
 public class TvEpisodesPlusItemBean extends TvEpisodesGridItemBean implements Serializable {
 
-    public TvEpisodesPlusItemBean() {
-    }
-
     private int rangeStart = -1;
     private int rangeEnd = -1;
     private int rangeIndex = -1;
     private int rangeMax = -1;
+    public TvEpisodesPlusItemBean() {
+    }
 
     public int getRangeStart() {
         return rangeStart;

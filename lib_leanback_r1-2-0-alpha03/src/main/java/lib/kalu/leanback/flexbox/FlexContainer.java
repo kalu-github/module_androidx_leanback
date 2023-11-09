@@ -163,6 +163,14 @@ interface FlexContainer {
     List<FlexLine> getFlexLines();
 
     /**
+     * Sets the list of the flex lines that compose the flex container to the one received as an
+     * argument.
+     *
+     * @param flexLines the list of flex lines
+     */
+    void setFlexLines(List<FlexLine> flexLines);
+
+    /**
      * Returns true if the main axis is horizontal, false otherwise.
      *
      * @return true if the main axis is horizontal, false otherwise
@@ -265,21 +273,12 @@ interface FlexContainer {
     void onNewFlexLineAdded(FlexLine flexLine);
 
     /**
-     * Sets the list of the flex lines that compose the flex container to the one received as an
-     * argument.
-     *
-     * @param flexLines the list of flex lines
-     */
-    void setFlexLines(List<FlexLine> flexLines);
-
-    /**
      * @return the current value of the maximum number of flex lines. If not set, {@link #NOT_SET}
      * is returned.
      */
     int getMaxLine();
 
     /**
-     *
      * @param maxLine the int value, which specifies the maximum number of flex lines
      */
     void setMaxLine(int maxLine);

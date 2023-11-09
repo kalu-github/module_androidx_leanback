@@ -3,16 +3,9 @@ package lib.kalu.leanback.list;
 import android.content.Context;
 import android.os.Build;
 import android.util.AttributeSet;
-import android.view.FocusFinder;
-import android.view.KeyEvent;
-import android.view.View;
 
-import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.recyclerview.widget.GridLayoutManager;
-
-import lib.kalu.leanback.util.LeanBackUtil;
 
 public class ListView extends android.widget.ListView {
     public ListView(@NonNull Context context) {

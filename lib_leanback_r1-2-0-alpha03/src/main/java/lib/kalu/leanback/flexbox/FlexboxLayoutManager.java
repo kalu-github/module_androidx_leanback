@@ -30,15 +30,15 @@ import android.util.SparseArray;
 import android.view.View;
 import android.view.ViewGroup;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import androidx.annotation.NonNull;
 import androidx.core.view.ViewCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.LinearSmoothScroller;
 import androidx.recyclerview.widget.OrientationHelper;
 import androidx.recyclerview.widget.RecyclerView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * LayoutManager for the {@link RecyclerView}. This class is intended to be used within a
@@ -58,7 +58,8 @@ public class FlexboxLayoutManager extends RecyclerView.LayoutManager implements 
     private static final Rect TEMP_RECT = new Rect();
 
     private static final boolean DEBUG = false;
-
+    private final FlexboxHelper mFlexboxHelper = new FlexboxHelper(this);
+    private final Context mContext;
     /**
      * The current value of the {@link FlexDirection}, the default value is {@link
      * FlexDirection#ROW}.
@@ -66,14 +67,12 @@ public class FlexboxLayoutManager extends RecyclerView.LayoutManager implements 
      * @see FlexContainer#getFlexDirection()
      */
     private int mFlexDirection;
-
     /**
      * The current value of the {@link FlexWrap}, the default value is {@link FlexWrap#WRAP}.
      *
      * @see FlexContainer#getFlexWrap()
      */
     private int mFlexWrap;
-
     /**
      * The current value of the {@link JustifyContent}, the default value is
      * {@link JustifyContent#FLEX_START}.
@@ -81,7 +80,6 @@ public class FlexboxLayoutManager extends RecyclerView.LayoutManager implements 
      * @see FlexContainer#getJustifyContent()
      */
     private int mJustifyContent;
-
     /**
      * The current value of the {@link AlignItems}, the default value is
      * {@link AlignItems#STRETCH}.
@@ -89,23 +87,16 @@ public class FlexboxLayoutManager extends RecyclerView.LayoutManager implements 
      * @see FlexContainer#getAlignItems()
      */
     private int mAlignItems;
-
     private int mMaxLine = NOT_SET;
-
     /**
      * True if the layout direction is right to left, false otherwise.
      */
     private boolean mIsRtl;
-
     /**
      * True if the layout direction is bottom to top, false otherwise.
      */
     private boolean mFromBottomToTop;
-
     private List<FlexLine> mFlexLines = new ArrayList<>();
-
-    private final FlexboxHelper mFlexboxHelper = new FlexboxHelper(this);
-
     /**
      * A snapshot of the {@link RecyclerView.Recycler} instance at a given moment.
      * It's not guaranteed that this instance has a reference to the latest Recycler.
@@ -113,7 +104,6 @@ public class FlexboxLayoutManager extends RecyclerView.LayoutManager implements 
      * (such as the one in {@link #onLayoutChildren(RecyclerView.Recycler, RecyclerView.State)})
      */
     private RecyclerView.Recycler mRecycler;
-
     /**
      * A snapshot of the {@link RecyclerView.State} instance at a given moment.
      * It's not guaranteed that this instance has a reference to the latest State.
@@ -121,54 +111,43 @@ public class FlexboxLayoutManager extends RecyclerView.LayoutManager implements 
      * (such as the one in {@link #onLayoutChildren(RecyclerView.Recycler, RecyclerView.State)})
      */
     private RecyclerView.State mState;
-
     private LayoutState mLayoutState;
-
     private AnchorInfo mAnchorInfo = new AnchorInfo();
-
     /**
      * {@link OrientationHelper} along cross axis, which will be the primary scrolling direction.
      * e.g. If the flex direction is set to {@link FlexDirection#ROW} and flex wrap is set to
      * {@link FlexWrap#WRAP}, the RecyclerView scrolls vertically (along the cross axis).
      */
     private OrientationHelper mOrientationHelper;
-
     /**
      * {@link OrientationHelper} along the main axis, which will be the secondary scrolling
      * direction if the size of the main size is larger than the parent of the RecyclerView.
      */
     private OrientationHelper mSubOrientationHelper;
-
     private SavedState mPendingSavedState;
-
     /**
      * The position to which the next layout should start from this adapter position.
      * This value is set either from the {@link #mPendingSavedState} when a configuration change
      * happens or programmatically such as when the {@link #scrollToPosition(int)} is called.
      */
     private int mPendingScrollPosition = NO_POSITION;
-
     /**
      * The offset by which the next layout should be offset.
      */
     private int mPendingScrollPositionOffset = INVALID_OFFSET;
-
     /**
      * The width value used in the last {@link #onLayoutChildren} method.
      */
     private int mLastWidth = Integer.MIN_VALUE;
-
     /**
      * The height value used in the last {@link #onLayoutChildren} method.
      */
     private int mLastHeight = Integer.MIN_VALUE;
-
     /**
      * If set to {@code true}, this LayoutManager tries to recycle the children when detached from
      * the RecyclerView so that recycled views can be reused using RecycledViewPool.
      */
     private boolean mRecycleChildrenOnDetach;
-
     /**
      * View cache within this LayoutManager. This is used to avoid the same ViewHolder is created
      * multiple times in the same layout pass (onLayoutChildren or scrollHorizontally or
@@ -176,10 +155,9 @@ public class FlexboxLayoutManager extends RecyclerView.LayoutManager implements 
      * The keys and values in this cache needs to be cleared at the end of each layout pass.
      */
     private SparseArray<View> mViewCache = new SparseArray<>();
-
-    private final Context mContext;
-
-    /** The reference to the parent of the RecyclerView */
+    /**
+     * The reference to the parent of the RecyclerView
+     */
     private View mParent;
 
     /**
@@ -219,7 +197,7 @@ public class FlexboxLayoutManager extends RecyclerView.LayoutManager implements 
      * @param flexWrap      the flex wrap attribute
      */
     public FlexboxLayoutManager(Context context, @FlexDirection int flexDirection,
-            @FlexWrap int flexWrap) {
+                                @FlexWrap int flexWrap) {
         setFlexDirection(flexDirection);
         setFlexWrap(flexWrap);
         setAlignItems(AlignItems.STRETCH);
@@ -231,17 +209,17 @@ public class FlexboxLayoutManager extends RecyclerView.LayoutManager implements 
      * "layoutManager". No corresponding attributes for the {@code orientation},
      * {@code reverseLayout} and {@code stackFromEnd} exist in Flexbox, thus map the similar
      * attributes from Flexbox that behave similarly for each of them.
-     *
+     * <p>
      * {@code android:orientation} maps to the {@link FlexDirection},
      * HORIZONTAL -> {@link FlexDirection#ROW}, VERTICAL -> {@link FlexDirection#COLUMN}.
-     *
+     * <p>
      * {@code android.support.v7.recyclerview:reverseLayout} reverses the direction of the
      * {@link FlexDirection}, i.e. if reverseLayout is {@code true}, {@link FlexDirection#ROW} is
      * changed to {@link FlexDirection#ROW_REVERSE}. Similarly {@link FlexDirection#COLUMN} is
      * changed to {@link FlexDirection#COLUMN_REVERSE}.
      */
     public FlexboxLayoutManager(Context context, AttributeSet attrs, int defStyleAttr,
-            int defStyleRes) {
+                                int defStyleRes) {
         Properties properties = getProperties(context, attrs, defStyleAttr, defStyleRes);
         switch (properties.orientation) {
             case LinearLayoutManager.HORIZONTAL:
@@ -262,6 +240,28 @@ public class FlexboxLayoutManager extends RecyclerView.LayoutManager implements 
         setFlexWrap(FlexWrap.WRAP);
         setAlignItems(AlignItems.STRETCH);
         mContext = context;
+    }
+
+    /**
+     * Copied from
+     * {@link RecyclerView.LayoutManager#isMeasurementUpToDate(int, int,
+     * int)}
+     */
+    private static boolean isMeasurementUpToDate(int childSize, int spec, int dimension) {
+        final int specMode = View.MeasureSpec.getMode(spec);
+        final int specSize = View.MeasureSpec.getSize(spec);
+        if (dimension > 0 && childSize != dimension) {
+            return false;
+        }
+        switch (specMode) {
+            case View.MeasureSpec.UNSPECIFIED:
+                return true;
+            case View.MeasureSpec.AT_MOST:
+                return specSize >= childSize;
+            case View.MeasureSpec.EXACTLY:
+                return specSize == childSize;
+        }
+        return false;
     }
 
     @Override
@@ -388,6 +388,11 @@ public class FlexboxLayoutManager extends RecyclerView.LayoutManager implements 
     }
 
     @Override
+    public void setFlexLines(List<FlexLine> flexLines) {
+        mFlexLines = flexLines;
+    }
+
+    @Override
     public int getDecorationLengthMainAxis(View view, int index, int indexInFlexLine) {
         if (isMainAxisDirectionHorizontal()) {
             return getLeftDecorationWidth(view) + getRightDecorationWidth(view);
@@ -428,7 +433,7 @@ public class FlexboxLayoutManager extends RecyclerView.LayoutManager implements 
      * If you want to access the latest state of the adapter, use the {@link RecyclerView.State}
      * instance passed as an argument for some methods (such as
      * {@link #onLayoutChildren(RecyclerView.Recycler, RecyclerView.State)})
-     *
+     * <p>
      * This method is used to avoid the implementation of the similar method.
      * i.e. {@link FlexboxLayoutManager#getChildCount()} returns the child count, but it doesn't
      * include the children that are detached or scrapped.
@@ -444,7 +449,7 @@ public class FlexboxLayoutManager extends RecyclerView.LayoutManager implements 
      * If you want to access the latest state, use the {@link RecyclerView.Recycler}
      * instance passed as an argument for some methods (such as
      * {@link #onLayoutChildren(RecyclerView.Recycler, RecyclerView.State)})
-     *
+     * <p>
      * This method is used to avoid the implementation of the similar method.
      * i.e. {@link FlexboxLayoutManager#getChildAt(int)} returns a view for the given index,
      * but the index is based on the layout position, not based on the adapter position, which
@@ -520,20 +525,15 @@ public class FlexboxLayoutManager extends RecyclerView.LayoutManager implements 
     }
 
     @Override
-    public void setFlexLines(List<FlexLine> flexLines) {
-        mFlexLines = flexLines;
-    }
-
-    @Override
     public List<FlexLine> getFlexLinesInternal() {
         return mFlexLines;
     }
+    // The end of methods from FlexContainer
 
     @Override
     public void updateViewCache(int position, View view) {
         mViewCache.put(position, view);
     }
-    // The end of methods from FlexContainer
 
     // ScrollVectorProvider method
     @Override
@@ -615,7 +615,7 @@ public class FlexboxLayoutManager extends RecyclerView.LayoutManager implements 
 
     @Override
     public void onItemsUpdated(@NonNull RecyclerView recyclerView, int positionStart, int itemCount,
-            Object payload) {
+                               Object payload) {
         super.onItemsUpdated(recyclerView, positionStart, itemCount, payload);
         updateDirtyPosition(positionStart);
     }
@@ -789,7 +789,7 @@ public class FlexboxLayoutManager extends RecyclerView.LayoutManager implements 
      * Large part is copied from LinearLayoutManager#fixLayoutStartGap.
      */
     private int fixLayoutStartGap(int startOffset, RecyclerView.Recycler recycler,
-            RecyclerView.State state, boolean canOffsetChildren) {
+                                  RecyclerView.State state, boolean canOffsetChildren) {
         int gap;
         int fixOffset;
         if (!isMainAxisDirectionHorizontal() && mIsRtl) {
@@ -828,7 +828,7 @@ public class FlexboxLayoutManager extends RecyclerView.LayoutManager implements 
      * Large part is copied from LinearLayoutManager#fixLayoutEndGap.
      */
     private int fixLayoutEndGap(int endOffset, RecyclerView.Recycler recycler,
-            RecyclerView.State state, boolean canOffsetChildren) {
+                                RecyclerView.State state, boolean canOffsetChildren) {
         int gap;
         boolean columnAndRtl = !isMainAxisDirectionHorizontal() && mIsRtl;
         int fixOffset;
@@ -1066,7 +1066,7 @@ public class FlexboxLayoutManager extends RecyclerView.LayoutManager implements 
     }
 
     private boolean updateAnchorFromPendingState(RecyclerView.State state, AnchorInfo anchorInfo,
-            SavedState savedState) {
+                                                 SavedState savedState) {
         assert mFlexboxHelper.mIndexToFlexLine != null;
         if (state.isPreLayout() || mPendingScrollPosition == NO_POSITION) {
             return false;
@@ -1281,7 +1281,7 @@ public class FlexboxLayoutManager extends RecyclerView.LayoutManager implements 
      * @return the amount of pixels filled
      */
     private int fill(RecyclerView.Recycler recycler, RecyclerView.State state,
-            LayoutState layoutState) {
+                     LayoutState layoutState) {
         if (layoutState.mScrollingOffset != LayoutState.SCROLLING_OFFSET_NaN) {
             if (layoutState.mAvailable < 0) {
                 layoutState.mScrollingOffset += layoutState.mAvailable;
@@ -1330,7 +1330,7 @@ public class FlexboxLayoutManager extends RecyclerView.LayoutManager implements 
     }
 
     private void recycleFlexLinesFromStart(RecyclerView.Recycler recycler,
-            LayoutState layoutState) {
+                                           LayoutState layoutState) {
         if (layoutState.mScrollingOffset < 0) {
             return;
         }
@@ -1525,7 +1525,7 @@ public class FlexboxLayoutManager extends RecyclerView.LayoutManager implements 
         // a flex item should be inserted
         int indexInFlexLine = 0;
         for (int i = startPosition, itemCount = flexLine.getItemCount();
-                i < startPosition + itemCount; i++) {
+             i < startPosition + itemCount; i++) {
             View view = getFlexItemAt(i);
             if (view == null) {
                 continue;
@@ -1644,7 +1644,7 @@ public class FlexboxLayoutManager extends RecyclerView.LayoutManager implements 
         // a flex item should be inserted
         int indexInFlexLine = 0;
         for (int i = startPosition, itemCount = flexLine.getItemCount();
-                i < startPosition + itemCount; i++) {
+             i < startPosition + itemCount; i++) {
             View view = getFlexItemAt(i);
             if (view == null) {
                 continue;
@@ -1713,7 +1713,6 @@ public class FlexboxLayoutManager extends RecyclerView.LayoutManager implements 
         return mFlexDirection == FlexDirection.ROW || mFlexDirection == FlexDirection.ROW_REVERSE;
     }
 
-
     /**
      * Update the layout state based on the anchor information.
      * The view holders are going to be filled toward the end position (bottom if the main axis
@@ -1727,7 +1726,7 @@ public class FlexboxLayoutManager extends RecyclerView.LayoutManager implements 
      *                         needs to be considered.
      */
     private void updateLayoutStateToFillEnd(AnchorInfo anchorInfo, boolean fromNextLine,
-            boolean considerInfinite) {
+                                            boolean considerInfinite) {
         if (considerInfinite) {
             resolveInfiniteAmount();
         } else {
@@ -1769,7 +1768,7 @@ public class FlexboxLayoutManager extends RecyclerView.LayoutManager implements 
      *                         needs to be considered.
      */
     private void updateLayoutStateToFillStart(AnchorInfo anchorInfo, boolean fromPreviousLine,
-            boolean considerInfinite) {
+                                              boolean considerInfinite) {
         if (considerInfinite) {
             resolveInfiniteAmount();
         } else {
@@ -1864,7 +1863,7 @@ public class FlexboxLayoutManager extends RecyclerView.LayoutManager implements 
 
     @Override
     public void smoothScrollToPosition(RecyclerView recyclerView, RecyclerView.State state,
-            int position) {
+                                       int position) {
         LinearSmoothScroller smoothScroller =
                 new LinearSmoothScroller(recyclerView.getContext());
         smoothScroller.setTargetPosition(position);
@@ -1936,7 +1935,7 @@ public class FlexboxLayoutManager extends RecyclerView.LayoutManager implements 
 
     @Override
     public int scrollHorizontallyBy(int dx, RecyclerView.Recycler recycler,
-            RecyclerView.State state) {
+                                    RecyclerView.State state) {
         if (!isMainAxisDirectionHorizontal() || (mFlexWrap == FlexWrap.NOWRAP)) {
             int scrolled = handleScrollingMainOrientation(dx, recycler, state);
             mViewCache.clear();
@@ -1951,7 +1950,7 @@ public class FlexboxLayoutManager extends RecyclerView.LayoutManager implements 
 
     @Override
     public int scrollVerticallyBy(int dy, RecyclerView.Recycler recycler,
-            RecyclerView.State state) {
+                                  RecyclerView.State state) {
         if (isMainAxisDirectionHorizontal() ||
                 (mFlexWrap == FlexWrap.NOWRAP && !isMainAxisDirectionHorizontal())) {
             int scrolled = handleScrollingMainOrientation(dy, recycler, state);
@@ -1975,7 +1974,7 @@ public class FlexboxLayoutManager extends RecyclerView.LayoutManager implements 
      * @return the amount actually scrolled
      */
     private int handleScrollingMainOrientation(int delta, RecyclerView.Recycler recycler,
-            RecyclerView.State state) {
+                                               RecyclerView.State state) {
         if (getChildCount() == 0 || delta == 0) {
             return 0;
         }
@@ -2011,9 +2010,9 @@ public class FlexboxLayoutManager extends RecyclerView.LayoutManager implements 
     /**
      * Handle the scrolling along the direction of {@link #mSubOrientationHelper}.
      *
-     * @param delta    the delta for the amount that is being scrolled
-     *                 (either horizontally or vertically)
-     * @return  the amount actually scrolled
+     * @param delta the delta for the amount that is being scrolled
+     *              (either horizontally or vertically)
+     * @return the amount actually scrolled
      */
     private int handleScrollingSubOrientation(int delta) {
         if (getChildCount() == 0 || delta == 0) {
@@ -2177,7 +2176,7 @@ public class FlexboxLayoutManager extends RecyclerView.LayoutManager implements 
         boolean mainAxisHorizontal = isMainAxisDirectionHorizontal();
         View referenceView = firstView;
         for (int i = 1, to = firstVisibleLine.mItemCount;
-                i < to; i++) {
+             i < to; i++) {
             View viewInSameLine = getChildAt(i);
             if (viewInSameLine == null || viewInSameLine.getVisibility() == View.GONE) {
                 continue;
@@ -2209,7 +2208,7 @@ public class FlexboxLayoutManager extends RecyclerView.LayoutManager implements 
         boolean mainAxisHorizontal = isMainAxisDirectionHorizontal();
         View referenceView = lastView;
         for (int i = getChildCount() - 2, to = getChildCount() - lastVisibleLine.mItemCount - 1;
-                i > to; i--) {
+             i > to; i--) {
             View viewInSameLine = getChildAt(i);
             if (viewInSameLine == null || viewInSameLine.getVisibility() == View.GONE) {
                 continue;
@@ -2362,33 +2361,11 @@ public class FlexboxLayoutManager extends RecyclerView.LayoutManager implements 
      * int, int, RecyclerView.LayoutParams)}}
      */
     private boolean shouldMeasureChild(View child, int widthSpec, int heightSpec,
-            RecyclerView.LayoutParams lp) {
+                                       RecyclerView.LayoutParams lp) {
         return child.isLayoutRequested()
                 || !isMeasurementCacheEnabled()
                 || !isMeasurementUpToDate(child.getWidth(), widthSpec, lp.width)
                 || !isMeasurementUpToDate(child.getHeight(), heightSpec, lp.height);
-    }
-
-    /**
-     * Copied from
-     * {@link RecyclerView.LayoutManager#isMeasurementUpToDate(int, int,
-     * int)}
-     */
-    private static boolean isMeasurementUpToDate(int childSize, int spec, int dimension) {
-        final int specMode = View.MeasureSpec.getMode(spec);
-        final int specSize = View.MeasureSpec.getSize(spec);
-        if (dimension > 0 && childSize != dimension) {
-            return false;
-        }
-        switch (specMode) {
-            case View.MeasureSpec.UNSPECIFIED:
-                return true;
-            case View.MeasureSpec.AT_MOST:
-                return specSize >= childSize;
-            case View.MeasureSpec.EXACTLY:
-                return specSize == childSize;
-        }
-        return false;
     }
 
     private void clearFlexLines() {
@@ -2467,7 +2444,7 @@ public class FlexboxLayoutManager extends RecyclerView.LayoutManager implements 
     /**
      * Returns the adapter position of the first visible view. This position does not include
      * adapter changes that were dispatched after the last layout pass.
-     *
+     * <p>
      * If RecyclerView has item decorators, they will be considered in calculations as well.
      * LayoutManager may pre-cache some views that are not necessarily visible. Those views
      * are ignored in this method.
@@ -2501,7 +2478,7 @@ public class FlexboxLayoutManager extends RecyclerView.LayoutManager implements 
     /**
      * Returns the adapter position of the last visible view. This position does not include
      * adapter changes that were dispatched after the last layout pass.
-     *
+     * <p>
      * If RecyclerView has item decorators, they will be considered in calculations as well.
      * LayoutManager may pre-cache some views that are not necessarily visible. Those views
      * are ignored in this method.
@@ -2568,57 +2545,114 @@ public class FlexboxLayoutManager extends RecyclerView.LayoutManager implements 
     /**
      * LayoutParams used by the {@link FlexboxLayoutManager}, which stores per-child information
      * required for the Flexbox.
-     *
+     * <p>
      * Note that some parent fields (which are not primitive nor a class implements
      * {@link Parcelable}) are not included as the stored/restored fields after this class
      * is serialized/de-serialized as an {@link Parcelable}.
      */
     public static class LayoutParams extends RecyclerView.LayoutParams implements FlexItem {
 
+        public static final Parcelable.Creator<LayoutParams> CREATOR
+                = new Parcelable.Creator<LayoutParams>() {
+            @Override
+            public LayoutParams createFromParcel(Parcel source) {
+                return new LayoutParams(source);
+            }
+
+            @Override
+            public LayoutParams[] newArray(int size) {
+                return new LayoutParams[size];
+            }
+        };
         /**
          * @see FlexItem#getFlexGrow()
          */
         private float mFlexGrow = FlexItem.FLEX_GROW_DEFAULT;
-
         /**
          * @see FlexItem#getFlexShrink()
          */
         private float mFlexShrink = FlexItem.FLEX_SHRINK_DEFAULT;
-
         /**
          * @see FlexItem#getAlignSelf()
          */
         private int mAlignSelf = AlignSelf.AUTO;
-
         /**
          * @see FlexItem#getFlexBasisPercent()
          */
         private float mFlexBasisPercent = FlexItem.FLEX_BASIS_PERCENT_DEFAULT;
-
         /**
          * @see FlexItem#getMinWidth()
          */
         private int mMinWidth;
-
         /**
          * @see FlexItem#getMinHeight()
          */
         private int mMinHeight;
-
         /**
          * @see FlexItem#getMaxWidth()
          */
         private int mMaxWidth = MAX_SIZE;
-
         /**
          * @see FlexItem#getMaxHeight()
          */
         private int mMaxHeight = MAX_SIZE;
-
         /**
          * @see FlexItem#isWrapBefore()
          */
         private boolean mWrapBefore;
+
+        public LayoutParams(Context c, AttributeSet attrs) {
+            super(c, attrs);
+        }
+
+        public LayoutParams(int width, int height) {
+            super(width, height);
+        }
+
+        public LayoutParams(ViewGroup.MarginLayoutParams source) {
+            super(source);
+        }
+
+        public LayoutParams(ViewGroup.LayoutParams source) {
+            super(source);
+        }
+
+        public LayoutParams(RecyclerView.LayoutParams source) {
+            super(source);
+        }
+
+        public LayoutParams(LayoutParams source) {
+            super(source);
+
+            mFlexGrow = source.mFlexGrow;
+            mFlexShrink = source.mFlexShrink;
+            mAlignSelf = source.mAlignSelf;
+            mFlexBasisPercent = source.mFlexBasisPercent;
+            mMinWidth = source.mMinWidth;
+            mMinHeight = source.mMinHeight;
+            mMaxWidth = source.mMaxWidth;
+            mMaxHeight = source.mMaxHeight;
+            mWrapBefore = source.mWrapBefore;
+        }
+
+        protected LayoutParams(Parcel in) {
+            super(WRAP_CONTENT, WRAP_CONTENT);
+            this.mFlexGrow = in.readFloat();
+            this.mFlexShrink = in.readFloat();
+            this.mAlignSelf = in.readInt();
+            this.mFlexBasisPercent = in.readFloat();
+            this.mMinWidth = in.readInt();
+            this.mMinHeight = in.readInt();
+            this.mMaxWidth = in.readInt();
+            this.mMaxHeight = in.readInt();
+            this.mWrapBefore = in.readByte() != 0;
+            this.bottomMargin = in.readInt();
+            this.leftMargin = in.readInt();
+            this.rightMargin = in.readInt();
+            this.topMargin = in.readInt();
+            this.height = in.readInt();
+            this.width = in.readInt();
+        }
 
         @Override
         public int getWidth() {
@@ -2751,40 +2785,6 @@ public class FlexboxLayoutManager extends RecyclerView.LayoutManager implements 
             return bottomMargin;
         }
 
-        public LayoutParams(Context c, AttributeSet attrs) {
-            super(c, attrs);
-        }
-
-        public LayoutParams(int width, int height) {
-            super(width, height);
-        }
-
-        public LayoutParams(ViewGroup.MarginLayoutParams source) {
-            super(source);
-        }
-
-        public LayoutParams(ViewGroup.LayoutParams source) {
-            super(source);
-        }
-
-        public LayoutParams(RecyclerView.LayoutParams source) {
-            super(source);
-        }
-
-        public LayoutParams(LayoutParams source) {
-            super(source);
-
-            mFlexGrow = source.mFlexGrow;
-            mFlexShrink = source.mFlexShrink;
-            mAlignSelf = source.mAlignSelf;
-            mFlexBasisPercent = source.mFlexBasisPercent;
-            mMinWidth = source.mMinWidth;
-            mMinHeight = source.mMinHeight;
-            mMaxWidth = source.mMaxWidth;
-            mMaxHeight = source.mMaxHeight;
-            mWrapBefore = source.mWrapBefore;
-        }
-
         @Override
         public int getOrder() {
             return FlexItem.ORDER_DEFAULT;
@@ -2824,38 +2824,158 @@ public class FlexboxLayoutManager extends RecyclerView.LayoutManager implements 
             dest.writeInt(this.height);
             dest.writeInt(this.width);
         }
+    }
 
-        protected LayoutParams(Parcel in) {
-            super(WRAP_CONTENT, WRAP_CONTENT);
-            this.mFlexGrow = in.readFloat();
-            this.mFlexShrink = in.readFloat();
-            this.mAlignSelf = in.readInt();
-            this.mFlexBasisPercent = in.readFloat();
-            this.mMinWidth = in.readInt();
-            this.mMinHeight = in.readInt();
-            this.mMaxWidth = in.readInt();
-            this.mMaxHeight = in.readInt();
-            this.mWrapBefore = in.readByte() != 0;
-            this.bottomMargin = in.readInt();
-            this.leftMargin = in.readInt();
-            this.rightMargin = in.readInt();
-            this.topMargin = in.readInt();
-            this.height = in.readInt();
-            this.width = in.readInt();
+    /**
+     * Helper class that keeps temporary state while the FlexboxLayoutManager is filling out the
+     * empty space.
+     */
+    private static class LayoutState {
+
+        private final static int SCROLLING_OFFSET_NaN = Integer.MIN_VALUE;
+
+        private static final int LAYOUT_START = -1;
+        private static final int LAYOUT_END = 1;
+
+        private static final int ITEM_DIRECTION_TAIL = 1;
+
+        /**
+         * Number of pixels that we should fill, in the layout direction.
+         */
+        private int mAvailable;
+
+        /**
+         * If set to true, the value of {@link #mAvailable} is considered as infinite.
+         */
+        private boolean mInfinite;
+
+        // TODO: Add mExtra to support better smooth scrolling
+
+        /**
+         * Current position on the flex lines being laid out in the layout call
+         */
+        private int mFlexLinePosition;
+
+        /**
+         * Current position on the adapter to get the next item.
+         */
+        private int mPosition;
+
+        /**
+         * Pixel offset where layout should start
+         */
+        private int mOffset;
+
+        /**
+         * Used when LayoutState is constructed in a scrolling state.
+         * It should be set the amount of scrolling we can make without creating a new view.
+         * Settings this is required for efficient view recycling.
+         */
+        private int mScrollingOffset;
+
+        /**
+         * The most recent
+         * {@link #scrollVerticallyBy(int, RecyclerView.Recycler, RecyclerView.State)} or
+         * {@link #scrollHorizontallyBy(int, RecyclerView.Recycler, RecyclerView.State)} amount.
+         */
+        private int mLastScrollDelta;
+
+        private int mItemDirection = LayoutState.ITEM_DIRECTION_TAIL;
+
+        private int mLayoutDirection = LayoutState.LAYOUT_END;
+
+        private boolean mShouldRecycle;
+
+        /**
+         * @return {@code true} if there are more items to layout
+         */
+        private boolean hasMore(RecyclerView.State state, List<FlexLine> flexLines) {
+            return mPosition >= 0 && mPosition < state.getItemCount() &&
+                    mFlexLinePosition >= 0 && mFlexLinePosition < flexLines.size();
         }
 
-        public static final Parcelable.Creator<LayoutParams> CREATOR
-                = new Parcelable.Creator<LayoutParams>() {
+        @Override
+        @NonNull
+        public String toString() {
+            return "LayoutState{" +
+                    "mAvailable=" + mAvailable +
+                    ", mFlexLinePosition=" + mFlexLinePosition +
+                    ", mPosition=" + mPosition +
+                    ", mOffset=" + mOffset +
+                    ", mScrollingOffset=" + mScrollingOffset +
+                    ", mLastScrollDelta=" + mLastScrollDelta +
+                    ", mItemDirection=" + mItemDirection +
+                    ", mLayoutDirection=" + mLayoutDirection +
+                    '}';
+        }
+    }
+
+    /**
+     * The saved state that needs to be restored after the RecyclerView is recreated.
+     */
+    private static class SavedState implements Parcelable {
+
+        public static final Creator<SavedState> CREATOR = new Creator<SavedState>() {
             @Override
-            public LayoutParams createFromParcel(Parcel source) {
-                return new LayoutParams(source);
+            public SavedState createFromParcel(Parcel source) {
+                return new SavedState(source);
             }
 
             @Override
-            public LayoutParams[] newArray(int size) {
-                return new LayoutParams[size];
+            public SavedState[] newArray(int size) {
+                return new SavedState[size];
             }
         };
+        /**
+         * The adapter position of the first visible view
+         */
+        private int mAnchorPosition;
+        /**
+         * The offset of the first visible view.
+         * E.g. if this value is set as -30, the fist visible view's top is off screen by 30 pixels
+         */
+        private int mAnchorOffset;
+
+        SavedState() {
+        }
+
+        private SavedState(Parcel in) {
+            this.mAnchorPosition = in.readInt();
+            this.mAnchorOffset = in.readInt();
+        }
+
+        private SavedState(SavedState savedState) {
+            mAnchorPosition = savedState.mAnchorPosition;
+            mAnchorOffset = savedState.mAnchorOffset;
+        }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        @Override
+        public void writeToParcel(Parcel dest, int flags) {
+            dest.writeInt(this.mAnchorPosition);
+            dest.writeInt(this.mAnchorOffset);
+        }
+
+        private void invalidateAnchor() {
+            mAnchorPosition = NO_POSITION;
+        }
+
+        private boolean hasValidAnchor(int itemCount) {
+            return mAnchorPosition >= 0 && mAnchorPosition < itemCount;
+        }
+
+        @Override
+        @NonNull
+        public String toString() {
+            return "SavedState{" +
+                    "mAnchorPosition=" + mAnchorPosition +
+                    ", mAnchorOffset=" + mAnchorOffset +
+                    '}';
+        }
     }
 
     /**
@@ -2927,14 +3047,14 @@ public class FlexboxLayoutManager extends RecyclerView.LayoutManager implements 
                 // (column or column_reverse) and layout direction is RTL.
                 if (mLayoutFromEnd) {
                     mCoordinate = orientationHelper.getDecoratedStart(anchor) +
-                        orientationHelper.getTotalSpaceChange();
+                            orientationHelper.getTotalSpaceChange();
                 } else {
                     mCoordinate = orientationHelper.getDecoratedEnd(anchor);
                 }
             } else {
                 if (mLayoutFromEnd) {
                     mCoordinate = orientationHelper.getDecoratedEnd(anchor) +
-                        orientationHelper.getTotalSpaceChange();
+                            orientationHelper.getTotalSpaceChange();
                 } else {
                     mCoordinate = orientationHelper.getDecoratedStart(anchor);
                 }
@@ -2964,148 +3084,6 @@ public class FlexboxLayoutManager extends RecyclerView.LayoutManager implements 
                     ", mLayoutFromEnd=" + mLayoutFromEnd +
                     ", mValid=" + mValid +
                     ", mAssignedFromSavedState=" + mAssignedFromSavedState +
-                    '}';
-        }
-    }
-
-    /**
-     * Helper class that keeps temporary state while the FlexboxLayoutManager is filling out the
-     * empty space.
-     */
-    private static class LayoutState {
-
-        private final static int SCROLLING_OFFSET_NaN = Integer.MIN_VALUE;
-
-        private static final int LAYOUT_START = -1;
-        private static final int LAYOUT_END = 1;
-
-        private static final int ITEM_DIRECTION_TAIL = 1;
-
-        /** Number of pixels that we should fill, in the layout direction. */
-        private int mAvailable;
-
-        /** If set to true, the value of {@link #mAvailable} is considered as infinite. */
-        private boolean mInfinite;
-
-        // TODO: Add mExtra to support better smooth scrolling
-
-        /** Current position on the flex lines being laid out in the layout call */
-        private int mFlexLinePosition;
-
-        /** Current position on the adapter to get the next item. */
-        private int mPosition;
-
-        /** Pixel offset where layout should start */
-        private int mOffset;
-
-        /**
-         * Used when LayoutState is constructed in a scrolling state.
-         * It should be set the amount of scrolling we can make without creating a new view.
-         * Settings this is required for efficient view recycling.
-         */
-        private int mScrollingOffset;
-
-        /**
-         * The most recent
-         * {@link #scrollVerticallyBy(int, RecyclerView.Recycler, RecyclerView.State)} or
-         * {@link #scrollHorizontallyBy(int, RecyclerView.Recycler, RecyclerView.State)} amount.
-         */
-        private int mLastScrollDelta;
-
-        private int mItemDirection = LayoutState.ITEM_DIRECTION_TAIL;
-
-        private int mLayoutDirection = LayoutState.LAYOUT_END;
-
-        private boolean mShouldRecycle;
-
-        /**
-         * @return {@code true} if there are more items to layout
-         */
-        private boolean hasMore(RecyclerView.State state, List<FlexLine> flexLines) {
-            return mPosition >= 0 && mPosition < state.getItemCount() &&
-                    mFlexLinePosition >= 0 && mFlexLinePosition < flexLines.size();
-        }
-
-        @Override
-        @NonNull
-        public String toString() {
-            return "LayoutState{" +
-                    "mAvailable=" + mAvailable +
-                    ", mFlexLinePosition=" + mFlexLinePosition +
-                    ", mPosition=" + mPosition +
-                    ", mOffset=" + mOffset +
-                    ", mScrollingOffset=" + mScrollingOffset +
-                    ", mLastScrollDelta=" + mLastScrollDelta +
-                    ", mItemDirection=" + mItemDirection +
-                    ", mLayoutDirection=" + mLayoutDirection +
-                    '}';
-        }
-    }
-
-    /**
-     * The saved state that needs to be restored after the RecyclerView is recreated.
-     */
-    private static class SavedState implements Parcelable {
-
-        /** The adapter position of the first visible view */
-        private int mAnchorPosition;
-
-        /**
-         * The offset of the first visible view.
-         * E.g. if this value is set as -30, the fist visible view's top is off screen by 30 pixels
-         */
-        private int mAnchorOffset;
-
-        @Override
-        public int describeContents() {
-            return 0;
-        }
-
-        @Override
-        public void writeToParcel(Parcel dest, int flags) {
-            dest.writeInt(this.mAnchorPosition);
-            dest.writeInt(this.mAnchorOffset);
-        }
-
-        SavedState() {
-        }
-
-        private SavedState(Parcel in) {
-            this.mAnchorPosition = in.readInt();
-            this.mAnchorOffset = in.readInt();
-        }
-
-        private SavedState(SavedState savedState) {
-            mAnchorPosition = savedState.mAnchorPosition;
-            mAnchorOffset = savedState.mAnchorOffset;
-        }
-
-        private void invalidateAnchor() {
-            mAnchorPosition = NO_POSITION;
-        }
-
-        private boolean hasValidAnchor(int itemCount) {
-            return mAnchorPosition >= 0 && mAnchorPosition < itemCount;
-        }
-
-        public static final Creator<SavedState> CREATOR = new Creator<SavedState>() {
-            @Override
-            public SavedState createFromParcel(Parcel source) {
-                return new SavedState(source);
-            }
-
-            @Override
-            public SavedState[] newArray(int size) {
-                return new SavedState[size];
-            }
-        };
-
-        @Override
-        @NonNull
-        public String toString() {
-            return "SavedState{" +
-                    "mAnchorPosition=" + mAnchorPosition +
-                    ", mAnchorOffset=" + mAnchorOffset +
                     '}';
         }
     }

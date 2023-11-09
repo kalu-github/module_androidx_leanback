@@ -30,7 +30,8 @@ public final class ClassPresenterSelector extends PresenterSelector {
 
     /**
      * Sets a presenter to be used for the given class.
-     * @param cls The data model class to be rendered.
+     *
+     * @param cls       The data model class to be rendered.
      * @param presenter The presenter that renders the objects of the given class.
      * @return This ClassPresenterSelector object.
      */
@@ -44,13 +45,14 @@ public final class ClassPresenterSelector extends PresenterSelector {
 
     /**
      * Sets a presenter selector to be used for the given class.
-     * @param cls The data model class to be rendered.
+     *
+     * @param cls               The data model class to be rendered.
      * @param presenterSelector The presenter selector that finds the right presenter for a given
      *                          class.
      * @return This ClassPresenterSelector object.
      */
     public ClassPresenterSelector addClassPresenterSelector(Class<?> cls,
-            PresenterSelector presenterSelector) {
+                                                            PresenterSelector presenterSelector) {
         mClassMap.put(cls, presenterSelector);
         Presenter[] innerPresenters = presenterSelector.getPresenters();
         for (int i = 0; i < innerPresenters.length; i++) {

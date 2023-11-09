@@ -10,7 +10,6 @@ import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 import androidx.annotation.ColorInt;
@@ -33,15 +32,6 @@ import lib.kalu.leanback.util.LeanBackUtil;
 @Keep
 public final class TagsLayout extends LinearLayout {
 
-    private int mTextSize = 0;
-    private int mItemHeight = 0;
-    private int mItemMargin = 0;
-    private int mItemPaddingLeft = 0;
-    private int mItemPaddingRight = 0;
-    private int mUnderlineColor = 0;
-    private int mUnderlineHeight = 0;
-    private int mUnderlinePaddingLeft = 0;
-    private int mUnderlinePaddingRight = 0;
     @DrawableRes
     int mBackgroundResource;
     @DrawableRes
@@ -54,6 +44,18 @@ public final class TagsLayout extends LinearLayout {
     int mTextColorChecked;
     @ColorInt
     int mTextColorFocus;
+    private int mTextSize = 0;
+    private int mItemHeight = 0;
+    private int mItemMargin = 0;
+    private int mItemPaddingLeft = 0;
+    private int mItemPaddingRight = 0;
+    private int mUnderlineColor = 0;
+    private int mUnderlineHeight = 0;
+    private int mUnderlinePaddingLeft = 0;
+    private int mUnderlinePaddingRight = 0;
+    /*************************/
+
+    private OnTagsChangeListener onTagsChangeListener;
 
     public TagsLayout(Context context) {
         super(context);
@@ -269,10 +271,6 @@ public final class TagsLayout extends LinearLayout {
             return null;
         }
     }
-
-    /*************************/
-
-    private OnTagsChangeListener onTagsChangeListener;
 
     public void setOnTagsChangeListener(@NonNull OnTagsChangeListener listener) {
         this.onTagsChangeListener = listener;

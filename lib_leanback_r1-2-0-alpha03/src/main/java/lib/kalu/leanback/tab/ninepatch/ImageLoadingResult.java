@@ -27,14 +27,15 @@ public class ImageLoadingResult {
 
     /**
      * Method creates NinePatchDrawable according to the current object state.
+     *
      * @param resources uses to get some information about system, get access to resources cache.
-     * @param strName if not null it will be cached with this name inside resource manager.
+     * @param strName   if not null it will be cached with this name inside resource manager.
      * @return 9 patch drawable instance or null if bitmap was null.
      */
-    public NinePatchDrawable getNinePatchDrawable(Resources resources, String strName){
-        if(bitmap == null)
+    public NinePatchDrawable getNinePatchDrawable(Resources resources, String strName) {
+        if (bitmap == null)
             return null;
-        if(chunk == null)
+        if (chunk == null)
             return new NinePatchDrawable(resources, bitmap, null, new Rect(), strName);
         return new NinePatchDrawable(resources, bitmap, chunk.toBytes(), chunk.padding, strName);
     }

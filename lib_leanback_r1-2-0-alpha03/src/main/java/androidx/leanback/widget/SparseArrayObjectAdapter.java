@@ -46,7 +46,7 @@ public class SparseArrayObjectAdapter extends ObjectAdapter {
     /**
      * Returns the index for the given item in the adapter.
      *
-     * @param item  The item to find in the array.
+     * @param item The item to find in the array.
      * @return Index of the item, or a negative value if not found.
      */
     public int indexOf(Object item) {
@@ -68,7 +68,7 @@ public class SparseArrayObjectAdapter extends ObjectAdapter {
      * not same as items being added or removed.
      *
      * @param positionStart The position of first item that has changed.
-     * @param itemCount The count of how many items have changed.
+     * @param itemCount     The count of how many items have changed.
      */
     public void notifyArrayItemRangeChanged(int positionStart, int itemCount) {
         notifyItemRangeChanged(positionStart, itemCount);
@@ -77,7 +77,7 @@ public class SparseArrayObjectAdapter extends ObjectAdapter {
     /**
      * Sets the item for the given key.
      *
-     * @param key The key associated with the item.
+     * @param key  The key associated with the item.
      * @param item The item associated with the key.
      */
     public void set(int key, Object item) {

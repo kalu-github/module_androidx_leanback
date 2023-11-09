@@ -40,35 +40,10 @@ import java.io.PrintWriter;
  */
 abstract class StaggeredGrid extends Grid {
 
-    /**
-     * Cached representation of Staggered item.
-     */
-    static class Location extends Grid.Location {
-        /**
-         * Offset to previous item location.
-         * min_edge(index) - min_edge(index - 1) for non reversed case
-         * max_edge(index) - max_edge(index - 1) for reversed case
-         */
-        int mOffset;
-
-        /**
-         * size of the item.
-         */
-        int mSize;
-
-        Location(int row, int offset, int size) {
-            super(row);
-            this.mOffset = offset;
-            this.mSize = size;
-        }
-    }
-
     protected CircularArray<Location> mLocations = new CircularArray<>(64);
-
     // mFirstIndex <= mFirstVisibleIndex <= mLastVisibleIndex
     //    <= mFirstIndex + mLocations.size() - 1
     protected int mFirstIndex = -1;
-
     protected Object mPendingItem;
     protected int mPendingItemSize;
 
@@ -224,7 +199,6 @@ abstract class StaggeredGrid extends Grid {
         }
         return offset;
     }
-
 
     /**
      * This implements the algorithm of layout staggered grid, the method should only be called by
@@ -431,6 +405,29 @@ abstract class StaggeredGrid extends Grid {
         mLocations.removeFromEnd(getLastIndex() - index + 1);
         if (mLocations.size() == 0) {
             mFirstIndex = -1;
+        }
+    }
+
+    /**
+     * Cached representation of Staggered item.
+     */
+    static class Location extends Grid.Location {
+        /**
+         * Offset to previous item location.
+         * min_edge(index) - min_edge(index - 1) for non reversed case
+         * max_edge(index) - max_edge(index - 1) for reversed case
+         */
+        int mOffset;
+
+        /**
+         * size of the item.
+         */
+        int mSize;
+
+        Location(int row, int offset, int size) {
+            super(row);
+            this.mOffset = offset;
+            this.mSize = size;
         }
     }
 }

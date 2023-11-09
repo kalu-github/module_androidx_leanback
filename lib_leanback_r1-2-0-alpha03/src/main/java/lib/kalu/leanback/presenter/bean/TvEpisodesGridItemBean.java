@@ -1,7 +1,5 @@
 package lib.kalu.leanback.presenter.bean;
 
-import android.widget.LinearLayout;
-
 import androidx.annotation.Keep;
 
 import java.io.Serializable;
@@ -9,15 +7,13 @@ import java.io.Serializable;
 @Keep
 public class TvEpisodesGridItemBean extends TvPresenterRowBeanImpl implements Serializable {
 
-    public TvEpisodesGridItemBean() {
-    }
-
     private boolean checked = false; // 是否正在选中
     private boolean playing = false; // 是否正在播放
     private boolean focus = false; // 是否有焦点
-
     private int episodeIndex = -1;
     private int episodeMax = -1;
+    public TvEpisodesGridItemBean() {
+    }
 
     public int getEpisodeIndex() {
         return episodeIndex;

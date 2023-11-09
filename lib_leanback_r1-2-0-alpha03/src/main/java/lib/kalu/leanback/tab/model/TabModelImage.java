@@ -1,7 +1,6 @@
 package lib.kalu.leanback.tab.model;
 
 import androidx.annotation.Keep;
-import androidx.leanback.R;
 
 @Keep
 public final class TabModelImage extends TabModel {

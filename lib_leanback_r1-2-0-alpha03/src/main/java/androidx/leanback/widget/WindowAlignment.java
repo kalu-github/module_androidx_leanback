@@ -27,6 +27,44 @@ import static androidx.recyclerview.widget.RecyclerView.HORIZONTAL;
  */
 final class WindowAlignment {
 
+    public final Axis vertical = new Axis("vertical");
+    public final Axis horizontal = new Axis("horizontal");
+    private int mOrientation = HORIZONTAL;
+    private Axis mMainAxis = horizontal;
+    private Axis mSecondAxis = vertical;
+
+    public Axis mainAxis() {
+        return mMainAxis;
+    }
+
+    public Axis secondAxis() {
+        return mSecondAxis;
+    }
+
+    public int getOrientation() {
+        return mOrientation;
+    }
+
+    public void setOrientation(int orientation) {
+        mOrientation = orientation;
+        if (mOrientation == HORIZONTAL) {
+            mMainAxis = horizontal;
+            mSecondAxis = vertical;
+        } else {
+            mMainAxis = vertical;
+            mSecondAxis = horizontal;
+        }
+    }
+
+    public void reset() {
+        mainAxis().reset();
+    }
+
+    @Override
+    public String toString() {
+        return "horizontal=" + horizontal + "; vertical=" + vertical;
+    }
+
     /**
      * Maintains alignment information in one direction.
      */
@@ -89,10 +127,8 @@ final class WindowAlignment {
             mWindowAlignment = windowAlignment;
         }
 
-        void setPreferKeylineOverLowEdge(boolean keylineOverLowEdge) {
-            mPreferredKeyLine = keylineOverLowEdge
-                    ? mPreferredKeyLine | PF_KEYLINE_OVER_LOW_EDGE
-                    : mPreferredKeyLine & ~PF_KEYLINE_OVER_LOW_EDGE;
+        boolean isPreferKeylineOverHighEdge() {
+            return (mPreferredKeyLine & PF_KEYLINE_OVER_HIGH_EDGE) != 0;
         }
 
         void setPreferKeylineOverHighEdge(boolean keylineOverHighEdge) {
@@ -101,12 +137,14 @@ final class WindowAlignment {
                     : mPreferredKeyLine & ~PF_KEYLINE_OVER_HIGH_EDGE;
         }
 
-        boolean isPreferKeylineOverHighEdge() {
-            return (mPreferredKeyLine & PF_KEYLINE_OVER_HIGH_EDGE) != 0;
-        }
-
         boolean isPreferKeylineOverLowEdge() {
             return (mPreferredKeyLine & PF_KEYLINE_OVER_LOW_EDGE) != 0;
+        }
+
+        void setPreferKeylineOverLowEdge(boolean keylineOverLowEdge) {
+            mPreferredKeyLine = keylineOverLowEdge
+                    ? mPreferredKeyLine | PF_KEYLINE_OVER_LOW_EDGE
+                    : mPreferredKeyLine & ~PF_KEYLINE_OVER_LOW_EDGE;
         }
 
         public int getWindowAlignmentOffset() {
@@ -117,16 +155,16 @@ final class WindowAlignment {
             mWindowAlignmentOffset = offset;
         }
 
+        public float getWindowAlignmentOffsetPercent() {
+            return mWindowAlignmentOffsetPercent;
+        }
+
         public void setWindowAlignmentOffsetPercent(float percent) {
             if ((percent < 0 || percent > 100)
                     && percent != WINDOW_ALIGN_OFFSET_PERCENT_DISABLED) {
                 throw new IllegalArgumentException();
             }
             mWindowAlignmentOffsetPercent = percent;
-        }
-
-        public float getWindowAlignmentOffsetPercent() {
-            return mWindowAlignmentOffsetPercent;
         }
 
         /**
@@ -166,12 +204,12 @@ final class WindowAlignment {
             return mMaxEdge == Integer.MAX_VALUE;
         }
 
-        public void setSize(int size) {
-            mSize = size;
-        }
-
         public int getSize() {
             return mSize;
+        }
+
+        public void setSize(int size) {
+            mSize = size;
         }
 
         public void setPadding(int paddingMin, int paddingMax) {
@@ -226,7 +264,7 @@ final class WindowAlignment {
          * Update {@link #getMinScroll()} and {@link #getMaxScroll()}
          */
         public void updateMinMax(int minEdge, int maxEdge,
-                int minChildViewCenter, int maxChildViewCenter) {
+                                 int minChildViewCenter, int maxChildViewCenter) {
             mMinEdge = minEdge;
             mMaxEdge = maxEdge;
             final int clientSize = getClientSize();
@@ -349,47 +387,5 @@ final class WindowAlignment {
             return " min:" + mMinEdge + " " + mMinScroll + " max:" + mMaxEdge + " " + mMaxScroll;
         }
 
-    }
-
-    private int mOrientation = HORIZONTAL;
-
-    public final Axis vertical = new Axis("vertical");
-
-    public final Axis horizontal = new Axis("horizontal");
-
-    private Axis mMainAxis = horizontal;
-
-    private Axis mSecondAxis = vertical;
-
-    public Axis mainAxis() {
-        return mMainAxis;
-    }
-
-    public Axis secondAxis() {
-        return mSecondAxis;
-    }
-
-    public void setOrientation(int orientation) {
-        mOrientation = orientation;
-        if (mOrientation == HORIZONTAL) {
-            mMainAxis = horizontal;
-            mSecondAxis = vertical;
-        } else {
-            mMainAxis = vertical;
-            mSecondAxis = horizontal;
-        }
-    }
-
-    public int getOrientation() {
-        return mOrientation;
-    }
-
-    public void reset() {
-        mainAxis().reset();
-    }
-
-    @Override
-    public String toString() {
-        return "horizontal=" + horizontal + "; vertical=" + vertical;
     }
 }

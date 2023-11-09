@@ -14,13 +14,9 @@ import android.graphics.Region;
 import android.os.Build;
 import android.util.AttributeSet;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.ScaleAnimation;
 
 import androidx.annotation.NonNull;
 import androidx.core.view.ViewCompat;
-import androidx.core.view.ViewPropertyAnimatorListener;
 import androidx.leanback.R;
 
 import lib.kalu.leanback.util.LeanBackUtil;

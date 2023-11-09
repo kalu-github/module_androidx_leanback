@@ -5,21 +5,11 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.Rect;
-import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
-import android.net.Uri;
-import android.os.AsyncTask;
-import android.view.ViewParent;
 import android.widget.ImageView;
 
-import androidx.annotation.ColorInt;
-import androidx.annotation.ColorRes;
-import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -43,6 +33,7 @@ class TabImageView extends ImageView {
     private int mWidthMax = 0;
     private int mWidthMin = 0;
     private TabModel mTabModel;
+    private String downloadUrl = null;
 
     public TabImageView(@NonNull Context context, @NonNull TabModel data) {
         super(context);
@@ -171,20 +162,20 @@ class TabImageView extends ImageView {
         this.mWidthMin = max;
     }
 
-    protected void setChecked(boolean v) {
-        setSelected(v);
-    }
-
     protected boolean isChecked() {
         return isSelected();
     }
 
-    protected void setFocus(boolean v) {
-        setEnabled(v);
+    protected void setChecked(boolean v) {
+        setSelected(v);
     }
 
     protected boolean isFocus() {
         return hasFocus();
+    }
+
+    protected void setFocus(boolean v) {
+        setEnabled(v);
     }
 
     @Override
@@ -306,8 +297,6 @@ class TabImageView extends ImageView {
             LeanBackUtil.log("TabImageView => show => " + e.getMessage());
         }
     }
-
-    private String downloadUrl = null;
 
     private void download(@NonNull String url, boolean isBg) {
 

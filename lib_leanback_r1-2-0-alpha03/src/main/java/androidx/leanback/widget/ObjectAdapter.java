@@ -28,134 +28,19 @@ import androidx.annotation.RestrictTo;
  */
 public abstract class ObjectAdapter {
 
-    /** Indicates that an id has not been set. */
-    public static final int NO_ID = -1;
-
     /**
-     * A DataObserver can be notified when an ObjectAdapter's underlying data
-     * changes. Separate methods provide notifications about different types of
-     * changes.
+     * Indicates that an id has not been set.
      */
-    public static abstract class DataObserver {
-        /**
-         * Called whenever the ObjectAdapter's data has changed in some manner
-         * outside of the set of changes covered by the other range-based change
-         * notification methods.
-         */
-        public void onChanged() {
-        }
-
-        /**
-         * Called when a range of items in the ObjectAdapter has changed. The
-         * basic ordering and structure of the ObjectAdapter has not changed.
-         *
-         * @param positionStart The position of the first item that changed.
-         * @param itemCount     The number of items changed.
-         */
-        public void onItemRangeChanged(int positionStart, int itemCount) {
-            onChanged();
-        }
-
-        /**
-         * Called when a range of items in the ObjectAdapter has changed. The
-         * basic ordering and structure of the ObjectAdapter has not changed.
-         *
-         * @param positionStart The position of the first item that changed.
-         * @param itemCount     The number of items changed.
-         * @param payload       Optional parameter, use null to identify a "full" update.
-         */
-        public void onItemRangeChanged(int positionStart, int itemCount, @Nullable Object payload) {
-            onChanged();
-        }
-
-        /**
-         * Called when a range of items is inserted into the ObjectAdapter.
-         *
-         * @param positionStart The position of the first inserted item.
-         * @param itemCount     The number of items inserted.
-         */
-        public void onItemRangeInserted(int positionStart, int itemCount) {
-            onChanged();
-        }
-
-        /**
-         * Called when an item is moved from one position to another position
-         *
-         * @param fromPosition Previous position of the item.
-         * @param toPosition   New position of the item.
-         */
-        public void onItemMoved(int fromPosition, int toPosition) {
-            onChanged();
-        }
-
-        /**
-         * Called when a range of items is removed from the ObjectAdapter.
-         *
-         * @param positionStart The position of the first removed item.
-         * @param itemCount     The number of items removed.
-         */
-        public void onItemRangeRemoved(int positionStart, int itemCount) {
-            onChanged();
-        }
-    }
-
-    private static final class DataObservable extends Observable<DataObserver> {
-
-        DataObservable() {
-        }
-
-        public void notifyChanged() {
-            for (int i = mObservers.size() - 1; i >= 0; i--) {
-                mObservers.get(i).onChanged();
-            }
-        }
-
-        public void notifyItemRangeChanged(int positionStart, int itemCount) {
-            for (int i = mObservers.size() - 1; i >= 0; i--) {
-                mObservers.get(i).onItemRangeChanged(positionStart, itemCount);
-            }
-        }
-
-        public void notifyItemRangeChanged(int positionStart, int itemCount, Object payload) {
-            for (int i = mObservers.size() - 1; i >= 0; i--) {
-                mObservers.get(i).onItemRangeChanged(positionStart, itemCount, payload);
-            }
-        }
-
-        public void notifyItemRangeInserted(int positionStart, int itemCount) {
-            for (int i = mObservers.size() - 1; i >= 0; i--) {
-                mObservers.get(i).onItemRangeInserted(positionStart, itemCount);
-            }
-        }
-
-        public void notifyItemRangeRemoved(int positionStart, int itemCount) {
-            for (int i = mObservers.size() - 1; i >= 0; i--) {
-                mObservers.get(i).onItemRangeRemoved(positionStart, itemCount);
-            }
-        }
-
-        public void notifyItemMoved(int positionStart, int toPosition) {
-            for (int i = mObservers.size() - 1; i >= 0; i--) {
-                mObservers.get(i).onItemMoved(positionStart, toPosition);
-            }
-        }
-
-        boolean hasObserver() {
-            return mObservers.size() > 0;
-        }
-    }
-
+    public static final int NO_ID = -1;
     private final DataObservable mObservable = new DataObservable();
     private boolean mHasStableIds;
     private PresenterSelector mPresenterSelector;
-
     /**
      * Constructs an adapter with the given {@link PresenterSelector}.
      */
     public ObjectAdapter(@NonNull PresenterSelector presenterSelector) {
         setPresenterSelector(presenterSelector);
     }
-
     /**
      * Constructs an adapter that uses the given {@link Presenter} for all items.
      */
@@ -167,6 +52,21 @@ public abstract class ObjectAdapter {
      * Constructs an adapter.
      */
     public ObjectAdapter() {
+    }
+
+    /**
+     * Called when {@link #setPresenterSelector(PresenterSelector)} is called
+     * and the PresenterSelector differs from the previous one.
+     */
+    protected void onPresenterSelectorChanged() {
+    }
+
+    /**
+     * Returns the presenter selector for this ObjectAdapter.
+     */
+    @NonNull
+    public final PresenterSelector getPresenterSelector() {
+        return mPresenterSelector;
     }
 
     /**
@@ -190,21 +90,6 @@ public abstract class ObjectAdapter {
     }
 
     /**
-     * Called when {@link #setPresenterSelector(PresenterSelector)} is called
-     * and the PresenterSelector differs from the previous one.
-     */
-    protected void onPresenterSelectorChanged() {
-    }
-
-    /**
-     * Returns the presenter selector for this ObjectAdapter.
-     */
-    @NonNull
-    public final PresenterSelector getPresenterSelector() {
-        return mPresenterSelector;
-    }
-
-    /**
      * Registers a DataObserver for data change notifications.
      */
     public final void registerObserver(@NonNull DataObserver observer) {
@@ -219,6 +104,7 @@ public abstract class ObjectAdapter {
     }
 
     /**
+     *
      */
     @RestrictTo(LIBRARY_GROUP_PREFIX)
     public final boolean hasObserver() {
@@ -358,5 +244,119 @@ public abstract class ObjectAdapter {
      */
     public boolean isImmediateNotifySupported() {
         return false;
+    }
+
+    /**
+     * A DataObserver can be notified when an ObjectAdapter's underlying data
+     * changes. Separate methods provide notifications about different types of
+     * changes.
+     */
+    public static abstract class DataObserver {
+        /**
+         * Called whenever the ObjectAdapter's data has changed in some manner
+         * outside of the set of changes covered by the other range-based change
+         * notification methods.
+         */
+        public void onChanged() {
+        }
+
+        /**
+         * Called when a range of items in the ObjectAdapter has changed. The
+         * basic ordering and structure of the ObjectAdapter has not changed.
+         *
+         * @param positionStart The position of the first item that changed.
+         * @param itemCount     The number of items changed.
+         */
+        public void onItemRangeChanged(int positionStart, int itemCount) {
+            onChanged();
+        }
+
+        /**
+         * Called when a range of items in the ObjectAdapter has changed. The
+         * basic ordering and structure of the ObjectAdapter has not changed.
+         *
+         * @param positionStart The position of the first item that changed.
+         * @param itemCount     The number of items changed.
+         * @param payload       Optional parameter, use null to identify a "full" update.
+         */
+        public void onItemRangeChanged(int positionStart, int itemCount, @Nullable Object payload) {
+            onChanged();
+        }
+
+        /**
+         * Called when a range of items is inserted into the ObjectAdapter.
+         *
+         * @param positionStart The position of the first inserted item.
+         * @param itemCount     The number of items inserted.
+         */
+        public void onItemRangeInserted(int positionStart, int itemCount) {
+            onChanged();
+        }
+
+        /**
+         * Called when an item is moved from one position to another position
+         *
+         * @param fromPosition Previous position of the item.
+         * @param toPosition   New position of the item.
+         */
+        public void onItemMoved(int fromPosition, int toPosition) {
+            onChanged();
+        }
+
+        /**
+         * Called when a range of items is removed from the ObjectAdapter.
+         *
+         * @param positionStart The position of the first removed item.
+         * @param itemCount     The number of items removed.
+         */
+        public void onItemRangeRemoved(int positionStart, int itemCount) {
+            onChanged();
+        }
+    }
+
+    private static final class DataObservable extends Observable<DataObserver> {
+
+        DataObservable() {
+        }
+
+        public void notifyChanged() {
+            for (int i = mObservers.size() - 1; i >= 0; i--) {
+                mObservers.get(i).onChanged();
+            }
+        }
+
+        public void notifyItemRangeChanged(int positionStart, int itemCount) {
+            for (int i = mObservers.size() - 1; i >= 0; i--) {
+                mObservers.get(i).onItemRangeChanged(positionStart, itemCount);
+            }
+        }
+
+        public void notifyItemRangeChanged(int positionStart, int itemCount, Object payload) {
+            for (int i = mObservers.size() - 1; i >= 0; i--) {
+                mObservers.get(i).onItemRangeChanged(positionStart, itemCount, payload);
+            }
+        }
+
+        public void notifyItemRangeInserted(int positionStart, int itemCount) {
+            for (int i = mObservers.size() - 1; i >= 0; i--) {
+                mObservers.get(i).onItemRangeInserted(positionStart, itemCount);
+            }
+        }
+
+        public void notifyItemRangeRemoved(int positionStart, int itemCount) {
+            for (int i = mObservers.size() - 1; i >= 0; i--) {
+                mObservers.get(i).onItemRangeRemoved(positionStart, itemCount);
+            }
+        }
+
+        public void notifyItemMoved(int positionStart, int toPosition) {
+            for (int i = mObservers.size() - 1; i >= 0; i--) {
+                mObservers.get(i).onItemMoved(positionStart, toPosition);
+            }
+        }
+
+        boolean hasObserver() {
+            return mObservers.size() > 0;
+        }
     }
 }

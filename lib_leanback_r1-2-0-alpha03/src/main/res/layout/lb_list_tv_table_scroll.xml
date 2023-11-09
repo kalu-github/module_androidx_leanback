@@ -46,8 +46,8 @@
             android:layout_marginLeft="-40dp"
             android:layout_toLeftOf="@id/module_leanback_lghp_content"
             android:focusable="false"
-            android:visibility="invisible"
-            android:scaleType="fitStart" />
+            android:scaleType="fitStart"
+            android:visibility="invisible" />
 
         <ImageView
             android:id="@+id/module_leanback_lghp_icon_right"
@@ -55,10 +55,10 @@
             android:layout_height="20dp"
             android:layout_centerVertical="true"
             android:layout_marginRight="-40dp"
-            android:visibility="invisible"
             android:layout_toRightOf="@id/module_leanback_lghp_content"
             android:focusable="false"
-            android:scaleType="fitEnd" />
+            android:scaleType="fitEnd"
+            android:visibility="invisible" />
 
     </RelativeLayout>
 

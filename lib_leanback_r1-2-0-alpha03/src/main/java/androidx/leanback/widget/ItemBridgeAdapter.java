@@ -29,126 +29,10 @@ import java.util.List;
 public class ItemBridgeAdapter extends RecyclerView.Adapter implements FacetProviderAdapter {
     static final String TAG = "ItemBridgeAdapter";
     static final boolean DEBUG = false;
-
-    /**
-     * Interface for listening to ViewHolder operations.
-     */
-    public static class AdapterListener {
-        public void onAddPresenter(Presenter presenter, int type) {
-        }
-
-        public void onCreate(ViewHolder viewHolder) {
-        }
-
-        public void onBind(ViewHolder viewHolder) {
-        }
-
-        public void onBind(ViewHolder viewHolder, List payloads) {
-            onBind(viewHolder);
-        }
-
-        public void onUnbind(ViewHolder viewHolder) {
-        }
-
-        public void onAttachedToWindow(ViewHolder viewHolder) {
-        }
-
-        public void onDetachedFromWindow(ViewHolder viewHolder) {
-        }
-    }
-
     private ObjectAdapter mAdapter;
     private PresenterSelector mPresenterSelector;
     private AdapterListener mAdapterListener;
     private ArrayList<Presenter> mPresenters = new ArrayList<Presenter>();
-
-    static final class ChainingFocusChangeListener implements View.OnFocusChangeListener {
-        final View.OnFocusChangeListener mChainedListener;
-        boolean mHasWrapper;
-
-        ChainingFocusChangeListener(View.OnFocusChangeListener chainedListener, boolean hasWrapper) {
-            mChainedListener = chainedListener;
-            mHasWrapper = hasWrapper;
-        }
-
-        void update(boolean hasWrapper) {
-            mHasWrapper = hasWrapper;
-        }
-
-        @Override
-        public void onFocusChange(View view, boolean hasFocus) {
-            if (DEBUG) {
-                Log.v(TAG, "onFocusChange " + hasFocus + " " + view);
-            }
-            if (mHasWrapper) {
-                view = (View) view.getParent();
-            }
-            if (mChainedListener != null) {
-                mChainedListener.onFocusChange(view, hasFocus);
-            }
-        }
-    }
-
-    /**
-     * ViewHolder for the ItemBridgeAdapter.
-     */
-    public static class ViewHolder extends RecyclerView.ViewHolder implements FacetProvider {
-        final Presenter mPresenter;
-        final Presenter.ViewHolder mHolder;
-        Object mItem;
-        Object mExtraObject;
-
-        /**
-         * Get {@link Presenter}.
-         */
-        public final Presenter getPresenter() {
-            return mPresenter;
-        }
-
-        /**
-         * Get {@link Presenter.ViewHolder}.
-         */
-        public final Presenter.ViewHolder getViewHolder() {
-            return mHolder;
-        }
-
-        /**
-         * Get currently bound object.
-         */
-        public final Object getItem() {
-            return mItem;
-        }
-
-        /**
-         * Get extra object associated with the view.  Developer can attach
-         * any customized UI object in addition to {@link Presenter.ViewHolder}.
-         * A typical use case is attaching an animator object.
-         */
-        public final Object getExtraObject() {
-            return mExtraObject;
-        }
-
-        /**
-         * Set extra object associated with the view.  Developer can attach
-         * any customized UI object in addition to {@link Presenter.ViewHolder}.
-         * A typical use case is attaching an animator object.
-         */
-        public void setExtraObject(Object object) {
-            mExtraObject = object;
-        }
-
-        @Override
-        public Object getFacet(Class<?> facetClass) {
-            return mHolder.getFacet(facetClass);
-        }
-
-        ViewHolder(Presenter presenter, View view, Presenter.ViewHolder holder) {
-            super(view);
-            mPresenter = presenter;
-            mHolder = holder;
-        }
-    }
-
     private ObjectAdapter.DataObserver mDataObserver = new ObjectAdapter.DataObserver() {
         @Override
         public void onChanged() {
@@ -238,17 +122,17 @@ public class ItemBridgeAdapter extends RecyclerView.Adapter implements FacetProv
     }
 
     /**
-     * Sets the presenter mapper array.
-     */
-    public void setPresenterMapper(ArrayList<Presenter> presenters) {
-        mPresenters = presenters;
-    }
-
-    /**
      * Returns the presenter mapper array.
      */
     public ArrayList<Presenter> getPresenterMapper() {
         return mPresenters;
+    }
+
+    /**
+     * Sets the presenter mapper array.
+     */
+    public void setPresenterMapper(ArrayList<Presenter> presenters) {
+        mPresenters = presenters;
     }
 
     @Override
@@ -321,7 +205,7 @@ public class ItemBridgeAdapter extends RecyclerView.Adapter implements FacetProv
         if (DEBUG) Log.v(TAG, "onCreateViewHolder viewType " + viewType);
         Presenter presenter = mPresenters.get(viewType);
         Presenter.ViewHolder presenterVh = presenter.onCreateViewHolder(parent);
-        View view= presenterVh.view;
+        View view = presenterVh.view;
         ViewHolder viewHolder = new ViewHolder(presenter, view, presenterVh);
         onCreate(viewHolder);
         if (mAdapterListener != null) {
@@ -419,5 +303,119 @@ public class ItemBridgeAdapter extends RecyclerView.Adapter implements FacetProv
     @Override
     public FacetProvider getFacetProvider(int type) {
         return mPresenters.get(type);
+    }
+
+    /**
+     * Interface for listening to ViewHolder operations.
+     */
+    public static class AdapterListener {
+        public void onAddPresenter(Presenter presenter, int type) {
+        }
+
+        public void onCreate(ViewHolder viewHolder) {
+        }
+
+        public void onBind(ViewHolder viewHolder) {
+        }
+
+        public void onBind(ViewHolder viewHolder, List payloads) {
+            onBind(viewHolder);
+        }
+
+        public void onUnbind(ViewHolder viewHolder) {
+        }
+
+        public void onAttachedToWindow(ViewHolder viewHolder) {
+        }
+
+        public void onDetachedFromWindow(ViewHolder viewHolder) {
+        }
+    }
+
+    static final class ChainingFocusChangeListener implements View.OnFocusChangeListener {
+        final View.OnFocusChangeListener mChainedListener;
+        boolean mHasWrapper;
+
+        ChainingFocusChangeListener(View.OnFocusChangeListener chainedListener, boolean hasWrapper) {
+            mChainedListener = chainedListener;
+            mHasWrapper = hasWrapper;
+        }
+
+        void update(boolean hasWrapper) {
+            mHasWrapper = hasWrapper;
+        }
+
+        @Override
+        public void onFocusChange(View view, boolean hasFocus) {
+            if (DEBUG) {
+                Log.v(TAG, "onFocusChange " + hasFocus + " " + view);
+            }
+            if (mHasWrapper) {
+                view = (View) view.getParent();
+            }
+            if (mChainedListener != null) {
+                mChainedListener.onFocusChange(view, hasFocus);
+            }
+        }
+    }
+
+    /**
+     * ViewHolder for the ItemBridgeAdapter.
+     */
+    public static class ViewHolder extends RecyclerView.ViewHolder implements FacetProvider {
+        final Presenter mPresenter;
+        final Presenter.ViewHolder mHolder;
+        Object mItem;
+        Object mExtraObject;
+
+        ViewHolder(Presenter presenter, View view, Presenter.ViewHolder holder) {
+            super(view);
+            mPresenter = presenter;
+            mHolder = holder;
+        }
+
+        /**
+         * Get {@link Presenter}.
+         */
+        public final Presenter getPresenter() {
+            return mPresenter;
+        }
+
+        /**
+         * Get {@link Presenter.ViewHolder}.
+         */
+        public final Presenter.ViewHolder getViewHolder() {
+            return mHolder;
+        }
+
+        /**
+         * Get currently bound object.
+         */
+        public final Object getItem() {
+            return mItem;
+        }
+
+        /**
+         * Get extra object associated with the view.  Developer can attach
+         * any customized UI object in addition to {@link Presenter.ViewHolder}.
+         * A typical use case is attaching an animator object.
+         */
+        public final Object getExtraObject() {
+            return mExtraObject;
+        }
+
+        /**
+         * Set extra object associated with the view.  Developer can attach
+         * any customized UI object in addition to {@link Presenter.ViewHolder}.
+         * A typical use case is attaching an animator object.
+         */
+        public void setExtraObject(Object object) {
+            mExtraObject = object;
+        }
+
+        @Override
+        public Object getFacet(Class<?> facetClass) {
+            return mHolder.getFacet(facetClass);
+        }
     }
 }

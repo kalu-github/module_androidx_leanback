@@ -7,16 +7,11 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
-import android.os.AsyncTask;
 import android.text.TextPaint;
-import android.util.Log;
 import android.view.Gravity;
-import android.view.ViewParent;
-import android.webkit.WebSettings;
 import android.widget.TextView;
 
 import androidx.annotation.ColorInt;
@@ -44,6 +39,7 @@ class TabTextView extends TextView {
     private int mUnderlineWidth = 0;
 
     private TabModel mTabModel;
+    private String downloadUrl = null;
 
     public TabTextView(@NonNull Context context, @NonNull TabModel data) {
         super(context);
@@ -163,20 +159,20 @@ class TabTextView extends TextView {
         refreshUI();
     }
 
-    protected void setChecked(boolean v) {
-        setSelected(v);
-    }
-
     protected boolean isChecked() {
         return isSelected();
     }
 
-    protected void setFocus(boolean v) {
-        setEnabled(v);
+    protected void setChecked(boolean v) {
+        setSelected(v);
     }
 
     protected boolean isFocus() {
         return hasFocus();
+    }
+
+    protected void setFocus(boolean v) {
+        setEnabled(v);
     }
 
     @Override
@@ -282,7 +278,6 @@ class TabTextView extends TextView {
         }
     }
 
-    private String downloadUrl = null;
     private void download(@NonNull String url) {
 
         try {
@@ -324,7 +319,7 @@ class TabTextView extends TextView {
                                         throw new Exception("url warning: change url");
                                     Drawable drawable = decodeDrawable(getContext(), path, false);
                                     setBackground(drawable);
-                                }catch (Exception e){
+                                } catch (Exception e) {
                                     downloadUrl = null;
                                     LeanBackUtil.log("TabTextView => download => " + e.getMessage());
                                 }

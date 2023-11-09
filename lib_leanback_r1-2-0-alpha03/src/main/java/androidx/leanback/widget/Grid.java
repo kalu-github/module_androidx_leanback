@@ -46,104 +46,16 @@ abstract class Grid {
      * developer did not provide a start index.
      */
     static final int START_DEFAULT = -1;
-
-    Object[] mTmpItem = new Object[1];
-
-    /**
-     * When user uses Grid,  he should provide count of items and
-     * the method to create item and remove item.
-     */
-    interface Provider {
-
-        /**
-         * Return how many items (are in the adapter).
-         */
-        int getCount();
-
-        /**
-         * @return Min index to prepend, usually it's 0; but in the preLayout case,
-         * when grid was showing 5,6,7.  Removing 3,4,5 will make the layoutPosition to
-         * be 3(deleted),4,5 in prelayout pass; Grid's index is still 5,6,7 in prelayout.
-         * When we prepend in prelayout, we can call createItem(4), createItem(3), createItem(2),
-         * the minimal index is 2, which is also the delta to mapping to layoutPosition in
-         * prelayout pass.
-         */
-        int getMinIndex();
-
-        /**
-         * Create visible item and where the provider should measure it.
-         * The call is always followed by addItem().
-         *
-         * @param index            0-based index of the item in provider
-         * @param append           True if new item is after last visible item, false if new item is
-         *                         before first visible item.
-         * @param item             item[0] returns created item that will be passed in addItem()
-         *                         call.
-         * @param disappearingItem The item is a disappearing item added by
-         *                         {@link Grid#fillDisappearingItems(int[], int, SparseIntArray)}.
-         * @return length of the item.
-         */
-        int createItem(int index, boolean append, Object[] item, boolean disappearingItem);
-
-        /**
-         * add item to given row and given edge.  The call is always after createItem().
-         *
-         * @param item     The object returned by createItem()
-         * @param index    0-based index of the item in provider
-         * @param length   The size of the object
-         * @param rowIndex Row index to put the item
-         * @param edge     min_edge if not reversed or max_edge if reversed.
-         */
-        void addItem(Object item, int index, int length, int rowIndex, int edge);
-
-        /**
-         * Remove visible item at index.
-         *
-         * @param index 0-based index of the item in provider
-         */
-        void removeItem(int index);
-
-        /**
-         * Get edge of an existing visible item. edge will be the min_edge
-         * if not reversed or the max_edge if reversed.
-         *
-         * @param index 0-based index of the item in provider
-         */
-        int getEdge(int index);
-
-        /**
-         * Get size of an existing visible item.
-         *
-         * @param index 0-based index of the item in provider
-         */
-        int getSize(int index);
-    }
-
-    /**
-     * Cached representation of an item in Grid.  May be subclassed.
-     */
-    static class Location {
-        /**
-         * The index of the row for this Location.
-         */
-        int mRow;
-
-        Location(int row) {
-            this.mRow = row;
-        }
-    }
-
     protected Provider mProvider;
     protected boolean mReversedFlow;
     protected int mSpacing;
     protected int mNumRows;
     protected int mFirstVisibleIndex = -1;
     protected int mLastVisibleIndex = -1;
-
     protected CircularIntArray[] mTmpItemPositionsInRows;
-
     // the first index that grid will layout
     protected int mStartIndex = START_DEFAULT;
+    Object[] mTmpItem = new Object[1];
 
     /**
      * Creates a single or multiple rows (can be staggered or not staggered) grid
@@ -168,17 +80,17 @@ abstract class Grid {
     }
 
     /**
-     * Sets if reversed flow (rtl)
-     */
-    public final void setReversedFlow(boolean reversedFlow) {
-        mReversedFlow = reversedFlow;
-    }
-
-    /**
      * Returns true if reversed flow (rtl)
      */
     public boolean isReversedFlow() {
         return mReversedFlow;
+    }
+
+    /**
+     * Sets if reversed flow (rtl)
+     */
+    public final void setReversedFlow(boolean reversedFlow) {
+        mReversedFlow = reversedFlow;
     }
 
     /**
@@ -476,7 +388,7 @@ abstract class Grid {
      * @param positionToRow Which row we want to put the disappearing item.
      */
     public void fillDisappearingItems(int[] positions, int positionsLength,
-            SparseIntArray positionToRow) {
+                                      SparseIntArray positionToRow) {
         final int lastPos = getLastVisibleIndex();
         final int resultSearchLast = lastPos >= 0
                 ? Arrays.binarySearch(positions, 0, positionsLength, lastPos) : 0;
@@ -538,8 +450,92 @@ abstract class Grid {
      * Queries items adjacent to the viewport (in the direction of da) into the prefetch registry.
      */
     public void collectAdjacentPrefetchPositions(int fromLimit, int da,
-            @NonNull RecyclerView.LayoutManager.LayoutPrefetchRegistry layoutPrefetchRegistry) {
+                                                 @NonNull RecyclerView.LayoutManager.LayoutPrefetchRegistry layoutPrefetchRegistry) {
     }
 
     public abstract void debugPrint(PrintWriter pw);
+
+    /**
+     * When user uses Grid,  he should provide count of items and
+     * the method to create item and remove item.
+     */
+    interface Provider {
+
+        /**
+         * Return how many items (are in the adapter).
+         */
+        int getCount();
+
+        /**
+         * @return Min index to prepend, usually it's 0; but in the preLayout case,
+         * when grid was showing 5,6,7.  Removing 3,4,5 will make the layoutPosition to
+         * be 3(deleted),4,5 in prelayout pass; Grid's index is still 5,6,7 in prelayout.
+         * When we prepend in prelayout, we can call createItem(4), createItem(3), createItem(2),
+         * the minimal index is 2, which is also the delta to mapping to layoutPosition in
+         * prelayout pass.
+         */
+        int getMinIndex();
+
+        /**
+         * Create visible item and where the provider should measure it.
+         * The call is always followed by addItem().
+         *
+         * @param index            0-based index of the item in provider
+         * @param append           True if new item is after last visible item, false if new item is
+         *                         before first visible item.
+         * @param item             item[0] returns created item that will be passed in addItem()
+         *                         call.
+         * @param disappearingItem The item is a disappearing item added by
+         *                         {@link Grid#fillDisappearingItems(int[], int, SparseIntArray)}.
+         * @return length of the item.
+         */
+        int createItem(int index, boolean append, Object[] item, boolean disappearingItem);
+
+        /**
+         * add item to given row and given edge.  The call is always after createItem().
+         *
+         * @param item     The object returned by createItem()
+         * @param index    0-based index of the item in provider
+         * @param length   The size of the object
+         * @param rowIndex Row index to put the item
+         * @param edge     min_edge if not reversed or max_edge if reversed.
+         */
+        void addItem(Object item, int index, int length, int rowIndex, int edge);
+
+        /**
+         * Remove visible item at index.
+         *
+         * @param index 0-based index of the item in provider
+         */
+        void removeItem(int index);
+
+        /**
+         * Get edge of an existing visible item. edge will be the min_edge
+         * if not reversed or the max_edge if reversed.
+         *
+         * @param index 0-based index of the item in provider
+         */
+        int getEdge(int index);
+
+        /**
+         * Get size of an existing visible item.
+         *
+         * @param index 0-based index of the item in provider
+         */
+        int getSize(int index);
+    }
+
+    /**
+     * Cached representation of an item in Grid.  May be subclassed.
+     */
+    static class Location {
+        /**
+         * The index of the row for this Location.
+         */
+        int mRow;
+
+        Location(int row) {
+            this.mRow = row;
+        }
+    }
 }

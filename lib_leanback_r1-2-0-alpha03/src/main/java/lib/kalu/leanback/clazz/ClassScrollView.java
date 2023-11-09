@@ -53,6 +53,9 @@ public final class ClassScrollView extends ScrollView implements ClassLayoutImpl
     int mTextColorChecked;
     @ColorInt
     int mTextColorFocus;
+    /*****************/
+
+    OnCheckedChangeListener mOnCheckedChangeListener = null;
 
     public ClassScrollView(Context context) {
         super(context);
@@ -263,10 +266,6 @@ public final class ClassScrollView extends ScrollView implements ClassLayoutImpl
     public void update(@NonNull List<? extends ClassBean> data, int checkedIndex, boolean checkedRequestFocus) {
         update(data, checkedIndex, mItemMargin, mItemWidth, mItemHeight, mTextSize, mOrientation, mTextColor, mTextColorFocus, mTextColorChecked, mBackgroundResource, mBackgroundResourceFocus, mBackgroundResourceChecked, true, checkedRequestFocus);
     }
-
-    /*****************/
-
-    OnCheckedChangeListener mOnCheckedChangeListener = null;
 
     public void setOnCheckedChangeListener(@NonNull OnCheckedChangeListener listener) {
         this.mOnCheckedChangeListener = listener;

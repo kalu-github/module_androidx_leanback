@@ -60,7 +60,7 @@ final class TagsHorizontalScrollView extends HorizontalScrollView {
                 addView(layout);
             }
             TagsLinearLayoutChild tagsLinearLayoutChild = (TagsLinearLayoutChild) getChildAt(0);
-            tagsLinearLayoutChild.update(key, data, textSize, margin, paddingLeft, paddingRight, textColor, textColorFocus, textColorChecked, backgroundResource,backgroundResourceFocus, backgroundResourceChecked);
+            tagsLinearLayoutChild.update(key, data, textSize, margin, paddingLeft, paddingRight, textColor, textColorFocus, textColorChecked, backgroundResource, backgroundResourceFocus, backgroundResourceChecked);
         } catch (Exception e) {
             LeanBackUtil.log("TagsHorizontalScrollView => update => " + e.getMessage());
         }

@@ -26,27 +26,39 @@ import android.view.View;
  */
 interface FlexItem extends Parcelable {
 
-    /** The default value for the order attribute */
+    /**
+     * The default value for the order attribute
+     */
     int ORDER_DEFAULT = 1;
 
-    /** The default value for the flex grow attribute */
+    /**
+     * The default value for the flex grow attribute
+     */
     float FLEX_GROW_DEFAULT = 0f;
 
-    /** The default value for the flex shrink attribute */
+    /**
+     * The default value for the flex shrink attribute
+     */
     float FLEX_SHRINK_DEFAULT = 1f;
 
-    /** The value representing the flex shrink attribute is not set  */
+    /**
+     * The value representing the flex shrink attribute is not set
+     */
     float FLEX_SHRINK_NOT_SET = 0f;
 
-    /** The default value for the flex basis percent attribute */
+    /**
+     * The default value for the flex basis percent attribute
+     */
     float FLEX_BASIS_PERCENT_DEFAULT = -1f;
 
-    /** The maximum size of the max width and max height attributes */
+    /**
+     * The maximum size of the max width and max height attributes
+     */
     int MAX_SIZE = Integer.MAX_VALUE & View.MEASURED_SIZE_MASK;
 
     /**
      * @return the width attribute of the flex item.
-     *
+     * <p>
      * The attribute is about how wide the view wants to be. Can be one of the
      * constants MATCH_PARENT(-1) or WRAP_CONTENT(-2), or an exact size.
      */
@@ -62,7 +74,7 @@ interface FlexItem extends Parcelable {
 
     /**
      * @return the height attribute of the flex item.
-     *
+     * <p>
      * The attribute is about how wide the view wants to be. Can be one of the
      * constants MATCH_PARENT(-1) or WRAP_CONTENT(-2), or an exact size.
      */
@@ -78,7 +90,7 @@ interface FlexItem extends Parcelable {
 
     /**
      * @return the order attribute of the flex item.
-     *
+     * <p>
      * The attribute can change the ordering of the children views are laid out.
      * By default, children are displayed and laid out in the same order as they appear in the
      * layout XML. If not specified, {@link #ORDER_DEFAULT} is set as a default value.
@@ -94,7 +106,7 @@ interface FlexItem extends Parcelable {
 
     /**
      * @return the flex grow attribute of the flex item
-     *
+     * <p>
      * The attribute determines how much this child will grow if positive free space is
      * distributed relative to the rest of other flex items included in the same flex line.
      * If not specified, {@link #FLEX_GROW_DEFAULT} is set as a default value.
@@ -110,7 +122,7 @@ interface FlexItem extends Parcelable {
 
     /**
      * @return the flex shrink attribute of the flex item
-     *
+     * <p>
      * The attribute determines how much this child will shrink if negative free space is
      * distributed relative to the rest of other flex items included in the same flex line.
      * If not specified, {@link #FLEX_SHRINK_DEFAULT} is set as a default value.
@@ -126,7 +138,7 @@ interface FlexItem extends Parcelable {
 
     /**
      * @return the align self attribute of the flex item
-     *
+     * <p>
      * The attribute determines the alignment along the cross axis (perpendicular to the
      * main axis). The alignment in the same direction can be determined by the
      * align items attribute in the parent, but if this is set to other than
@@ -148,7 +160,7 @@ interface FlexItem extends Parcelable {
 
     /**
      * @return the minimum width attribute of the flex item
-     *
+     * <p>
      * The attribute determines the minimum width the child can shrink to.
      */
     int getMinWidth();
@@ -162,7 +174,7 @@ interface FlexItem extends Parcelable {
 
     /**
      * @return the minimum height attribute of the flex item
-     *
+     * <p>
      * The attribute determines the minimum height the child can shrink to.
      */
     int getMinHeight();
@@ -176,7 +188,7 @@ interface FlexItem extends Parcelable {
 
     /**
      * @return the maximum width attribute of the flex item
-     *
+     * <p>
      * The attribute determines the maximum width the child can expand to.
      */
     int getMaxWidth();
@@ -202,7 +214,7 @@ interface FlexItem extends Parcelable {
 
     /**
      * @return the wrapBefore attribute of the flex item
-     *
+     * <p>
      * The attribute forces a flex line wrapping. i.e. if this is set to {@code true} for a
      * flex item, the item will become the first item of the new flex line. (A wrapping happens
      * regardless of the flex items being processed in the the previous flex line)
@@ -223,7 +235,7 @@ interface FlexItem extends Parcelable {
 
     /**
      * @return the flexBasisPercent attribute of the flex item
-     *
+     * <p>
      * The attribute determines the initial flex item length in a fraction format relative to its
      * parent.
      * The initial main size of this child View is trying to be expanded as the specified

@@ -136,7 +136,7 @@ class SingleRow extends Grid {
 
     @Override
     public void collectAdjacentPrefetchPositions(int fromLimit, int da,
-            @NonNull RecyclerView.LayoutManager.LayoutPrefetchRegistry layoutPrefetchRegistry) {
+                                                 @NonNull RecyclerView.LayoutManager.LayoutPrefetchRegistry layoutPrefetchRegistry) {
         int indexToPrefetch;
         int nearestEdge;
         if (mReversedFlow ? da > 0 : da < 0) {
