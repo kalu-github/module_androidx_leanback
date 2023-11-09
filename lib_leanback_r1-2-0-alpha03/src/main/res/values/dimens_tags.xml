@@ -1,0 +1,8 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <dimen name="module_tagslayout_text_padding_left_default" tools:ignore="MissingDefaultResource">8dp</dimen>
+    <dimen name="module_tagslayout_text_padding_right_default" tools:ignore="MissingDefaultResource">8dp</dimen>
+    <dimen name="module_tagslayout_text_size_default" tools:ignore="MissingDefaultResource">14sp</dimen>
+    <dimen name="module_tagslayout_item_height_default" tools:ignore="MissingDefaultResource">24sp</dimen>
+    <dimen name="module_tagslayout_item_padding_top_default" tools:ignore="MissingDefaultResource">2dp</dimen>
+    <dimen name="module_tagslayout_item_padding_bottom_default" tools:ignore="MissingDefaultResource">2dp</dimen>
+</resources>
