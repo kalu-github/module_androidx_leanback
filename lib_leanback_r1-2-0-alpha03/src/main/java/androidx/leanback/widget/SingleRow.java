@@ -1,180 +1,195 @@
-//
-// Source code recreated from a .class file by IntelliJ IDEA
-// (powered by FernFlower decompiler)
-//
-
+/*
+ * Copyright 2021 The Android Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package androidx.leanback.widget;
 
 import androidx.annotation.NonNull;
 import androidx.collection.CircularIntArray;
 import androidx.recyclerview.widget.RecyclerView;
+
 import java.io.PrintWriter;
 
+/**
+ * A Grid with restriction to single row.
+ */
 class SingleRow extends Grid {
-    private final Grid.Location mTmpLocation = new Grid.Location(0);
+
+    private final Location mTmpLocation = new Location(0);
 
     SingleRow() {
-        this.setNumRows(1);
+        setNumRows(1);
     }
 
-    public final Grid.Location getLocation(int index) {
-        return this.mTmpLocation;
+    @Override
+    public final Location getLocation(int index) {
+        // all items are on row 0, share the same Location object.
+        return mTmpLocation;
     }
 
+    @Override
     public final void debugPrint(PrintWriter pw) {
         pw.print("SingleRow<");
-        pw.print(this.mFirstVisibleIndex);
+        pw.print(mFirstVisibleIndex);
         pw.print(",");
-        pw.print(this.mLastVisibleIndex);
+        pw.print(mLastVisibleIndex);
         pw.print(">");
         pw.println();
     }
 
     int getStartIndexForAppend() {
-        if (this.mLastVisibleIndex >= 0) {
-            return this.mLastVisibleIndex + 1;
+        if (mLastVisibleIndex >= 0) {
+            return mLastVisibleIndex + 1;
+        } else if (mStartIndex != START_DEFAULT) {
+            return Math.min(mStartIndex, mProvider.getCount() - 1);
         } else {
-            return this.mStartIndex != -1 ? Math.min(this.mStartIndex, this.mProvider.getCount() - 1) : 0;
+            return 0;
         }
     }
 
     int getStartIndexForPrepend() {
-        if (this.mFirstVisibleIndex >= 0) {
-            return this.mFirstVisibleIndex - 1;
+        if (mFirstVisibleIndex >= 0) {
+            return mFirstVisibleIndex - 1;
+        } else if (mStartIndex != START_DEFAULT) {
+            return Math.min(mStartIndex, mProvider.getCount() - 1);
         } else {
-            return this.mStartIndex != -1 ? Math.min(this.mStartIndex, this.mProvider.getCount() - 1) : this.mProvider.getCount() - 1;
+            return mProvider.getCount() - 1;
         }
     }
 
+    @Override
     protected final boolean prependVisibleItems(int toLimit, boolean oneColumnMode) {
-        if (this.mProvider.getCount() == 0) {
+        if (mProvider.getCount() == 0) {
             return false;
-        } else if (!oneColumnMode && this.checkPrependOverLimit(toLimit)) {
-            return false;
-        } else {
-            boolean filledOne = false;
-            int minIndex = this.mProvider.getMinIndex();
-
-            for(int index = this.getStartIndexForPrepend(); index >= minIndex; --index) {
-                int size = this.mProvider.createItem(index, false, this.mTmpItem, false);
-                int edge;
-                if (this.mFirstVisibleIndex >= 0 && this.mLastVisibleIndex >= 0) {
-                    if (this.mReversedFlow) {
-                        edge = this.mProvider.getEdge(index + 1) + this.mSpacing + size;
-                    } else {
-                        edge = this.mProvider.getEdge(index + 1) - this.mSpacing - size;
-                    }
-
-                    this.mFirstVisibleIndex = index;
-                } else {
-                    edge = this.mReversedFlow ? Integer.MIN_VALUE : Integer.MAX_VALUE;
-                    this.mLastVisibleIndex = this.mFirstVisibleIndex = index;
-                }
-
-                this.mProvider.addItem(this.mTmpItem[0], index, size, 0, edge);
-                filledOne = true;
-                if (oneColumnMode || this.checkPrependOverLimit(toLimit)) {
-                    break;
-                }
-            }
-
-            return filledOne;
         }
+        if (!oneColumnMode && checkPrependOverLimit(toLimit)) {
+            return false;
+        }
+        boolean filledOne = false;
+        int minIndex = mProvider.getMinIndex();
+        for (int index = getStartIndexForPrepend(); index >= minIndex; index--) {
+            int size = mProvider.createItem(index, false, mTmpItem, false);
+            int edge;
+            if (mFirstVisibleIndex < 0 || mLastVisibleIndex < 0) {
+                edge = mReversedFlow ? Integer.MIN_VALUE : Integer.MAX_VALUE;
+                mLastVisibleIndex = mFirstVisibleIndex = index;
+            } else {
+                if (mReversedFlow) {
+                    edge = mProvider.getEdge(index + 1) + mSpacing + size;
+                } else {
+                    edge = mProvider.getEdge(index + 1) - mSpacing - size;
+                }
+                mFirstVisibleIndex = index;
+            }
+            mProvider.addItem(mTmpItem[0], index, size, 0, edge);
+            filledOne = true;
+            if (oneColumnMode || checkPrependOverLimit(toLimit)) {
+                break;
+            }
+        }
+        return filledOne;
     }
 
+    @Override
     protected final boolean appendVisibleItems(int toLimit, boolean oneColumnMode) {
-        if (this.mProvider.getCount() == 0) {
+        if (mProvider.getCount() == 0) {
             return false;
-        } else if (!oneColumnMode && this.checkAppendOverLimit(toLimit)) {
-            return false;
-        } else {
-            boolean filledOne = false;
-
-            for(int index = this.getStartIndexForAppend(); index < this.mProvider.getCount(); ++index) {
-                int size = this.mProvider.createItem(index, true, this.mTmpItem, false);
-                int edge;
-                if (this.mFirstVisibleIndex >= 0 && this.mLastVisibleIndex >= 0) {
-                    if (this.mReversedFlow) {
-                        edge = this.mProvider.getEdge(index - 1) - this.mProvider.getSize(index - 1) - this.mSpacing;
-                    } else {
-                        edge = this.mProvider.getEdge(index - 1) + this.mProvider.getSize(index - 1) + this.mSpacing;
-                    }
-
-                    this.mLastVisibleIndex = index;
-                } else {
-                    edge = this.mReversedFlow ? Integer.MAX_VALUE : Integer.MIN_VALUE;
-                    this.mLastVisibleIndex = this.mFirstVisibleIndex = index;
-                }
-
-                this.mProvider.addItem(this.mTmpItem[0], index, size, 0, edge);
-                filledOne = true;
-                if (oneColumnMode || this.checkAppendOverLimit(toLimit)) {
-                    break;
-                }
-            }
-
-            return filledOne;
         }
+        if (!oneColumnMode && checkAppendOverLimit(toLimit)) {
+            // not in one column mode, return immediately if over limit
+            return false;
+        }
+        boolean filledOne = false;
+        for (int index = getStartIndexForAppend(); index < mProvider.getCount(); index++) {
+            int size = mProvider.createItem(index, true, mTmpItem, false);
+            int edge;
+            if (mFirstVisibleIndex < 0 || mLastVisibleIndex < 0) {
+                edge = mReversedFlow ? Integer.MAX_VALUE : Integer.MIN_VALUE;
+                mLastVisibleIndex = mFirstVisibleIndex = index;
+            } else {
+                if (mReversedFlow) {
+                    edge = mProvider.getEdge(index - 1) - mProvider.getSize(index - 1) - mSpacing;
+                } else {
+                    edge = mProvider.getEdge(index - 1) + mProvider.getSize(index - 1) + mSpacing;
+                }
+                mLastVisibleIndex = index;
+            }
+            mProvider.addItem(mTmpItem[0], index, size, 0, edge);
+            filledOne = true;
+            if (oneColumnMode || checkAppendOverLimit(toLimit)) {
+                break;
+            }
+        }
+        return filledOne;
     }
 
-    public void collectAdjacentPrefetchPositions(int fromLimit, int da, @NonNull RecyclerView.LayoutManager.LayoutPrefetchRegistry layoutPrefetchRegistry) {
+    @Override
+    public void collectAdjacentPrefetchPositions(int fromLimit, int da,
+            @NonNull RecyclerView.LayoutManager.LayoutPrefetchRegistry layoutPrefetchRegistry) {
         int indexToPrefetch;
         int nearestEdge;
-        int distance;
-        label37: {
-            label38: {
-                if (this.mReversedFlow) {
-                    if (da <= 0) {
-                        break label38;
-                    }
-                } else if (da >= 0) {
-                    break label38;
-                }
-
-                if (this.getFirstVisibleIndex() == 0) {
-                    return;
-                }
-
-                indexToPrefetch = this.getStartIndexForPrepend();
-                nearestEdge = this.mProvider.getEdge(this.mFirstVisibleIndex) + (this.mReversedFlow ? this.mSpacing : -this.mSpacing);
-                break label37;
+        if (mReversedFlow ? da > 0 : da < 0) {
+            // prefetch next prepend, lower index number
+            if (getFirstVisibleIndex() == 0) {
+                return; // no remaining items to prefetch
             }
 
-            if (this.getLastVisibleIndex() == this.mProvider.getCount() - 1) {
-                return;
+            indexToPrefetch = getStartIndexForPrepend();
+            nearestEdge = mProvider.getEdge(mFirstVisibleIndex)
+                    + (mReversedFlow ? mSpacing : -mSpacing);
+        } else {
+            // prefetch next append, higher index number
+            if (getLastVisibleIndex() == mProvider.getCount() - 1) {
+                return; // no remaining items to prefetch
             }
 
-            indexToPrefetch = this.getStartIndexForAppend();
-            distance = this.mProvider.getSize(this.mLastVisibleIndex) + this.mSpacing;
-            nearestEdge = this.mProvider.getEdge(this.mLastVisibleIndex) + (this.mReversedFlow ? -distance : distance);
+            indexToPrefetch = getStartIndexForAppend();
+            int itemSizeWithSpace = mProvider.getSize(mLastVisibleIndex) + mSpacing;
+            nearestEdge = mProvider.getEdge(mLastVisibleIndex)
+                    + (mReversedFlow ? -itemSizeWithSpace : itemSizeWithSpace);
         }
 
-        distance = Math.abs(nearestEdge - fromLimit);
+        int distance = Math.abs(nearestEdge - fromLimit);
         layoutPrefetchRegistry.addPosition(indexToPrefetch, distance);
     }
 
+    @Override
     public final CircularIntArray[] getItemPositionsInRows(int startPos, int endPos) {
-        this.mTmpItemPositionsInRows[0].clear();
-        this.mTmpItemPositionsInRows[0].addLast(startPos);
-        this.mTmpItemPositionsInRows[0].addLast(endPos);
-        return this.mTmpItemPositionsInRows;
+        // all items are on the same row:
+        mTmpItemPositionsInRows[0].clear();
+        mTmpItemPositionsInRows[0].addLast(startPos);
+        mTmpItemPositionsInRows[0].addLast(endPos);
+        return mTmpItemPositionsInRows;
     }
 
+    @Override
     protected final int findRowMin(boolean findLarge, int indexLimit, int[] indices) {
         if (indices != null) {
             indices[0] = 0;
             indices[1] = indexLimit;
         }
-
-        return this.mReversedFlow ? this.mProvider.getEdge(indexLimit) - this.mProvider.getSize(indexLimit) : this.mProvider.getEdge(indexLimit);
+        return mReversedFlow ? mProvider.getEdge(indexLimit) - mProvider.getSize(indexLimit)
+                : mProvider.getEdge(indexLimit);
     }
 
+    @Override
     protected final int findRowMax(boolean findLarge, int indexLimit, int[] indices) {
         if (indices != null) {
             indices[0] = 0;
             indices[1] = indexLimit;
         }
-
-        return this.mReversedFlow ? this.mProvider.getEdge(indexLimit) : this.mProvider.getEdge(indexLimit) + this.mProvider.getSize(indexLimit);
+        return mReversedFlow ? mProvider.getEdge(indexLimit)
+                : mProvider.getEdge(indexLimit) + mProvider.getSize(indexLimit);
     }
 }

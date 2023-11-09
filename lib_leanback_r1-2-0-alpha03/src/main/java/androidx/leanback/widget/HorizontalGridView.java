@@ -1,8 +1,18 @@
-//
-// Source code recreated from a .class file by IntelliJ IDEA
-// (powered by FernFlower decompiler)
-//
-
+/*
+ * Copyright 2021 The Android Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package androidx.leanback.widget;
 
 import android.annotation.SuppressLint;
@@ -10,25 +20,47 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.LinearGradient;
 import android.graphics.Paint;
+import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
-import android.graphics.Bitmap.Config;
-import android.graphics.PorterDuff.Mode;
-import android.graphics.Shader.TileMode;
+import android.graphics.Shader;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.View;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.view.ViewCompat;
-import androidx.leanback.widget.R.styleable;
+import androidx.leanback.R;
+import androidx.recyclerview.widget.RecyclerView;
 
+/**
+ * A {@link android.view.ViewGroup} that shows items in a horizontal scrolling list. The items
+ * come from
+ * the {@link RecyclerView.Adapter} associated with this view.
+ * <p>
+ * {@link RecyclerView.Adapter} can optionally implement {@link FacetProviderAdapter} which
+ * provides {@link FacetProvider} for a given view type;  {@link RecyclerView.ViewHolder}
+ * can also implement {@link FacetProvider}.  Facet from ViewHolder
+ * has a higher priority than the one from FacetProviderAdapter associated with viewType.
+ * Supported optional facets are:
+ * <ol>
+ * <li> {@link ItemAlignmentFacet}
+ * When this facet is provided by ViewHolder or FacetProviderAdapter,  it will
+ * override the item alignment settings set on HorizontalGridView.  This facet also allows multiple
+ * alignment positions within one ViewHolder.
+ * </li>
+ * </ol>
+ */
 public class HorizontalGridView extends BaseGridView {
+
     private boolean mFadingLowEdge;
     private boolean mFadingHighEdge;
-    private Paint mTempPaint;
+
+    private Paint mTempPaint = new Paint();
     private Bitmap mTempBitmapLow;
     private LinearGradient mLowFadeShader;
     private int mLowFadeShaderLength;
@@ -37,274 +69,342 @@ public class HorizontalGridView extends BaseGridView {
     private LinearGradient mHighFadeShader;
     private int mHighFadeShaderLength;
     private int mHighFadeShaderOffset;
-    private final Rect mTempRect;
+    private final Rect mTempRect = new Rect();
 
     public HorizontalGridView(@NonNull Context context) {
-        this(context, (AttributeSet)null);
+        this(context, null);
     }
 
     public HorizontalGridView(@NonNull Context context, @Nullable AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public HorizontalGridView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyle) {
+    public HorizontalGridView(@NonNull Context context, @Nullable AttributeSet attrs,
+            int defStyle) {
         super(context, attrs, defStyle);
-        this.mTempPaint = new Paint();
-        this.mTempRect = new Rect();
-        this.mLayoutManager.setOrientation(0);
-        this.initAttributes(context, attrs);
+        mLayoutManager.setOrientation(RecyclerView.HORIZONTAL);
+        initAttributes(context, attrs);
     }
 
-    @SuppressLint({"CustomViewStyleable"})
+    @SuppressLint("CustomViewStyleable")
     protected void initAttributes(@NonNull Context context, @Nullable AttributeSet attrs) {
-        this.initBaseGridViewAttributes(context, attrs);
-        TypedArray a = context.obtainStyledAttributes(attrs, styleable.lbHorizontalGridView);
-        ViewCompat.saveAttributeDataForStyleable(this, context, styleable.lbHorizontalGridView, attrs, a, 0, 0);
-        this.setRowHeight(a);
-        this.setNumRows(a.getInt(styleable.lbHorizontalGridView_numberOfRows, 1));
+        initBaseGridViewAttributes(context, attrs);
+        TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.lbHorizontalGridView);
+        ViewCompat.saveAttributeDataForStyleable(this,
+                context, R.styleable.lbHorizontalGridView, attrs, a, 0, 0);
+        setRowHeight(a);
+        setNumRows(a.getInt(R.styleable.lbHorizontalGridView_numberOfRows, 1));
         a.recycle();
-        this.updateLayerType();
-        this.mTempPaint = new Paint();
-        this.mTempPaint.setXfermode(new PorterDuffXfermode(Mode.DST_IN));
+        updateLayerType();
+        mTempPaint = new Paint();
+        mTempPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_IN));
     }
 
     void setRowHeight(TypedArray array) {
-        TypedValue typedValue = array.peekValue(styleable.lbHorizontalGridView_rowHeight);
+        TypedValue typedValue = array.peekValue(R.styleable.lbHorizontalGridView_rowHeight);
         if (typedValue != null) {
-            int size = array.getLayoutDimension(styleable.lbHorizontalGridView_rowHeight, 0);
-            this.setRowHeight(size);
+            int size = array.getLayoutDimension(R.styleable.lbHorizontalGridView_rowHeight, 0);
+            setRowHeight(size);
         }
-
     }
 
+    /**
+     * Sets the number of rows.  Defaults to one.
+     */
     public void setNumRows(int numRows) {
-        this.mLayoutManager.setNumRows(numRows);
-        this.requestLayout();
+        mLayoutManager.setNumRows(numRows);
+        requestLayout();
     }
 
+    /**
+     * Sets the row height.
+     *
+     * @param height May be {@link android.view.ViewGroup.LayoutParams#WRAP_CONTENT WRAP_CONTENT},
+     *               or a size in pixels. If zero, row height will be fixed based on number of
+     *               rows and view height.
+     */
     public void setRowHeight(int height) {
-        this.mLayoutManager.setRowHeight(height);
-        this.requestLayout();
+        mLayoutManager.setRowHeight(height);
+        requestLayout();
     }
 
+    /**
+     * Sets the fade out left edge to transparent.   Note turn on fading edge is very expensive
+     * that you should turn off when HorizontalGridView is scrolling.
+     */
     public final void setFadingLeftEdge(boolean fading) {
-        if (this.mFadingLowEdge != fading) {
-            this.mFadingLowEdge = fading;
-            if (!this.mFadingLowEdge) {
-                this.mTempBitmapLow = null;
+        if (mFadingLowEdge != fading) {
+            mFadingLowEdge = fading;
+            if (!mFadingLowEdge) {
+                mTempBitmapLow = null;
             }
-
-            this.invalidate();
-            this.updateLayerType();
+            invalidate();
+            updateLayerType();
         }
-
     }
 
-    @SuppressLint({"GetterSetterNames"})
+    /**
+     * Returns true if left edge fading is enabled.
+     */
+    @SuppressLint("GetterSetterNames")
     public final boolean getFadingLeftEdge() {
-        return this.mFadingLowEdge;
+        return mFadingLowEdge;
     }
 
+    /**
+     * Sets the left edge fading length in pixels.
+     */
     public final void setFadingLeftEdgeLength(int fadeLength) {
-        if (this.mLowFadeShaderLength != fadeLength) {
-            this.mLowFadeShaderLength = fadeLength;
-            if (this.mLowFadeShaderLength != 0) {
-                this.mLowFadeShader = new LinearGradient(0.0F, 0.0F, (float)this.mLowFadeShaderLength, 0.0F, 0, -16777216, TileMode.CLAMP);
+        if (mLowFadeShaderLength != fadeLength) {
+            mLowFadeShaderLength = fadeLength;
+            if (mLowFadeShaderLength != 0) {
+                mLowFadeShader = new LinearGradient(0, 0, mLowFadeShaderLength, 0,
+                        Color.TRANSPARENT, Color.BLACK, Shader.TileMode.CLAMP);
             } else {
-                this.mLowFadeShader = null;
+                mLowFadeShader = null;
             }
-
-            this.invalidate();
+            invalidate();
         }
-
     }
 
+    /**
+     * Returns the left edge fading length in pixels.
+     */
     public final int getFadingLeftEdgeLength() {
-        return this.mLowFadeShaderLength;
+        return mLowFadeShaderLength;
     }
 
+    /**
+     * Sets the distance in pixels between fading start position and left padding edge.
+     * The fading start position is positive when start position is inside left padding
+     * area.  Default value is 0, means that the fading starts from left padding edge.
+     */
     public final void setFadingLeftEdgeOffset(int fadeOffset) {
-        if (this.mLowFadeShaderOffset != fadeOffset) {
-            this.mLowFadeShaderOffset = fadeOffset;
-            this.invalidate();
+        if (mLowFadeShaderOffset != fadeOffset) {
+            mLowFadeShaderOffset = fadeOffset;
+            invalidate();
         }
-
     }
 
+    /**
+     * Returns the distance in pixels between fading start position and left padding edge.
+     * The fading start position is positive when start position is inside left padding
+     * area.  Default value is 0, means that the fading starts from left padding edge.
+     */
     public final int getFadingLeftEdgeOffset() {
-        return this.mLowFadeShaderOffset;
+        return mLowFadeShaderOffset;
     }
 
+    /**
+     * Sets the fade out right edge to transparent.   Note turn on fading edge is very expensive
+     * that you should turn off when HorizontalGridView is scrolling.
+     */
     public final void setFadingRightEdge(boolean fading) {
-        if (this.mFadingHighEdge != fading) {
-            this.mFadingHighEdge = fading;
-            if (!this.mFadingHighEdge) {
-                this.mTempBitmapHigh = null;
+        if (mFadingHighEdge != fading) {
+            mFadingHighEdge = fading;
+            if (!mFadingHighEdge) {
+                mTempBitmapHigh = null;
             }
-
-            this.invalidate();
-            this.updateLayerType();
+            invalidate();
+            updateLayerType();
         }
-
     }
 
-    @SuppressLint({"GetterSetterNames"})
+    /**
+     * Returns true if fading right edge is enabled.
+     */
+    @SuppressLint("GetterSetterNames")
     public final boolean getFadingRightEdge() {
-        return this.mFadingHighEdge;
+        return mFadingHighEdge;
     }
 
+    /**
+     * Sets the right edge fading length in pixels.
+     */
     public final void setFadingRightEdgeLength(int fadeLength) {
-        if (this.mHighFadeShaderLength != fadeLength) {
-            this.mHighFadeShaderLength = fadeLength;
-            if (this.mHighFadeShaderLength != 0) {
-                this.mHighFadeShader = new LinearGradient(0.0F, 0.0F, (float)this.mHighFadeShaderLength, 0.0F, -16777216, 0, TileMode.CLAMP);
+        if (mHighFadeShaderLength != fadeLength) {
+            mHighFadeShaderLength = fadeLength;
+            if (mHighFadeShaderLength != 0) {
+                mHighFadeShader = new LinearGradient(0, 0, mHighFadeShaderLength, 0,
+                        Color.BLACK, Color.TRANSPARENT, Shader.TileMode.CLAMP);
             } else {
-                this.mHighFadeShader = null;
+                mHighFadeShader = null;
             }
-
-            this.invalidate();
+            invalidate();
         }
-
     }
 
+    /**
+     * Returns the right edge fading length in pixels.
+     */
     public final int getFadingRightEdgeLength() {
-        return this.mHighFadeShaderLength;
+        return mHighFadeShaderLength;
     }
 
+    /**
+     * Returns the distance in pixels between fading start position and right padding edge.
+     * The fading start position is positive when start position is inside right padding
+     * area.  Default value is 0, means that the fading starts from right padding edge.
+     */
     public final void setFadingRightEdgeOffset(int fadeOffset) {
-        if (this.mHighFadeShaderOffset != fadeOffset) {
-            this.mHighFadeShaderOffset = fadeOffset;
-            this.invalidate();
+        if (mHighFadeShaderOffset != fadeOffset) {
+            mHighFadeShaderOffset = fadeOffset;
+            invalidate();
         }
-
     }
 
+    /**
+     * Sets the distance in pixels between fading start position and right padding edge.
+     * The fading start position is positive when start position is inside right padding
+     * area.  Default value is 0, means that the fading starts from right padding edge.
+     */
     public final int getFadingRightEdgeOffset() {
-        return this.mHighFadeShaderOffset;
+        return mHighFadeShaderOffset;
     }
 
     private boolean needsFadingLowEdge() {
-        if (!this.mFadingLowEdge) {
-            return false;
-        } else {
-            int c = this.getChildCount();
-
-            for(int i = 0; i < c; ++i) {
-                View view = this.getChildAt(i);
-                if (this.mLayoutManager.getOpticalLeft(view) < this.getPaddingLeft() - this.mLowFadeShaderOffset) {
-                    return true;
-                }
-            }
-
+        if (!mFadingLowEdge) {
             return false;
         }
+        final int c = getChildCount();
+        for (int i = 0; i < c; i++) {
+            View view = getChildAt(i);
+            if (mLayoutManager.getOpticalLeft(view) < getPaddingLeft() - mLowFadeShaderOffset) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private boolean needsFadingHighEdge() {
-        if (!this.mFadingHighEdge) {
-            return false;
-        } else {
-            int c = this.getChildCount();
-
-            for(int i = c - 1; i >= 0; --i) {
-                View view = this.getChildAt(i);
-                if (this.mLayoutManager.getOpticalRight(view) > this.getWidth() - this.getPaddingRight() + this.mHighFadeShaderOffset) {
-                    return true;
-                }
-            }
-
+        if (!mFadingHighEdge) {
             return false;
         }
+        final int c = getChildCount();
+        for (int i = c - 1; i >= 0; i--) {
+            View view = getChildAt(i);
+            if (mLayoutManager.getOpticalRight(view) > getWidth()
+                    - getPaddingRight() + mHighFadeShaderOffset) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private Bitmap getTempBitmapLow() {
-        if (this.mTempBitmapLow == null || this.mTempBitmapLow.getWidth() != this.mLowFadeShaderLength || this.mTempBitmapLow.getHeight() != this.getHeight()) {
-            this.mTempBitmapLow = Bitmap.createBitmap(this.mLowFadeShaderLength, this.getHeight(), Config.ARGB_8888);
+        if (mTempBitmapLow == null
+                || mTempBitmapLow.getWidth() != mLowFadeShaderLength
+                || mTempBitmapLow.getHeight() != getHeight()) {
+            mTempBitmapLow = Bitmap.createBitmap(mLowFadeShaderLength, getHeight(),
+                    Bitmap.Config.ARGB_8888);
         }
-
-        return this.mTempBitmapLow;
+        return mTempBitmapLow;
     }
 
     private Bitmap getTempBitmapHigh() {
-        if (this.mTempBitmapHigh == null || this.mTempBitmapHigh.getWidth() != this.mHighFadeShaderLength || this.mTempBitmapHigh.getHeight() != this.getHeight()) {
-            this.mTempBitmapHigh = Bitmap.createBitmap(this.mHighFadeShaderLength, this.getHeight(), Config.ARGB_8888);
+        if (mTempBitmapHigh == null
+                || mTempBitmapHigh.getWidth() != mHighFadeShaderLength
+                || mTempBitmapHigh.getHeight() != getHeight()) {
+            // TODO: fix logic for sharing mTempBitmapLow
+            //if (mTempBitmapLow != null
+            //        && mTempBitmapLow.getWidth() == mHighFadeShaderLength
+            //        && mTempBitmapLow.getHeight() == getHeight()) {
+            //    // share same bitmap for low edge fading and high edge fading.
+            //    mTempBitmapHigh = mTempBitmapLow;
+            //} else {
+            mTempBitmapHigh = Bitmap.createBitmap(mHighFadeShaderLength, getHeight(),
+                    Bitmap.Config.ARGB_8888);
+            //}
         }
-
-        return this.mTempBitmapHigh;
+        return mTempBitmapHigh;
     }
 
+    @Override
     public void draw(@NonNull Canvas canvas) {
-        boolean needsFadingLow = this.needsFadingLowEdge();
-        boolean needsFadingHigh = this.needsFadingHighEdge();
+        final boolean needsFadingLow = needsFadingLowEdge();
+        final boolean needsFadingHigh = needsFadingHighEdge();
         if (!needsFadingLow) {
-            this.mTempBitmapLow = null;
+            mTempBitmapLow = null;
         }
-
         if (!needsFadingHigh) {
-            this.mTempBitmapHigh = null;
+            mTempBitmapHigh = null;
         }
-
         if (!needsFadingLow && !needsFadingHigh) {
             super.draw(canvas);
-        } else {
-            int lowEdge = this.mFadingLowEdge ? this.getPaddingLeft() - this.mLowFadeShaderOffset - this.mLowFadeShaderLength : 0;
-            int highEdge = this.mFadingHighEdge ? this.getWidth() - this.getPaddingRight() + this.mHighFadeShaderOffset + this.mHighFadeShaderLength : this.getWidth();
-            int save = canvas.save();
-            canvas.clipRect(lowEdge + (this.mFadingLowEdge ? this.mLowFadeShaderLength : 0), 0, highEdge - (this.mFadingHighEdge ? this.mHighFadeShaderLength : 0), this.getHeight());
-            super.draw(canvas);
-            canvas.restoreToCount(save);
-            Canvas tmpCanvas = new Canvas();
-            this.mTempRect.top = 0;
-            this.mTempRect.bottom = this.getHeight();
-            Bitmap tempBitmap;
-            int tmpSave;
-            if (needsFadingLow && this.mLowFadeShaderLength > 0) {
-                tempBitmap = this.getTempBitmapLow();
-                tempBitmap.eraseColor(0);
-                tmpCanvas.setBitmap(tempBitmap);
-                tmpSave = tmpCanvas.save();
-                tmpCanvas.clipRect(0, 0, this.mLowFadeShaderLength, this.getHeight());
-                tmpCanvas.translate((float)(-lowEdge), 0.0F);
-                super.draw(tmpCanvas);
-                tmpCanvas.restoreToCount(tmpSave);
-                this.mTempPaint.setShader(this.mLowFadeShader);
-                tmpCanvas.drawRect(0.0F, 0.0F, (float)this.mLowFadeShaderLength, (float)this.getHeight(), this.mTempPaint);
-                this.mTempRect.left = 0;
-                this.mTempRect.right = this.mLowFadeShaderLength;
-                canvas.translate((float)lowEdge, 0.0F);
-                canvas.drawBitmap(tempBitmap, this.mTempRect, this.mTempRect, (Paint)null);
-                canvas.translate((float)(-lowEdge), 0.0F);
-            }
+            return;
+        }
 
-            if (needsFadingHigh && this.mHighFadeShaderLength > 0) {
-                tempBitmap = this.getTempBitmapHigh();
-                tempBitmap.eraseColor(0);
-                tmpCanvas.setBitmap(tempBitmap);
-                tmpSave = tmpCanvas.save();
-                tmpCanvas.clipRect(0, 0, this.mHighFadeShaderLength, this.getHeight());
-                tmpCanvas.translate((float)(-(highEdge - this.mHighFadeShaderLength)), 0.0F);
-                super.draw(tmpCanvas);
-                tmpCanvas.restoreToCount(tmpSave);
-                this.mTempPaint.setShader(this.mHighFadeShader);
-                tmpCanvas.drawRect(0.0F, 0.0F, (float)this.mHighFadeShaderLength, (float)this.getHeight(), this.mTempPaint);
-                this.mTempRect.left = 0;
-                this.mTempRect.right = this.mHighFadeShaderLength;
-                canvas.translate((float)(highEdge - this.mHighFadeShaderLength), 0.0F);
-                canvas.drawBitmap(tempBitmap, this.mTempRect, this.mTempRect, (Paint)null);
-                canvas.translate((float)(-(highEdge - this.mHighFadeShaderLength)), 0.0F);
-            }
+        int lowEdge =
+                mFadingLowEdge ? getPaddingLeft() - mLowFadeShaderOffset - mLowFadeShaderLength : 0;
+        int highEdge = mFadingHighEdge ? getWidth() - getPaddingRight()
+                + mHighFadeShaderOffset + mHighFadeShaderLength : getWidth();
 
+        // draw not-fade content
+        int save = canvas.save();
+        canvas.clipRect(lowEdge + (mFadingLowEdge ? mLowFadeShaderLength : 0), 0,
+                highEdge - (mFadingHighEdge ? mHighFadeShaderLength : 0), getHeight());
+        super.draw(canvas);
+        canvas.restoreToCount(save);
+
+        Canvas tmpCanvas = new Canvas();
+        mTempRect.top = 0;
+        mTempRect.bottom = getHeight();
+        if (needsFadingLow && mLowFadeShaderLength > 0) {
+            Bitmap tempBitmap = getTempBitmapLow();
+            tempBitmap.eraseColor(Color.TRANSPARENT);
+            tmpCanvas.setBitmap(tempBitmap);
+            // draw original content
+            int tmpSave = tmpCanvas.save();
+            tmpCanvas.clipRect(0, 0, mLowFadeShaderLength, getHeight());
+            tmpCanvas.translate(-lowEdge, 0);
+            super.draw(tmpCanvas);
+            tmpCanvas.restoreToCount(tmpSave);
+            // draw fading out
+            mTempPaint.setShader(mLowFadeShader);
+            tmpCanvas.drawRect(0, 0, mLowFadeShaderLength, getHeight(), mTempPaint);
+            // copy back to canvas
+            mTempRect.left = 0;
+            mTempRect.right = mLowFadeShaderLength;
+            canvas.translate(lowEdge, 0);
+            canvas.drawBitmap(tempBitmap, mTempRect, mTempRect, null);
+            canvas.translate(-lowEdge, 0);
+        }
+        if (needsFadingHigh && mHighFadeShaderLength > 0) {
+            Bitmap tempBitmap = getTempBitmapHigh();
+            tempBitmap.eraseColor(Color.TRANSPARENT);
+            tmpCanvas.setBitmap(tempBitmap);
+            // draw original content
+            int tmpSave = tmpCanvas.save();
+            tmpCanvas.clipRect(0, 0, mHighFadeShaderLength, getHeight());
+            tmpCanvas.translate(-(highEdge - mHighFadeShaderLength), 0);
+            super.draw(tmpCanvas);
+            tmpCanvas.restoreToCount(tmpSave);
+            // draw fading out
+            mTempPaint.setShader(mHighFadeShader);
+            tmpCanvas.drawRect(0, 0, mHighFadeShaderLength, getHeight(), mTempPaint);
+            // copy back to canvas
+            mTempRect.left = 0;
+            mTempRect.right = mHighFadeShaderLength;
+            canvas.translate(highEdge - mHighFadeShaderLength, 0);
+            canvas.drawBitmap(tempBitmap, mTempRect, mTempRect, null);
+            canvas.translate(-(highEdge - mHighFadeShaderLength), 0);
         }
     }
 
+    /**
+     * Updates the layer type for this view.
+     * If fading edges are needed, use a hardware layer.  This works around the problem
+     * that when a child invalidates itself (for example has an animated background),
+     * the parent view must also be invalidated to refresh the display list which
+     * updates the the caching bitmaps used to draw the fading edges.
+     */
     private void updateLayerType() {
-        if (!this.mFadingLowEdge && !this.mFadingHighEdge) {
-            this.setLayerType(0, (Paint)null);
-            this.setWillNotDraw(true);
+        if (mFadingLowEdge || mFadingHighEdge) {
+            setLayerType(View.LAYER_TYPE_HARDWARE, null);
+            setWillNotDraw(false);
         } else {
-            this.setLayerType(2, (Paint)null);
-            this.setWillNotDraw(false);
+            setLayerType(View.LAYER_TYPE_NONE, null);
+            setWillNotDraw(true);
         }
-
     }
 }

@@ -1,357 +1,436 @@
-//
-// Source code recreated from a .class file by IntelliJ IDEA
-// (powered by FernFlower decompiler)
-//
-
+/*
+ * Copyright 2021 The Android Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package androidx.leanback.widget;
 
 import androidx.collection.CircularArray;
 import androidx.collection.CircularIntArray;
+
 import java.io.PrintWriter;
 
+/**
+ * A dynamic data structure that caches staggered grid position information
+ * for each individual child. The algorithm ensures that each row will be kept
+ * as balanced as possible when prepending and appending a child.
+ *
+ * <p>
+ * You may keep view {@link StaggeredGrid.Location} inside StaggeredGrid as much
+ * as possible since prepending and appending views is not symmetric: layout
+ * going from 0 to N will likely produce a different result than layout going
+ * from N to 0 for the staggered cases. If a user scrolls from 0 to N then
+ * scrolls back to 0 and we don't keep history location information, edges of
+ * the very beginning of rows will not be aligned. It is recommended to keep a
+ * list of tens of thousands of {@link StaggeredGrid.Location}s which will be
+ * big enough to remember a typical user's scroll history.
+ *
+ * <p>
+ * This class is abstract and can be replaced with different implementations.
+ */
 abstract class StaggeredGrid extends Grid {
-    protected CircularArray<Location> mLocations = new CircularArray(64);
-    protected int mFirstIndex = -1;
-    protected Object mPendingItem;
-    protected int mPendingItemSize;
 
-    StaggeredGrid() {
-    }
-
-    public final int getFirstIndex() {
-        return this.mFirstIndex;
-    }
-
-    public final int getLastIndex() {
-        return this.mFirstIndex + this.mLocations.size() - 1;
-    }
-
-    public final int getSize() {
-        return this.mLocations.size();
-    }
-
-    public final Location getLocation(int index) {
-        int indexInArray = index - this.mFirstIndex;
-        return indexInArray >= 0 && indexInArray < this.mLocations.size() ? (Location)this.mLocations.get(indexInArray) : null;
-    }
-
-    public final void debugPrint(PrintWriter pw) {
-        int i = 0;
-
-        for(int size = this.mLocations.size(); i < size; ++i) {
-            Location loc = (Location)this.mLocations.get(i);
-            pw.print("<" + (this.mFirstIndex + i) + "," + loc.mRow + ">");
-            pw.print(" ");
-            pw.println();
-        }
-
-    }
-
-    protected final boolean prependVisibleItems(int toLimit, boolean oneColumnMode) {
-        if (this.mProvider.getCount() == 0) {
-            return false;
-        } else if (!oneColumnMode && this.checkPrependOverLimit(toLimit)) {
-            return false;
-        } else {
-            boolean var3;
-            try {
-                if (this.prependVisbleItemsWithCache(toLimit, oneColumnMode)) {
-                    var3 = true;
-                    return var3;
-                }
-
-                var3 = this.prependVisibleItemsWithoutCache(toLimit, oneColumnMode);
-            } finally {
-                this.mTmpItem[0] = null;
-                this.mPendingItem = null;
-            }
-
-            return var3;
-        }
-    }
-
-    protected final boolean prependVisbleItemsWithCache(int toLimit, boolean oneColumnMode) {
-        if (this.mLocations.size() == 0) {
-            return false;
-        } else {
-            int itemIndex;
-            int edge;
-            int offset;
-            if (this.mFirstVisibleIndex >= 0) {
-                edge = this.mProvider.getEdge(this.mFirstVisibleIndex);
-                offset = this.getLocation(this.mFirstVisibleIndex).mOffset;
-                itemIndex = this.mFirstVisibleIndex - 1;
-            } else {
-                edge = Integer.MAX_VALUE;
-                offset = 0;
-                itemIndex = this.mStartIndex != -1 ? this.mStartIndex : 0;
-                if (itemIndex > this.getLastIndex() || itemIndex < this.getFirstIndex() - 1) {
-                    this.mLocations.clear();
-                    return false;
-                }
-
-                if (itemIndex < this.getFirstIndex()) {
-                    return false;
-                }
-            }
-
-            for(int firstIndex = Math.max(this.mProvider.getMinIndex(), this.mFirstIndex); itemIndex >= firstIndex; --itemIndex) {
-                Location loc = this.getLocation(itemIndex);
-                int rowIndex = loc.mRow;
-                int size = this.mProvider.createItem(itemIndex, false, this.mTmpItem, false);
-                if (size != loc.mSize) {
-                    this.mLocations.removeFromStart(itemIndex + 1 - this.mFirstIndex);
-                    this.mFirstIndex = this.mFirstVisibleIndex;
-                    this.mPendingItem = this.mTmpItem[0];
-                    this.mPendingItemSize = size;
-                    return false;
-                }
-
-                this.mFirstVisibleIndex = itemIndex;
-                if (this.mLastVisibleIndex < 0) {
-                    this.mLastVisibleIndex = itemIndex;
-                }
-
-                this.mProvider.addItem(this.mTmpItem[0], itemIndex, size, rowIndex, edge - offset);
-                if (!oneColumnMode && this.checkPrependOverLimit(toLimit)) {
-                    return true;
-                }
-
-                edge = this.mProvider.getEdge(itemIndex);
-                offset = loc.mOffset;
-                if (rowIndex == 0 && oneColumnMode) {
-                    return true;
-                }
-            }
-
-            return false;
-        }
-    }
-
-    private int calculateOffsetAfterLastItem(int row) {
-        int cachedIndex = this.getLastIndex();
-
-        boolean foundCachedItemInSameRow;
-        for(foundCachedItemInSameRow = false; cachedIndex >= this.mFirstIndex; --cachedIndex) {
-            Location loc = this.getLocation(cachedIndex);
-            if (loc.mRow == row) {
-                foundCachedItemInSameRow = true;
-                break;
-            }
-        }
-
-        if (!foundCachedItemInSameRow) {
-            cachedIndex = this.getLastIndex();
-        }
-
-        int offset = this.isReversedFlow() ? -this.getLocation(cachedIndex).mSize - this.mSpacing : this.getLocation(cachedIndex).mSize + this.mSpacing;
-
-        for(int i = cachedIndex + 1; i <= this.getLastIndex(); ++i) {
-            offset -= this.getLocation(i).mOffset;
-        }
-
-        return offset;
-    }
-
-    protected abstract boolean prependVisibleItemsWithoutCache(int var1, boolean var2);
-
-    protected final int prependVisibleItemToRow(int itemIndex, int rowIndex, int edge) {
-        if (this.mFirstVisibleIndex < 0 || this.mFirstVisibleIndex == this.getFirstIndex() && this.mFirstVisibleIndex == itemIndex + 1) {
-            Location oldFirstLoc = this.mFirstIndex >= 0 ? this.getLocation(this.mFirstIndex) : null;
-            int oldFirstEdge = this.mProvider.getEdge(this.mFirstIndex);
-            Location loc = new Location(rowIndex, 0, 0);
-            this.mLocations.addFirst(loc);
-            Object item;
-            if (this.mPendingItem != null) {
-                loc.mSize = this.mPendingItemSize;
-                item = this.mPendingItem;
-                this.mPendingItem = null;
-            } else {
-                loc.mSize = this.mProvider.createItem(itemIndex, false, this.mTmpItem, false);
-                item = this.mTmpItem[0];
-            }
-
-            this.mFirstIndex = this.mFirstVisibleIndex = itemIndex;
-            if (this.mLastVisibleIndex < 0) {
-                this.mLastVisibleIndex = itemIndex;
-            }
-
-            int thisEdge = !this.mReversedFlow ? edge - loc.mSize : edge + loc.mSize;
-            if (oldFirstLoc != null) {
-                oldFirstLoc.mOffset = oldFirstEdge - thisEdge;
-            }
-
-            this.mProvider.addItem(item, itemIndex, loc.mSize, rowIndex, thisEdge);
-            return loc.mSize;
-        } else {
-            throw new IllegalStateException();
-        }
-    }
-
-    protected final boolean appendVisibleItems(int toLimit, boolean oneColumnMode) {
-        if (this.mProvider.getCount() == 0) {
-            return false;
-        } else if (!oneColumnMode && this.checkAppendOverLimit(toLimit)) {
-            return false;
-        } else {
-            boolean var3;
-            try {
-                if (!this.appendVisbleItemsWithCache(toLimit, oneColumnMode)) {
-                    var3 = this.appendVisibleItemsWithoutCache(toLimit, oneColumnMode);
-                    return var3;
-                }
-
-                var3 = true;
-            } finally {
-                this.mTmpItem[0] = null;
-                this.mPendingItem = null;
-            }
-
-            return var3;
-        }
-    }
-
-    protected final boolean appendVisbleItemsWithCache(int toLimit, boolean oneColumnMode) {
-        if (this.mLocations.size() == 0) {
-            return false;
-        } else {
-            int count = this.mProvider.getCount();
-            int itemIndex;
-            int edge;
-            if (this.mLastVisibleIndex >= 0) {
-                itemIndex = this.mLastVisibleIndex + 1;
-                edge = this.mProvider.getEdge(this.mLastVisibleIndex);
-            } else {
-                edge = Integer.MAX_VALUE;
-                itemIndex = this.mStartIndex != -1 ? this.mStartIndex : 0;
-                if (itemIndex > this.getLastIndex() + 1 || itemIndex < this.getFirstIndex()) {
-                    this.mLocations.clear();
-                    return false;
-                }
-
-                if (itemIndex > this.getLastIndex()) {
-                    return false;
-                }
-            }
-
-            for(int lastIndex = this.getLastIndex(); itemIndex < count && itemIndex <= lastIndex; ++itemIndex) {
-                Location loc = this.getLocation(itemIndex);
-                if (edge != Integer.MAX_VALUE) {
-                    edge += loc.mOffset;
-                }
-
-                int rowIndex = loc.mRow;
-                int size = this.mProvider.createItem(itemIndex, true, this.mTmpItem, false);
-                if (size != loc.mSize) {
-                    loc.mSize = size;
-                    this.mLocations.removeFromEnd(lastIndex - itemIndex);
-                    lastIndex = itemIndex;
-                }
-
-                this.mLastVisibleIndex = itemIndex;
-                if (this.mFirstVisibleIndex < 0) {
-                    this.mFirstVisibleIndex = itemIndex;
-                }
-
-                this.mProvider.addItem(this.mTmpItem[0], itemIndex, size, rowIndex, edge);
-                if (!oneColumnMode && this.checkAppendOverLimit(toLimit)) {
-                    return true;
-                }
-
-                if (edge == Integer.MAX_VALUE) {
-                    edge = this.mProvider.getEdge(itemIndex);
-                }
-
-                if (rowIndex == this.mNumRows - 1 && oneColumnMode) {
-                    return true;
-                }
-            }
-
-            return false;
-        }
-    }
-
-    protected abstract boolean appendVisibleItemsWithoutCache(int var1, boolean var2);
-
-    protected final int appendVisibleItemToRow(int itemIndex, int rowIndex, int location) {
-        if (this.mLastVisibleIndex >= 0 && (this.mLastVisibleIndex != this.getLastIndex() || this.mLastVisibleIndex != itemIndex - 1)) {
-            throw new IllegalStateException();
-        } else {
-            int offset;
-            if (this.mLastVisibleIndex < 0) {
-                if (this.mLocations.size() > 0 && itemIndex == this.getLastIndex() + 1) {
-                    offset = this.calculateOffsetAfterLastItem(rowIndex);
-                } else {
-                    offset = 0;
-                }
-            } else {
-                offset = location - this.mProvider.getEdge(this.mLastVisibleIndex);
-            }
-
-            Location loc = new Location(rowIndex, offset, 0);
-            this.mLocations.addLast(loc);
-            Object item;
-            if (this.mPendingItem != null) {
-                loc.mSize = this.mPendingItemSize;
-                item = this.mPendingItem;
-                this.mPendingItem = null;
-            } else {
-                loc.mSize = this.mProvider.createItem(itemIndex, true, this.mTmpItem, false);
-                item = this.mTmpItem[0];
-            }
-
-            if (this.mLocations.size() == 1) {
-                this.mFirstIndex = this.mFirstVisibleIndex = this.mLastVisibleIndex = itemIndex;
-            } else if (this.mLastVisibleIndex < 0) {
-                this.mFirstVisibleIndex = this.mLastVisibleIndex = itemIndex;
-            } else {
-                ++this.mLastVisibleIndex;
-            }
-
-            this.mProvider.addItem(item, itemIndex, loc.mSize, rowIndex, location);
-            return loc.mSize;
-        }
-    }
-
-    public final CircularIntArray[] getItemPositionsInRows(int startPos, int endPos) {
-        int i;
-        for(i = 0; i < this.mNumRows; ++i) {
-            this.mTmpItemPositionsInRows[i].clear();
-        }
-
-        if (startPos >= 0) {
-            for(i = startPos; i <= endPos; ++i) {
-                CircularIntArray row = this.mTmpItemPositionsInRows[this.getLocation(i).mRow];
-                if (row.size() > 0 && row.getLast() == i - 1) {
-                    row.popLast();
-                    row.addLast(i);
-                } else {
-                    row.addLast(i);
-                    row.addLast(i);
-                }
-            }
-        }
-
-        return this.mTmpItemPositionsInRows;
-    }
-
-    public void invalidateItemsAfter(int index) {
-        super.invalidateItemsAfter(index);
-        this.mLocations.removeFromEnd(this.getLastIndex() - index + 1);
-        if (this.mLocations.size() == 0) {
-            this.mFirstIndex = -1;
-        }
-
-    }
-
+    /**
+     * Cached representation of Staggered item.
+     */
     static class Location extends Grid.Location {
+        /**
+         * Offset to previous item location.
+         * min_edge(index) - min_edge(index - 1) for non reversed case
+         * max_edge(index) - max_edge(index - 1) for reversed case
+         */
         int mOffset;
+
+        /**
+         * size of the item.
+         */
         int mSize;
 
         Location(int row, int offset, int size) {
             super(row);
             this.mOffset = offset;
             this.mSize = size;
+        }
+    }
+
+    protected CircularArray<Location> mLocations = new CircularArray<>(64);
+
+    // mFirstIndex <= mFirstVisibleIndex <= mLastVisibleIndex
+    //    <= mFirstIndex + mLocations.size() - 1
+    protected int mFirstIndex = -1;
+
+    protected Object mPendingItem;
+    protected int mPendingItemSize;
+
+    /**
+     * Returns index of first item (cached or visible) in the staggered grid.
+     * Returns negative value if no item.
+     */
+    public final int getFirstIndex() {
+        return mFirstIndex;
+    }
+
+    /**
+     * Returns index of last item (cached or visible) in the staggered grid.
+     * Returns negative value if no item.
+     */
+    public final int getLastIndex() {
+        return mFirstIndex + mLocations.size() - 1;
+    }
+
+    /**
+     * Returns the size of the saved {@link Location}s.
+     */
+    public final int getSize() {
+        return mLocations.size();
+    }
+
+    @Override
+    public final Location getLocation(int index) {
+        final int indexInArray = index - mFirstIndex;
+        if (indexInArray < 0 || indexInArray >= mLocations.size()) {
+            return null;
+        }
+        return mLocations.get(indexInArray);
+    }
+
+    @Override
+    public final void debugPrint(PrintWriter pw) {
+        for (int i = 0, size = mLocations.size(); i < size; i++) {
+            Location loc = mLocations.get(i);
+            pw.print("<" + (mFirstIndex + i) + "," + loc.mRow + ">");
+            pw.print(" ");
+            pw.println();
+        }
+    }
+
+    @Override
+    protected final boolean prependVisibleItems(int toLimit, boolean oneColumnMode) {
+        if (mProvider.getCount() == 0) {
+            return false;
+        }
+        if (!oneColumnMode && checkPrependOverLimit(toLimit)) {
+            return false;
+        }
+        try {
+            if (prependVisbleItemsWithCache(toLimit, oneColumnMode)) {
+                return true;
+            }
+            return prependVisibleItemsWithoutCache(toLimit, oneColumnMode);
+        } finally {
+            mTmpItem[0] = null;
+            mPendingItem = null;
+        }
+    }
+
+    /**
+     * Prepends items using cached locations,  returning true if toLimit is reached.
+     * This method should only be called by prependVisibleItems().
+     */
+    protected final boolean prependVisbleItemsWithCache(int toLimit, boolean oneColumnMode) {
+        if (mLocations.size() == 0) {
+            return false;
+        }
+        int itemIndex;
+        int edge;
+        int offset;
+        if (mFirstVisibleIndex >= 0) {
+            // prepend visible items from first visible index
+            edge = mProvider.getEdge(mFirstVisibleIndex);
+            offset = getLocation(mFirstVisibleIndex).mOffset;
+            itemIndex = mFirstVisibleIndex - 1;
+        } else {
+            // prepend first visible item
+            edge = Integer.MAX_VALUE;
+            offset = 0;
+            itemIndex = mStartIndex != START_DEFAULT ? mStartIndex : 0;
+            if (itemIndex > getLastIndex() || itemIndex < getFirstIndex() - 1) {
+                // if the item is not within or adjacent to cached items, clear cache.
+                mLocations.clear();
+                return false;
+            } else if (itemIndex < getFirstIndex()) {
+                // if the item is adjacent to first index, should prepend without cache.
+                return false;
+            }
+        }
+        int firstIndex = Math.max(mProvider.getMinIndex(), mFirstIndex);
+        for (; itemIndex >= firstIndex; itemIndex--) {
+            Location loc = getLocation(itemIndex);
+            int rowIndex = loc.mRow;
+            int size = mProvider.createItem(itemIndex, false, mTmpItem, false);
+            if (size != loc.mSize) {
+                mLocations.removeFromStart(itemIndex + 1 - mFirstIndex);
+                mFirstIndex = mFirstVisibleIndex;
+                // pending item will be added in prependVisibleItemsWithoutCache
+                mPendingItem = mTmpItem[0];
+                mPendingItemSize = size;
+                return false;
+            }
+            mFirstVisibleIndex = itemIndex;
+            if (mLastVisibleIndex < 0) {
+                mLastVisibleIndex = itemIndex;
+            }
+            mProvider.addItem(mTmpItem[0], itemIndex, size, rowIndex, edge - offset);
+            if (!oneColumnMode && checkPrependOverLimit(toLimit)) {
+                return true;
+            }
+            edge = mProvider.getEdge(itemIndex);
+            offset = loc.mOffset;
+            // Check limit after filled a full column
+            if (rowIndex == 0) {
+                if (oneColumnMode) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Calculate offset of item after last cached item.
+     */
+    private int calculateOffsetAfterLastItem(int row) {
+        // Find a cached item in same row, if not found, just use last item.
+        int cachedIndex = getLastIndex();
+        boolean foundCachedItemInSameRow = false;
+        while (cachedIndex >= mFirstIndex) {
+            Location loc = getLocation(cachedIndex);
+            if (loc.mRow == row) {
+                foundCachedItemInSameRow = true;
+                break;
+            }
+            cachedIndex--;
+        }
+        if (!foundCachedItemInSameRow) {
+            cachedIndex = getLastIndex();
+        }
+        // Assuming the cachedIndex is next to item on the same row, so the
+        // sum of offset of [cachedIndex + 1, itemIndex] should be size of the
+        // cached item plus spacing.
+        int offset = isReversedFlow() ? -getLocation(cachedIndex).mSize - mSpacing :
+                getLocation(cachedIndex).mSize + mSpacing;
+        for (int i = cachedIndex + 1; i <= getLastIndex(); i++) {
+            offset -= getLocation(i).mOffset;
+        }
+        return offset;
+    }
+
+
+    /**
+     * This implements the algorithm of layout staggered grid, the method should only be called by
+     * prependVisibleItems().
+     */
+    protected abstract boolean prependVisibleItemsWithoutCache(int toLimit, boolean oneColumnMode);
+
+    /**
+     * Prepends one visible item with new Location info.  Only called from
+     * prependVisibleItemsWithoutCache().
+     */
+    protected final int prependVisibleItemToRow(int itemIndex, int rowIndex, int edge) {
+        if (mFirstVisibleIndex >= 0) {
+            if (mFirstVisibleIndex != getFirstIndex() || mFirstVisibleIndex != itemIndex + 1) {
+                // should never hit this when we prepend a new item with a new Location object.
+                throw new IllegalStateException();
+            }
+        }
+        Location oldFirstLoc = mFirstIndex >= 0 ? getLocation(mFirstIndex) : null;
+        int oldFirstEdge = mProvider.getEdge(mFirstIndex);
+        Location loc = new Location(rowIndex, 0, 0);
+        mLocations.addFirst(loc);
+        Object item;
+        if (mPendingItem != null) {
+            loc.mSize = mPendingItemSize;
+            item = mPendingItem;
+            mPendingItem = null;
+        } else {
+            loc.mSize = mProvider.createItem(itemIndex, false, mTmpItem, false);
+            item = mTmpItem[0];
+        }
+        mFirstIndex = mFirstVisibleIndex = itemIndex;
+        if (mLastVisibleIndex < 0) {
+            mLastVisibleIndex = itemIndex;
+        }
+        int thisEdge = !mReversedFlow ? edge - loc.mSize : edge + loc.mSize;
+        if (oldFirstLoc != null) {
+            oldFirstLoc.mOffset = oldFirstEdge - thisEdge;
+        }
+        mProvider.addItem(item, itemIndex, loc.mSize, rowIndex, thisEdge);
+        return loc.mSize;
+    }
+
+    @Override
+    protected final boolean appendVisibleItems(int toLimit, boolean oneColumnMode) {
+        if (mProvider.getCount() == 0) {
+            return false;
+        }
+        if (!oneColumnMode && checkAppendOverLimit(toLimit)) {
+            return false;
+        }
+        try {
+            if (appendVisbleItemsWithCache(toLimit, oneColumnMode)) {
+                return true;
+            }
+            return appendVisibleItemsWithoutCache(toLimit, oneColumnMode);
+        } finally {
+            mTmpItem[0] = null;
+            mPendingItem = null;
+        }
+    }
+
+    /**
+     * Appends items using cached locations,  returning true if at least one item is appended
+     * and (oneColumnMode is true or reach limit and aboveIndex).
+     * This method should only be called by appendVisibleItems()
+     */
+    protected final boolean appendVisbleItemsWithCache(int toLimit, boolean oneColumnMode) {
+        if (mLocations.size() == 0) {
+            return false;
+        }
+        final int count = mProvider.getCount();
+        int itemIndex;
+        int edge;
+        if (mLastVisibleIndex >= 0) {
+            // append visible items from last visible index
+            itemIndex = mLastVisibleIndex + 1;
+            edge = mProvider.getEdge(mLastVisibleIndex);
+        } else {
+            // append first visible item
+            edge = Integer.MAX_VALUE;
+            itemIndex = mStartIndex != START_DEFAULT ? mStartIndex : 0;
+            if (itemIndex > getLastIndex() + 1 || itemIndex < getFirstIndex()) {
+                // if the item is not within or adjacent to cached items, clear cache.
+                mLocations.clear();
+                return false;
+            } else if (itemIndex > getLastIndex()) {
+                // if the item is adjacent to first index, should prepend without cache.
+                return false;
+            }
+        }
+        int lastIndex = getLastIndex();
+        for (; itemIndex < count && itemIndex <= lastIndex; itemIndex++) {
+            Location loc = getLocation(itemIndex);
+            if (edge != Integer.MAX_VALUE) {
+                edge = edge + loc.mOffset;
+            }
+            int rowIndex = loc.mRow;
+            int size = mProvider.createItem(itemIndex, true, mTmpItem, false);
+            if (size != loc.mSize) {
+                loc.mSize = size;
+                mLocations.removeFromEnd(lastIndex - itemIndex);
+                lastIndex = itemIndex;
+            }
+            mLastVisibleIndex = itemIndex;
+            if (mFirstVisibleIndex < 0) {
+                mFirstVisibleIndex = itemIndex;
+            }
+            mProvider.addItem(mTmpItem[0], itemIndex, size, rowIndex, edge);
+            if (!oneColumnMode && checkAppendOverLimit(toLimit)) {
+                return true;
+            }
+            if (edge == Integer.MAX_VALUE) {
+                edge = mProvider.getEdge(itemIndex);
+            }
+            // Check limit after filled a full column
+            if (rowIndex == mNumRows - 1) {
+                if (oneColumnMode) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * algorithm of layout staggered grid, this method should only be called by
+     * appendVisibleItems().
+     */
+    protected abstract boolean appendVisibleItemsWithoutCache(int toLimit, boolean oneColumnMode);
+
+    /**
+     * Appends one visible item with new Location info.  Only called from
+     * appendVisibleItemsWithoutCache().
+     */
+    protected final int appendVisibleItemToRow(int itemIndex, int rowIndex, int location) {
+        int offset;
+        if (mLastVisibleIndex >= 0) {
+            if (mLastVisibleIndex != getLastIndex() || mLastVisibleIndex != itemIndex - 1) {
+                // should never hit this when we append a new item with a new Location object.
+                throw new IllegalStateException();
+            }
+        }
+        if (mLastVisibleIndex < 0) {
+            // if we append first visible item after existing cached items,  we need update
+            // the offset later when prependVisbleItemsWithCache()
+            if (mLocations.size() > 0 && itemIndex == getLastIndex() + 1) {
+                offset = calculateOffsetAfterLastItem(rowIndex);
+            } else {
+                offset = 0;
+            }
+        } else {
+            offset = location - mProvider.getEdge(mLastVisibleIndex);
+        }
+        Location loc = new Location(rowIndex, offset, 0);
+        mLocations.addLast(loc);
+        Object item;
+        if (mPendingItem != null) {
+            loc.mSize = mPendingItemSize;
+            item = mPendingItem;
+            mPendingItem = null;
+        } else {
+            loc.mSize = mProvider.createItem(itemIndex, true, mTmpItem, false);
+            item = mTmpItem[0];
+        }
+        if (mLocations.size() == 1) {
+            mFirstIndex = mFirstVisibleIndex = mLastVisibleIndex = itemIndex;
+        } else {
+            if (mLastVisibleIndex < 0) {
+                mFirstVisibleIndex = mLastVisibleIndex = itemIndex;
+            } else {
+                mLastVisibleIndex++;
+            }
+        }
+        mProvider.addItem(item, itemIndex, loc.mSize, rowIndex, location);
+        return loc.mSize;
+    }
+
+    @Override
+    public final CircularIntArray[] getItemPositionsInRows(int startPos, int endPos) {
+        for (int i = 0; i < mNumRows; i++) {
+            mTmpItemPositionsInRows[i].clear();
+        }
+        if (startPos >= 0) {
+            for (int i = startPos; i <= endPos; i++) {
+                CircularIntArray row = mTmpItemPositionsInRows[getLocation(i).mRow];
+                if (row.size() > 0 && row.getLast() == i - 1) {
+                    // update continuous range
+                    row.popLast();
+                    row.addLast(i);
+                } else {
+                    // add single position
+                    row.addLast(i);
+                    row.addLast(i);
+                }
+            }
+        }
+        return mTmpItemPositionsInRows;
+    }
+
+    @Override
+    public void invalidateItemsAfter(int index) {
+        super.invalidateItemsAfter(index);
+        mLocations.removeFromEnd(getLastIndex() - index + 1);
+        if (mLocations.size() == 0) {
+            mFirstIndex = -1;
         }
     }
 }
