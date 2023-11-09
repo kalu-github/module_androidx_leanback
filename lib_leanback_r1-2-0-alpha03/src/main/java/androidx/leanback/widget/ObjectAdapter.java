@@ -252,8 +252,7 @@ public abstract class ObjectAdapter {
     public final void notifyItemRangeChanged(
             int positionStart,
             int itemCount,
-            @Nullable Object payload
-    ) {
+            @Nullable Object payload) {
         mObservable.notifyItemRangeChanged(positionStart, itemCount, payload);
     }
 
@@ -263,7 +262,7 @@ public abstract class ObjectAdapter {
      * @param positionStart Position where new items has been inserted.
      * @param itemCount     Count of the new items has been inserted.
      */
-    final protected void notifyItemRangeInserted(int positionStart, int itemCount) {
+    public final void notifyItemRangeInserted(int positionStart, int itemCount) {
         mObservable.notifyItemRangeInserted(positionStart, itemCount);
     }
 
@@ -273,7 +272,7 @@ public abstract class ObjectAdapter {
      * @param positionStart Starting position of the removed items.
      * @param itemCount     Total number of items that has been removed.
      */
-    final protected void notifyItemRangeRemoved(int positionStart, int itemCount) {
+    public final void notifyItemRangeRemoved(int positionStart, int itemCount) {
         mObservable.notifyItemRangeRemoved(positionStart, itemCount);
     }
 
@@ -283,14 +282,14 @@ public abstract class ObjectAdapter {
      * @param fromPosition Previous position of the item.
      * @param toPosition   New position of the item.
      */
-    protected final void notifyItemMoved(int fromPosition, int toPosition) {
+    public final void notifyItemMoved(int fromPosition, int toPosition) {
         mObservable.notifyItemMoved(fromPosition, toPosition);
     }
 
     /**
      * Notifies UI that the underlying data has changed.
      */
-    final protected void notifyChanged() {
+    public final void notifyChanged() {
         mObservable.notifyChanged();
     }
 
@@ -321,7 +320,7 @@ public abstract class ObjectAdapter {
      * Called when {@link #setHasStableIds(boolean)} is called and the status
      * of stable ids has changed.
      */
-    protected void onHasStableIdsChanged() {
+    public void onHasStableIdsChanged() {
     }
 
     /**
