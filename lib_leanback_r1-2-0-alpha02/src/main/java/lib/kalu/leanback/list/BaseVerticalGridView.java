@@ -5,8 +5,14 @@ import android.util.AttributeSet;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.leanback.widget.ArrayObjectAdapter;
+import androidx.leanback.widget.ItemBridgeAdapter;
+import androidx.leanback.widget.Presenter;
 
 import com.bumptech.glide.Glide;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import lib.kalu.leanback.util.LeanBackUtil;
 
@@ -60,6 +66,201 @@ class BaseVerticalGridView extends androidx.leanback.widget.VerticalGridView {
                     LeanBackUtil.log("BaseVerticalGridView => onScrollStateChanged => pauseRequests => fail");
                 }
                 break;
+        }
+    }
+
+    public final ViewHolder findViewHolderAtFirst(@NonNull Class<?> cls) {
+        try {
+            String simpleName = cls.getName();
+            if (null == simpleName || simpleName.length() == 0)
+                throw new Exception("simpleName error: " + simpleName);
+            ItemBridgeAdapter itemBridgeAdapter = (ItemBridgeAdapter) getAdapter();
+            if (null == itemBridgeAdapter)
+                throw new Exception("itemBridgeAdapter error: null");
+            ArrayObjectAdapter objectAdapter = (ArrayObjectAdapter) itemBridgeAdapter.getAdapter();
+            if (null == objectAdapter)
+                throw new Exception("objectAdapter error: null");
+            int size = objectAdapter.size();
+            if (size <= 0)
+                throw new Exception("size error: " + size);
+            for (int i = 0; i < size; i++) {
+                Object o = objectAdapter.get(i);
+                if (null == o)
+                    continue;
+                String oName = o.getClass().getName();
+                if (!simpleName.equals(oName))
+                    continue;
+                ViewHolder forAdapterPosition = findViewHolderForAdapterPosition(i);
+                if (null != forAdapterPosition) {
+                    return forAdapterPosition;
+                }
+            }
+            throw new Exception("not find");
+        } catch (Exception e) {
+            LeanBackUtil.log("BaseVerticalGridView => findViewHolderAtFirst => " + e.getMessage());
+            return null;
+        }
+    }
+
+    public final List<ViewHolder> findViewHolders(@NonNull Class<?> cls) {
+        try {
+            String simpleName = cls.getName();
+            if (null == simpleName || simpleName.length() == 0)
+                throw new Exception("simpleName error: " + simpleName);
+            ItemBridgeAdapter itemBridgeAdapter = (ItemBridgeAdapter) getAdapter();
+            if (null == itemBridgeAdapter)
+                throw new Exception("itemBridgeAdapter error: null");
+            ArrayObjectAdapter objectAdapter = (ArrayObjectAdapter) itemBridgeAdapter.getAdapter();
+            if (null == objectAdapter)
+                throw new Exception("objectAdapter error: null");
+            int size = objectAdapter.size();
+            if (size <= 0)
+                throw new Exception("size error: " + size);
+            ArrayList<ViewHolder> result = new ArrayList<>();
+            for (int i = 0; i < size; i++) {
+                Object o = objectAdapter.get(i);
+                if (null == o)
+                    continue;
+                String oName = o.getClass().getName();
+                if (!simpleName.equals(oName))
+                    continue;
+                ViewHolder forAdapterPosition = findViewHolderForAdapterPosition(i);
+                if (null == forAdapterPosition)
+                    continue;
+                result.add(forAdapterPosition);
+            }
+            return result;
+        } catch (Exception e) {
+            LeanBackUtil.log("BaseVerticalGridView => findViewHolders => " + e.getMessage());
+            return null;
+        }
+    }
+
+    @Deprecated
+    public final <T extends Presenter> T findPresenterFirst(Class<T> cls) {
+        try {
+            String simpleName = cls.getName();
+            if (null == simpleName || simpleName.length() == 0)
+                throw new Exception("simpleName error: " + simpleName);
+            ItemBridgeAdapter itemBridgeAdapter = (ItemBridgeAdapter) getAdapter();
+            if (null == itemBridgeAdapter)
+                throw new Exception("itemBridgeAdapter error: null");
+            ArrayObjectAdapter objectAdapter = (ArrayObjectAdapter) itemBridgeAdapter.getAdapter();
+            if (null == objectAdapter)
+                throw new Exception("objectAdapter error: null");
+            Presenter[] presenters = objectAdapter.getPresenterSelector().getPresenters();
+            if (null == presenters || presenters.length == 0)
+                throw new Exception("presenters error: " + presenters);
+            for (Presenter o : presenters) {
+                if (null == o)
+                    continue;
+                if (simpleName.equals(o.getClass().getName())) {
+                    return (T) o;
+                }
+            }
+            throw new Exception("not find");
+        } catch (Exception e) {
+            LeanBackUtil.log("BaseVerticalGridView => findPresenterFirst => " + e.getMessage());
+            return null;
+        }
+    }
+
+    @Deprecated
+    public final <T extends Presenter> List<T> findPresenterAll(Class<T> cls) {
+        try {
+            String simpleName = cls.getName();
+            if (null == simpleName || simpleName.length() == 0)
+                throw new Exception("simpleName error: " + simpleName);
+            ItemBridgeAdapter itemBridgeAdapter = (ItemBridgeAdapter) getAdapter();
+            if (null == itemBridgeAdapter)
+                throw new Exception("itemBridgeAdapter error: null");
+            ArrayObjectAdapter objectAdapter = (ArrayObjectAdapter) itemBridgeAdapter.getAdapter();
+            if (null == objectAdapter)
+                throw new Exception("objectAdapter error: null");
+            Presenter[] presenters = objectAdapter.getPresenterSelector().getPresenters();
+            if (null == presenters || presenters.length == 0)
+                throw new Exception("presenters error: " + presenters);
+            ArrayList<T> result = new ArrayList<>();
+            for (Presenter o : presenters) {
+                if (null == o)
+                    continue;
+                if (!simpleName.equals(o.getClass().getName()))
+                    continue;
+                result.add((T) o);
+            }
+            return result;
+        } catch (Exception e) {
+            LeanBackUtil.log("BaseVerticalGridView => findPresenterFirst => " + e.getMessage());
+            return null;
+        }
+    }
+
+    @Deprecated
+    public final ViewHolder findViewHolderForAdapterObjectFirst(@NonNull Class<?> cls) {
+        try {
+            String simpleName = cls.getName();
+            if (null == simpleName || simpleName.length() == 0)
+                throw new Exception("simpleName error: " + simpleName);
+            ItemBridgeAdapter itemBridgeAdapter = (ItemBridgeAdapter) getAdapter();
+            if (null == itemBridgeAdapter)
+                throw new Exception("itemBridgeAdapter error: null");
+            ArrayObjectAdapter objectAdapter = (ArrayObjectAdapter) itemBridgeAdapter.getAdapter();
+            if (null == objectAdapter)
+                throw new Exception("objectAdapter error: null");
+            int size = objectAdapter.size();
+            if (size <= 0)
+                throw new Exception("size error: " + size);
+            for (int i = 0; i < size; i++) {
+                Object o = objectAdapter.get(i);
+                if (null == o)
+                    continue;
+                String oName = o.getClass().getName();
+                if (!simpleName.equals(oName))
+                    continue;
+                ViewHolder forAdapterPosition = findViewHolderForAdapterPosition(i);
+                if (null != forAdapterPosition) {
+                    return forAdapterPosition;
+                }
+            }
+            throw new Exception("not find");
+        } catch (Exception e) {
+            LeanBackUtil.log("BaseVerticalGridView => findViewHolderForAdapterObjectFirst => " + e.getMessage());
+            return null;
+        }
+    }
+
+    @Deprecated
+    public final List<ViewHolder> findViewHolderForAdapterObjectAll(@NonNull Class<?> cls) {
+        try {
+            String simpleName = cls.getName();
+            if (null == simpleName || simpleName.length() == 0)
+                throw new Exception("simpleName error: " + simpleName);
+            ItemBridgeAdapter itemBridgeAdapter = (ItemBridgeAdapter) getAdapter();
+            if (null == itemBridgeAdapter)
+                throw new Exception("itemBridgeAdapter error: null");
+            ArrayObjectAdapter objectAdapter = (ArrayObjectAdapter) itemBridgeAdapter.getAdapter();
+            if (null == objectAdapter)
+                throw new Exception("objectAdapter error: null");
+            int size = objectAdapter.size();
+            if (size <= 0)
+                throw new Exception("size error: " + size);
+            ArrayList<ViewHolder> result = new ArrayList<>();
+            for (int i = 0; i < size; i++) {
+                Object o = objectAdapter.get(i);
+                if (null == o)
+                    continue;
+                String oName = o.getClass().getName();
+                if (!simpleName.equals(oName))
+                    continue;
+                ViewHolder forAdapterPosition = findViewHolderForAdapterPosition(i);
+                if (null == forAdapterPosition)
+                    continue;
+                result.add(forAdapterPosition);
+            }
+            return result;
+        } catch (Exception e) {
+            LeanBackUtil.log("BaseVerticalGridView => findViewHolderForAdapterObjectAll => " + e.getMessage());
+            return null;
         }
     }
 }
