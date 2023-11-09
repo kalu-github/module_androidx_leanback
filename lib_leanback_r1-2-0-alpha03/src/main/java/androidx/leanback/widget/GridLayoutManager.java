@@ -16,7 +16,6 @@
 package androidx.leanback.widget;
 
 import static androidx.recyclerview.widget.RecyclerView.HORIZONTAL;
-import static androidx.recyclerview.widget.RecyclerView.NO_ID;
 import static androidx.recyclerview.widget.RecyclerView.NO_POSITION;
 import static androidx.recyclerview.widget.RecyclerView.SCROLL_STATE_IDLE;
 import static androidx.recyclerview.widget.RecyclerView.VERTICAL;
@@ -46,7 +45,6 @@ import android.widget.GridView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.annotation.VisibleForTesting;
 import androidx.collection.CircularIntArray;
 import androidx.core.os.TraceCompat;
 import androidx.core.view.ViewCompat;
