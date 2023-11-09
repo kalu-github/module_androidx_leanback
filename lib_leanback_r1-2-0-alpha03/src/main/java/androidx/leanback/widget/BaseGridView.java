@@ -56,14 +56,12 @@ public abstract class BaseGridView extends RecyclerView {
      * WINDOW_ALIGN_XXX and ITEM_ALIGN_XXX to define how focused item is aligned.
      * In this mode, the last focused position will be remembered and restored when focus
      * is back to the view.
-     *
      */
     @RestrictTo(LIBRARY_GROUP_PREFIX)
     public static final int FOCUS_SCROLL_ALIGNED = 0;
 
     /**
      * Scroll to make the focused item inside client area.
-     *
      */
     @RestrictTo(LIBRARY_GROUP_PREFIX)
     public static final int FOCUS_SCROLL_ITEM = 1;
@@ -71,7 +69,6 @@ public abstract class BaseGridView extends RecyclerView {
     /**
      * Scroll a page of items when focusing to item outside the client area.
      * The page size matches the client area size of RecyclerView.
-     *
      */
     @RestrictTo(LIBRARY_GROUP_PREFIX)
     public static final int FOCUS_SCROLL_PAGE = 2;
@@ -309,7 +306,6 @@ public abstract class BaseGridView extends RecyclerView {
      * <li>{@link #FOCUS_SCROLL_ITEM}</li>
      * <li>{@link #FOCUS_SCROLL_PAGE}</li>
      * </ul>
-     *
      */
     @RestrictTo(LIBRARY_GROUP_PREFIX)
     public void setFocusScrollStrategy(int scrollStrategy) {
@@ -328,7 +324,6 @@ public abstract class BaseGridView extends RecyclerView {
      * <li>{@link #FOCUS_SCROLL_ITEM}</li>
      * <li>{@link #FOCUS_SCROLL_PAGE}</li>
      * </ul>
-     *
      */
     @RestrictTo(LIBRARY_GROUP_PREFIX)
     public int getFocusScrollStrategy() {
@@ -675,7 +670,6 @@ public abstract class BaseGridView extends RecyclerView {
 
     /**
      * Changes the selected item and/or subposition immediately without animation.
-     *
      */
     @RestrictTo(LIBRARY_GROUP_PREFIX)
     public void setSelectedPositionWithSub(int position, int subposition) {
@@ -695,7 +689,6 @@ public abstract class BaseGridView extends RecyclerView {
      * Changes the selected item and/or subposition immediately without animation, scrollExtra is
      * applied in primary scroll direction.  The scrollExtra will be kept until
      * another {@link #setSelectedPosition} or {@link #setSelectedPositionSmooth} call.
-     *
      */
     @RestrictTo(LIBRARY_GROUP_PREFIX)
     public void setSelectedPositionWithSub(int position, int subposition, int scrollExtra) {
@@ -715,7 +708,6 @@ public abstract class BaseGridView extends RecyclerView {
     /**
      * Changes the selected item and/or subposition, runs an animation to scroll to the target
      * position.
-     *
      */
     @RestrictTo(LIBRARY_GROUP_PREFIX)
     public void setSelectedPositionSmoothWithSub(int position, int subposition) {
@@ -736,7 +728,6 @@ public abstract class BaseGridView extends RecyclerView {
      * multiple {@link ItemAlignmentFacet}s provided by {@link RecyclerView.ViewHolder}
      * or {@link FacetProviderAdapter}.  Zero is returned when no {@link ItemAlignmentFacet}
      * is defined.
-     *
      */
     @RestrictTo(LIBRARY_GROUP_PREFIX)
     public int getSelectedSubPosition() {
@@ -800,7 +791,7 @@ public abstract class BaseGridView extends RecyclerView {
 
     @Override
     public boolean onRequestFocusInDescendants(int direction,
-            @Nullable Rect previouslyFocusedRect) {
+                                               @Nullable Rect previouslyFocusedRect) {
         if ((mPrivateFlag & PFLAG_RETAIN_FOCUS_FOR_CHILD) == PFLAG_RETAIN_FOCUS_FOR_CHILD) {
             // dont focus to child if GridView itself retains focus for child
             return false;
@@ -846,7 +837,7 @@ public abstract class BaseGridView extends RecyclerView {
 
     @Override
     protected void onFocusChanged(boolean gainFocus, int direction,
-            @Nullable Rect previouslyFocusedRect) {
+                                  @Nullable Rect previouslyFocusedRect) {
         super.onFocusChanged(gainFocus, direction, previouslyFocusedRect);
         mLayoutManager.onFocusChanged(gainFocus, direction, previouslyFocusedRect);
     }
@@ -1091,7 +1082,6 @@ public abstract class BaseGridView extends RecyclerView {
 
     /**
      * Returns pixels of extra space for layout child in invisible area.
-     *
      */
     @RestrictTo(LIBRARY_GROUP_PREFIX)
     public int getExtraLayoutSpace() {
@@ -1363,6 +1353,11 @@ public abstract class BaseGridView extends RecyclerView {
     }
 
 
+    @Deprecated
+    public final ViewHolder findViewHolder(@NonNull Class<?> cls) {
+        return findViewHolderAtFirst(cls);
+    }
+
     public final ViewHolder findViewHolderAtFirst(@NonNull Class<?> cls) {
         try {
             String simpleName = cls.getName();
@@ -1431,6 +1426,10 @@ public abstract class BaseGridView extends RecyclerView {
     }
 
     @Deprecated
+    public final <T extends Presenter> T findPresenter(Class<T> cls) {
+        return findPresenterFirst(cls);
+    }
+
     public final <T extends Presenter> T findPresenterFirst(Class<T> cls) {
         try {
             String simpleName = cls.getName();
@@ -1459,7 +1458,6 @@ public abstract class BaseGridView extends RecyclerView {
         }
     }
 
-    @Deprecated
     public final <T extends Presenter> List<T> findPresenterAll(Class<T> cls) {
         try {
             String simpleName = cls.getName();
@@ -1490,6 +1488,10 @@ public abstract class BaseGridView extends RecyclerView {
     }
 
     @Deprecated
+    public final ViewHolder findViewHolderForAdapterObject(@NonNull Class<?> cls) {
+        return findViewHolderForAdapterObjectFirst(cls);
+    }
+
     public final ViewHolder findViewHolderForAdapterObjectFirst(@NonNull Class<?> cls) {
         try {
             String simpleName = cls.getName();
@@ -1523,7 +1525,6 @@ public abstract class BaseGridView extends RecyclerView {
         }
     }
 
-    @Deprecated
     public final List<ViewHolder> findViewHolderForAdapterObjectAll(@NonNull Class<?> cls) {
         try {
             String simpleName = cls.getName();
