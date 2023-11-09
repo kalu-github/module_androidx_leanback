@@ -5,8 +5,14 @@ import android.util.AttributeSet;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.leanback.widget.ArrayObjectAdapter;
+import androidx.leanback.widget.ItemBridgeAdapter;
+import androidx.leanback.widget.Presenter;
 
 import com.bumptech.glide.Glide;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import lib.kalu.leanback.util.LeanBackUtil;
 
@@ -91,7 +97,7 @@ class BaseVerticalGridView extends androidx.leanback.widget.VerticalGridView {
             }
             throw new Exception("not find");
         } catch (Exception e) {
-            LeanBackUtil.log("BaseGridView => findViewHolderAtFirst => " + e.getMessage());
+            LeanBackUtil.log("BaseVerticalGridView => findViewHolderAtFirst => " + e.getMessage());
             return null;
         }
     }
@@ -125,7 +131,7 @@ class BaseVerticalGridView extends androidx.leanback.widget.VerticalGridView {
             }
             return result;
         } catch (Exception e) {
-            LeanBackUtil.log("BaseGridView => findViewHolders => " + e.getMessage());
+            LeanBackUtil.log("BaseVerticalGridView => findViewHolders => " + e.getMessage());
             return null;
         }
     }
@@ -154,7 +160,7 @@ class BaseVerticalGridView extends androidx.leanback.widget.VerticalGridView {
             }
             throw new Exception("not find");
         } catch (Exception e) {
-            LeanBackUtil.log("BaseGridView => findPresenterFirst => " + e.getMessage());
+            LeanBackUtil.log("BaseVerticalGridView => findPresenterFirst => " + e.getMessage());
             return null;
         }
     }
@@ -184,7 +190,7 @@ class BaseVerticalGridView extends androidx.leanback.widget.VerticalGridView {
             }
             return result;
         } catch (Exception e) {
-            LeanBackUtil.log("BaseGridView => findPresenterFirst => " + e.getMessage());
+            LeanBackUtil.log("BaseVerticalGridView => findPresenterFirst => " + e.getMessage());
             return null;
         }
     }
@@ -218,7 +224,7 @@ class BaseVerticalGridView extends androidx.leanback.widget.VerticalGridView {
             }
             throw new Exception("not find");
         } catch (Exception e) {
-            LeanBackUtil.log("BaseGridView => findViewHolderForAdapterObjectFirst => " + e.getMessage());
+            LeanBackUtil.log("BaseVerticalGridView => findViewHolderForAdapterObjectFirst => " + e.getMessage());
             return null;
         }
     }
@@ -253,7 +259,7 @@ class BaseVerticalGridView extends androidx.leanback.widget.VerticalGridView {
             }
             return result;
         } catch (Exception e) {
-            LeanBackUtil.log("BaseGridView => findViewHolderForAdapterObjectAll => " + e.getMessage());
+            LeanBackUtil.log("BaseVerticalGridView => findViewHolderForAdapterObjectAll => " + e.getMessage());
             return null;
         }
     }
