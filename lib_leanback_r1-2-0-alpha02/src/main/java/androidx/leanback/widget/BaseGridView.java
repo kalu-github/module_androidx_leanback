@@ -1507,7 +1507,7 @@ public abstract class BaseGridView extends RecyclerView {
             int itemCount = objectAdapter.size();
             if (itemCount <= 0)
                 throw new Exception("itemCount error: " + itemCount);
-            objectAdapter.removeItems(0, itemCount);
+            objectAdapter.removeItems(0, itemCount, true);
             Class<? extends PresenterSelector> aClass = presenterSelector.getClass();
             PresenterSelector newPresenterSelector = aClass.newInstance();
             objectAdapter.setPresenterSelector(newPresenterSelector);
