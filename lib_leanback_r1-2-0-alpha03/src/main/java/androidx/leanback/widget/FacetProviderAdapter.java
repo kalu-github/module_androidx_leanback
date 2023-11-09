@@ -1,15 +1,13 @@
+//
+// Source code recreated from a .class file by IntelliJ IDEA
+// (powered by FernFlower decompiler)
+//
+
 package androidx.leanback.widget;
 
 import androidx.annotation.Nullable;
 
-public abstract interface FacetProviderAdapter
-{
+public interface FacetProviderAdapter {
   @Nullable
-  public abstract FacetProvider getFacetProvider(int paramInt);
+  FacetProvider getFacetProvider(int var1);
 }
-
-
-/* Location:           D:\Android\Huan_Component\androidx_aar_leanback\repo\classes.jar
- * Qualified Name:     androidx.leanback.widget.FacetProviderAdapter
- * JD-Core Version:    0.7.0.1
- */

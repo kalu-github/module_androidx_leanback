@@ -1,15 +1,13 @@
+//
+// Source code recreated from a .class file by IntelliJ IDEA
+// (powered by FernFlower decompiler)
+//
+
 package androidx.leanback.widget;
 
 import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView.ViewHolder;
+import androidx.recyclerview.widget.RecyclerView;
 
-public abstract interface ViewHolderTask
-{
-  public abstract void run(@NonNull RecyclerView.ViewHolder paramViewHolder);
+public interface ViewHolderTask {
+  void run(@NonNull RecyclerView.ViewHolder var1);
 }
-
-
-/* Location:           D:\Android\Huan_Component\androidx_aar_leanback\repo\classes.jar
- * Qualified Name:     androidx.leanback.widget.ViewHolderTask
- * JD-Core Version:    0.7.0.1
- */
