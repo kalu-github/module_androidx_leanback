@@ -103,91 +103,77 @@ public class ArrayObjectAdapter extends ObjectAdapter {
      * @param item The item to add to the end of the adapter.
      */
     public void add(@NonNull Object item) {
-        add(mItems.size(), item);
+        add(mItems.size(), item, false);
     }
 
-    /**
-     * Inserts an item into this adapter at the specified index.
-     * If the index is > {@link #size} an exception will be thrown.
-     *
-     * @param index The index at which the item should be inserted.
-     * @param item  The item to insert into the adapter.
-     */
-    public void add(int index, @NonNull Object item) {
+    public void add(int index, @NonNull Object item, @NonNull boolean notifyUI) {
         mItems.add(index, item);
+        if(!notifyUI)
+            return;
         notifyItemRangeInserted(index, 1);
     }
 
-    /**
-     * Adds the objects in the given collection to the adapter, starting at the
-     * given index.  If the index is >= {@link #size} an exception will be thrown.
-     *
-     * @param index The index at which the items should be inserted.
-     * @param items A {@link Collection} of items to insert.
-     */
-    @SuppressWarnings("unchecked")
     public void addAll(int index, @NonNull Collection<?> items) {
+        addAll(index, items, false);
+    }
+    public void addAll(int index, @NonNull Collection<?> items, @NonNull boolean notifyUI) {
         int itemsCount = items.size();
         if (itemsCount == 0) {
             return;
         }
         mItems.addAll(index, items);
+        if(!notifyUI)
+            return;
         notifyItemRangeInserted(index, itemsCount);
     }
 
-    /**
-     * Removes the first occurrence of the given item from the adapter.
-     *
-     * @param item The item to remove from the adapter.
-     * @return True if the item was found and thus removed from the adapter.
-     */
     public boolean remove(@NonNull Object item) {
+        return remove(item, false);
+    }
+
+    public boolean remove(@NonNull Object item, @NonNull boolean notifyUI) {
         int index = mItems.indexOf(item);
         if (index >= 0) {
             mItems.remove(index);
-            notifyItemRangeRemoved(index, 1);
+            if (notifyUI) {
+                notifyItemRangeRemoved(index, 1);
+            }
         }
         return index >= 0;
     }
 
-    /**
-     * Moved the item at fromPosition to toPosition.
-     *
-     * @param fromPosition Previous position of the item.
-     * @param toPosition   New position of the item.
-     */
     public void move(int fromPosition, int toPosition) {
+        move(fromPosition, toPosition, false);
+    }
+
+    public void move(int fromPosition, int toPosition, @NonNull boolean notifyUI) {
         if (fromPosition == toPosition) {
             // no-op
             return;
         }
         Object item = mItems.remove(fromPosition);
         mItems.add(toPosition, item);
+        if (!notifyUI)
+            return;
         notifyItemMoved(fromPosition, toPosition);
     }
 
-    /**
-     * Replaces item at position with a new item and calls notifyItemRangeChanged()
-     * at the given position.  Note that this method does not compare new item to
-     * existing item.
-     *
-     * @param position The index of item to replace.
-     * @param item     The new item to be placed at given position.
-     */
     public void replace(int position, @NonNull Object item) {
+        replace(position, item, false);
+    }
+
+    public void replace(int position, @NonNull Object item, @NonNull boolean notifyUI) {
         mItems.set(position, item);
+        if (!notifyUI)
+            return;
         notifyItemRangeChanged(position, 1);
     }
 
-    /**
-     * Removes a range of items from the adapter. The range is specified by giving
-     * the starting position and the number of elements to remove.
-     *
-     * @param position The index of the first item to remove.
-     * @param count    The number of items to remove.
-     * @return The number of items removed.
-     */
     public int removeItems(int position, int count) {
+        return removeItems(position, count, false);
+    }
+
+    public int removeItems(int position, int count, @NonNull boolean notifyUI) {
         int itemsToRemove = Math.min(count, mItems.size() - position);
         if (itemsToRemove <= 0) {
             return 0;
@@ -196,19 +182,24 @@ public class ArrayObjectAdapter extends ObjectAdapter {
         for (int i = 0; i < itemsToRemove; i++) {
             mItems.remove(position);
         }
-        notifyItemRangeRemoved(position, itemsToRemove);
+        if (notifyUI) {
+            notifyItemRangeRemoved(position, itemsToRemove);
+        }
         return itemsToRemove;
     }
 
-    /**
-     * Removes all items from this adapter, leaving it empty.
-     */
     public void clear() {
+        clear(false);
+    }
+
+    public void clear(@NonNull boolean notifyUI) {
         int itemCount = mItems.size();
         if (itemCount == 0) {
             return;
         }
         mItems.clear();
+        if (!notifyUI)
+            return;
         notifyItemRangeRemoved(0, itemCount);
     }
 
@@ -243,10 +234,7 @@ public class ArrayObjectAdapter extends ObjectAdapter {
      *                 set and new data set. When null, {@link #notifyChanged()} will be fired.
      */
     @SuppressWarnings("unchecked")
-    public void setItems(
-            final @NonNull List itemList,
-            final @Nullable DiffCallback callback
-    ) {
+    public void setItems(final @NonNull List itemList, final @Nullable DiffCallback callback) {
         if (callback == null) {
             // shortcut when DiffCallback is not provided
             mItems.clear();
