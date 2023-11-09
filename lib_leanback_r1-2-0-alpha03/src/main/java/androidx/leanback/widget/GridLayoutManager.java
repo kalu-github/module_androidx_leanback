@@ -249,8 +249,6 @@ public final class GridLayoutManager extends RecyclerView.LayoutManager {
                 targetView.requestFocus();
                 mFlag &= ~PF_IN_SELECTION;
             }
-            dispatchChildSelected();
-            dispatchChildSelectedAndPositioned();
         }
 
         @Override
@@ -563,16 +561,6 @@ public final class GridLayoutManager extends RecyclerView.LayoutManager {
     int mFlag = PF_LAYOUT_ENABLED
             | PF_FOCUS_OUT_SIDE_START | PF_FOCUS_OUT_SIDE_END
             | PF_PRUNE_CHILD | PF_SCROLL_ENABLED;
-
-    @SuppressWarnings("deprecation")
-    private OnChildSelectedListener mChildSelectedListener = null;
-
-    private ArrayList<OnChildViewHolderSelectedListener> mChildViewHolderSelectedListeners = null;
-
-    @VisibleForTesting
-    ArrayList<BaseGridView.OnLayoutCompletedListener> mOnLayoutCompletedListeners = null;
-
-    OnChildLaidOutListener mChildLaidOutListener = null;
 
     /**
      * The focused position, it's not the currently visually aligned position
@@ -917,82 +905,6 @@ public final class GridLayoutManager extends RecyclerView.LayoutManager {
         return mGrid != null;
     }
 
-    @SuppressWarnings("deprecation")
-    void setOnChildSelectedListener(OnChildSelectedListener listener) {
-        mChildSelectedListener = listener;
-    }
-
-    void setOnChildViewHolderSelectedListener(OnChildViewHolderSelectedListener listener) {
-        if (listener == null) {
-            mChildViewHolderSelectedListeners = null;
-            return;
-        }
-        if (mChildViewHolderSelectedListeners == null) {
-            mChildViewHolderSelectedListeners = new ArrayList<>();
-        } else {
-            mChildViewHolderSelectedListeners.clear();
-        }
-        mChildViewHolderSelectedListeners.add(listener);
-    }
-
-    void addOnChildViewHolderSelectedListener(OnChildViewHolderSelectedListener listener) {
-        if (mChildViewHolderSelectedListeners == null) {
-            mChildViewHolderSelectedListeners = new ArrayList<OnChildViewHolderSelectedListener>();
-        }
-        mChildViewHolderSelectedListeners.add(listener);
-    }
-
-    void removeOnChildViewHolderSelectedListener(OnChildViewHolderSelectedListener
-            listener) {
-        if (mChildViewHolderSelectedListeners != null) {
-            mChildViewHolderSelectedListeners.remove(listener);
-        }
-    }
-
-    boolean hasOnChildViewHolderSelectedListener() {
-        return mChildViewHolderSelectedListeners != null
-                && mChildViewHolderSelectedListeners.size() > 0;
-    }
-
-    void fireOnChildViewHolderSelected(RecyclerView parent, RecyclerView.ViewHolder child,
-            int position, int subposition) {
-        if (mChildViewHolderSelectedListeners == null) {
-            return;
-        }
-        for (int i = mChildViewHolderSelectedListeners.size() - 1; i >= 0; i--) {
-            mChildViewHolderSelectedListeners.get(i).onChildViewHolderSelected(parent, child,
-                    position, subposition);
-        }
-    }
-
-    void fireOnChildViewHolderSelectedAndPositioned(RecyclerView parent, RecyclerView.ViewHolder
-            child, int position, int subposition) {
-        if (mChildViewHolderSelectedListeners == null) {
-            return;
-        }
-        for (int i = mChildViewHolderSelectedListeners.size() - 1; i >= 0; i--) {
-            mChildViewHolderSelectedListeners.get(i).onChildViewHolderSelectedAndPositioned(parent,
-                    child, position, subposition);
-        }
-    }
-
-    void addOnLayoutCompletedListener(BaseGridView.OnLayoutCompletedListener listener) {
-        if (mOnLayoutCompletedListeners == null) {
-            mOnLayoutCompletedListeners = new ArrayList<>();
-        }
-        mOnLayoutCompletedListeners.add(listener);
-    }
-
-    void removeOnLayoutCompletedListener(BaseGridView.OnLayoutCompletedListener listener) {
-        if (mOnLayoutCompletedListeners != null) {
-            mOnLayoutCompletedListeners.remove(listener);
-        }
-    }
-
-    void setOnChildLaidOutListener(OnChildLaidOutListener listener) {
-        mChildLaidOutListener = listener;
-    }
-
     private int getAdapterPositionByView(View view) {
         if (view == null) {
             return NO_POSITION;
@@ -1032,70 +944,6 @@ public final class GridLayoutManager extends RecyclerView.LayoutManager {
 
     private int getAdapterPositionByIndex(int index) {
         return getAdapterPositionByView(getChildAt(index));
-    }
-
-    void dispatchChildSelected() {
-        if (mChildSelectedListener == null && !hasOnChildViewHolderSelectedListener()) {
-            return;
-        }
-
-        if (TRACE) TraceCompat.beginSection("onChildSelected");
-        View view = mFocusPosition == NO_POSITION ? null : findViewByPosition(mFocusPosition);
-        if (view != null) {
-            RecyclerView.ViewHolder vh = mBaseGridView.getChildViewHolder(view);
-            if (mChildSelectedListener != null) {
-                mChildSelectedListener.onChildSelected(mBaseGridView, view, mFocusPosition,
-                        vh == null ? NO_ID : vh.getItemId());
-            }
-            fireOnChildViewHolderSelected(mBaseGridView, vh, mFocusPosition, mSubFocusPosition);
-        } else {
-            if (mChildSelectedListener != null) {
-                mChildSelectedListener.onChildSelected(mBaseGridView, null, NO_POSITION, NO_ID);
-            }
-            fireOnChildViewHolderSelected(mBaseGridView, null, NO_POSITION, 0);
-        }
-        if (TRACE) TraceCompat.endSection();
-
-        // Children may request layout when a child selection event occurs (such as a change of
-        // padding on the current and previously selected rows).
-        // If in layout, a child requesting layout may have been laid out before the selection
-        // callback.
-        // If it was not, the child will be laid out after the selection callback.
-        // If so, the layout request will be honoured though the view system will emit a double-
-        // layout warning.
-        // If not in layout, we may be scrolling in which case the child layout request will be
-        // eaten by recyclerview.  Post a requestLayout.
-        if ((mFlag & PF_STAGE_MASK) != PF_STAGE_LAYOUT && !mBaseGridView.isLayoutRequested()) {
-            int childCount = getChildCount();
-            for (int i = 0; i < childCount; i++) {
-                if (getChildAt(i).isLayoutRequested()) {
-                    forceRequestLayout();
-                    break;
-                }
-            }
-        }
-    }
-
-    @SuppressWarnings("WeakerAccess") /* synthetic access */
-    void dispatchChildSelectedAndPositioned() {
-        if (!hasOnChildViewHolderSelectedListener()) {
-            return;
-        }
-
-        if (TRACE) TraceCompat.beginSection("onChildSelectedAndPositioned");
-        View view = mFocusPosition == NO_POSITION ? null : findViewByPosition(mFocusPosition);
-        if (view != null) {
-            RecyclerView.ViewHolder vh = mBaseGridView.getChildViewHolder(view);
-            fireOnChildViewHolderSelectedAndPositioned(mBaseGridView, vh, mFocusPosition,
-                    mSubFocusPosition);
-        } else {
-            if (mChildSelectedListener != null) {
-                mChildSelectedListener.onChildSelected(mBaseGridView, null, NO_POSITION, NO_ID);
-            }
-            fireOnChildViewHolderSelectedAndPositioned(mBaseGridView, null, NO_POSITION, 0);
-        }
-        if (TRACE) TraceCompat.endSection();
-
     }
 
     @Override
@@ -1729,7 +1577,6 @@ public final class GridLayoutManager extends RecyclerView.LayoutManager {
                     // increase performance.
                     if (index == mFocusPosition && subindex == mSubFocusPosition
                             && mPendingMoveSmoothScroller == null) {
-                        dispatchChildSelected();
                     }
                 } else if ((mFlag & PF_FAST_RELAYOUT) == 0) {
                     // fastRelayout will dispatch event at end of onLayoutChildren().
@@ -1739,13 +1586,11 @@ public final class GridLayoutManager extends RecyclerView.LayoutManager {
                     //    equal to or after mFocusPosition that can take focus.
                     if ((mFlag & PF_IN_LAYOUT_SEARCH_FOCUS) == 0 && index == mFocusPosition
                             && subindex == mSubFocusPosition) {
-                        dispatchChildSelected();
                     } else if ((mFlag & PF_IN_LAYOUT_SEARCH_FOCUS) != 0 && index >= mFocusPosition
                             && v.hasFocusable()) {
                         mFocusPosition = index;
                         mSubFocusPosition = subindex;
                         mFlag &= ~PF_IN_LAYOUT_SEARCH_FOCUS;
-                        dispatchChildSelected();
                     }
                 }
                 measureChild(v);
@@ -1786,11 +1631,6 @@ public final class GridLayoutManager extends RecyclerView.LayoutManager {
             }
             if ((mFlag & PF_STAGE_MASK) != PF_STAGE_LAYOUT && mPendingMoveSmoothScroller != null) {
                 mPendingMoveSmoothScroller.consumePendingMovesAfterLayout();
-            }
-            if (mChildLaidOutListener != null) {
-                RecyclerView.ViewHolder vh = mBaseGridView.getChildViewHolder(v);
-                mChildLaidOutListener.onChildLaidOut(mBaseGridView, v, index,
-                        vh == null ? NO_ID : vh.getItemId());
             }
         }
 
@@ -2150,15 +1990,6 @@ public final class GridLayoutManager extends RecyclerView.LayoutManager {
     }
 
     @Override
-    public void onLayoutCompleted(@NonNull State state) {
-        if (mOnLayoutCompletedListeners != null) {
-            for (int i = mOnLayoutCompletedListeners.size() - 1; i >= 0; i--) {
-                mOnLayoutCompletedListeners.get(i).onLayoutCompleted(state);
-            }
-        }
-    }
-
-    @Override
     public boolean supportsPredictiveItemAnimations() {
         return true;
     }
@@ -2410,14 +2241,11 @@ public final class GridLayoutManager extends RecyclerView.LayoutManager {
         if ((mFlag & PF_FAST_RELAYOUT) != 0 && (mFocusPosition != savedFocusPos || mSubFocusPosition
                 != savedSubFocusPos || findViewByPosition(mFocusPosition) != savedFocusView
                 || (mFlag & PF_FAST_RELAYOUT_UPDATED_SELECTED_POSITION) != 0)) {
-            dispatchChildSelected();
         } else if ((mFlag & (PF_FAST_RELAYOUT | PF_IN_LAYOUT_SEARCH_FOCUS))
                 == PF_IN_LAYOUT_SEARCH_FOCUS) {
             // For full layout we dispatchChildSelected() in createItem() unless searched all
             // children and found none is focusable then dispatchChildSelected() here.
-            dispatchChildSelected();
         }
-        dispatchChildSelectedAndPositioned();
         if ((mFlag & PF_SLIDING) != 0) {
             scrollDirectionPrimary(getSlideOutDistance());
         }
@@ -3063,7 +2891,6 @@ public final class GridLayoutManager extends RecyclerView.LayoutManager {
             mSubFocusPosition = newSubFocusPosition;
             mFocusPositionOffset = 0;
             if ((mFlag & PF_STAGE_MASK) != PF_STAGE_LAYOUT) {
-                dispatchChildSelected();
             }
             if (mBaseGridView.isChildrenDrawingOrderEnabledInternal()) {
                 mBaseGridView.invalidate();
@@ -3211,7 +3038,6 @@ public final class GridLayoutManager extends RecyclerView.LayoutManager {
                 mBaseGridView.smoothScrollBy(scrollX, scrollY);
             } else {
                 mBaseGridView.scrollBy(scrollX, scrollY);
-                dispatchChildSelectedAndPositioned();
             }
         }
     }
