@@ -33,7 +33,7 @@ android {
         variant.outputs.all {
             def type = new String(buildType.name).toLowerCase()
             def time = new Date().format("yyyyMMdd", TimeZone.getTimeZone("GMT+08"))
-            outputFileName = "lib_leanback_r1-2-0-alpha02_" + type + "_" + time + ".aar"
+            outputFileName = "lib_leanback_r1-2-0-alpha03_" + type + "_" + time + ".aar"
         }
     }
 }

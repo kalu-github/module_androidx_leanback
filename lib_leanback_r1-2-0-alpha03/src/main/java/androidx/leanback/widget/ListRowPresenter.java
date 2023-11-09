@@ -280,7 +280,6 @@ public class ListRowPresenter extends RowPresenter {
     private int mRowHeight;
     private int mExpandedRowHeight;
     private PresenterSelector mHoverCardPresenterSelector;
-    private int mFocusZoomFactor;
     private boolean mUseFocusDimmer;
     private int mBrowseRowsFadingEdgeLength = -1;
     private boolean mRoundedCornersEnabled = true;
@@ -294,44 +293,17 @@ public class ListRowPresenter extends RowPresenter {
 
     /**
      * Constructs a ListRowPresenter with defaults.
-     * Uses {@link FocusHighlight#ZOOM_FACTOR_MEDIUM} for focus zooming and
      * disabled dimming on focus.
      */
     public ListRowPresenter() {
-        this(FocusHighlight.ZOOM_FACTOR_MEDIUM);
+        this(false);
     }
 
     /**
      * Constructs a ListRowPresenter with the given parameters.
-     *
-     * @param focusZoomFactor Controls the zoom factor used when an item view is focused. One of
-     *         {@link FocusHighlight#ZOOM_FACTOR_NONE},
-     *         {@link FocusHighlight#ZOOM_FACTOR_SMALL},
-     *         {@link FocusHighlight#ZOOM_FACTOR_XSMALL},
-     *         {@link FocusHighlight#ZOOM_FACTOR_MEDIUM},
-     *         {@link FocusHighlight#ZOOM_FACTOR_LARGE}
-     * Dimming on focus defaults to disabled.
-     */
-    public ListRowPresenter(int focusZoomFactor) {
-        this(focusZoomFactor, false);
-    }
-
-    /**
-     * Constructs a ListRowPresenter with the given parameters.
-     *
-     * @param focusZoomFactor Controls the zoom factor used when an item view is focused. One of
-     *         {@link FocusHighlight#ZOOM_FACTOR_NONE},
-     *         {@link FocusHighlight#ZOOM_FACTOR_SMALL},
-     *         {@link FocusHighlight#ZOOM_FACTOR_XSMALL},
-     *         {@link FocusHighlight#ZOOM_FACTOR_MEDIUM},
-     *         {@link FocusHighlight#ZOOM_FACTOR_LARGE}
      * @param useFocusDimmer determines if the FocusHighlighter will use the dimmer
      */
-    public ListRowPresenter(int focusZoomFactor, boolean useFocusDimmer) {
-        if (!FocusHighlightHelper.isValidZoomIndex(focusZoomFactor)) {
-            throw new IllegalArgumentException("Unhandled zoom factor");
-        }
-        mFocusZoomFactor = focusZoomFactor;
+    public ListRowPresenter(boolean useFocusDimmer) {
         mUseFocusDimmer = useFocusDimmer;
     }
 
@@ -373,22 +345,6 @@ public class ListRowPresenter extends RowPresenter {
     }
 
     /**
-     * Returns the zoom factor used for focus highlighting.
-     */
-    public final int getFocusZoomFactor() {
-        return mFocusZoomFactor;
-    }
-
-    /**
-     * Returns the zoom factor used for focus highlighting.
-     * @deprecated use {@link #getFocusZoomFactor} instead.
-     */
-    @Deprecated
-    public final int getZoomFactor() {
-        return mFocusZoomFactor;
-    }
-
-    /**
      * Returns true if the focus dimmer is used for focus highlighting; false otherwise.
      */
     public final boolean isFocusDimmerUsed() {
@@ -410,8 +366,6 @@ public class ListRowPresenter extends RowPresenter {
         rowViewHolder.mItemBridgeAdapter = new ListRowPresenterItemBridgeAdapter(rowViewHolder);
         // set wrapper if needed
         rowViewHolder.mItemBridgeAdapter.setWrapper(mShadowOverlayWrapper);
-        FocusHighlightHelper.setupBrowseItemFocusHighlight(rowViewHolder.mItemBridgeAdapter,
-                mFocusZoomFactor, mUseFocusDimmer);
         // TODO: 2022/7/28
 //        rowViewHolder.mGridView.setFocusDrawingOrderEnabled(false);
         rowViewHolder.mGridView.setOnUnhandledKeyListener(

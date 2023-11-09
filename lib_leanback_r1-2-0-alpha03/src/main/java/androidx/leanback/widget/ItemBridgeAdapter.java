@@ -68,25 +68,20 @@ public class ItemBridgeAdapter extends RecyclerView.Adapter implements FacetProv
     private ObjectAdapter mAdapter;
     Wrapper mWrapper;
     private PresenterSelector mPresenterSelector;
-    FocusHighlightHandler mFocusHighlight;
     private AdapterListener mAdapterListener;
     private ArrayList<Presenter> mPresenters = new ArrayList<Presenter>();
 
     static final class ChainingFocusChangeListener implements View.OnFocusChangeListener {
         final View.OnFocusChangeListener mChainedListener;
         boolean mHasWrapper;
-        FocusHighlightHandler mFocusHighlight;
 
-        ChainingFocusChangeListener(View.OnFocusChangeListener chainedListener,
-                                    boolean hasWrapper, FocusHighlightHandler focusHighlight) {
+        ChainingFocusChangeListener(View.OnFocusChangeListener chainedListener, boolean hasWrapper) {
             mChainedListener = chainedListener;
             mHasWrapper = hasWrapper;
-            mFocusHighlight = focusHighlight;
         }
 
-        void update(boolean hasWrapper, FocusHighlightHandler focusHighlight) {
+        void update(boolean hasWrapper) {
             mHasWrapper = hasWrapper;
-            mFocusHighlight = focusHighlight;
         }
 
         @Override
@@ -94,7 +89,6 @@ public class ItemBridgeAdapter extends RecyclerView.Adapter implements FacetProv
             if (mHasWrapper) {
                 view = (View) view.getParent();
             }
-            mFocusHighlight.onItemFocused(view, hasFocus);
             if (mChainedListener != null) {
                 mChainedListener.onFocusChange(view, hasFocus);
             }
@@ -259,10 +253,6 @@ public class ItemBridgeAdapter extends RecyclerView.Adapter implements FacetProv
         return mWrapper;
     }
 
-    void setFocusHighlight(FocusHighlightHandler listener) {
-        mFocusHighlight = listener;
-    }
-
     /**
      * Clears the adapter.
      */
@@ -369,22 +359,10 @@ public class ItemBridgeAdapter extends RecyclerView.Adapter implements FacetProv
         }
         View presenterView = viewHolder.mHolder.view;
         View.OnFocusChangeListener currentListener = presenterView.getOnFocusChangeListener();
-        if (mFocusHighlight != null) {
-            // update or create ChainingFocusChangeListener
-            if (currentListener instanceof ChainingFocusChangeListener) {
-                ((ChainingFocusChangeListener) currentListener).update(
-                        /* hasWrapper= */ mWrapper != null, mFocusHighlight);
-            } else {
-                presenterView.setOnFocusChangeListener(new ChainingFocusChangeListener(
-                        currentListener, /* hasWrapper= */ mWrapper != null, mFocusHighlight));
-            }
-            mFocusHighlight.onInitializeView(view);
-        } else {
-            // restore chained listener
-            if (currentListener instanceof ChainingFocusChangeListener) {
-                presenterView.setOnFocusChangeListener(
-                        ((ChainingFocusChangeListener) currentListener).mChainedListener);
-            }
+        // restore chained listener
+        if (currentListener instanceof ChainingFocusChangeListener) {
+            presenterView.setOnFocusChangeListener(
+                    ((ChainingFocusChangeListener) currentListener).mChainedListener);
         }
         return viewHolder;
     }

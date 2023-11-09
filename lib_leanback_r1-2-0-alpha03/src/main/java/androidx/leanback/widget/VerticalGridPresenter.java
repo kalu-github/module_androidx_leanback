@@ -86,7 +86,6 @@ public class VerticalGridPresenter extends Presenter {
     }
 
     private int mNumColumns = -1;
-    private int mFocusZoomFactor;
     private boolean mUseFocusDimmer;
     private boolean mShadowEnabled = true;
     private boolean mKeepChildForeground = true;
@@ -95,43 +94,15 @@ public class VerticalGridPresenter extends Presenter {
     private boolean mRoundedCornersEnabled = true;
     private ItemBridgeAdapter.Wrapper mShadowOverlayWrapper;
 
-    /**
-     * Constructs a VerticalGridPresenter with defaults.
-     * Uses {@link FocusHighlight#ZOOM_FACTOR_LARGE} for focus zooming and
-     * enabled dimming on focus.
-     */
     public VerticalGridPresenter() {
-        this(FocusHighlight.ZOOM_FACTOR_LARGE);
+        this(true);
     }
 
     /**
      * Constructs a VerticalGridPresenter with the given parameters.
-     *
-     * @param focusZoomFactor Controls the zoom factor used when an item view is focused. One of
-     *         {@link FocusHighlight#ZOOM_FACTOR_NONE},
-     *         {@link FocusHighlight#ZOOM_FACTOR_SMALL},
-     *         {@link FocusHighlight#ZOOM_FACTOR_XSMALL},
-     *         {@link FocusHighlight#ZOOM_FACTOR_MEDIUM},
-     *         {@link FocusHighlight#ZOOM_FACTOR_LARGE}
-     * enabled dimming on focus.
-     */
-    public VerticalGridPresenter(int focusZoomFactor) {
-        this(focusZoomFactor, true);
-    }
-
-    /**
-     * Constructs a VerticalGridPresenter with the given parameters.
-     *
-     * @param focusZoomFactor Controls the zoom factor used when an item view is focused. One of
-     *         {@link FocusHighlight#ZOOM_FACTOR_NONE},
-     *         {@link FocusHighlight#ZOOM_FACTOR_SMALL},
-     *         {@link FocusHighlight#ZOOM_FACTOR_XSMALL},
-     *         {@link FocusHighlight#ZOOM_FACTOR_MEDIUM},
-     *         {@link FocusHighlight#ZOOM_FACTOR_LARGE}
      * @param useFocusDimmer determines if the FocusHighlighter will use the dimmer
      */
-    public VerticalGridPresenter(int focusZoomFactor, boolean useFocusDimmer) {
-        mFocusZoomFactor = focusZoomFactor;
+    public VerticalGridPresenter(boolean useFocusDimmer) {
         mUseFocusDimmer = useFocusDimmer;
     }
 
@@ -210,13 +181,6 @@ public class VerticalGridPresenter extends Presenter {
 //    }
 
     /**
-     * Returns the zoom factor used for focus highlighting.
-     */
-    public final int getFocusZoomFactor() {
-        return mFocusZoomFactor;
-    }
-
-    /**
      * Returns true if the focus dimmer is used for focus highlighting; false otherwise.
      */
     public final boolean isFocusDimmerUsed() {
@@ -262,8 +226,6 @@ public class VerticalGridPresenter extends Presenter {
         vh.mItemBridgeAdapter.setWrapper(mShadowOverlayWrapper);
         // TODO: 2022/7/28
 //        vh.getGridView().setFocusDrawingOrderEnabled(false);
-        FocusHighlightHelper.setupBrowseItemFocusHighlight(vh.mItemBridgeAdapter,
-                mFocusZoomFactor, mUseFocusDimmer);
     }
 
     /**
