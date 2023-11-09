@@ -1,0 +1,7 @@
+*.iml
+.gradle
+/.idea
+/build
+/app/build
+/lib_leanback_r1-2-0-alpha02/build/
+/lib_leanback_r1-2-0-alpha02_lite/build/

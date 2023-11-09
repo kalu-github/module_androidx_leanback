@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="picker_column_horizontal_padding">8dp</dimen>
+    <dimen name="picker_item_spacing">32dp</dimen>
+    <dimen name="picker_separator_horizontal_padding">4dp</dimen>
+    <dimen name="picker_item_height">32dp</dimen>
+</resources>

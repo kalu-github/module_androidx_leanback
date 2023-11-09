@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clipChildren="false"
+    android:clipToPadding="false"
+    android:focusable="false">
+
+    <lib.kalu.leanback.presenter.widget.TvRowTitleView
+        android:id="@+id/module_leanback_llf_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:focusable="false"
+        android:gravity="top|left"
+        android:singleLine="true"
+        android:textColor="#ffffff"
+        android:textSize="20sp"
+        android:visibility="gone" />
+
+    <lib.kalu.leanback.list.RecyclerViewHorizontal
+        android:id="@+id/module_leanback_llf_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        android:focusable="false"
+        app:focusOutEnd="true"
+        app:focusOutFront="true" />
+
+</RelativeLayout>
