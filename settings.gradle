@@ -1,16 +1,1 @@
-pluginManagement {
-    repositories {
-        maven { url 'https://maven.aliyun.com/repository/public' }
-        maven { url 'https://maven.aliyun.com/repository/google' }
-    }
-}
-dependencyResolutionManagement {
-    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
-    repositories {
-        maven { url 'https://maven.aliyun.com/repository/public' }
-        maven { url 'https://maven.aliyun.com/repository/google' }
-    }
-}
 include ':app'
-include ':lib_leanback_r1-2-0-alpha02'
-//include ':lib_leanback_r1-2-0-alpha02_lite'

@@ -1,7 +1,0 @@
-<resources>
-    <declare-styleable name="PopuTextView">
-        <attr name="ptv_corners" format="reference|dimension" />
-        <attr name="ptv_margin_bottom" format="reference|dimension" />
-        <attr name="ptv_background_color" format="reference|color" />
-    </declare-styleable>
-</resources>
