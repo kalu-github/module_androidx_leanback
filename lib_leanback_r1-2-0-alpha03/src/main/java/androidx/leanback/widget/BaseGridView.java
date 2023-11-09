@@ -18,9 +18,12 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RestrictTo;
 import androidx.annotation.RestrictTo.Scope;
+import androidx.leanback.R;
 import androidx.leanback.widget.R.styleable;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SimpleItemAnimator;
+
+import lib.kalu.leanback.util.LeanBackUtil;
 
 public abstract class BaseGridView extends RecyclerView {
     @RestrictTo({Scope.LIBRARY_GROUP_PREFIX})
@@ -71,7 +74,7 @@ public abstract class BaseGridView extends RecyclerView {
 
     @SuppressLint({"CustomViewStyleable"})
     void initBaseGridViewAttributes(Context context, AttributeSet attrs) {
-        TypedArray a = context.obtainStyledAttributes(attrs, styleable.lbBaseGridView);
+        TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.lbBaseGridView);
         boolean throughFront = a.getBoolean(styleable.lbBaseGridView_focusOutFront, false);
         boolean throughEnd = a.getBoolean(styleable.lbBaseGridView_focusOutEnd, false);
         this.mLayoutManager.setFocusOutAllowed(throughFront, throughEnd);
@@ -662,4 +665,118 @@ public abstract class BaseGridView extends RecyclerView {
         @Nullable
         Interpolator configSmoothScrollByInterpolator(int var1, int var2);
     }
+
+    /***********/
+
+    public final <T extends Object> T getAdapterObject(int position) {
+        try {
+            ItemBridgeAdapter itemBridgeAdapter = (ItemBridgeAdapter) getAdapter();
+            ArrayObjectAdapter objectAdapter = (ArrayObjectAdapter) itemBridgeAdapter.getAdapter();
+            return (T) objectAdapter.get(position);
+        } catch (Exception e) {
+            LeanBackUtil.log("BaseGridView => getAdapterObject => " + e.getMessage());
+            return null;
+        }
+    }
+
+    /***********/
+
+//    public final void setPresenterSelector(@NonNull PresenterSelector presenterSelector) {
+//        try {
+//            if (null == presenterSelector)
+//                throw new Exception("presenterSelector error: null");
+//            ItemBridgeAdapter itemBridgeAdapter = (ItemBridgeAdapter) getAdapter();
+//            if (null == itemBridgeAdapter)
+//                throw new Exception("itemBridgeAdapter error: null");
+//            ArrayObjectAdapter objectAdapter = (ArrayObjectAdapter) itemBridgeAdapter.getAdapter();
+//            if (null == objectAdapter)
+//                throw new Exception("objectAdapter error: null");
+//            objectAdapter.setPresenterSelector(presenterSelector);
+//        } catch (Exception e) {
+//            LeanBackUtil.log("BaseGridView => setPresenterSelector => " + e.getMessage());
+//        }
+//    }
+
+    /***********/
+
+//    public final void notifyItemChanged(int position) {
+//        try {
+//            ItemBridgeAdapter itemBridgeAdapter = (ItemBridgeAdapter) getAdapter();
+//            itemBridgeAdapter.notifyItemChanged(position);
+//        } catch (Exception e) {
+//            LeanBackUtil.log("BaseGridView => notifyItemChanged => " + e.getMessage());
+//        }
+//    }
+    public final void clearAdapter() {
+        try {
+            ItemBridgeAdapter itemBridgeAdapter = (ItemBridgeAdapter) getAdapter();
+            if (null == itemBridgeAdapter)
+                throw new Exception("itemBridgeAdapter error: null");
+            ArrayObjectAdapter objectAdapter = (ArrayObjectAdapter) itemBridgeAdapter.getAdapter();
+            if (null == objectAdapter)
+                throw new Exception("objectAdapter error: null");
+            PresenterSelector presenterSelector = objectAdapter.getPresenterSelector();
+            if (null == presenterSelector)
+                throw new Exception("presenterSelector error: null");
+            int itemCount = objectAdapter.size();
+            if (itemCount <= 0)
+                throw new Exception("itemCount error: " + itemCount);
+            objectAdapter.removeItems(0, itemCount, false);
+            Class<? extends PresenterSelector> aClass = presenterSelector.getClass();
+            PresenterSelector newPresenterSelector = aClass.newInstance();
+            objectAdapter.setPresenterSelector(newPresenterSelector);
+        } catch (Exception e) {
+            LeanBackUtil.log("BaseGridView => clearAdapter => " + e.getMessage());
+        }
+    }
+
+    /***********/
+
+    public final <T extends Presenter> T findPresenter(Class<T> cls) {
+        try {
+            String simpleName = cls.getName();
+            if (null == simpleName || simpleName.length() == 0)
+                throw new Exception("simpleName error: " + simpleName);
+            ItemBridgeAdapter itemBridgeAdapter = (ItemBridgeAdapter) getAdapter();
+            if (null == itemBridgeAdapter)
+                throw new Exception("itemBridgeAdapter error: null");
+            ArrayObjectAdapter objectAdapter = (ArrayObjectAdapter) itemBridgeAdapter.getAdapter();
+            if (null == objectAdapter)
+                throw new Exception("objectAdapter error: null");
+            Presenter[] presenters = objectAdapter.getPresenterSelector().getPresenters();
+            if (null == presenters || presenters.length == 0)
+                throw new Exception("presenters error: " + presenters);
+            for (Presenter o : presenters) {
+                if (null == o)
+                    continue;
+                if (simpleName.equals(o.getClass().getName())) {
+                    return (T) o;
+                }
+            }
+            throw new Exception("not find");
+        } catch (Exception e) {
+            LeanBackUtil.log("BaseGridView => findPresenter => " + e.getMessage());
+            return null;
+        }
+    }
+
+    public final Presenter[] findPresenters() {
+        try {
+            ItemBridgeAdapter itemBridgeAdapter = (ItemBridgeAdapter) getAdapter();
+            if (null == itemBridgeAdapter)
+                throw new Exception("itemBridgeAdapter error: null");
+            ArrayObjectAdapter objectAdapter = (ArrayObjectAdapter) itemBridgeAdapter.getAdapter();
+            if (null == objectAdapter)
+                throw new Exception("objectAdapter error: null");
+            Presenter[] presenters = objectAdapter.getPresenterSelector().getPresenters();
+            if (null == presenters || presenters.length == 0)
+                throw new Exception("presenters error: " + presenters);
+            return presenters;
+        } catch (Exception e) {
+            LeanBackUtil.log("BaseGridView => findPresenters => " + e.getMessage());
+            return null;
+        }
+    }
+
+    /***********/
 }
