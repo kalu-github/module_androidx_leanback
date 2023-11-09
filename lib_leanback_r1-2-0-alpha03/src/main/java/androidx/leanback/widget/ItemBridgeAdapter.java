@@ -193,6 +193,10 @@ public class ItemBridgeAdapter extends RecyclerView.Adapter implements FacetProv
     public ItemBridgeAdapter() {
     }
 
+    public ObjectAdapter getAdapter() {
+        return this.mAdapter;
+    }
+
     /**
      * Sets the {@link ObjectAdapter}.
      */

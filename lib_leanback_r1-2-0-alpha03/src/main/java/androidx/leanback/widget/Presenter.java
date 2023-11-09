@@ -13,15 +13,19 @@
  */
 package androidx.leanback.widget;
 
+import android.os.Build;
 import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.collection.ArrayMap;
 
 import java.util.List;
 import java.util.Map;
+
+import lib.kalu.leanback.util.LeanBackUtil;
 
 /**
  * A Presenter is used to generate {@link View}s and bind Objects to them on
@@ -77,11 +81,29 @@ public abstract class Presenter implements FacetProvider {
      * without needing to subclass a View.
      */
     public static class ViewHolder implements FacetProvider {
+        private Object mObject;
+
+        public Object getObject() {
+            return mObject;
+        }
+
+        public void setObject(Object mObject) {
+            this.mObject = mObject;
+        }
+
         public final View view;
         private Map<Class<?>, Object> mFacets;
 
         public ViewHolder(View view) {
             this.view = view;
+        }
+
+        public final int getChildAdapterPosition() {
+            try {
+                return ((BaseGridView) (this.view).getParent()).getChildAdapterPosition(this.view);
+            } catch (Exception e) {
+                return -1;
+            }
         }
 
         @Override
@@ -94,7 +116,8 @@ public abstract class Presenter implements FacetProvider {
 
         /**
          * Sets dynamic implemented facet in addition to basic ViewHolder functions.
-         * @param facetClass   Facet classes to query,  can be class of {@link ItemAlignmentFacet}.
+         *
+         * @param facetClass Facet classes to query,  can be class of {@link ItemAlignmentFacet}.
          * @param facetImpl  Facet implementation.
          */
         public final void setFacet(Class<?> facetClass, Object facetImpl) {
@@ -102,6 +125,20 @@ public abstract class Presenter implements FacetProvider {
                 mFacets = new ArrayMap<>();
             }
             mFacets.put(facetClass, facetImpl);
+        }
+
+        public final void clearFacet() {
+            try {
+                if (mFacets == null)
+                    throw new Exception("mFacets error: null");
+                mFacets.clear();
+            } catch (Exception e) {
+                LeanBackUtil.log("Presenter => ViewHolder => clearFacet => " + e.getMessage());
+            }
+        }
+
+        public Map<Class<?>, Object> getFacets() {
+            return mFacets;
         }
     }
 
@@ -186,6 +223,7 @@ public abstract class Presenter implements FacetProvider {
     /**
      * Utility method for removing all running animations on a view.
      */
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     protected static void cancelAnimationsRecursive(View view) {
         if (view != null && view.hasTransientState()) {
             view.animate().cancel();
