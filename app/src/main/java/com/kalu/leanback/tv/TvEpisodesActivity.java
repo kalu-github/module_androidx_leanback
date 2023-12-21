@@ -63,7 +63,7 @@ public class TvEpisodesActivity extends AppCompatActivity {
 
     private void showData1() {
         VerticalGridView verticalGridView = findViewById(R.id.list_content);
-        TestPresenter presenter = verticalGridView.findPresenter(TestPresenter.class);
+        TestPresenter presenter = verticalGridView.findPresenterFirst(TestPresenter.class);
         RecyclerView.ViewHolder holder = verticalGridView.findViewHolderAtFirst(TestPresenter.TestData.class);
         presenter.checkedPlayingPosition((ViewGroup) holder.itemView, 8);
     }
