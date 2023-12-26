@@ -17,11 +17,11 @@ allprojects {
         google()
     }
     // aar方法参数名被混淆问题
-    gradle.projectsEvaluated {
-        tasks.withType(JavaCompile) {
-            options.compilerArgs << "-g" << "-parameters"
-        }
-    }
+//    gradle.projectsEvaluated {
+//        tasks.withType(JavaCompile) {
+//            options.compilerArgs << "-g" << "-parameters"
+//        }
+//    }
 }
 
 task clean(type: Delete) {
