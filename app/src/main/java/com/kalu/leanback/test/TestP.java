@@ -4,7 +4,7 @@ import lib.kalu.leanback.presenter.ListTvGridPresenter;
 
 public class TestP extends ListTvGridPresenter<Object> {
     @Override
-    protected int initLayout(int i) {
+    protected int initLayout(int viewType) {
         return 0;
     }
 
@@ -12,13 +12,4 @@ public class TestP extends ListTvGridPresenter<Object> {
     protected int initSpan() {
         return 0;
     }
-//    @Override
-//    protected int initLayout(int i) {
-//        return 0;
-//    }
-//
-//    @Override
-//    protected int initSpan() {
-//        return 0;
-//    }
 }
