@@ -36,6 +36,11 @@ android {
             outputFileName = "lib_leanback_r1-2-0-alpha03_" + type + "_" + time + ".aar"
         }
     }
+
+    // aar方法参数名被混淆问题
+    tasks.withType(JavaCompile) {
+        options.compilerArgs += ["-g", "-parameters"]
+    }
 }
 
 dependencies {
