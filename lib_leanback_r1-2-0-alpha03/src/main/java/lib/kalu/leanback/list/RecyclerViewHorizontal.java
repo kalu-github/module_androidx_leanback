@@ -8,7 +8,6 @@ import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
 import lib.kalu.leanback.util.LeanBackUtil;
 
 public class RecyclerViewHorizontal extends BaseRecyclerView {

@@ -104,6 +104,10 @@ public class ArrayObjectAdapter extends ObjectAdapter {
         add(mItems.size(), item, false);
     }
 
+    public void add(@NonNull Object item, boolean notifyUI) {
+        add(mItems.size(), item, notifyUI);
+    }
+
     public void add(int index, @NonNull Object item, @NonNull boolean notifyUI) {
         mItems.add(index, item);
         if (!notifyUI)

@@ -11,12 +11,10 @@ import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
-import com.bumptech.glide.Glide;
-
 import lib.kalu.leanback.list.listener.OnBaseRecyclerViewChangeListener;
 import lib.kalu.leanback.util.LeanBackUtil;
 
-class BaseRecyclerView extends androidx.recyclerview.widget.RecyclerView {
+class BaseRecyclerView extends android.recyclerview.RecyclerView {
 
     /******************/
 
@@ -203,32 +201,6 @@ class BaseRecyclerView extends androidx.recyclerview.widget.RecyclerView {
     }
 
     /*****************/
-
-    @Override
-    public void onScrollStateChanged(int state) {
-        super.onScrollStateChanged(state);
-        LeanBackUtil.log("BaseRecyclerView => onScrollStateChanged => state = " + state);
-        switch (state) {
-            case SCROLL_STATE_IDLE: //当屏幕停止滚动，加载图片
-                try {
-                    Glide.with(getContext()).resumeRequests();
-                    LeanBackUtil.log("BaseRecyclerView => onScrollStateChanged => resumeRequests => succ");
-                } catch (Exception e) {
-                    LeanBackUtil.log("BaseRecyclerView => onScrollStateChanged => resumeRequests => fail");
-                }
-                break;
-            case SCROLL_STATE_DRAGGING: //当屏幕滚动且用户使用的触碰或手指还在屏幕上，停止加载图片
-            case SCROLL_STATE_SETTLING: //由于用户的操作，屏幕产生惯性滑动，停止加载图片
-            default:
-                try {
-                    Glide.with(getContext()).pauseRequests();
-                    LeanBackUtil.log("BaseRecyclerView => onScrollStateChanged => pauseRequests => succ");
-                } catch (Exception e) {
-                    LeanBackUtil.log("BaseRecyclerView => onScrollStateChanged => pauseRequests => fail");
-                }
-                break;
-        }
-    }
 
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {

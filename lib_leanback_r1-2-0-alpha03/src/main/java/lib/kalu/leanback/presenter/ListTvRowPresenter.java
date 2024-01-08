@@ -174,6 +174,7 @@ public abstract class ListTvRowPresenter<T extends TvPresenterRowBean> extends P
                             RecyclerView.ViewHolder holder = new RecyclerView.ViewHolder(view) {
                             };
                             onCreateHolder(context, holder, view, mData, viewType);
+                            onCreateHolder(context, holder, view, mData);
                             return holder;
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -227,6 +228,10 @@ public abstract class ListTvRowPresenter<T extends TvPresenterRowBean> extends P
     }
 
     protected void onCreateHolder(@NonNull Context context, @NonNull RecyclerView.ViewHolder holder, @NonNull View itemView, @NonNull List<T> list, @NonNull int viewType) {
+    }
+
+    @Deprecated
+    protected void onCreateHolder(@NonNull Context context, @NonNull RecyclerView.ViewHolder holder, @NonNull View itemView, @NonNull List<T> list) {
     }
 
     protected void onBindHolder(@NonNull View itemView, @NonNull T item, @NonNull int position, @NonNull int viewType) {

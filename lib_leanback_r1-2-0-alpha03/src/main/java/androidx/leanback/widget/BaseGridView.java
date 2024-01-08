@@ -49,7 +49,7 @@ import lib.kalu.leanback.util.LeanBackUtil;
  * The class is not intended to be subclassed other than {@link VerticalGridView} and
  * {@link HorizontalGridView}.
  */
-public abstract class BaseGridView extends RecyclerView {
+public abstract class BaseGridView extends android.recyclerview.RecyclerView {
 
     /**
      * Always keep focused item at a aligned position.  Developer can use
@@ -1215,32 +1215,6 @@ public abstract class BaseGridView extends RecyclerView {
     }
 
     /*********/
-
-    @Override
-    public void onScrollStateChanged(int state) {
-        super.onScrollStateChanged(state);
-        LeanBackUtil.log("BaseGridView => onScrollStateChanged => state = " + state);
-        switch (state) {
-            case SCROLL_STATE_IDLE: //当屏幕停止滚动，加载图片
-                try {
-                    Glide.with(getContext()).resumeRequests();
-                    LeanBackUtil.log("BaseGridView => onScrollStateChanged => resumeRequests => succ");
-                } catch (Exception e) {
-                    LeanBackUtil.log("BaseGridView => onScrollStateChanged => resumeRequests => fail");
-                }
-                break;
-            case SCROLL_STATE_DRAGGING: //当屏幕滚动且用户使用的触碰或手指还在屏幕上，停止加载图片
-            case SCROLL_STATE_SETTLING: //由于用户的操作，屏幕产生惯性滑动，停止加载图片
-            default:
-                try {
-                    Glide.with(getContext()).pauseRequests();
-                    LeanBackUtil.log("BaseGridView => onScrollStateChanged => pauseRequests => succ");
-                } catch (Exception e) {
-                    LeanBackUtil.log("BaseGridView => onScrollStateChanged => pauseRequests => fail");
-                }
-                break;
-        }
-    }
 
     public final <T extends Object> T getAdapterObject(int position) {
         try {
