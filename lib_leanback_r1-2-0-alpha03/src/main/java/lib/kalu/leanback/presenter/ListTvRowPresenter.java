@@ -18,6 +18,7 @@ import java.util.List;
 
 import lib.kalu.leanback.presenter.bean.TvPresenterRowBean;
 import lib.kalu.leanback.presenter.impl.ListTvPresenterImpl;
+import lib.kalu.leanback.presenter.root.RootLinearLayout;
 import lib.kalu.leanback.util.LeanBackUtil;
 
 public abstract class ListTvRowPresenter<T extends TvPresenterRowBean> extends Presenter implements ListTvPresenterImpl {
@@ -35,7 +36,10 @@ public abstract class ListTvRowPresenter<T extends TvPresenterRowBean> extends P
         try {
             Context context = parent.getContext();
             onLife(context);
-            ViewGroup inflate = (ViewGroup) LayoutInflater.from(context).inflate(R.layout.lb_list_tv_row, parent, false);
+            RootLinearLayout inflate = (RootLinearLayout) LayoutInflater.from(context).inflate(R.layout.lb_list_tv_row, parent, false);
+            // listener
+            resistOnVisibilityChangedListener1(inflate, R.id.module_leanback_llr_list);
+
             setPadding(context, inflate);
             setBackgroundColor(context, inflate);
             setContentBackgroundColor(context, inflate, R.id.module_leanback_llr_list);

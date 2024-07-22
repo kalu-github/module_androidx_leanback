@@ -20,6 +20,7 @@ import java.util.List;
 
 import lib.kalu.leanback.presenter.bean.TvPresenterRowBean;
 import lib.kalu.leanback.presenter.impl.ListTvPresenterImpl;
+import lib.kalu.leanback.presenter.root.RootLinearLayout;
 import lib.kalu.leanback.util.LeanBackUtil;
 
 public abstract class ListTvGridPresenter<T extends TvPresenterRowBean> extends Presenter implements ListTvPresenterImpl {
@@ -37,7 +38,9 @@ public abstract class ListTvGridPresenter<T extends TvPresenterRowBean> extends 
         try {
             Context context = parent.getContext();
             onLife(context);
-            ViewGroup inflate = (ViewGroup) LayoutInflater.from(context).inflate(R.layout.lb_list_tv_grid, parent, false);
+            RootLinearLayout inflate = (RootLinearLayout) LayoutInflater.from(context).inflate(R.layout.lb_list_tv_grid, parent, false);
+            // listener
+            resistOnVisibilityChangedListener1(inflate, R.id.module_leanback_lgp_list);
             setPadding(context, inflate);
             setBackgroundColor(context, inflate);
             setContentBackgroundColor(context, inflate, R.id.module_leanback_lgp_list);
@@ -216,7 +219,7 @@ public abstract class ListTvGridPresenter<T extends TvPresenterRowBean> extends 
                         View view = LayoutInflater.from(context).inflate(initLayout(viewType), parent, false);
                         RecyclerView.ViewHolder itemHolder = new RecyclerView.ViewHolder(view) {
                         };
-                        onCreateHolder(context, itemHolder, view, mData, viewType);
+                        onItemCreateHolder(context, itemHolder, view, mData, viewType);
                         return itemHolder;
                     } catch (Exception e) {
                         LeanBackUtil.log("ListTvGridPresenter => setAdapter => onCreateViewHolder => " + e.getMessage(), e);
@@ -229,7 +232,7 @@ public abstract class ListTvGridPresenter<T extends TvPresenterRowBean> extends 
                     try {
                         T t = mData.get(position);
                         int viewType = holder.getItemViewType();
-                        onBindHolder(holder.itemView, t, position, viewType);
+                        onItemBindHolder(holder.itemView, t, position, viewType);
                     } catch (Exception e) {
                         LeanBackUtil.log("ListTvGridPresenter => setAdapter => onBindViewHolder => " + e.getMessage(), e);
                     }
@@ -357,14 +360,14 @@ public abstract class ListTvGridPresenter<T extends TvPresenterRowBean> extends 
         }
     }
 
-    protected void onCreateHolder(@NonNull Context context, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull View itemView, @NonNull List<T> list, @NonNull int viewType) {
-    }
-
-    protected void onBindHolder(@NonNull View view, @NonNull T item, @NonNull int position, @NonNull int viewType) {
-    }
-
     @LayoutRes
     protected abstract int initLayout(int viewType);
 
     protected abstract int initSpan();
+
+    protected void onItemCreateHolder(@NonNull Context context, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull View itemView, @NonNull List<T> list, @NonNull int viewType) {
+    }
+
+    protected void onItemBindHolder(@NonNull View view, @NonNull T item, @NonNull int position, @NonNull int viewType) {
+    }
 }

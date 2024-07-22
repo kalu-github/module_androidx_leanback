@@ -19,6 +19,8 @@ import java.io.File;
 import java.util.List;
 
 import lib.kalu.leanback.presenter.bean.TvPresenterRowBean;
+import lib.kalu.leanback.presenter.root.RootLinearLayout;
+import lib.kalu.leanback.presenter.root.RootRelativeLayout;
 import lib.kalu.leanback.util.LeanBackUtil;
 
 public interface ListTvPresenterImpl<T extends TvPresenterRowBean> {
@@ -254,4 +256,132 @@ public interface ListTvPresenterImpl<T extends TvPresenterRowBean> {
 //            LeanBackUtil.log("ListTvPresenterImpl => setItemMargin => " + e.getMessage());
 //        }
 //    }
+
+    default void onItemViewHolderShow(View itemView, int position) {
+    }
+
+    default void onItemViewHolderHide(View itemView, int position) {
+    }
+
+    default void onRootViewHolderShow(View itemView) {
+    }
+
+    default void onRootViewHolderHide(View itemView) {
+    }
+
+    default void resistOnVisibilityChangedListener1(@NonNull RootLinearLayout rootView, @IdRes int recyId) {
+        try {
+            rootView.setOnVisibilityChangedListener(new RootLinearLayout.OnVisibilityChangedListener() {
+                @Override
+                public void onShow() {
+
+                    onRootViewHolderShow(rootView);
+
+                    try {
+                        RecyclerView recyclerView = rootView.findViewById(recyId);
+                        int itemCount = recyclerView.getAdapter().getItemCount();
+                        for (int i = 0; i < itemCount; i++) {
+                            RecyclerView.ViewHolder viewHolder = recyclerView.findViewHolderForAdapterPosition(i);
+                            if (null == viewHolder)
+                                continue;
+                            if (null == viewHolder.itemView)
+                                continue;
+                            onItemViewHolderShow(viewHolder.itemView, i);
+                        }
+                    } catch (Exception e) {
+                        LeanBackUtil.log("ListTvPresenterImpl => resistOnVisibilityChangedListener1 => Exception1 " + e.getMessage());
+                    }
+                }
+
+                @Override
+                public void onHide() {
+
+                    onRootViewHolderHide(rootView);
+
+                    try {
+                        RecyclerView recyclerView = rootView.findViewById(recyId);
+                        int itemCount = recyclerView.getAdapter().getItemCount();
+                        for (int i = 0; i < itemCount; i++) {
+                            RecyclerView.ViewHolder viewHolder = recyclerView.findViewHolderForAdapterPosition(i);
+                            if (null == viewHolder)
+                                continue;
+                            if (null == viewHolder.itemView)
+                                continue;
+                            onItemViewHolderHide(viewHolder.itemView, i);
+                        }
+                    } catch (Exception e) {
+                        LeanBackUtil.log("ListTvPresenterImpl => resistOnVisibilityChangedListener1 => Exception2 " + e.getMessage());
+                    }
+                }
+            });
+        } catch (Exception e) {
+            LeanBackUtil.log("ListTvPresenterImpl => resistOnVisibilityChangedListener1 => Exception3 " + e.getMessage());
+        }
+    }
+
+    default void resistOnVisibilityChangedListener2(@NonNull RootLinearLayout rootView) {
+        try {
+            rootView.setOnVisibilityChangedListener(new RootLinearLayout.OnVisibilityChangedListener() {
+                @Override
+                public void onShow() {
+                    //
+                    onRootViewHolderShow(rootView);
+                }
+
+                @Override
+                public void onHide() {
+                    //
+                    onRootViewHolderHide(rootView);
+                }
+            });
+        } catch (Exception e) {
+            LeanBackUtil.log("ListTvPresenterImpl => resistOnVisibilityChangedListener2 => Exception " + e.getMessage());
+        }
+    }
+
+    default void resistOnVisibilityChangedListener3(@NonNull RootRelativeLayout rootView, @IdRes int recyId) {
+        try {
+            rootView.setOnVisibilityChangedListener(new RootRelativeLayout.OnVisibilityChangedListener() {
+                @Override
+                public void onShow() {
+                    onRootViewHolderShow(rootView);
+                    try {
+                        RecyclerView recyclerView = rootView.findViewById(recyId);
+                        int itemCount = recyclerView.getAdapter().getItemCount();
+                        for (int i = 0; i < itemCount; i++) {
+                            RecyclerView.ViewHolder viewHolder = recyclerView.findViewHolderForAdapterPosition(i);
+                            if (null == viewHolder)
+                                continue;
+                            if (null == viewHolder.itemView)
+                                continue;
+                            onItemViewHolderShow(viewHolder.itemView, i);
+                        }
+                    } catch (Exception e) {
+                        LeanBackUtil.log("ListTvPresenterImpl => resistOnVisibilityChangedListener3 => Exception1 " + e.getMessage());
+                    }
+                }
+
+                @Override
+                public void onHide() {
+                    onRootViewHolderHide(rootView);
+                    try {
+                        RecyclerView recyclerView = rootView.findViewById(recyId);
+                        int itemCount = recyclerView.getAdapter().getItemCount();
+                        for (int i = 0; i < itemCount; i++) {
+                            RecyclerView.ViewHolder viewHolder = recyclerView.findViewHolderForAdapterPosition(i);
+                            if (null == viewHolder)
+                                continue;
+                            if (null == viewHolder.itemView)
+                                continue;
+                            onItemViewHolderHide(viewHolder.itemView, i);
+                        }
+                    } catch (Exception e) {
+                        LeanBackUtil.log("ListTvPresenterImpl => resistOnVisibilityChangedListener3 => Exception2 " + e.getMessage());
+                    }
+                }
+            });
+        } catch (Exception e) {
+            LeanBackUtil.log("ListTvPresenterImpl => resistOnVisibilityChangedListener3 => Exception3 " + e.getMessage());
+        }
+    }
 }

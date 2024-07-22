@@ -24,6 +24,7 @@ import lib.kalu.leanback.list.RecyclerViewVertical;
 import lib.kalu.leanback.list.layoutmanager.BaseLinearLayoutManager;
 import lib.kalu.leanback.presenter.bean.TvRadioGroupItemBean;
 import lib.kalu.leanback.presenter.impl.ListTvPresenterImpl;
+import lib.kalu.leanback.presenter.root.RootRelativeLayout;
 import lib.kalu.leanback.radio.RadioGroupHorizontal;
 import lib.kalu.leanback.util.LeanBackUtil;
 
@@ -39,7 +40,10 @@ public abstract class ListTvRadioGroupListPresenter<T extends TvRadioGroupItemBe
     public ViewHolder onCreateViewHolder(ViewGroup parent) {
         try {
             Context context = parent.getContext();
-            ViewGroup inflate = (ViewGroup) LayoutInflater.from(context).inflate(R.layout.lb_list_tv_radio_group_list, parent, false);
+            RootRelativeLayout inflate = (RootRelativeLayout) LayoutInflater.from(context).inflate(R.layout.lb_list_tv_radio_group_list, parent, false);
+            // listenr
+            resistOnVisibilityChangedListener3(inflate, R.id.module_leanback_lrgl_list);
+
             setPadding(context, inflate);
             setBackgroundColor(context, inflate);
             setContentBackgroundColor(context, inflate, R.id.module_leanback_lrgl_list);

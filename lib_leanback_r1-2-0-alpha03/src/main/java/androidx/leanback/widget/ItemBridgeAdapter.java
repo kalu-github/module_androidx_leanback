@@ -243,22 +243,6 @@ public class ItemBridgeAdapter extends RecyclerView.Adapter implements FacetProv
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public final void onBindViewHolder(RecyclerView.ViewHolder holder, int position,
-                                       List payloads) {
-        if (DEBUG) Log.v(TAG, "onBindViewHolder position " + position);
-        ViewHolder viewHolder = (ViewHolder) holder;
-        viewHolder.mItem = mAdapter.get(position);
-
-        viewHolder.mPresenter.onBindViewHolder(viewHolder.mHolder, viewHolder.mItem, payloads);
-
-        onBind(viewHolder);
-        if (mAdapterListener != null) {
-            mAdapterListener.onBind(viewHolder, payloads);
-        }
-    }
-
-    @Override
     public final void onViewRecycled(RecyclerView.ViewHolder holder) {
         ViewHolder viewHolder = (ViewHolder) holder;
         viewHolder.mPresenter.onUnbindViewHolder(viewHolder.mHolder);

@@ -20,6 +20,7 @@ import java.util.List;
 
 import lib.kalu.leanback.presenter.bean.TvEpisodesGridItemBean;
 import lib.kalu.leanback.presenter.impl.ListTvPresenterImpl;
+import lib.kalu.leanback.presenter.root.RootLinearLayout;
 import lib.kalu.leanback.util.LeanBackUtil;
 
 public abstract class ListTvTableScrollPresenter<T extends TvEpisodesGridItemBean> extends Presenter implements ListTvPresenterImpl {
@@ -31,7 +32,10 @@ public abstract class ListTvTableScrollPresenter<T extends TvEpisodesGridItemBea
     public ViewHolder onCreateViewHolder(ViewGroup parent) {
         try {
             Context context = parent.getContext();
-            ViewGroup inflate = (ViewGroup) LayoutInflater.from(context).inflate(R.layout.lb_list_tv_table_scroll, parent, false);
+            RootLinearLayout inflate = (RootLinearLayout) LayoutInflater.from(context).inflate(R.layout.lb_list_tv_table_scroll, parent, false);
+            // listener
+            resistOnVisibilityChangedListener2(inflate);
+
             setPadding(context, inflate);
             setBackgroundColor(context, inflate);
             setContentBackgroundColor(context, inflate, R.id.module_leanback_lghp_content);

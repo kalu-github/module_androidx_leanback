@@ -24,6 +24,7 @@ import java.util.Map;
 
 import lib.kalu.leanback.presenter.bean.TvEpisodesPlusItemBean;
 import lib.kalu.leanback.presenter.impl.ListTvPresenterImpl;
+import lib.kalu.leanback.presenter.root.RootLinearLayout;
 import lib.kalu.leanback.util.LeanBackUtil;
 
 public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusItemBean> extends Presenter implements ListTvPresenterImpl {
@@ -77,7 +78,9 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
     public ViewHolder onCreateViewHolder(ViewGroup parent) {
         try {
             Context context = parent.getContext();
-            ViewGroup viewGroup = (ViewGroup) LayoutInflater.from(context).inflate(R.layout.lb_list_tv_episodes_double_row, parent, false);
+            RootLinearLayout viewGroup = (RootLinearLayout) LayoutInflater.from(context).inflate(R.layout.lb_list_tv_episodes_double_row, parent, false);
+            // listener
+            resistOnVisibilityChangedListener2(viewGroup);
             viewGroup.setOnFocusChangeListener(new View.OnFocusChangeListener() {
                 @Override
                 public void onFocusChange(View view, boolean hasFocus) {

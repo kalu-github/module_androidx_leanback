@@ -20,6 +20,7 @@ import java.util.List;
 
 import lib.kalu.leanback.presenter.bean.TvPresenterRowBean;
 import lib.kalu.leanback.presenter.impl.ListTvPresenterImpl;
+import lib.kalu.leanback.presenter.root.RootLinearLayout;
 import lib.kalu.leanback.util.LeanBackUtil;
 
 public abstract class ListTvRowHeadPresenter<T extends TvPresenterRowBean> extends Presenter implements ListTvPresenterImpl {
@@ -39,7 +40,10 @@ public abstract class ListTvRowHeadPresenter<T extends TvPresenterRowBean> exten
         try {
             Context context = parent.getContext();
             onLife(context);
-            ViewGroup inflate = (ViewGroup) LayoutInflater.from(context).inflate(R.layout.lb_list_tv_row_head, parent, false);
+            RootLinearLayout inflate = (RootLinearLayout) LayoutInflater.from(context).inflate(R.layout.lb_list_tv_row_head, parent, false);
+            // listener
+            resistOnVisibilityChangedListener1(inflate, R.id.module_leanback_llr_head_list);
+
             setPadding(context, inflate);
             setBackgroundColor(context, inflate);
             setContentBackgroundColor(context, inflate, R.id.module_leanback_llr_head_list);
@@ -79,7 +83,7 @@ public abstract class ListTvRowHeadPresenter<T extends TvPresenterRowBean> exten
         try {
             List<T> list = getValue(viewHolder);
             T t = list.get(0);
-            onBindHeadHolder(viewHolder.view.getContext(), viewHolder.view, 0, t);
+            onCheckedItemHolder(viewHolder.view.getContext(), viewHolder.view,  t, 0);
             checkedPosition = 0;
         } catch (Exception e) {
         }
@@ -225,7 +229,7 @@ public abstract class ListTvRowHeadPresenter<T extends TvPresenterRowBean> exten
                                             if (position > 0)
                                                 throw new Exception();
                                             T t = mData.get(position);
-                                            onUnCheckedItemHolder(view.getContext(), headLayout, view, t, position, keyCode);
+                                            onUnCheckedItemHolder(view.getContext(), headLayout, t, position);
                                         } catch (Exception e) {
                                         }
                                     }
@@ -239,7 +243,7 @@ public abstract class ListTvRowHeadPresenter<T extends TvPresenterRowBean> exten
                                             if (position + 1 < size)
                                                 throw new Exception();
                                             T t = mData.get(position);
-                                            onUnCheckedItemHolder(view.getContext(), headLayout, view, t, position, keyCode);
+                                            onUnCheckedItemHolder(view.getContext(), headLayout, t, position);
                                         } catch (Exception e) {
                                         }
                                     }
@@ -250,7 +254,7 @@ public abstract class ListTvRowHeadPresenter<T extends TvPresenterRowBean> exten
                                             if (position < 0)
                                                 throw new Exception();
                                             T t = mData.get(position);
-                                            onUnCheckedItemHolder(view.getContext(), headLayout, view, t, position, keyCode);
+                                            onUnCheckedItemHolder(view.getContext(), headLayout, t, position);
                                         } catch (Exception e) {
                                         }
                                     }
@@ -261,7 +265,7 @@ public abstract class ListTvRowHeadPresenter<T extends TvPresenterRowBean> exten
                                             if (position < 0)
                                                 throw new Exception();
                                             T t = mData.get(position);
-                                            onUnCheckedItemHolder(view.getContext(), headLayout, view, t, position, keyCode);
+                                            onUnCheckedItemHolder(view.getContext(), headLayout, t, position);
                                         } catch (Exception e) {
                                         }
                                     }
@@ -272,7 +276,7 @@ public abstract class ListTvRowHeadPresenter<T extends TvPresenterRowBean> exten
                                             if (position < 0)
                                                 throw new Exception();
                                             T t = mData.get(position);
-                                            onBindHeadHolder(view.getContext(), headLayout, position, t);
+                                            onCheckedItemHolder(view.getContext(), headLayout, t, position);
                                             checkedPosition = position;
                                         } catch (Exception e) {
                                         }
@@ -284,7 +288,7 @@ public abstract class ListTvRowHeadPresenter<T extends TvPresenterRowBean> exten
                                             if (position < 0)
                                                 throw new Exception();
                                             T t = mData.get(position);
-                                            onBindHeadHolder(view.getContext(), headLayout, position, t);
+                                            onCheckedItemHolder(view.getContext(), headLayout, t, position);
                                             checkedPosition = position;
                                         } catch (Exception e) {
                                         }
@@ -299,7 +303,7 @@ public abstract class ListTvRowHeadPresenter<T extends TvPresenterRowBean> exten
                                             if (checkedPosition == position)
                                                 throw new Exception();
                                             T t = mData.get(position);
-                                            onBindHeadHolder(view.getContext(), headLayout, position, t);
+                                            onCheckedItemHolder(view.getContext(), headLayout, t, position);
                                             checkedPosition = position;
                                         } catch (Exception e) {
                                         }
@@ -317,7 +321,7 @@ public abstract class ListTvRowHeadPresenter<T extends TvPresenterRowBean> exten
                                             if (position + 1 > size)
                                                 throw new Exception();
                                             T t = mData.get(position);
-                                            onBindHeadHolder(view.getContext(), headLayout, position, t);
+                                            onCheckedItemHolder(view.getContext(), headLayout, t, position);
                                             checkedPosition = position;
                                         } catch (Exception e) {
                                         }
@@ -374,16 +378,16 @@ public abstract class ListTvRowHeadPresenter<T extends TvPresenterRowBean> exten
     protected void onCreateHeadHolder(@NonNull Context context, @NonNull View headView, @NonNull List<T> data) {
     }
 
-    protected void onBindHeadHolder(@NonNull Context context, @NonNull View headView, int position, T data) {
-    }
-
     protected void onCreateItemHolder(@NonNull Context context, @NonNull View headView, @NonNull View itemView, @NonNull List<T> data, @NonNull RecyclerView.ViewHolder holder) {
     }
 
     protected void onBindItemHolder(@NonNull Context context, @NonNull View headView, @NonNull View itemView, @NonNull T item, @NonNull int position) {
     }
 
-    protected void onUnCheckedItemHolder(@NonNull Context context, @NonNull View headView, @NonNull View itemView, @NonNull T item, @NonNull int position, @NonNull int keyCode) {
+    protected void onUnCheckedItemHolder(@NonNull Context context, @NonNull View headView, @NonNull T item, @NonNull int position) {
+    }
+
+    protected void onCheckedItemHolder(@NonNull Context context, @NonNull View headView,  @NonNull T item, @NonNull int position) {
     }
 
     @LayoutRes

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<lib.kalu.leanback.presenter.root.RootLinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:clipChildren="false"
@@ -26,4 +26,4 @@
         android:clipToPadding="false"
         android:focusable="false" />
 
-</LinearLayout>
+</lib.kalu.leanback.presenter.root.RootLinearLayout>

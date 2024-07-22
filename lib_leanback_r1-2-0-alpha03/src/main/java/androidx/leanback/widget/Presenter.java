@@ -81,7 +81,7 @@ public abstract class Presenter implements FacetProvider {
      * Utility method for removing all running animations on a view.
      */
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
-    protected static void cancelAnimationsRecursive(View view) {
+    private static void cancelAnimationsRecursive(View view) {
         if (view != null && view.hasTransientState()) {
             view.animate().cancel();
             if (view instanceof ViewGroup) {
@@ -103,23 +103,6 @@ public abstract class Presenter implements FacetProvider {
      * Binds a {@link View} to an item.
      */
     public abstract void onBindViewHolder(@NonNull ViewHolder viewHolder, @Nullable Object item);
-
-    /**
-     * Binds a {@link View} to an item with a list of payloads.
-     *
-     * @param viewHolder The ViewHolder which should be updated to represent the contents of the
-     *                   item at the given position in the data set.
-     * @param item       The item which should be bound to view holder.
-     * @param payloads   A non-null list of merged payloads. Can be empty list if requires full
-     *                   update.
-     */
-    public void onBindViewHolder(
-            @NonNull ViewHolder viewHolder,
-            @NonNull Object item,
-            @NonNull List<Object> payloads
-    ) {
-        onBindViewHolder(viewHolder, item);
-    }
 
     /**
      * Unbinds a {@link View} from an item. Any expensive references may be
@@ -155,7 +138,9 @@ public abstract class Presenter implements FacetProvider {
      */
     public void onViewDetachedFromWindow(@NonNull ViewHolder holder) {
         // If there are view property animations running then RecyclerView won't recycle.
-        cancelAnimationsRecursive(holder.view);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            cancelAnimationsRecursive(holder.view);
+        }
     }
 
     /**
