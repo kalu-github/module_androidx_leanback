@@ -48,10 +48,9 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
 
     /***************************/
 
-    protected boolean isShowingDefaultData() {
-        return false;
-    }
-
+//    protected boolean isHideDefaultData() {
+//        return true;
+//    }
     protected int initRangePadding(@NonNull Context context) {
         return 0;
     }
@@ -132,13 +131,16 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
             // 标题
             updateTitle(viewHolder.view, R.id.module_leanback_lep_title);
             // 默认
-            if (isShowingDefaultData()) {
-                updateDefaultRangeData(viewHolder.view);
-                updateDefaultEpisodeData(viewHolder.view);
-            } else {
-                updateDefaultRangeUI(viewHolder.view);
-                updateDefaultEpisodeUI(viewHolder.view);
-            }
+            updateDefaultRangeData(viewHolder.view);
+            updateDefaultEpisodeData(viewHolder.view);
+            // ??
+            setPlayingRange(viewHolder.view, 0);
+            setPlayingEpisode(viewHolder.view, 0, -1, false);
+//            // 默认数据隐藏
+//            if (isHideDefaultData()) {
+//                updateDefaultRangeUI(viewHolder.view);
+//                updateDefaultEpisodeUI(viewHolder.view);
+//            }
             // 回调
             onBindViewHolderFinish(viewHolder.view.getContext(), viewHolder.view, item);
         } catch (Exception e) {
@@ -250,48 +252,48 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
         }
     }
 
-    private void updateDefaultRangeUI(View view) {
-        try {
-            if (null == view)
-                throw new Exception("view error: null");
-            ViewGroup rangeGroup = view.findViewById(R.id.module_leanback_lep_ranges);
-            int rangeChildCount = rangeGroup.getChildCount();
-            if (rangeChildCount <= 0)
-                throw new Exception("rangeChildCount error: " + rangeChildCount);
-            int size = mMap.size();
-            if (size >= rangeChildCount)
-                throw new Exception("size warning: " + size + ", rangeChildCount = " + rangeChildCount);
-            for (int i = 0; i < rangeChildCount; i++) {
-                View child = rangeGroup.getChildAt(i);
-                child.setVisibility(i >= size ? View.INVISIBLE : View.VISIBLE);
-            }
-        } catch (Exception e) {
-            LeanBackUtil.log("ListTvEpisodesDoubleRowPresenter => updateDefaultRange => " + e.getMessage());
-        }
-    }
+//    private void updateDefaultRangeUI(View view) {
+//        try {
+//            if (null == view)
+//                throw new Exception("view error: null");
+//            ViewGroup rangeGroup = view.findViewById(R.id.module_leanback_lep_ranges);
+//            int rangeChildCount = rangeGroup.getChildCount();
+//            if (rangeChildCount <= 0)
+//                throw new Exception("rangeChildCount error: " + rangeChildCount);
+//            int size = mMap.size();
+//            if (size >= rangeChildCount)
+//                throw new Exception("size warning: " + size + ", rangeChildCount = " + rangeChildCount);
+//            for (int i = 0; i < rangeChildCount; i++) {
+//                View child = rangeGroup.getChildAt(i);
+//                child.setVisibility(i >= size ? View.INVISIBLE : View.VISIBLE);
+//            }
+//        } catch (Exception e) {
+//            LeanBackUtil.log("ListTvEpisodesDoubleRowPresenter => updateDefaultRange => " + e.getMessage());
+//        }
+//    }
 
-    private void updateDefaultEpisodeUI(View view) {
-        try {
-            if (null == view)
-                throw new Exception("view error: null");
-            ViewGroup episodeGroup = view.findViewById(R.id.module_leanback_lep_episodes);
-            int episodeChildCount = episodeGroup.getChildCount();
-            if (episodeChildCount <= 0)
-                throw new Exception("episodeChildCount error: " + episodeChildCount);
-            List<T> episodeData = getDataIndexOfEpisode(0);
-            if (null == episodeData)
-                throw new Exception("episodeData error: null");
-            int episodeSize = episodeData.size();
-            if (episodeSize > episodeChildCount)
-                throw new Exception("episodeSize warning: " + episodeSize + ", episodeChildCount = " + episodeChildCount);
-            for (int i = 0; i < episodeChildCount; i++) {
-                View child = episodeGroup.getChildAt(i);
-                child.setVisibility(i >= episodeSize ? View.INVISIBLE : View.VISIBLE);
-            }
-        } catch (Exception e) {
-            LeanBackUtil.log("ListTvEpisodesDoubleRowPresenter => updateDefaultEpisodeUI => " + e.getMessage());
-        }
-    }
+//    private void updateDefaultEpisodeUI(View view) {
+//        try {
+//            if (null == view)
+//                throw new Exception("view error: null");
+//            ViewGroup episodeGroup = view.findViewById(R.id.module_leanback_lep_episodes);
+//            int episodeChildCount = episodeGroup.getChildCount();
+//            if (episodeChildCount <= 0)
+//                throw new Exception("episodeChildCount error: " + episodeChildCount);
+//            List<T> episodeData = getDataIndexOfEpisode(0);
+//            if (null == episodeData)
+//                throw new Exception("episodeData error: null");
+//            int episodeSize = episodeData.size();
+//            if (episodeSize > episodeChildCount)
+//                throw new Exception("episodeSize warning: " + episodeSize + ", episodeChildCount = " + episodeChildCount);
+//            for (int i = 0; i < episodeChildCount; i++) {
+//                View child = episodeGroup.getChildAt(i);
+//                child.setVisibility(i >= episodeSize ? View.INVISIBLE : View.VISIBLE);
+//            }
+//        } catch (Exception e) {
+//            LeanBackUtil.log("ListTvEpisodesDoubleRowPresenter => updateDefaultEpisodeUI => " + e.getMessage());
+//        }
+//    }
 
     private int getRangeLength() {
         try {
@@ -1569,7 +1571,7 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
             updateRange(viewGroup, startRangeIndex, checkedRangeIndex, -1);
             updateEpisode(viewGroup, checkedRangeIndex, checkedEpisodeIndex, true, true);
             setPlayingRange(viewGroup, checkedRangeIndex);
-            setPlayingEpisode(viewGroup, checkedEpisodeIndex, playingIndexOfChild, false);
+            setPlayingEpisode(viewGroup, checkedEpisodeIndex, playingIndexOfChild, true);
         } catch (Exception e) {
             LeanBackUtil.log("ListTvEpisodesDoubleRowPresenter => checkedPlayingPosition => " + e.getMessage());
         }
