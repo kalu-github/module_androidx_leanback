@@ -12,9 +12,10 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import lib.kalu.leanback.list.listener.OnBaseRecyclerViewChangeListener;
+import lib.kalu.leanback.recycler.RecyclerView;
 import lib.kalu.leanback.util.LeanBackUtil;
 
-class BaseRecyclerView extends android.recyclerview.RecyclerView {
+class BaseRecyclerView extends RecyclerView {
 
     /******************/
 

@@ -35,8 +35,6 @@ import androidx.leanback.R;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SimpleItemAnimator;
 
-import com.bumptech.glide.Glide;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,7 +47,7 @@ import lib.kalu.leanback.util.LeanBackUtil;
  * The class is not intended to be subclassed other than {@link VerticalGridView} and
  * {@link HorizontalGridView}.
  */
-public abstract class BaseGridView extends android.recyclerview.RecyclerView {
+public abstract class BaseGridView extends lib.kalu.leanback.recycler.RecyclerView {
 
     /**
      * Always keep focused item at a aligned position.  Developer can use
