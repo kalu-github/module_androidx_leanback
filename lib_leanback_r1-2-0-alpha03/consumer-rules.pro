@@ -11,3 +11,47 @@
 # 接口
 -keep public interface lib.kalu.leanback.presenter.impl.ListTvPresenterImpl{ *; }
 -keep class * implements lib.kalu.leanback.presenter.impl.ListTvPresenterImpl{ *; }
+
+# tab
+-keep class lib.kalu.leanback.tab.TabLayout  {
+      public <methods>;
+      public <fields>;
+}
+-keep class lib.kalu.leanback.tab.model.**  {
+      public <methods>;
+      public <fields>;
+}
+-keep class lib.kalu.leanback.tab.listener.OnTabChangeListener  {
+      public <methods>;
+      public <fields>;
+}
+
+# tags
+-keep class lib.kalu.leanback.tags.TagsLayout  {
+      public <methods>;
+      public <fields>;
+}
+-keep class lib.kalu.leanback.tags.model.**  {
+      public <methods>;
+      public <fields>;
+}
+-keep class lib.kalu.leanback.tags.listener.OnTagsChangeListener  {
+      public <methods>;
+      public <fields>;
+}
+
+# util
+-keep class lib.kalu.leanback.util.LeanBackUtil  {
+      public <methods>;
+      public <fields>;
+}
+
+# web
+-keep class lib.kalu.leanback.web.WebView  {
+      public <methods>;
+      public <fields>;
+}
+-keep class lib.kalu.leanback.web.WebView2  {
+      public <methods>;
+      public <fields>;
+}
