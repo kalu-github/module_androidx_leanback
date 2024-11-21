@@ -48,7 +48,7 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
 
     /***************************/
 
-    protected boolean initRangeShowingDefaultData() {
+    protected boolean isShowingDefaultData() {
         return false;
     }
 
@@ -58,10 +58,6 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
 
     protected int initRangeMarginTop(@NonNull Context context) {
         return 0;
-    }
-
-    protected boolean initEpisodeShowingDefaultData() {
-        return false;
     }
 
     protected int initEpisodePadding(@NonNull Context context) {
@@ -127,20 +123,27 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
 
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, Object item) {
-        // 数据
-        formatData(item);
-        // 标题
-        updateTitle(viewHolder.view, R.id.module_leanback_lep_title);
-        // 默认
-        if (initRangeShowingDefaultData()) {
-            updateDefaultRangeData(viewHolder.view);
-        } else {
-            updateDefaultRangeUI(viewHolder.view);
-        }
-        if (initEpisodeShowingDefaultData()) {
-            updateDefaultEpisodeData(viewHolder.view);
-        } else {
-            updateDefaultEpisodeUI(viewHolder.view);
+
+        try {
+            // 回调
+            onBindViewHolderStart(viewHolder.view.getContext(), viewHolder.view, item);
+            // 数据
+            formatData(item);
+            // 标题
+            updateTitle(viewHolder.view, R.id.module_leanback_lep_title);
+            // 默认
+            if (isShowingDefaultData()) {
+                updateDefaultRangeData(viewHolder.view);
+                updateDefaultEpisodeData(viewHolder.view);
+            } else {
+                updateDefaultRangeUI(viewHolder.view);
+                updateDefaultEpisodeUI(viewHolder.view);
+            }
+            // 回调
+            onBindViewHolderFinish(viewHolder.view.getContext(), viewHolder.view, item);
+        } catch (Exception e) {
+            // 回调
+            onBindViewHolderError(viewHolder.view.getContext(), viewHolder.view, item);
         }
     }
 
@@ -148,17 +151,23 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
     public void onUnbindViewHolder(ViewHolder viewHolder) {
     }
 
-    public void onBindHolderEpisode(@NonNull Context context, @NonNull View v, @NonNull T item,
-                                    @NonNull int position) {
+    public void onBindHolderEpisode(@NonNull Context context, @NonNull View v, @NonNull T item, @NonNull int position) {
     }
 
-    public void onBindHolderRange(@NonNull Context context, @NonNull View v, @NonNull T item,
-                                  @NonNull int position) {
+    public void onBindHolderRange(@NonNull Context context, @NonNull View v, @NonNull T item, @NonNull int position) {
 
     }
 
-    public void onClickEpisode(@NonNull Context context, @NonNull View v, @NonNull T item,
-                               @NonNull int checkedIndex, @NonNull int playingIndex, boolean isFromUser) {
+    public void onClickEpisode(@NonNull Context context, @NonNull View v, @NonNull T item, @NonNull int checkedIndex, @NonNull int playingIndex, boolean isFromUser) {
+    }
+
+    public void onBindViewHolderStart(@NonNull Context context, @NonNull View v, @NonNull Object item) {
+    }
+
+    public void onBindViewHolderError(@NonNull Context context, @NonNull View v, @NonNull Object item) {
+    }
+
+    public void onBindViewHolderFinish(@NonNull Context context, @NonNull View v, @NonNull Object item) {
     }
 
     /************/
@@ -658,7 +667,8 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
 
     private void setPlayingEpisode(@NonNull View viewGroup,
                                    @NonNull int indexOfChild,
-                                   @NonNull int playingIndexOfChild) {
+                                   @NonNull int playingIndexOfChild,
+                                   @NonNull boolean callback) {
         try {
             if (null == viewGroup)
                 throw new Exception("viewGroup error: null");
@@ -685,6 +695,8 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
             t.setChecked(true);
             child.setTag(R.id.lb_presenter_episode_playing, t);
             onBindHolderEpisode(child.getContext(), child, t, indexOfChild);
+            if (!callback)
+                throw new Exception("warning: callback false");
             onClickEpisode(child.getContext(), child, t, t.getEpisodeIndex(), playingIndexOfChild, false);
         } catch (Exception e) {
             LeanBackUtil.log("ListTvEpisodesDoubleRowPresenter => setPlayingEpisode => " + e.getMessage(), e);
@@ -1557,7 +1569,7 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
             updateRange(viewGroup, startRangeIndex, checkedRangeIndex, -1);
             updateEpisode(viewGroup, checkedRangeIndex, checkedEpisodeIndex, true, true);
             setPlayingRange(viewGroup, checkedRangeIndex);
-            setPlayingEpisode(viewGroup, checkedEpisodeIndex, playingIndexOfChild);
+            setPlayingEpisode(viewGroup, checkedEpisodeIndex, playingIndexOfChild, false);
         } catch (Exception e) {
             LeanBackUtil.log("ListTvEpisodesDoubleRowPresenter => checkedPlayingPosition => " + e.getMessage());
         }

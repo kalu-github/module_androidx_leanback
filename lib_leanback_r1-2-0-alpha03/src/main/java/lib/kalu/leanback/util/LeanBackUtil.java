@@ -7,7 +7,7 @@ import androidx.annotation.NonNull;
 public final class LeanBackUtil {
 
     private static boolean mEnable = false;
-    private static String mTAG = "LEAN_BACK_LOG";
+    private static String mTAG = "LEAN_BACK";
 
     public static boolean isLogger() {
         return mEnable;
