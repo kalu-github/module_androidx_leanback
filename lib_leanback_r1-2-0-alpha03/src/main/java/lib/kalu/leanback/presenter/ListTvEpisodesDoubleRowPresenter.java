@@ -124,6 +124,8 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
     public void onBindViewHolder(ViewHolder viewHolder, Object object) {
 
         try {
+            // 缓存数据
+            viewHolder.view.setTag(R.id.lb_listtvepisodesdoublerowpresenter_object, object);
             // 回调
             onBindViewHolderStart(viewHolder.view.getContext(), viewHolder.view, object);
             // 数据
@@ -169,7 +171,7 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
     public void onBindViewHolderFinish(@NonNull Context context, @NonNull View v, @NonNull Object object) {
     }
 
-    public void onClickEpisode(@NonNull Context context, @NonNull View v, @NonNull T data, @NonNull int clickIndex, @NonNull int playingIndex, boolean isFromUser) {
+    public void onClickEpisode(@NonNull Context context, @NonNull View v, @NonNull Object object, @NonNull T data, @NonNull int clickIndex, @NonNull int playingIndex, boolean isFromUser) {
     }
 
     /************/
@@ -306,7 +308,7 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
 
     /*********************/
 
-    private void formatData(Object item) {
+    private void formatData(Object object) {
         try {
 //            int length = mMap.size();
 //            if (length > 0)
@@ -319,7 +321,7 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
             if (null == actualTypeArguments || actualTypeArguments.length == 0)
                 throw new Exception("actualTypeArguments error: " + actualTypeArguments);
             Class<T> cls = (Class<T>) actualTypeArguments[0];
-            List<T> list = (List<T>) item;
+            List<T> list = (List<T>) object;
             int size = list.size();
             int episodeNum = initEpisodeNum();
             int rangeMax;
@@ -494,7 +496,9 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
                 onBindHolderEpisode(child.getContext(), child, t, i);
                 if (!isFromSwapEpisode && !isFromSwapRange && i == checkedIndex) {
                     int playingIndexOfChild = getEpisodeCurrentPlayingIndexOfChild(viewGroup);
-                    onClickEpisode(child.getContext(), child, t, t.getEpisodeIndex(), playingIndexOfChild, false);
+                    // 缓存数据
+                    Object tag = viewGroup.getTag(R.id.lb_listtvepisodesdoublerowpresenter_object);
+                    onClickEpisode(child.getContext(), child, tag, t, t.getEpisodeIndex(), playingIndexOfChild, false);
                 }
             }
         } catch (Exception e) {
@@ -699,7 +703,9 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
             onBindHolderEpisode(child.getContext(), child, t, indexOfChild);
             if (!callback)
                 throw new Exception("warning: callback false");
-            onClickEpisode(child.getContext(), child, t, t.getEpisodeIndex(), playingIndexOfChild, false);
+            // 缓存数据
+            Object tag = viewGroup.getTag(R.id.lb_listtvepisodesdoublerowpresenter_object);
+            onClickEpisode(child.getContext(), child, tag, t, t.getEpisodeIndex(), playingIndexOfChild, false);
         } catch (Exception e) {
             LeanBackUtil.log("ListTvEpisodesDoubleRowPresenter => setPlayingEpisode => " + e.getMessage(), e);
         }
@@ -1056,7 +1062,9 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
                             t.setPlaying(true);
                             view.setTag(R.id.lb_presenter_episode_playing, t);
                             onBindHolderEpisode(view.getContext(), view, t, indexOfChild);
-                            onClickEpisode(view.getContext(), view, t, t.getEpisodeIndex(), playingIndexOfChild, true);
+                            // 缓存数据
+                            Object tag = viewGroup.getTag(R.id.lb_listtvepisodesdoublerowpresenter_object);
+                            onClickEpisode(view.getContext(), view, tag, t, t.getEpisodeIndex(), playingIndexOfChild, true);
                         } catch (Exception e) {
                         }
                     }

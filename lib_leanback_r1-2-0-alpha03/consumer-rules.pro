@@ -12,6 +12,14 @@
 -keep public interface lib.kalu.leanback.presenter.impl.ListTvPresenterImpl{ *; }
 -keep class * implements lib.kalu.leanback.presenter.impl.ListTvPresenterImpl{ *; }
 
+
+
+# leanback
+-keep class * extends android.widget.View.**  {
+      public <methods>;
+      public <fields>;
+}
+
 # leanback
 -keep class androidx.leanback.widget.**  {
       public <methods>;
