@@ -20,29 +20,35 @@
 
 # bold
 -keep class lib.kalu.leanback.bold.BoldTextView  {
-    protected <methods>;public <methods>;
+    protected <methods>;
+    public <methods>;
     public <fields>;
 }
 
 # clazz
 -keep class lib.kalu.leanback.clazz.ClassLayoutImpl  {
-    protected <methods>;public <methods>;
+    protected <methods>;
+    public <methods>;
     public <fields>;
 }
 -keep class lib.kalu.leanback.clazz.ClassBean  {
-    protected <methods>;public <methods>;
+    protected <methods>;
+    public <methods>;
     public <fields>;
 }
 -keep class lib.kalu.leanback.clazz.ClassImageSpan  {
-    protected <methods>;public <methods>;
+    protected <methods>;
+    public <methods>;
     public <fields>;
 }
 -keep class lib.kalu.leanback.clazz.ClassScrollView  {
-    protected <methods>;public <methods>;
+    protected <methods>;
+    public <methods>;
     public <fields>;
 }
 -keep class lib.kalu.leanback.clazz.OnCheckedChangeListener  {
-    protected <methods>;public <methods>;
+    protected <methods>;
+    public <methods>;
     public <fields>;
 }
 
@@ -58,33 +64,39 @@
 
 # loading
 -keep class lib.kalu.leanback.loading.LoadingView  {
-    protected <methods>;public <methods>;
+    protected <methods>;
+    public <methods>;
     public <fields>;
 }
 
 # page
 -keep class lib.kalu.leanback.page.PageView  {
-    protected <methods>;public <methods>;
+    protected <methods>;
+    public <methods>;
     public <fields>;
 }
 -keep class lib.kalu.leanback.page.OnPageChangeListener  {
-    protected <methods>;public <methods>;
+    protected <methods>;
+    public <methods>;
     public <fields>;
 }
 
 # plus
 -keep class lib.kalu.leanback.plus.TextViewPlus  {
-    protected <methods>;public <methods>;
+    protected <methods>;
+    public <methods>;
     public <fields>;
 }
 
 # popu
 -keep class lib.kalu.leanback.popu.PopuTextView  {
-    protected <methods>;public <methods>;
+    protected <methods>;
+    public <methods>;
     public <fields>;
 }
 -keep class lib.kalu.leanback.popu.PopuMarqueeTextView  {
-    protected <methods>;public <methods>;
+    protected <methods>;
+    public <methods>;
     public <fields>;
 }
 
@@ -99,17 +111,20 @@
 
 # presenter
 -keep class lib.kalu.leanback.radio.RadioButton  {
-    protected <methods>;public <methods>;
+    protected <methods>;
+    public <methods>;
     public <fields>;
 }
 -keep class lib.kalu.leanback.radio.RadioGroupHorizontal  {
-    protected <methods>;public <methods>;
+    protected <methods>;
+    public <methods>;
     public <fields>;
 }
 
 # recycler
 -keep class lib.kalu.leanback.recycler.RecyclerView  {
-    protected <methods>;public <methods>;
+    protected <methods>;
+    public <methods>;
     public <fields>;
 }
 
@@ -125,51 +140,61 @@
 
 # selector
 -keep class lib.kalu.leanback.selector.**  {
-    protected <methods>;public <methods>;
+    protected <methods>;
+    public <methods>;
     public <fields>;
 }
 
 # tab
 -keep class lib.kalu.leanback.tab.TabLayout  {
-    protected <methods>;public <methods>;
+    protected <methods>;
+    public <methods>;
     public <fields>;
 }
 -keep class lib.kalu.leanback.tab.model.**  {
-    protected <methods>;public <methods>;
+    protected <methods>;
+    public <methods>;
     public <fields>;
 }
 -keep class lib.kalu.leanback.tab.listener.OnTabChangeListener  {
-    protected <methods>;public <methods>;
+    protected <methods>;
+    public <methods>;
     public <fields>;
 }
 
 # tags
 -keep class lib.kalu.leanback.tags.TagsLayout  {
-    protected <methods>;public <methods>;
+    protected <methods>;
+    public <methods>;
     public <fields>;
 }
 -keep class lib.kalu.leanback.tags.model.**  {
-    protected <methods>;public <methods>;
+    protected <methods>;
+    public <methods>;
     public <fields>;
 }
 -keep class lib.kalu.leanback.tags.listener.OnTagsChangeListener  {
-    protected <methods>;public <methods>;
+    protected <methods>;
+    public <methods>;
     public <fields>;
 }
 
 
 # util
 -keep class lib.kalu.leanback.util.LeanBackUtil  {
-    protected <methods>;public <methods>;
+    protected <methods>;
+    public <methods>;
     public <fields>;
 }
 
 # web
 -keep class lib.kalu.leanback.web.WebView  {
-    protected <methods>;public <methods>;
+    protected <methods>;
+    public <methods>;
     public <fields>;
 }
 -keep class lib.kalu.leanback.web.WebView2  {
-    protected <methods>;public <methods>;
+    protected <methods>;
+    public <methods>;
     public <fields>;
 }

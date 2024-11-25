@@ -1,6 +1,5 @@
 package lib.kalu.leanback.tab;
 
-
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Rect;
@@ -25,7 +24,6 @@ final class TabLinearLayout extends LinearLayout {
     }
 
     private void init() {
-        super.setBackground(new ColorDrawable(Color.TRANSPARENT));
         setFocusable(false);
         setGravity(Gravity.CENTER);
         setOrientation(LinearLayout.HORIZONTAL);

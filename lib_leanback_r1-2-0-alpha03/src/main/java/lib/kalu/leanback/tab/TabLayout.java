@@ -181,14 +181,9 @@ public final class TabLayout extends HorizontalScrollView {
         return false;
     }
 
-    @Override
-    public void setBackground(Drawable background) {
-    }
-
     private void init(@Nullable AttributeSet attrs) {
         setFocusable(true);
         setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
-        super.setBackground(new ColorDrawable(Color.TRANSPARENT));
         setSmoothScrollingEnabled(true);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             setNestedScrollingEnabled(true);
