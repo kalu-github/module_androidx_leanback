@@ -11,8 +11,6 @@
         <attr name="tab_margin" format="reference|dimension" />
         <!-- 内边距 -->
         <attr name="tab_padding" format="reference|dimension" />
-        <!-- 背景渐变色圆角 -->
-        <attr name="tab_background_colors_radius" format="reference|dimension" />
         <!-- 图片高度 -->
         <attr name="tab_image_height" format="reference|dimension" />
         <!-- 图片最小宽度 -->

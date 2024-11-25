@@ -39,7 +39,6 @@ public final class TabLayout extends HorizontalScrollView {
     public OnTabChangeListener mListener;
     private float mScale = 1f;
     private int mMargin = 0;
-    private int mBackgroundColorsRadius = 0;
     private int mTextUnderlineColor = Color.TRANSPARENT;
     private int mTextUnderlineWidth = 0;
     private int mTextUnderlineHeight = 0;
@@ -198,7 +197,6 @@ public final class TabLayout extends HorizontalScrollView {
             attributes = getContext().obtainStyledAttributes(attrs, R.styleable.TabLayout);
             mScale = attributes.getFloat(R.styleable.TabLayout_tab_scale, 1);
             mMargin = attributes.getDimensionPixelOffset(R.styleable.TabLayout_tab_margin, 0);
-            mBackgroundColorsRadius = attributes.getDimensionPixelOffset(R.styleable.TabLayout_tab_background_colors_radius, 0);
             mTextPadding = attributes.getDimensionPixelOffset(R.styleable.TabLayout_tab_text_padding, 0);
             mTextUnderlineColor = attributes.getColor(R.styleable.TabLayout_tab_text_underline_color, Color.TRANSPARENT);
             mTextUnderlineWidth = attributes.getDimensionPixelOffset(R.styleable.TabLayout_tab_text_underline_width, 0);
