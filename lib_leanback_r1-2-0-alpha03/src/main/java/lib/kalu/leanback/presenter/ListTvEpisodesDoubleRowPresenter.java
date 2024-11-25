@@ -121,13 +121,13 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder viewHolder, Object item) {
+    public void onBindViewHolder(ViewHolder viewHolder, Object object) {
 
         try {
             // 回调
-            onBindViewHolderStart(viewHolder.view.getContext(), viewHolder.view, item);
+            onBindViewHolderStart(viewHolder.view.getContext(), viewHolder.view, object);
             // 数据
-            formatData(item);
+            formatData(object);
             // 标题
             updateTitle(viewHolder.view, R.id.module_leanback_lep_title);
             // 默认
@@ -142,10 +142,10 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
 //                updateDefaultEpisodeUI(viewHolder.view);
 //            }
             // 回调
-            onBindViewHolderFinish(viewHolder.view.getContext(), viewHolder.view, item);
+            onBindViewHolderFinish(viewHolder.view.getContext(), viewHolder.view, object);
         } catch (Exception e) {
             // 回调
-            onBindViewHolderError(viewHolder.view.getContext(), viewHolder.view, item);
+            onBindViewHolderError(viewHolder.view.getContext(), viewHolder.view, object);
         }
     }
 
@@ -153,23 +153,23 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
     public void onUnbindViewHolder(ViewHolder viewHolder) {
     }
 
-    public void onBindHolderEpisode(@NonNull Context context, @NonNull View v, @NonNull T item, @NonNull int position) {
+    public void onBindHolderEpisode(@NonNull Context context, @NonNull View v, @NonNull T data, @NonNull int position) {
     }
 
-    public void onBindHolderRange(@NonNull Context context, @NonNull View v, @NonNull T item, @NonNull int position) {
+    public void onBindHolderRange(@NonNull Context context, @NonNull View v, @NonNull T data, @NonNull int position) {
 
     }
 
-    public void onClickEpisode(@NonNull Context context, @NonNull View v, @NonNull T item, @NonNull int checkedIndex, @NonNull int playingIndex, boolean isFromUser) {
+    public void onBindViewHolderStart(@NonNull Context context, @NonNull View v, @NonNull Object object) {
     }
 
-    public void onBindViewHolderStart(@NonNull Context context, @NonNull View v, @NonNull Object item) {
+    public void onBindViewHolderError(@NonNull Context context, @NonNull View v, @NonNull Object object) {
     }
 
-    public void onBindViewHolderError(@NonNull Context context, @NonNull View v, @NonNull Object item) {
+    public void onBindViewHolderFinish(@NonNull Context context, @NonNull View v, @NonNull Object object) {
     }
 
-    public void onBindViewHolderFinish(@NonNull Context context, @NonNull View v, @NonNull Object item) {
+    public void onClickEpisode(@NonNull Context context, @NonNull View v, @NonNull T data, @NonNull int clickIndex, @NonNull int playingIndex, boolean isFromUser) {
     }
 
     /************/
@@ -592,7 +592,7 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
                 }
             }
         } catch (Exception e) {
-            LeanBackUtil.log("ListTvEpisodesDoubleRowPresenter => updateRange => " + e.getMessage(), e);
+            LeanBackUtil.log("ListTvEpisodesDoubleRowPresenter => swapRange => " + e.getMessage(), e);
         }
     }
 
