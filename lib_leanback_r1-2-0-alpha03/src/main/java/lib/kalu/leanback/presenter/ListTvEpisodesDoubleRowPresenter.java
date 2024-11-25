@@ -29,6 +29,18 @@ import lib.kalu.leanback.util.LeanBackUtil;
 
 public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusItemBean> extends Presenter implements ListTvPresenterImpl {
 
+    public static class PresenterData<T extends TvEpisodesPlusItemBean> {
+        private List<T> episodeData;
+
+        public List<T> getEpisodeData() {
+            return episodeData;
+        }
+
+        public void setEpisodeData(List<T> episodeData) {
+            this.episodeData = episodeData;
+        }
+    }
+
     private final Map<T, List<T>> mMap = new LinkedHashMap<>();
 
     /***************************/
@@ -124,6 +136,9 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
     public void onBindViewHolder(ViewHolder viewHolder, Object object) {
 
         try {
+            boolean assignableFrom = PresenterData.class.isAssignableFrom(object.getClass());
+            if (!assignableFrom)
+                throw new Exception("error: assignableFrom false");
             // 缓存数据
             viewHolder.view.setTag(R.id.lb_listtvepisodesdoublerowpresenter_object, object);
             // 回调
@@ -321,7 +336,7 @@ public abstract class ListTvEpisodesDoubleRowPresenter<T extends TvEpisodesPlusI
             if (null == actualTypeArguments || actualTypeArguments.length == 0)
                 throw new Exception("actualTypeArguments error: " + actualTypeArguments);
             Class<T> cls = (Class<T>) actualTypeArguments[0];
-            List<T> list = (List<T>) object;
+            List<T> list = ((PresenterData<T>) object).getEpisodeData();
             int size = list.size();
             int episodeNum = initEpisodeNum();
             int rangeMax;
