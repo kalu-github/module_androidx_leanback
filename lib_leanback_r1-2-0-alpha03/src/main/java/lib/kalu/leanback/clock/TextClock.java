@@ -7,6 +7,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.util.AttributeSet;
+import android.view.View;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -75,6 +76,16 @@ public class TextClock extends TextView {
         }
     }
 
+    @Override
+    protected void onWindowVisibilityChanged(int visibility) {
+        super.onWindowVisibilityChanged(visibility);
+        if (visibility == View.VISIBLE) {
+            loopNext();
+        } else {
+            loopClear();
+        }
+    }
+
     private void init(@Nullable AttributeSet attrs) {
         TypedArray attributes = null;
         try {
@@ -88,9 +99,18 @@ public class TextClock extends TextView {
         }
     }
 
+    private void loopClear() {
+        if (null != mHandler) {
+            mHandler.removeCallbacksAndMessages(null);
+        }
+    }
+
     private void loopNext() {
         if (null != mHandler) {
-            mHandler.sendEmptyMessageDelayed(1000, 1000);
+            boolean hasMessages = mHandler.hasMessages(1000);
+            if (!hasMessages) {
+                mHandler.sendEmptyMessageDelayed(1000, 1000);
+            }
         }
     }
 
