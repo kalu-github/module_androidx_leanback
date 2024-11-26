@@ -96,9 +96,11 @@ public class TextClock extends TextView {
 
     private void update() {
         try {
-            SimpleDateFormat format = new SimpleDateFormat(mFormat);
-            String data = format.format(new Date());
-            setText(data);
+            if (null != mFormat && mFormat.length() > 0) {
+                SimpleDateFormat format = new SimpleDateFormat(mFormat);
+                String data = format.format(new Date());
+                setText(data);
+            }
         } catch (Exception e) {
         }
     }
