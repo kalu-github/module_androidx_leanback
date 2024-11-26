@@ -44,10 +44,6 @@ public class TextClock extends TextView {
     }
 
     @Override
-    public void setText(CharSequence text, BufferType type) {
-    }
-
-    @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
         if (null != mFormat && mFormat.length() > 0) {
@@ -59,7 +55,7 @@ public class TextClock extends TextView {
                             try {
                                 SimpleDateFormat format = new SimpleDateFormat(mFormat);
                                 String data = format.format(new Date());
-                                TextClock.super.setText(data);
+                                setText(data);
                             } catch (Exception e) {
                             }
                             loopNext();
