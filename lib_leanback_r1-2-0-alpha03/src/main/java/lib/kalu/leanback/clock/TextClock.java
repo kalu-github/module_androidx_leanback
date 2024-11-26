@@ -22,6 +22,7 @@ public class TextClock extends TextView {
 
     private String mFormat = null;
     private Handler mHandler = null;
+    private SimpleDateFormat mSimpleDateFormat = null;
 
     public TextClock(Context context) {
         super(context);
@@ -74,6 +75,9 @@ public class TextClock extends TextView {
             mHandler.removeCallbacksAndMessages(null);
             mHandler = null;
         }
+        if (null != mSimpleDateFormat) {
+            mSimpleDateFormat = null;
+        }
     }
 
     @Override
@@ -117,8 +121,10 @@ public class TextClock extends TextView {
     private void update() {
         try {
             if (null != mFormat && mFormat.length() > 0) {
-                SimpleDateFormat format = new SimpleDateFormat(mFormat);
-                String data = format.format(new Date());
+                if (null == mSimpleDateFormat) {
+                    mSimpleDateFormat = new SimpleDateFormat(mFormat);
+                }
+                String data = mSimpleDateFormat.format(new Date());
                 setText(data);
             }
         } catch (Exception e) {
