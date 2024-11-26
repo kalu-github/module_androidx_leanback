@@ -25,22 +25,26 @@ public class TextClock extends TextView {
     public TextClock(Context context) {
         super(context);
         init(null);
+        update();
     }
 
     public TextClock(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         init(attrs);
+        update();
     }
 
     public TextClock(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init(attrs);
+        update();
     }
 
     @SuppressLint("NewApi")
     public TextClock(Context context, @Nullable AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
         init(attrs);
+        update();
     }
 
     @Override
@@ -52,12 +56,7 @@ public class TextClock extends TextView {
                     @Override
                     public void handleMessage(@NonNull Message msg) {
                         if (msg.what == 1000) {
-                            try {
-                                SimpleDateFormat format = new SimpleDateFormat(mFormat);
-                                String data = format.format(new Date());
-                                setText(data);
-                            } catch (Exception e) {
-                            }
+                            update();
                             loopNext();
                         }
                     }
@@ -92,6 +91,15 @@ public class TextClock extends TextView {
     private void loopNext() {
         if (null != mHandler) {
             mHandler.sendEmptyMessageDelayed(1000, 1000);
+        }
+    }
+
+    private void update() {
+        try {
+            SimpleDateFormat format = new SimpleDateFormat(mFormat);
+            String data = format.format(new Date());
+            setText(data);
+        } catch (Exception e) {
         }
     }
 }
