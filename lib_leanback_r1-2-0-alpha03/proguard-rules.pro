@@ -52,6 +52,13 @@
     public <fields>;
 }
 
+# clock
+-keep class lib.kalu.leanback.clock.TextClock  {
+    protected <methods>;
+    public <methods>;
+    public <fields>;
+}
+
 # flexbox
 -keep class lib.kalu.leanback.flexbox.**  {
     *;

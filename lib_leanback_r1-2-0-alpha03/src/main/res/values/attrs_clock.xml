@@ -1,0 +1,6 @@
+<resources>
+    <declare-styleable name="TextClock">
+        <!-- 文字下划线高度 -->
+        <attr name="tc_format" format="string" />
+    </declare-styleable>
+</resources>
