@@ -69,6 +69,12 @@
     public <fields>;
 }
 
+# marquee
+-keep class lib.kalu.leanback.marquee.MarqueeTextView  {
+    protected <methods>;
+    public <methods>;
+    public <fields>;
+}
 # page
 -keep class lib.kalu.leanback.page.PageView  {
     protected <methods>;
