@@ -44,8 +44,18 @@ class BaseVerticalGridView extends androidx.leanback.widget.VerticalGridView {
         // ACTION_UP KEYCODE_DPAD_DOWN
         if (event.getAction() == KeyEvent.ACTION_UP && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_DOWN) {
             int focusedChildAtPosition = getFocusedChildAtPosition();
+            if (focusedChildAtPosition == 0) {
+                onFocusInto();
+            }
             if (focusedChildAtPosition >= 0) {
                 onDown(focusedChildAtPosition);
+            }
+        }
+        // ACTION_UP KEYCODE_DPAD_UP
+        else if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_UP) {
+            int focusedChildAtPosition = getFocusedChildAtPosition();
+            if (focusedChildAtPosition == 0) {
+                onFocusOut();
             }
         }
         // ACTION_UP KEYCODE_DPAD_UP
@@ -92,6 +102,12 @@ class BaseVerticalGridView extends androidx.leanback.widget.VerticalGridView {
             LeanBackUtil.log("BaseVerticalGridView => getFocusedChildAtPosition => " + e.getMessage());
             return -1;
         }
+    }
+
+    protected void onFocusInto() {
+    }
+
+    protected void onFocusOut() {
     }
 
     protected void onUp(int index) {
