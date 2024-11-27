@@ -205,26 +205,6 @@ class BaseRecyclerView extends RecyclerView {
 
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
-//        try {
-//            int repeatCount = event.getRepeatCount();
-//            LeanBackUtil.log("BaseRecyclerView => dispatchKeyEvent => repeatCount = " + repeatCount);
-//            if (repeatCount <= 0) {
-//                try {
-//                    Glide.with(getContext()).resumeRequests();
-//                    LeanBackUtil.log("BaseRecyclerView => dispatchKeyEvent => resumeRequests => succ");
-//                } catch (Exception e) {
-//                    LeanBackUtil.log("BaseRecyclerView => dispatchKeyEvent => resumeRequests => fail");
-//                }
-//            } else {
-//                try {
-//                    Glide.with(getContext()).pauseRequests();
-//                    LeanBackUtil.log("BaseRecyclerView => dispatchKeyEvent => pauseRequests => succ");
-//                } catch (Exception e) {
-//                    LeanBackUtil.log("BaseRecyclerView => dispatchKeyEvent => pauseRequests => fail");
-//                }
-//            }
-//        } catch (Exception e) {
-//        }
         try {
             return super.dispatchKeyEvent(event);
         } catch (Exception e) {
