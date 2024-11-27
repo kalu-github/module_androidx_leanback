@@ -1,5 +1,6 @@
 *.iml
 .gradle
+local.properties
 /.idea
 /lib_leanback_r1-2-0-alpha02/
 /lib_leanback_r1-2-0-alpha03/build/
