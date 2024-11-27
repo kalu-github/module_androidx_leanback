@@ -2,6 +2,7 @@ package lib.kalu.leanback.list;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewParent;
 
@@ -10,6 +11,8 @@ import androidx.annotation.Nullable;
 import androidx.leanback.widget.BaseGridView;
 import androidx.leanback.widget.ItemBridgeAdapter;
 import androidx.recyclerview.widget.RecyclerView;
+
+import lib.kalu.leanback.util.LeanBackUtil;
 
 class BaseVerticalGridView extends androidx.leanback.widget.VerticalGridView {
     public BaseVerticalGridView(@NonNull Context context) {
@@ -37,101 +40,63 @@ class BaseVerticalGridView extends androidx.leanback.widget.VerticalGridView {
     }
 
     @Override
-    public void setAdapter(@Nullable Adapter adapter) {
+    public boolean dispatchKeyEvent(@NonNull KeyEvent event) {
+        // ACTION_UP KEYCODE_DPAD_DOWN
+        if (event.getAction() == KeyEvent.ACTION_UP && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_DOWN) {
+            int focusedChildAtPosition = getFocusedChildAtPosition();
+            if (focusedChildAtPosition >= 0) {
+                onDown(focusedChildAtPosition);
+            }
+        }
+        // ACTION_UP KEYCODE_DPAD_UP
+        else if (event.getAction() == KeyEvent.ACTION_UP && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_UP) {
+            int focusedChildAtPosition = getFocusedChildAtPosition();
+            if (focusedChildAtPosition >= 0) {
+                onUp(focusedChildAtPosition);
+            }
+        }
+        return super.dispatchKeyEvent(event);
+    }
+
+    @Override
+    public View getFocusedChild() {
         try {
-            if (!(adapter instanceof ItemBridgeAdapter))
-                throw new Exception("error: adapter not ItemBridgeAdapter");
-            super.setAdapter(adapter);
-            ((ItemBridgeAdapter) adapter).setAdapterListener(new ItemBridgeAdapter.AdapterListener() {
-                @Override
-                public void onAttachedToWindow(ItemBridgeAdapter.ViewHolder viewHolder) {
-                    try {
-                        View itemView = viewHolder.itemView;
-                        if (null == itemView)
-                            throw new Exception("error: itemView null");
-                        ViewParent parent = itemView.getParent();
-                        if (null == parent)
-                            throw new Exception("error: parent null");
-                        boolean assignableFrom = BaseGridView.class.isAssignableFrom(parent.getClass());
-                        if (!assignableFrom)
-                            throw new Exception("error: assignableFrom false");
-                        RecyclerView.LayoutManager layoutManager = getLayoutManager();
-                        int position = layoutManager.getPosition(itemView);
-                        onViewHolderAttachedToWindow(viewHolder, position);
-                    } catch (Exception e) {
-                    }
-                }
-
-                @Override
-                public void onDetachedFromWindow(ItemBridgeAdapter.ViewHolder viewHolder) {
-                    try {
-                        View itemView = viewHolder.itemView;
-                        if (null == itemView)
-                            throw new Exception("error: itemView null");
-                        ViewParent parent = itemView.getParent();
-                        if (null == parent)
-                            throw new Exception("error: parent null");
-                        boolean assignableFrom = BaseGridView.class.isAssignableFrom(parent.getClass());
-                        if (!assignableFrom)
-                            throw new Exception("error: assignableFrom false");
-                        RecyclerView.LayoutManager layoutManager = getLayoutManager();
-                        int position = layoutManager.getPosition(itemView);
-                        onViewHolderDetachedFromWindow(viewHolder, position);
-                    } catch (Exception e) {
-                    }
-                }
-
-                @Override
-                public void onBind(ItemBridgeAdapter.ViewHolder viewHolder) {
-                    try {
-                        View itemView = viewHolder.itemView;
-                        if (null == itemView)
-                            throw new Exception("error: itemView null");
-                        ViewParent parent = itemView.getParent();
-                        if (null == parent)
-                            throw new Exception("error: parent null");
-                        boolean assignableFrom = BaseGridView.class.isAssignableFrom(parent.getClass());
-                        if (!assignableFrom)
-                            throw new Exception("error: assignableFrom false");
-                        RecyclerView.LayoutManager layoutManager = getLayoutManager();
-                        int position = layoutManager.getPosition(itemView);
-                        onViewHolderBind(viewHolder, position);
-                    } catch (Exception e) {
-                    }
-                }
-
-                @Override
-                public void onUnbind(ItemBridgeAdapter.ViewHolder viewHolder) {
-                    try {
-                        View itemView = viewHolder.itemView;
-                        if (null == itemView)
-                            throw new Exception("error: itemView null");
-                        ViewParent parent = itemView.getParent();
-                        if (null == parent)
-                            throw new Exception("error: parent null");
-                        boolean assignableFrom = BaseGridView.class.isAssignableFrom(parent.getClass());
-                        if (!assignableFrom)
-                            throw new Exception("error: assignableFrom false");
-                        RecyclerView.LayoutManager layoutManager = getLayoutManager();
-                        int position = layoutManager.getPosition(itemView);
-                        onViewHolderUnbind(viewHolder, position);
-                    } catch (Exception e) {
-                    }
-                }
-            });
+            View focusedChild = findFocus();
+            if (null == focusedChild)
+                throw new Exception("focusedChild is null");
+            return focusedChild;
         } catch (Exception e) {
+            LeanBackUtil.log("BaseVerticalGridView => findFocusChild => " + e.getMessage());
+            return null;
         }
     }
 
-    public void onViewHolderAttachedToWindow(ItemBridgeAdapter.ViewHolder viewHolder, int position) {
+    protected final int getFocusedChildAtPosition() {
+        try {
+            View focusedChild = getFocusedChild();
+            if (null == focusedChild)
+                throw new Exception("focusedChild is null");
+            int position = -1;
+            while (true) {
+                ViewParent parent = focusedChild.getParent();
+                if (parent instanceof BaseVerticalGridView) {
+                    position = getChildAdapterPosition(focusedChild);
+                    break;
+                }
+                focusedChild = (View) parent;
+            }
+            if (position == -1)
+                throw new Exception("position error: " + position);
+            return position;
+        } catch (Exception e) {
+            LeanBackUtil.log("BaseVerticalGridView => getFocusedChildAtPosition => " + e.getMessage());
+            return -1;
+        }
     }
 
-    public void onViewHolderDetachedFromWindow(ItemBridgeAdapter.ViewHolder viewHolder, int position) {
+    protected void onUp(int index) {
     }
 
-    public void onViewHolderBind(ItemBridgeAdapter.ViewHolder viewHolder, int position) {
-    }
-
-    public void onViewHolderUnbind(ItemBridgeAdapter.ViewHolder viewHolder, int position) {
+    protected void onDown(int index) {
     }
 }
