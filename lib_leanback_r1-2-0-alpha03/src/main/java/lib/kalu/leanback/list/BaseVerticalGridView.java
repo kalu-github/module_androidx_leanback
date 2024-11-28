@@ -61,8 +61,12 @@ class BaseVerticalGridView extends androidx.leanback.widget.VerticalGridView {
             if (hasFocusGridView) {
                 int index = findFocusedChildByPositionAtGridView();
                 if (index == 0) {
-                    hasFocusGridView = false;
-                    onGridViewFocusOut();
+                    View focusedChild = getFocusedChild();
+                    View nextFocus = FocusFinder.getInstance().findNextFocus(this, focusedChild, View.FOCUS_UP);
+                    if (null == nextFocus) {
+                        hasFocusGridView = false;
+                        onGridViewFocusOut();
+                    }
                 }
             }
         }
