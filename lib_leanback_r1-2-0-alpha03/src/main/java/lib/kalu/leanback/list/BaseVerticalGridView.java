@@ -2,19 +2,21 @@ package lib.kalu.leanback.list;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.view.FocusFinder;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.ViewParent;
+import android.widget.BaseAdapter;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.leanback.widget.BaseGridView;
-import androidx.leanback.widget.ItemBridgeAdapter;
-import androidx.recyclerview.widget.RecyclerView;
 
 import lib.kalu.leanback.util.LeanBackUtil;
 
 class BaseVerticalGridView extends androidx.leanback.widget.VerticalGridView {
+
     public BaseVerticalGridView(@NonNull Context context) {
         super(context);
         init();
@@ -39,30 +41,28 @@ class BaseVerticalGridView extends androidx.leanback.widget.VerticalGridView {
         setHasFixedSize(true);
     }
 
+
+    private boolean hasFocusGridView = false;
+
     @Override
     public boolean dispatchKeyEvent(@NonNull KeyEvent event) {
+        LeanBackUtil.log("BaseVerticalGridView => dispatchKeyEvent => action = " + event.getAction() + ", keyCode = " + event.getKeyCode());
         // ACTION_UP KEYCODE_DPAD_DOWN
         if (event.getAction() == KeyEvent.ACTION_UP && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_DOWN) {
-            int focusedChildAtPosition = getFocusedChildAtPosition();
-            if (focusedChildAtPosition == 0) {
-                onFocusInto();
-            }
-            if (focusedChildAtPosition >= 0) {
-                onDown(focusedChildAtPosition);
+            if (!hasFocusGridView) {
+                hasFocusGridView = true;
+                onGridViewFocusInto();
             }
         }
         // ACTION_UP KEYCODE_DPAD_UP
         else if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_UP) {
-            int focusedChildAtPosition = getFocusedChildAtPosition();
-            if (focusedChildAtPosition == 0) {
-                onFocusOut();
-            }
-        }
-        // ACTION_UP KEYCODE_DPAD_UP
-        else if (event.getAction() == KeyEvent.ACTION_UP && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_UP) {
-            int focusedChildAtPosition = getFocusedChildAtPosition();
-            if (focusedChildAtPosition >= 0) {
-                onUp(focusedChildAtPosition);
+            if (hasFocusGridView) {
+                View focusedChild = getFocusedChild();
+                View nextFocus = FocusFinder.getInstance().findNextFocus(this, focusedChild, View.FOCUS_UP);
+                if (null == nextFocus) {
+                    hasFocusGridView = false;
+                    onGridViewFocusOut();
+                }
             }
         }
         return super.dispatchKeyEvent(event);
@@ -74,6 +74,7 @@ class BaseVerticalGridView extends androidx.leanback.widget.VerticalGridView {
             View focusedChild = findFocus();
             if (null == focusedChild)
                 throw new Exception("focusedChild is null");
+            LeanBackUtil.log("BaseVerticalGridView => findFocusChild => focusedChild = " + focusedChild);
             return focusedChild;
         } catch (Exception e) {
             LeanBackUtil.log("BaseVerticalGridView => findFocusChild => " + e.getMessage());
@@ -81,7 +82,7 @@ class BaseVerticalGridView extends androidx.leanback.widget.VerticalGridView {
         }
     }
 
-    protected final int getFocusedChildAtPosition() {
+    public final int getFocusedChildAtGridViewIndex() {
         try {
             View focusedChild = getFocusedChild();
             if (null == focusedChild)
@@ -89,7 +90,8 @@ class BaseVerticalGridView extends androidx.leanback.widget.VerticalGridView {
             int position = -1;
             while (true) {
                 ViewParent parent = focusedChild.getParent();
-                if (parent instanceof BaseVerticalGridView) {
+                boolean assignableFrom = BaseGridView.class.isAssignableFrom(parent.getClass());
+                if (assignableFrom) {
                     position = getChildAdapterPosition(focusedChild);
                     break;
                 }
@@ -99,20 +101,107 @@ class BaseVerticalGridView extends androidx.leanback.widget.VerticalGridView {
                 throw new Exception("position error: " + position);
             return position;
         } catch (Exception e) {
-            LeanBackUtil.log("BaseVerticalGridView => getFocusedChildAtPosition => " + e.getMessage());
+            LeanBackUtil.log("BaseVerticalGridView => getFocusedChildAtGridViewIndex => " + e.getMessage());
             return -1;
         }
     }
 
-    protected void onFocusInto() {
+    public final void scrollTop() {
+        try {
+            while (true) {
+                // 1
+                View focusedChild = getFocusedChild();
+                if (null == focusedChild)
+                    break;
+                // 2
+                scrollFocusedChild(View.FOCUS_UP);
+                // 3
+                View nextFocus = FocusFinder.getInstance().findNextFocus(this, focusedChild, View.FOCUS_UP);
+                if (null == nextFocus)
+                    break;
+                nextFocus.requestFocus();
+            }
+        } catch (Exception e) {
+            LeanBackUtil.log("BaseVerticalGridView => scrollTop => " + e.getMessage());
+        }
     }
 
-    protected void onFocusOut() {
+    public final void scrollBottom() {
+        try {
+            while (true) {
+                // 1
+                View focusedChild = getFocusedChild();
+                if (null == focusedChild)
+                    break;
+                // 2
+                scrollFocusedChild(View.FOCUS_DOWN);
+                // 3
+                View nextFocus = FocusFinder.getInstance().findNextFocus(this, focusedChild, View.FOCUS_DOWN);
+                if (null == nextFocus)
+                    break;
+                nextFocus.requestFocus();
+            }
+        } catch (Exception e) {
+            LeanBackUtil.log("BaseVerticalGridView => scrollBottom => " + e.getMessage());
+        }
     }
 
-    protected void onUp(int index) {
+    public final int findFocusedChildPosition() {
+        try {
+            View focusedView = getFocusedChild();
+            if (null == focusedView)
+                throw new Exception("focusedView error: null");
+            while (true) {
+                ViewParent parent = focusedView.getParent();
+                if (parent instanceof LeanBackVerticalGridView) {
+                    int adapterPosition = getChildAdapterPosition(focusedView);
+                    if (adapterPosition < 0)
+                        throw new Exception("adapterPosition error: " + adapterPosition);
+                    return adapterPosition;
+                } else {
+                    focusedView = (View) parent;
+                }
+            }
+        } catch (Exception e) {
+            return -1;
+        }
     }
 
-    protected void onDown(int index) {
+    public final int getAdapterItemCount() {
+        try {
+            Adapter adapter = getAdapter();
+            if (null == adapter)
+                throw new Exception("adapter error: null");
+            return adapter.getItemCount();
+        } catch (Exception e) {
+            return 0;
+        }
     }
+
+    public final void scrollFocusedChild(int direction) {
+        try {
+            if (direction != View.FOCUS_UP && direction != View.FOCUS_DOWN)
+                throw new Exception("direction error: " + direction);
+            View focusedView = getFocusedChild();
+            if (null == focusedView)
+                throw new Exception("focusedView error: null");
+            int measuredHeight = focusedView.getMeasuredHeight();
+            scrollBy(0, direction == View.FOCUS_UP ? -measuredHeight : measuredHeight);
+        } catch (Exception e) {
+        }
+    }
+
+    /**************/
+
+    protected void onGridViewFocusInto() {
+    }
+
+    protected void onGridViewFocusOut() {
+    }
+//
+//    protected void onUp(int index) {
+//    }
+//
+//    protected void onDown(int index) {
+//    }
 }

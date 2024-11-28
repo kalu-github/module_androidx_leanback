@@ -168,18 +168,14 @@ public abstract class BaseGridView extends lib.kalu.leanback.recycler.RecyclerVi
      * Number of items to prefetch when first coming on screen with new data.
      */
     int mInitialPrefetchItemCount = 4;
-    private SmoothScrollByBehavior mSmoothScrollByBehavior;
     /**
      * Animate layout changes from a child resizing or adding/removing a child.
      */
     private boolean mAnimateChildLayout = true;
     private boolean mHasOverlappingRendering = true;
     private RecyclerView.ItemAnimator mSavedItemAnimator;
-    private OnTouchInterceptListener mOnTouchInterceptListener;
-    private OnMotionInterceptListener mOnMotionInterceptListener;
-    private OnKeyInterceptListener mOnKeyInterceptListener;
-    private OnUnhandledKeyListener mOnUnhandledKeyListener;
     private int mPrivateFlag;
+
     BaseGridView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         mLayoutManager = new GridLayoutManager(this);
@@ -861,83 +857,6 @@ public abstract class BaseGridView extends lib.kalu.leanback.recycler.RecyclerVi
     }
 
     /**
-     * Sets the touch intercept listener.
-     *
-     * @param listener The touch intercept listener.
-     */
-    public void setOnTouchInterceptListener(@Nullable OnTouchInterceptListener listener) {
-        mOnTouchInterceptListener = listener;
-    }
-
-    /**
-     * Sets the generic motion intercept listener.
-     *
-     * @param listener The motion intercept listener.
-     */
-    public void setOnMotionInterceptListener(@Nullable OnMotionInterceptListener listener) {
-        mOnMotionInterceptListener = listener;
-    }
-
-    /**
-     * Sets the key intercept listener.
-     *
-     * @param listener The key intercept listener.
-     */
-    public void setOnKeyInterceptListener(@Nullable OnKeyInterceptListener listener) {
-        mOnKeyInterceptListener = listener;
-    }
-
-    /**
-     * Returns the unhandled key listener.
-     *
-     * @return The unhandled key listener.
-     */
-    @Nullable
-    public OnUnhandledKeyListener getOnUnhandledKeyListener() {
-        return mOnUnhandledKeyListener;
-    }
-
-    /**
-     * Sets the unhandled key listener.
-     *
-     * @param listener The unhandled key intercept listener.
-     */
-    public void setOnUnhandledKeyListener(@Nullable OnUnhandledKeyListener listener) {
-        mOnUnhandledKeyListener = listener;
-    }
-
-    @Override
-    public boolean dispatchKeyEvent(@NonNull KeyEvent event) {
-        if (mOnKeyInterceptListener != null && mOnKeyInterceptListener.onInterceptKeyEvent(event)) {
-            return true;
-        }
-        if (super.dispatchKeyEvent(event)) {
-            return true;
-        }
-        return mOnUnhandledKeyListener != null && mOnUnhandledKeyListener.onUnhandledKey(event);
-    }
-
-    @Override
-    public boolean dispatchTouchEvent(@NonNull MotionEvent event) {
-        if (mOnTouchInterceptListener != null) {
-            if (mOnTouchInterceptListener.onInterceptTouchEvent(event)) {
-                return true;
-            }
-        }
-        return super.dispatchTouchEvent(event);
-    }
-
-    @Override
-    protected boolean dispatchGenericFocusedEvent(@NonNull MotionEvent event) {
-        if (mOnMotionInterceptListener != null) {
-            if (mOnMotionInterceptListener.onInterceptMotionEvent(event)) {
-                return true;
-            }
-        }
-        return super.dispatchGenericFocusedEvent(event);
-    }
-
-    /**
      * Returns the policy for saving children.
      *
      * @return policy, one of {@link #SAVE_NO_CHILD}
@@ -1046,52 +965,14 @@ public abstract class BaseGridView extends lib.kalu.leanback.recycler.RecyclerVi
         super.smoothScrollToPosition(position);
     }
 
-    /**
-     * Returns custom behavior for smoothScrollBy().
-     *
-     * @return Custom behavior for SmoothScrollBy(). Null for default behavior.
-     */
-    @Nullable
-    public SmoothScrollByBehavior getSmoothScrollByBehavior() {
-        return mSmoothScrollByBehavior;
-    }
-
-    /**
-     * Set custom behavior for smoothScrollBy().
-     *
-     * @param behavior Custom behavior of SmoothScrollBy(). Null for default behavior.
-     */
-    public final void setSmoothScrollByBehavior(@Nullable SmoothScrollByBehavior behavior) {
-        mSmoothScrollByBehavior = behavior;
-    }
-
     @Override
     public void smoothScrollBy(int dx, int dy) {
-        if (mSmoothScrollByBehavior != null) {
-            smoothScrollBy(dx, dy,
-                    mSmoothScrollByBehavior.configSmoothScrollByInterpolator(dx, dy),
-                    mSmoothScrollByBehavior.configSmoothScrollByDuration(dx, dy));
-        } else {
-            smoothScrollBy(dx, dy, null, UNDEFINED_DURATION);
-        }
+        smoothScrollBy(dx, dy, null, UNDEFINED_DURATION);
     }
 
     @Override
     public void smoothScrollBy(int dx, int dy, @Nullable Interpolator interpolator) {
-        if (mSmoothScrollByBehavior != null) {
-            smoothScrollBy(dx, dy,
-                    interpolator,
-                    mSmoothScrollByBehavior.configSmoothScrollByDuration(dx, dy));
-        } else {
-            smoothScrollBy(dx, dy, interpolator, UNDEFINED_DURATION);
-        }
-    }
-
-    /**
-     * @return Factor of how slow the smoothScroller runs. Default value is 1f.
-     */
-    public final float getSmoothScrollSpeedFactor() {
-        return mLayoutManager.mSmoothScrollSpeedFactor;
+        smoothScrollBy(dx, dy, interpolator, UNDEFINED_DURATION);
     }
 
     /**
@@ -1452,69 +1333,5 @@ public abstract class BaseGridView extends lib.kalu.leanback.recycler.RecyclerVi
             LeanBackUtil.log("BaseGridView => findViewHolderForAdapterObjectAll => " + e.getMessage());
             return null;
         }
-    }
-
-    /**
-     * Defines behavior of duration and interpolator for smoothScrollBy().
-     */
-    public interface SmoothScrollByBehavior {
-        /**
-         * Defines duration in milliseconds of smoothScrollBy().
-         *
-         * @param dx x distance in pixels.
-         * @param dy y distance in pixels.
-         * @return Duration in milliseconds or UNDEFINED_DURATION for default value.
-         */
-        int configSmoothScrollByDuration(int dx, int dy);
-
-        /**
-         * Defines interpolator of smoothScrollBy().
-         *
-         * @param dx x distance in pixels.
-         * @param dy y distance in pixels.
-         * @return Interpolator to be used or null for default interpolator.
-         */
-        @Nullable
-        Interpolator configSmoothScrollByInterpolator(int dx, int dy);
-    }
-
-    /**
-     * Listener for intercepting touch dispatch events.
-     */
-    public interface OnTouchInterceptListener {
-        /**
-         * Returns true if the touch dispatch event should be consumed.
-         */
-        boolean onInterceptTouchEvent(@NonNull MotionEvent event);
-    }
-
-    /**
-     * Listener for intercepting generic motion dispatch events.
-     */
-    public interface OnMotionInterceptListener {
-        /**
-         * Returns true if the touch dispatch event should be consumed.
-         */
-        boolean onInterceptMotionEvent(@NonNull MotionEvent event);
-    }
-
-    /**
-     * Listener for intercepting key dispatch events.
-     */
-    public interface OnKeyInterceptListener {
-        /**
-         * Returns true if the key dispatch event should be consumed.
-         */
-        boolean onInterceptKeyEvent(@NonNull KeyEvent event);
-    }
-
-    /**
-     * Listener for intercepting unhandled key events.
-     */
-    public interface OnUnhandledKeyListener {
-        /**
-         * Returns true if the key event should be consumed.
-         */
-        boolean onUnhandledKey(@NonNull KeyEvent event);
     }
 }
