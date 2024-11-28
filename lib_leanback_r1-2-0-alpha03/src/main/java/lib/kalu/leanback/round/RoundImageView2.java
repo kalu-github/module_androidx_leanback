@@ -1,4 +1,4 @@
-package lib.kalu.leanback.round.news;
+package lib.kalu.leanback.round;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -18,22 +18,22 @@ import androidx.core.view.ViewCompat;
 import androidx.leanback.R;
 
 @SuppressLint("AppCompatCustomView")
-public class RoundImageView extends ImageView {
+public class RoundImageView2 extends ImageView {
     public boolean mFocus = false;
     public float mScale = 1.05f;
     public int mDuration = 100;
     private int mRadius = 0;
 
-    public RoundImageView(Context context) {
+    public RoundImageView2(Context context) {
         super(context);
     }
 
-    public RoundImageView(Context context, @Nullable AttributeSet attrs) {
+    public RoundImageView2(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         init(context, attrs);
     }
 
-    public RoundImageView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+    public RoundImageView2(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init(context, attrs);
     }

@@ -93,7 +93,7 @@ public class RoundRelativeLayout extends RelativeLayout {
         mRCHelper.saveLayer(canvas);
         mRCHelper.clipPath(canvas);
         super.dispatchDraw(canvas);
-        mRCHelper.drawPath(canvas);
+        mRCHelper.clipRound(canvas);
         canvas.restore();
     }
 

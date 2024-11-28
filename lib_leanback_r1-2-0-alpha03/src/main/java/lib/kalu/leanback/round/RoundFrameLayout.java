@@ -85,7 +85,7 @@ public class RoundFrameLayout extends FrameLayout {
         mRCHelper.saveLayer(canvas);
         mRCHelper.clipPath(canvas);
         super.dispatchDraw(canvas);
-        mRCHelper.drawPath(canvas);
+        mRCHelper.clipRound(canvas);
         canvas.restore();
     }
 

@@ -84,7 +84,7 @@ public class RoundLinearLayout extends LinearLayout {
         mRCHelper.saveLayer(canvas);
         mRCHelper.clipPath(canvas);
         super.dispatchDraw(canvas);
-        mRCHelper.drawPath(canvas);
+        mRCHelper.clipRound(canvas);
         canvas.restore();
     }
 

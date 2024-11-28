@@ -25,8 +25,6 @@ final class RoundHelper {
     public float[] mRadii = new float[8];   // top-left, top-right, bottom-right, bottom-left
     public float[] mRadiiTemp = new float[8];   // top-left, top-right, bottom-right, bottom-left
     public Path mClipPath;                 // 剪裁区域路径
-    public boolean mClipBackground;        // 是否剪裁背景
-    public boolean mClipCircle;        // 是否剪裁背景
     public float mScale = 1.05f;
     public int mDuration = 100;
     public Region mAreaRegion;             // 内容区域
@@ -35,7 +33,10 @@ final class RoundHelper {
 
     private float mRateWidth = 0;
     private float mRateHeight = 0;
-    private boolean mClip = false;
+
+    public boolean mClipBackground;        // 是否剪裁背景
+    public boolean mClipCircle;        // 裁剪原型
+    private boolean mClip;
 
     public void init(@NonNull Context context, @NonNull AttributeSet attrs) {
 
@@ -136,9 +137,15 @@ final class RoundHelper {
         }
     }
 
-    public void drawPath(Canvas canvas) {
-
-        if (!mClip) {
+    /**
+     * 圆角
+     *
+     * @param canvas
+     */
+    protected void clipRound(Canvas canvas) {
+        try {
+            if (mClip)
+                throw new Exception();
             mPaint.setColor(Color.WHITE);
             mPaint.setStyle(Paint.Style.FILL);
             if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.O) {
@@ -151,15 +158,8 @@ final class RoundHelper {
                 path.op(mClipPath, Path.Op.DIFFERENCE);
                 canvas.drawPath(path, mPaint);
             }
+        } catch (Exception e) {
         }
-
-//        // 边框
-//        mPaint.setStyle(Paint.Style.FILL_AND_STROKE);
-//        mPaint.setStrokeWidth(80);
-//        mPaint.setColor(focus ? mStrokeColorFocus : mStrokeColor);
-//        RectF rectF = new RectF(0, 0, canvas.getWidth(), canvas.getHeight());
-////        canvas.drawRoundRect(rectF, 10, 10, mPaint);
-//        canvas.drawLine(0, canvas.getWidth(), 40, 40, mPaint);
     }
 
     protected void onFocusChanged(@NonNull View view, boolean gainFocus) {
