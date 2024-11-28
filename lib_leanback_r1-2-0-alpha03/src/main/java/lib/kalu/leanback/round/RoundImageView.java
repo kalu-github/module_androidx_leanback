@@ -106,17 +106,17 @@ public class RoundImageView extends ImageView {
         int strokeWidth = 10;
         int width = getWidth();
         int height = getHeight();
-        int left = -Math.max(paddingLeft, strokeWidth);
-        int top = -Math.max(paddingTop, strokeWidth);
-        int right = width + Math.max(paddingRight, strokeWidth);
-        int bottom = height + Math.max(paddingBottom, strokeWidth);
+        int left = -strokeWidth;
+        int top = -strokeWidth;
+        int right = width + strokeWidth;
+        int bottom = height + strokeWidth;
         Path path = new Path();
         path.addRoundRect(new RectF(left, top, right, bottom), new float[]{radius, radius, radius, radius, radius, radius, radius, radius}, Path.Direction.CW);
 //        canvas.clipPath(path);
 
         Paint paint = new Paint();
         paint.setAntiAlias(true);
-        paint.setStrokeWidth(Math.max(strokeWidth * 4, paddingLeft * 4));
+        paint.setStrokeWidth(strokeWidth * 2 + paddingLeft * 4);
         paint.setColor(Color.WHITE);
         paint.setStyle(Paint.Style.STROKE);
         paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_OUT));
