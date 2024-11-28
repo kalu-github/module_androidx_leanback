@@ -12,7 +12,9 @@ import android.widget.BaseAdapter;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.leanback.widget.BaseGridView;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
+import lib.kalu.leanback.recycler.RecyclerView;
 import lib.kalu.leanback.util.LeanBackUtil;
 
 class BaseVerticalGridView extends androidx.leanback.widget.VerticalGridView {
@@ -57,9 +59,8 @@ class BaseVerticalGridView extends androidx.leanback.widget.VerticalGridView {
         // ACTION_UP KEYCODE_DPAD_UP
         else if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_UP) {
             if (hasFocusGridView) {
-                View focusedChild = getFocusedChild();
-                View nextFocus = FocusFinder.getInstance().findNextFocus(this, focusedChild, View.FOCUS_UP);
-                if (null == nextFocus) {
+                int index = findFocusedChildByPositionAtGridView();
+                if (index == 0) {
                     hasFocusGridView = false;
                     onGridViewFocusOut();
                 }
@@ -82,7 +83,7 @@ class BaseVerticalGridView extends androidx.leanback.widget.VerticalGridView {
         }
     }
 
-    public final int getFocusedChildAtGridViewIndex() {
+    public final int findFocusedChildByPositionAtGridView() {
         try {
             View focusedChild = getFocusedChild();
             if (null == focusedChild)
@@ -101,7 +102,7 @@ class BaseVerticalGridView extends androidx.leanback.widget.VerticalGridView {
                 throw new Exception("position error: " + position);
             return position;
         } catch (Exception e) {
-            LeanBackUtil.log("BaseVerticalGridView => getFocusedChildAtGridViewIndex => " + e.getMessage());
+            LeanBackUtil.log("BaseVerticalGridView => findFocusedChildByPositionAtGridView => " + e.getMessage());
             return -1;
         }
     }
