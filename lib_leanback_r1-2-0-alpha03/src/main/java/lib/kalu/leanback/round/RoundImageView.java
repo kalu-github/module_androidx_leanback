@@ -116,7 +116,7 @@ public class RoundImageView extends ImageView {
 
         Paint paint = new Paint();
         paint.setAntiAlias(true);
-        paint.setStrokeWidth(strokeWidth * 2 + paddingLeft * 4);
+        paint.setStrokeWidth(strokeWidth * 2 + paddingLeft * 2);
         paint.setColor(Color.WHITE);
         paint.setStyle(Paint.Style.STROKE);
         paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_OUT));
