@@ -28,9 +28,6 @@ import lib.kalu.leanback.util.LeanBackUtil;
 
 @SuppressLint("AppCompatCustomView")
 public class RoundImageView extends ImageView implements RoundImpl {
-    public boolean mFocus = false;
-    public float mScale = 1.05f;
-    public int mDuration = 100;
 
     private Paint mPaint;
     private int mStrokeWidth;
@@ -41,6 +38,11 @@ public class RoundImageView extends ImageView implements RoundImpl {
     private int mCornerTopRight;
     private int mCornerBottomLeft;
     private int mCornerBottomRight;
+
+    private float mFocusScale;
+    private int mFocusDuration;
+    private float mRateWidth;
+    private float mRateHeight;
 
     public RoundImageView(Context context) {
         super(context);
@@ -72,8 +74,10 @@ public class RoundImageView extends ImageView implements RoundImpl {
             mCornerTopRight = typedArray.getDimensionPixelOffset(R.styleable.RoundView2_rv_corner_top_right, 0);
             mCornerBottomLeft = typedArray.getDimensionPixelOffset(R.styleable.RoundView2_rv_corner_bottom_left, 0);
             mCornerBottomRight = typedArray.getDimensionPixelOffset(R.styleable.RoundView2_rv_corner_bottom_right, 0);
-            mScale = typedArray.getFloat(R.styleable.RoundView2_rv_scale, 1.05f);
-            mDuration = typedArray.getInteger(R.styleable.RoundView2_rv_duration, 100);
+            mFocusScale = typedArray.getFloat(R.styleable.RoundView2_rv_focus_scale, 1f);
+            mFocusDuration = typedArray.getInteger(R.styleable.RoundView2_rv_focus_duration, 100);
+            mRateWidth = typedArray.getFloat(R.styleable.RoundView2_rv_rate_width, 0f);
+            mRateHeight = typedArray.getFloat(R.styleable.RoundView2_rv_rate_height, 0f);
         } catch (Exception e) {
             LeanBackUtil.log("RoundImageView -> init -> Exception -> " + e.getMessage(), e);
         }
@@ -84,19 +88,8 @@ public class RoundImageView extends ImageView implements RoundImpl {
     }
 
     @Override
-    protected void onFocusChanged(boolean gainFocus, int direction, @Nullable Rect previouslyFocusedRect) {
-        super.onFocusChanged(gainFocus, direction, previouslyFocusedRect);
-        if (!mFocus)
-            return;
-        ViewCompat.animate(this).scaleX(gainFocus ? mScale : 1f).scaleY(gainFocus ? mScale : 1f).setDuration(mDuration).start();
-    }
-
-    @Override
     public void draw(Canvas canvas) {
         super.draw(canvas);
-        if (null == mPaint) {
-            mPaint = new Paint();
-        }
         int corner1 = mCornerTopLeft > 0 ? mCornerTopLeft : mCorner;
         clipCornerTopLeft(canvas, mPaint, corner1);
         int corner2 = mCornerTopRight > 0 ? mCornerTopRight : mCorner;
@@ -108,52 +101,21 @@ public class RoundImageView extends ImageView implements RoundImpl {
         drawBorder(canvas, mPaint, mStrokeWidth, mStrokeColor, corner1, corner2, corner3, corner4);
     }
 
-    @Override
-    public ScaleType getScaleType() {
-        return ScaleType.FIT_XY;
-    }
 
     @Override
-    public void setScaleType(ScaleType scaleType) {
-        super.setScaleType(ScaleType.FIT_XY);
-    }
-
-    @Override
-    public void setImageResource(int resId) {
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         try {
-            Drawable drawable = getResources().getDrawable(resId);
-            setImageDrawable(drawable);
+            int specW = measureSpecWidth(widthMeasureSpec, heightMeasureSpec, mRateWidth);
+            int specH = measureSpecHeight(widthMeasureSpec, heightMeasureSpec, mRateHeight);
+            super.onMeasure(specW, specH);
         } catch (Exception e) {
-            e.printStackTrace();
+            LeanBackUtil.log("RoundImageView -> onMeasure -> Exception -> " + e.getMessage(), e);
         }
     }
 
     @Override
-    public void setImageDrawable(@Nullable Drawable drawable) {
-//        try {
-//            if (mRadius > 0) {
-//                RoundedBitmapDrawable news = RoundedBitmapDrawableFactory.create(getResources(), ((BitmapDrawable) drawable).getBitmap());
-//                news.setCornerRadius(mRadius);
-//                super.setImageDrawable(news);
-//            } else {
-//                super.setImageDrawable(drawable);
-//            }
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-        super.setImageDrawable(drawable);
+    protected void onFocusChanged(boolean gainFocus, int direction, @Nullable Rect previouslyFocusedRect) {
+        super.onFocusChanged(gainFocus, direction, previouslyFocusedRect);
+        focusAnimate(gainFocus, mFocusScale, mFocusDuration);
     }
-//
-//    @Override
-//    public void setImageBitmap(Bitmap bm) {
-//        try {
-//            RoundedBitmapDrawable drawableNews = RoundedBitmapDrawableFactory.create(getResources(), bm);
-//            float scale = getResources().getDisplayMetrics().density;
-//            float v = 8 * scale + 0.5f;
-//            drawableNews.setCornerRadius(v);
-//            super.setImageDrawable(drawableNews);
-//        } catch (Exception e) {
-////            super.setImageBitmap(bm);
-//        }
-//    }
 }

@@ -7,17 +7,18 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
-import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.view.ViewCompat;
 import androidx.leanback.R;
 
 import lib.kalu.leanback.util.LeanBackUtil;
 
-public class RoundRelativeLayout2 extends RelativeLayout implements RoundImpl {
+@SuppressLint("AppCompatCustomView")
+public class RoundTextView extends TextView implements RoundImpl {
 
     private Paint mPaint;
     private int mStrokeWidth;
@@ -34,27 +35,20 @@ public class RoundRelativeLayout2 extends RelativeLayout implements RoundImpl {
     private float mRateWidth;
     private float mRateHeight;
 
-    public RoundRelativeLayout2(Context context) {
+    public RoundTextView(Context context) {
         super(context);
         setLayerType(LAYER_TYPE_SOFTWARE, null);
         init(context, null);
     }
 
-    public RoundRelativeLayout2(Context context, AttributeSet attrs) {
+    public RoundTextView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         setLayerType(LAYER_TYPE_SOFTWARE, null);
         init(context, attrs);
     }
 
-    public RoundRelativeLayout2(Context context, AttributeSet attrs, int defStyleAttr) {
+    public RoundTextView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        setLayerType(LAYER_TYPE_SOFTWARE, null);
-        init(context, attrs);
-    }
-
-    @SuppressLint("NewApi")
-    public RoundRelativeLayout2(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-        super(context, attrs, defStyleAttr, defStyleRes);
         setLayerType(LAYER_TYPE_SOFTWARE, null);
         init(context, attrs);
     }
@@ -64,7 +58,7 @@ public class RoundRelativeLayout2 extends RelativeLayout implements RoundImpl {
         try {
             typedArray = context.obtainStyledAttributes(attrs, R.styleable.RoundView2);
 //            mStrokeColor = typedArray.getColor(R.styleable.RoundView2_rv_stroke_width, Color.WHITE);
-            mStrokeColor = Color.WHITE;
+            mStrokeColor = Color.RED;
             mStrokeWidth = typedArray.getDimensionPixelOffset(R.styleable.RoundView2_rv_stroke_width, 0);
             mCorner = typedArray.getDimensionPixelOffset(R.styleable.RoundView2_rv_corner, 0);
             mCornerTopLeft = typedArray.getDimensionPixelOffset(R.styleable.RoundView2_rv_corner_top_left, 0);
@@ -76,7 +70,7 @@ public class RoundRelativeLayout2 extends RelativeLayout implements RoundImpl {
             mRateWidth = typedArray.getFloat(R.styleable.RoundView2_rv_rate_width, 0f);
             mRateHeight = typedArray.getFloat(R.styleable.RoundView2_rv_rate_height, 0f);
         } catch (Exception e) {
-            LeanBackUtil.log("RoundRelativeLayout2 -> init -> Exception -> " + e.getMessage(), e);
+            LeanBackUtil.log("RoundTextView -> init -> Exception -> " + e.getMessage(), e);
         }
 
         if (null != typedArray) {
@@ -85,8 +79,8 @@ public class RoundRelativeLayout2 extends RelativeLayout implements RoundImpl {
     }
 
     @Override
-    protected void dispatchDraw(Canvas canvas) {
-        super.dispatchDraw(canvas);
+    public void draw(Canvas canvas) {
+        super.draw(canvas);
         int corner1 = mCornerTopLeft > 0 ? mCornerTopLeft : mCorner;
         clipCornerTopLeft(canvas, mPaint, corner1);
         int corner2 = mCornerTopRight > 0 ? mCornerTopRight : mCorner;
@@ -105,7 +99,7 @@ public class RoundRelativeLayout2 extends RelativeLayout implements RoundImpl {
             int specH = measureSpecHeight(widthMeasureSpec, heightMeasureSpec, mRateHeight);
             super.onMeasure(specW, specH);
         } catch (Exception e) {
-            LeanBackUtil.log("RoundRelativeLayout2 -> onMeasure -> Exception -> " + e.getMessage(), e);
+            LeanBackUtil.log("RoundTextView -> onMeasure -> Exception -> " + e.getMessage(), e);
         }
     }
 
