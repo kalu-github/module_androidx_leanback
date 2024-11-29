@@ -40,20 +40,20 @@ public class RoundImageView2 extends ImageView {
 
     public void init(@NonNull Context context, @NonNull AttributeSet attrs) {
 
-        TypedArray typedArray = null;
-        try {
-            typedArray = context.obtainStyledAttributes(attrs, R.styleable.RoundImageView);
-            mRadius = typedArray.getDimensionPixelOffset(R.styleable.RoundImageView_riv_corner, 0);
-            mFocus = typedArray.getBoolean(R.styleable.RoundImageView_riv_focus, false);
-            mScale = typedArray.getFloat(R.styleable.RoundImageView_riv_scale, 1.05f);
-            mDuration = typedArray.getInteger(R.styleable.RoundImageView_riv_duration, 100);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        if (null != typedArray) {
-            typedArray.recycle();
-        }
+//        TypedArray typedArray = null;
+//        try {
+//            typedArray = context.obtainStyledAttributes(attrs, R.styleable.RoundImageView);
+////            mRadius = typedArray.getDimensionPixelOffset(R.styleable.RoundImageView_riv_corner, 0);
+//            mFocus = typedArray.getBoolean(R.styleable.RoundImageView_riv_focus, false);
+//            mScale = typedArray.getFloat(R.styleable.RoundImageView_riv_scale, 1.05f);
+//            mDuration = typedArray.getInteger(R.styleable.RoundImageView_riv_duration, 100);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//
+//        if (null != typedArray) {
+//            typedArray.recycle();
+//        }
     }
 
     @Override
