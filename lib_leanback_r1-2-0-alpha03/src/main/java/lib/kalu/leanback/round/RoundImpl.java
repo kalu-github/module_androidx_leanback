@@ -33,25 +33,25 @@ import lib.kalu.leanback.util.LeanBackUtil;
  */
 public interface RoundImpl {
 
-    default int measureSpecWidth(int widthMeasureSpec, int heightMeasureSpec, float widthWidth) {
+    default int measureSpecWidth(int widthMeasureSpec, int heightMeasureSpec, float rateWidth) {
         try {
-            if (widthMeasureSpec != View.MeasureSpec.UNSPECIFIED)
-                throw new Exception("warning: widthMeasureSpec not View.MeasureSpec.UNSPECIFIED");
-            if (widthWidth <= 0)
-                throw new Exception("warning: widthWidth<=0");
+//            if (widthMeasureSpec != View.MeasureSpec.UNSPECIFIED)
+//                throw new Exception("warning: widthMeasureSpec not View.MeasureSpec.UNSPECIFIED");
+            if (rateWidth <= 0)
+                throw new Exception("warning: rateWidth<=0");
             int height = View.MeasureSpec.getSize(heightMeasureSpec);
-            int width = (int) (height * widthWidth);
+            int width = (int) (height * rateWidth);
             return View.MeasureSpec.makeMeasureSpec(width, View.MeasureSpec.EXACTLY);
         } catch (Exception e) {
-            LeanBackUtil.log("RoundImpl -> measureSpecHeight -> Exception -> " + e.getMessage());
+            LeanBackUtil.log("RoundImpl -> measureSpecWidth -> Exception -> " + e.getMessage());
             return widthMeasureSpec;
         }
     }
 
     default int measureSpecHeight(int widthMeasureSpec, int heightMeasureSpec, float rateHeight) {
         try {
-            if (heightMeasureSpec != View.MeasureSpec.UNSPECIFIED)
-                throw new Exception("warning: heightMeasureSpec not View.MeasureSpec.UNSPECIFIED");
+//            if (heightMeasureSpec != View.MeasureSpec.UNSPECIFIED)
+//                throw new Exception("warning: heightMeasureSpec not View.MeasureSpec.UNSPECIFIED");
             if (rateHeight <= 0)
                 throw new Exception("warning: rateHeight<=0");
             int width = View.MeasureSpec.getSize(widthMeasureSpec);
