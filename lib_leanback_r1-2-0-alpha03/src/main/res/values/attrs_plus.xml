@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="TextViewPlus">
+        <attr name="tvp_drawable_left_width" format="dimension|reference" />
+        <attr name="tvp_drawable_left_height" format="dimension|reference" />
+        <attr name="tvp_drawable_top_width" format="dimension|reference" />
+        <attr name="tvp_drawable_top_height" format="dimension|reference" />
+        <attr name="tvp_drawable_right_width" format="dimension|reference" />
+        <attr name="tvp_drawable_right_height" format="dimension|reference" />
+        <attr name="tvp_drawable_bottom_width" format="dimension|reference" />
+        <attr name="tvp_drawable_bottom_height" format="dimension|reference" />
+    </declare-styleable>
+</resources>

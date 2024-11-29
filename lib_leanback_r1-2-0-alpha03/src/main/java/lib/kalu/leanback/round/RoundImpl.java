@@ -9,6 +9,7 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
+import android.graphics.Region;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationSet;
@@ -102,6 +103,10 @@ public interface RoundImpl {
             paint.setAntiAlias(true);
             paint.setColor(Color.WHITE);
             paint.setStyle(Paint.Style.FILL_AND_STROKE);
+            // CLEAR
+            // DST_OUT
+            // SRC_OUT
+            // XOR
             paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_OUT));
             canvas.drawPath(path, paint);
         } catch (Exception e) {

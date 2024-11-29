@@ -25,44 +25,4 @@
         </attr>
         <attr name="numberOfColumns" format="integer" />
     </declare-styleable>
-    <declare-styleable name="RoundView">
-        <attr name="rv_rate_width" format="float" />
-        <attr name="rv_rate_height" format="float" />
-        <attr name="rv_corner_top_left" format="reference|dimension" />
-        <attr name="rv_corner_top_right" format="reference|dimension" />
-        <attr name="rv_corner_bottom_left" format="reference|dimension" />
-        <attr name="rv_corner_bottom_right" format="reference|dimension" />
-        <attr name="rv_corner" format="reference|dimension" />
-        <attr name="rv_stroke_width" format="reference|dimension" />
-        <attr name="rv_stroke_color" format="color" />
-        <attr name="rv_focus_scale" format="float" />
-        <attr name="rv_focus_duration" format="integer" />
-    </declare-styleable>
-    <declare-styleable name="TextViewPlus">
-        <attr name="tvp_drawable_left_width" format="dimension|reference" />
-        <attr name="tvp_drawable_left_height" format="dimension|reference" />
-        <attr name="tvp_drawable_top_width" format="dimension|reference" />
-        <attr name="tvp_drawable_top_height" format="dimension|reference" />
-        <attr name="tvp_drawable_right_width" format="dimension|reference" />
-        <attr name="tvp_drawable_right_height" format="dimension|reference" />
-        <attr name="tvp_drawable_bottom_width" format="dimension|reference" />
-        <attr name="tvp_drawable_bottom_height" format="dimension|reference" />
-    </declare-styleable>
-
-    <declare-styleable name="ClassLayout">
-        <attr name="cl_orientation">
-            <enum name="horizontal" value="1" />
-            <enum name="vertical" value="2" />
-        </attr>
-        <attr name="cl_item_margin" format="reference|dimension" />
-        <attr name="cl_item_height" format="reference|dimension" />
-        <attr name="cl_item_width" format="reference|dimension" />
-        <attr name="cl_item_text_size" format="reference|dimension" />
-        <attr name="cl_item_text_color" format="reference|color" />
-        <attr name="cl_item_text_color_checked" format="reference|color" />
-        <attr name="cl_item_text_color_focus" format="reference|color" />
-        <attr name="cl_item_background_resource" format="reference" />
-        <attr name="cl_item_background_resource_checked" format="reference" />
-        <attr name="cl_item_background_resource_focus" format="reference" />
-    </declare-styleable>
 </resources>
