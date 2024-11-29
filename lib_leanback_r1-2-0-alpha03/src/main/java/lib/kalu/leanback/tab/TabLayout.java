@@ -190,8 +190,6 @@ public final class TabLayout extends HorizontalScrollView {
         setHorizontalScrollBarEnabled(false);
         setWillNotDraw(true);
         // 2
-        TabLinearLayout root = new TabLinearLayout(getContext());
-        addView(root, 0);
         TypedArray attributes = null;
         try {
             attributes = getContext().obtainStyledAttributes(attrs, R.styleable.TabLayout);
@@ -214,20 +212,32 @@ public final class TabLayout extends HorizontalScrollView {
         }
     }
 
-    @Keep
     public <T extends TabModel> void update(@NonNull List<T> list) {
-        update(list, 0);
+        update(list, 0, false);
     }
 
-    @Keep
     public <T extends TabModel> void update(@NonNull List<T> list, int position) {
+        update(list, position, false);
+    }
+
+    public <T extends TabModel> void update(@NonNull List<T> list, boolean requestFocus) {
+        update(list, 0, requestFocus);
+    }
+
+    public <T extends TabModel> void update(@NonNull List<T> list, int position, boolean requestFocus) {
         try {
             int childCount = getChildCount();
-            if (childCount != 1) throw new Exception("childCount is not 1");
+            if (childCount == 0) {
+                addView(new TabLinearLayout(getContext()), 0);
+            }
             // 1
             addAllItem(list);
             // 2
             scrollRequest(0x9999, position, position, true);
+            // 3
+            if (!requestFocus)
+                throw new Exception("warning: requestFocus false");
+            requestFocus();
         } catch (Exception e) {
             LeanBackUtil.log("TabLayout => update => " + e.getMessage());
         }
@@ -256,7 +266,6 @@ public final class TabLayout extends HorizontalScrollView {
         }
     }
 
-    @Keep
     private boolean requestTab(int direction) {
         try {
             int childCount = getChildCount();
@@ -283,7 +292,6 @@ public final class TabLayout extends HorizontalScrollView {
         }
     }
 
-    @Keep
     private boolean checkedTab(int direction) {
         try {
             int childCount = getChildCount();
