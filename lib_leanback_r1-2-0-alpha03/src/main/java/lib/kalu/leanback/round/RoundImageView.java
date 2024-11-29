@@ -62,7 +62,7 @@ public class RoundImageView extends ImageView implements RoundImpl {
         init(context, attrs);
     }
 
-    public void init(@NonNull Context context, @NonNull AttributeSet attrs) {
+    private void init(@NonNull Context context, @NonNull AttributeSet attrs) {
         TypedArray typedArray = null;
         try {
             typedArray = context.obtainStyledAttributes(attrs, R.styleable.RoundView);
