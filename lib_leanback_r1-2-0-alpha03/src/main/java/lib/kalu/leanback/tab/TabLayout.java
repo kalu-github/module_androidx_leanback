@@ -79,28 +79,28 @@ public class TabLayout extends HorizontalScrollView {
 //            return true;
 //        LeanBackUtil.log("TabLayout => dispatchKeyEvent => action = " + event.getAction() + ", keyCode = " + event.getKeyCode());
 
-        // action_up => keycode_dpad_down
-        if (event.getAction() == KeyEvent.ACTION_UP && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_DOWN) {
-            requestTab(View.FOCUS_DOWN);
-            return true;
-        }
-        // action_up => keycode_dpad_up
-        else if (event.getAction() == KeyEvent.ACTION_UP && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_UP) {
-            requestTab(View.FOCUS_UP);
-            return true;
-        }
-        // action_up => keycode_dpad_left
-        else if (event.getAction() == KeyEvent.ACTION_UP && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_LEFT) {
-            requestTab(View.FOCUS_LEFT);
-            return true;
-        }
-        // action_up => keycode_dpad_right
-        else if (event.getAction() == KeyEvent.ACTION_UP && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_RIGHT) {
-            requestTab(View.FOCUS_RIGHT);
-            return true;
-        }
+//        // action_up => keycode_dpad_down
+//        if (event.getAction() == KeyEvent.ACTION_UP && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_DOWN) {
+//
+//            return true;
+//        }
+//        // action_up => keycode_dpad_up
+//        else if (event.getAction() == KeyEvent.ACTION_UP && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_UP) {
+//
+//            return true;
+//        }
+//        // action_up => keycode_dpad_left
+//        if (event.getAction() == KeyEvent.ACTION_UP && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_LEFT) {
+//            requestTab(View.FOCUS_LEFT);
+//            return true;
+//        }
+//        // action_up => keycode_dpad_right
+//        else if (event.getAction() == KeyEvent.ACTION_UP && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_RIGHT) {
+//            requestTab(View.FOCUS_RIGHT);
+//            return true;
+//        }
         // action_down => keycode_dpad_left
-        else if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_LEFT) {
+        if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_LEFT) {
             try {
                 int index = getCheckedIndex();
                 if (index <= 0)
@@ -235,11 +235,26 @@ public class TabLayout extends HorizontalScrollView {
     }
 
     @Override
+    public boolean requestFocus(int direction, Rect previouslyFocusedRect) {
+        LeanBackUtil.log("TabLayout => requestFocus => direction = " + direction);
+        if (direction == FOCUS_DOWN) {
+            requestTab(View.FOCUS_DOWN);
+        } else if (direction == FOCUS_UP) {
+            requestTab(View.FOCUS_UP);
+        } else if (direction == FOCUS_LEFT) {
+            requestTab(View.FOCUS_LEFT);
+        } else if (direction == FOCUS_RIGHT) {
+            requestTab(View.FOCUS_RIGHT);
+        }
+        return super.requestFocus(direction, previouslyFocusedRect);
+    }
+
+    @Override
     protected void onFocusChanged(boolean gainFocus, int direction, @Nullable Rect previouslyFocusedRect) {
         super.onFocusChanged(gainFocus, direction, previouslyFocusedRect);
         LeanBackUtil.log("TabLayout => onFocusChanged => gainFocus = " + gainFocus + ", direction = " + direction);
         if (gainFocus) {
-            requestTab(0x8888);
+          //  requestTab(0x8888);
         } else {
             checkedTab(0x8888);
         }
