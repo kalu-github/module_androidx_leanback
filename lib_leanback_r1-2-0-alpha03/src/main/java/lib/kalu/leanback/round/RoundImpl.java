@@ -1,5 +1,8 @@
 package lib.kalu.leanback.round;
 
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
+import android.annotation.SuppressLint;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -7,8 +10,11 @@ import android.graphics.Path;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.animation.AnimationSet;
 
 import androidx.core.view.ViewCompat;
+import androidx.leanback.widget.ObjectAdapter;
 
 import lib.kalu.leanback.util.LeanBackUtil;
 
@@ -313,13 +319,36 @@ public interface RoundImpl {
         }
     }
 
-    default void focusAnimate(boolean gainFocus, float scale, int duration) {
+    default void focusScale(boolean gainFocus, float scale, int duration) {
         try {
             if (scale == 1f)
                 throw new Exception("warning: scale == 1f");
-            ViewCompat.animate((View) this).scaleX(gainFocus ? scale : 1f).scaleY(gainFocus ? scale : 1f).setDuration(duration).start();
+            if (duration <= 0)
+                throw new Exception("warning: duration <= 0");
+//            ViewCompat.animate((View) this).scaleX(gainFocus ? scale : 1f).scaleY(gainFocus ? scale : 1f).setDuration(duration).start();
+
+            ((View) this).setScaleX(gainFocus ? scale : 1f);
+            ((View) this).setScaleY(gainFocus ? scale : 1f);
+            ((View) this).requestLayout();
+
+//            ViewGroup.LayoutParams layoutParams = ((View) this).getLayoutParams();
+//            if (null == layoutParams)
+//                throw new Exception("error: layoutParams null");
+//            float value = gainFocus ? scale : 1f;
+//            layoutParams.width = (int) (layoutParams.width * 1.1f);
+//            layoutParams.height = (int) (layoutParams.height * 1.1f);
+//            ((View) this).setLayoutParams(layoutParams);
+
+//            ((View) this).setPivotX(((View) this).getWidth() / 2);
+//            ((View) this).setPivotY(((View) this).getHeight() / 2);
+//            ObjectAnimator scaleX = ObjectAnimator.ofFloat(this, "scaleX", gainFocus ? scale : 1f);
+//            ObjectAnimator scaleY = ObjectAnimator.ofFloat(this, "scaleY", gainFocus ? scale : 1f);
+//            AnimatorSet animatorSet = new AnimatorSet();
+//            animatorSet.setDuration(duration);
+//            animatorSet.play(scaleX).with(scaleY);
+//            animatorSet.start();
         } catch (Exception e) {
-            LeanBackUtil.log("RoundImpl -> focusAnimate -> Exception -> " + e.getMessage());
+            LeanBackUtil.log("RoundImpl -> focusScale -> Exception -> " + e.getMessage());
         }
     }
 }

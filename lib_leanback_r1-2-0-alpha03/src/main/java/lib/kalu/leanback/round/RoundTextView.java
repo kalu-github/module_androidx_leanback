@@ -56,19 +56,19 @@ public class RoundTextView extends TextView implements RoundImpl {
     public void init(@NonNull Context context, @NonNull AttributeSet attrs) {
         TypedArray typedArray = null;
         try {
-            typedArray = context.obtainStyledAttributes(attrs, R.styleable.RoundView2);
-//            mStrokeColor = typedArray.getColor(R.styleable.RoundView2_rv_stroke_width, Color.WHITE);
+            typedArray = context.obtainStyledAttributes(attrs, R.styleable.RoundView);
+//            mStrokeColor = typedArray.getColor(R.styleable.RoundView_rv_stroke_width, Color.WHITE);
             mStrokeColor = Color.RED;
-            mStrokeWidth = typedArray.getDimensionPixelOffset(R.styleable.RoundView2_rv_stroke_width, 0);
-            mCorner = typedArray.getDimensionPixelOffset(R.styleable.RoundView2_rv_corner, 0);
-            mCornerTopLeft = typedArray.getDimensionPixelOffset(R.styleable.RoundView2_rv_corner_top_left, 0);
-            mCornerTopRight = typedArray.getDimensionPixelOffset(R.styleable.RoundView2_rv_corner_top_right, 0);
-            mCornerBottomLeft = typedArray.getDimensionPixelOffset(R.styleable.RoundView2_rv_corner_bottom_left, 0);
-            mCornerBottomRight = typedArray.getDimensionPixelOffset(R.styleable.RoundView2_rv_corner_bottom_right, 0);
-            mFocusScale = typedArray.getFloat(R.styleable.RoundView2_rv_focus_scale, 1f);
-            mFocusDuration = typedArray.getInteger(R.styleable.RoundView2_rv_focus_duration, 100);
-            mRateWidth = typedArray.getFloat(R.styleable.RoundView2_rv_rate_width, 0f);
-            mRateHeight = typedArray.getFloat(R.styleable.RoundView2_rv_rate_height, 0f);
+            mStrokeWidth = typedArray.getDimensionPixelOffset(R.styleable.RoundView_rv_stroke_width, 0);
+            mCorner = typedArray.getDimensionPixelOffset(R.styleable.RoundView_rv_corner, 0);
+            mCornerTopLeft = typedArray.getDimensionPixelOffset(R.styleable.RoundView_rv_corner_top_left, 0);
+            mCornerTopRight = typedArray.getDimensionPixelOffset(R.styleable.RoundView_rv_corner_top_right, 0);
+            mCornerBottomLeft = typedArray.getDimensionPixelOffset(R.styleable.RoundView_rv_corner_bottom_left, 0);
+            mCornerBottomRight = typedArray.getDimensionPixelOffset(R.styleable.RoundView_rv_corner_bottom_right, 0);
+            mFocusScale = typedArray.getFloat(R.styleable.RoundView_rv_focus_scale, 1f);
+            mFocusDuration = typedArray.getInteger(R.styleable.RoundView_rv_focus_duration, 100);
+            mRateWidth = typedArray.getFloat(R.styleable.RoundView_rv_rate_width, 0f);
+            mRateHeight = typedArray.getFloat(R.styleable.RoundView_rv_rate_height, 0f);
         } catch (Exception e) {
             LeanBackUtil.log("RoundTextView -> init -> Exception -> " + e.getMessage(), e);
         }
@@ -106,6 +106,6 @@ public class RoundTextView extends TextView implements RoundImpl {
     @Override
     protected void onFocusChanged(boolean gainFocus, int direction, @Nullable Rect previouslyFocusedRect) {
         super.onFocusChanged(gainFocus, direction, previouslyFocusedRect);
-        focusAnimate(gainFocus, mFocusScale, mFocusDuration);
+        focusScale(gainFocus, mFocusScale, mFocusDuration);
     }
 }
