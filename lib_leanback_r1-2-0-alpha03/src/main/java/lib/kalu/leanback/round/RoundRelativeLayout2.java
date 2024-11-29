@@ -72,7 +72,7 @@ public class RoundRelativeLayout2 extends RelativeLayout implements RoundImpl {
             mScale = typedArray.getFloat(R.styleable.RoundView2_rv_scale, 1.05f);
             mDuration = typedArray.getInteger(R.styleable.RoundView2_rv_duration, 100);
         } catch (Exception e) {
-            LeanBackUtil.log("RoundImageView -> init -> Exception -> " + e.getMessage(), e);
+            LeanBackUtil.log("RoundRelativeLayout2 -> init -> Exception -> " + e.getMessage(), e);
         }
 
         if (null != typedArray) {
