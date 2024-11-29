@@ -20,8 +20,6 @@ public class RoundRelativeLayout2 extends RelativeLayout implements RoundImpl {
     public int mDuration = 100;
     private Paint mPaint;
     private float[] mRadii;
-    private int mClipStrokeWidth;
-    private int mFocusStrokeWidth;
     private int mCorner;
     private int mCornerTopLeft;
     private int mCornerTopRight;
@@ -53,8 +51,6 @@ public class RoundRelativeLayout2 extends RelativeLayout implements RoundImpl {
         TypedArray typedArray = null;
         try {
             typedArray = context.obtainStyledAttributes(attrs, R.styleable.RoundView2);
-            mClipStrokeWidth = typedArray.getDimensionPixelOffset(R.styleable.RoundView2_rv_clip_stroke_width, 0);
-            mFocusStrokeWidth = typedArray.getDimensionPixelOffset(R.styleable.RoundView2_rv_focus_stroke_width, 0);
             mCorner = typedArray.getDimensionPixelOffset(R.styleable.RoundView2_rv_corner, 0);
             mCornerTopLeft = typedArray.getDimensionPixelOffset(R.styleable.RoundView2_rv_corner_top_left, 0);
             mCornerTopRight = typedArray.getDimensionPixelOffset(R.styleable.RoundView2_rv_corner_top_right, 0);
@@ -87,7 +83,7 @@ public class RoundRelativeLayout2 extends RelativeLayout implements RoundImpl {
             }
         }
       //  clipPath(canvas, mPaint, mRadii, mClipStrokeWidth);
-        drawFocus(canvas, mPaint, mRadii, mFocusStrokeWidth);
+//        drawFocus(canvas, mPaint, mRadii, mFocusStrokeWidth);
     }
 
     @Override

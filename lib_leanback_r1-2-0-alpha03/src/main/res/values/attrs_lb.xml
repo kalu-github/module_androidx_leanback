@@ -47,8 +47,8 @@
         <attr name="rv_corner_bottom_left" format="reference|dimension" />
         <attr name="rv_corner_bottom_right" format="reference|dimension" />
         <attr name="rv_corner" format="reference|dimension" />
-        <attr name="rv_clip_stroke_width" format="reference|dimension" />
-        <attr name="rv_focus_stroke_width" format="reference|boolean" />
+        <attr name="rv_stroke_width" format="reference|dimension" />
+        <attr name="rv_stroke_color" format="color" />
         <attr name="rv_scale" format="reference|float" />
         <attr name="rv_duration" format="reference|integer" />
     </declare-styleable>
