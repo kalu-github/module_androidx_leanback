@@ -33,7 +33,7 @@ import lib.kalu.leanback.util.LeanBackUtil;
 /**
  * TabLayout for TV
  */
-public final class TabLayout extends HorizontalScrollView {
+public class TabLayout extends HorizontalScrollView {
 
     /************************************/
 
