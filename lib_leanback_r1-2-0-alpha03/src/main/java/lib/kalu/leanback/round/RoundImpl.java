@@ -334,7 +334,6 @@ public interface RoundImpl {
 
             ((View) this).setScaleX(gainFocus ? scale : 1f);
             ((View) this).setScaleY(gainFocus ? scale : 1f);
-            ((View) this).requestLayout();
 
 //            ViewGroup.LayoutParams layoutParams = ((View) this).getLayoutParams();
 //            if (null == layoutParams)

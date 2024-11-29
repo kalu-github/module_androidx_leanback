@@ -7,6 +7,7 @@ import android.graphics.Rect;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
+import android.os.Handler;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.KeyEvent;
@@ -73,41 +74,29 @@ public final class TabLayout extends HorizontalScrollView {
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
 
-        int repeatCount = event.getRepeatCount();
-        if (repeatCount > 0)
-            return true;
-//        LeanBackUtil.log("TabLayout => dispatchKeyEvent => action = " + event.getAction() + ", keyCode = " + event.getKeyCode());
+//        int repeatCount = event.getRepeatCount();
+//        if (repeatCount > 0)
+//            return true;
+        LeanBackUtil.log("TabLayout => dispatchKeyEvent => action = " + event.getAction() + ", keyCode = " + event.getKeyCode());
 
         // action_up => keycode_dpad_down
         if (event.getAction() == KeyEvent.ACTION_UP && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_DOWN) {
-            View focus = findFocus();
-            if (null != focus && focus instanceof TabLayout) {
-                requestTab(View.FOCUS_DOWN);
-            }
+            requestTab(View.FOCUS_DOWN);
             return true;
         }
         // action_up => keycode_dpad_up
         else if (event.getAction() == KeyEvent.ACTION_UP && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_UP) {
-            View focus = findFocus();
-            if (null != focus && focus instanceof TabLayout) {
-                requestTab(View.FOCUS_UP);
-            }
+            requestTab(View.FOCUS_UP);
             return true;
         }
         // action_up => keycode_dpad_left
         else if (event.getAction() == KeyEvent.ACTION_UP && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_LEFT) {
-            View focus = findFocus();
-            if (null != focus && focus instanceof TabLayout) {
-                requestTab(View.FOCUS_LEFT);
-            }
+            requestTab(View.FOCUS_LEFT);
             return true;
         }
         // action_up => keycode_dpad_right
         else if (event.getAction() == KeyEvent.ACTION_UP && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_RIGHT) {
-            View focus = findFocus();
-            if (null != focus && focus instanceof TabLayout) {
-                requestTab(View.FOCUS_RIGHT);
-            }
+            requestTab(View.FOCUS_RIGHT);
             return true;
         }
         // action_down => keycode_dpad_left
@@ -181,6 +170,7 @@ public final class TabLayout extends HorizontalScrollView {
     }
 
     private void init(@Nullable AttributeSet attrs) {
+        // 1
         setFocusable(true);
         setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
         setSmoothScrollingEnabled(true);
@@ -190,6 +180,8 @@ public final class TabLayout extends HorizontalScrollView {
         setHorizontalScrollBarEnabled(false);
         setWillNotDraw(true);
         // 2
+        addView(new TabLinearLayout(getContext()), 0);
+        // 3
         TypedArray attributes = null;
         try {
             attributes = getContext().obtainStyledAttributes(attrs, R.styleable.TabLayout);
@@ -213,31 +205,18 @@ public final class TabLayout extends HorizontalScrollView {
     }
 
     public <T extends TabModel> void update(@NonNull List<T> list) {
-        update(list, 0, false);
+        update(list, 0);
     }
 
     public <T extends TabModel> void update(@NonNull List<T> list, int position) {
-        update(list, position, false);
-    }
-
-    public <T extends TabModel> void update(@NonNull List<T> list, boolean requestFocus) {
-        update(list, 0, requestFocus);
-    }
-
-    public <T extends TabModel> void update(@NonNull List<T> list, int position, boolean requestFocus) {
         try {
             int childCount = getChildCount();
-            if (childCount == 0) {
-                addView(new TabLinearLayout(getContext()), 0);
-            }
+            if (childCount != 1)
+                throw new Exception("error: childCount != 1");
             // 1
             addAllItem(list);
             // 2
             scrollRequest(0x9999, position, position, true);
-            // 3
-            if (!requestFocus)
-                throw new Exception("warning: requestFocus false");
-            requestFocus();
         } catch (Exception e) {
             LeanBackUtil.log("TabLayout => update => " + e.getMessage());
         }
@@ -446,7 +425,11 @@ public final class TabLayout extends HorizontalScrollView {
                 if (position != next) {
                     ((TabLinearLayout) getChildAt(0)).resetChild(position);
                 }
-                ((TabLinearLayout) getChildAt(0)).requestChild(next);
+                if (init) {
+                    ((TabLinearLayout) getChildAt(0)).checkChild(next);
+                } else {
+                    ((TabLinearLayout) getChildAt(0)).requestChild(next);
+                }
                 if (null != mListener) {
                     if (next != position) {
                         mListener.onChecked(next, position);

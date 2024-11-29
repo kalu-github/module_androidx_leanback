@@ -150,12 +150,14 @@ class TabTextView extends TextView {
     @Override
     public void setSelected(boolean selected) {
         super.setSelected(selected);
+//        LeanBackUtil.log("TabTextView => setSelected => selected = " + selected + ", text = " + getText());
         refreshUI();
     }
 
     @Override
     public void setEnabled(boolean enabled) {
         super.setEnabled(enabled);
+//        LeanBackUtil.log("TabTextView => setEnabled => enabled = " + enabled + ", text = " + getText());
         refreshUI();
     }
 
@@ -183,6 +185,7 @@ class TabTextView extends TextView {
     private void refreshUI() {
         boolean focus = isFocus();
         boolean checked = isChecked();
+//        LeanBackUtil.log("TabTextView => refreshUI => focus = " + focus + ", checked = " + checked + ", text = " + getText());
         refreshText();
         refreshTextColor(focus, checked);
         refreshBackground(focus, checked);
