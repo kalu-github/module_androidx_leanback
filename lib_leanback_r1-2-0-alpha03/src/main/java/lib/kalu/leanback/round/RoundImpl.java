@@ -314,7 +314,6 @@ public interface RoundImpl {
     }
 
     default void focusAnimate(boolean gainFocus, float scale, int duration) {
-        LeanBackUtil.log("RoundImpl -> focusAnim -> gainFocus = " + gainFocus + ", scale = " + scale + ", duration = " + duration);
         try {
             if (scale == 1f)
                 throw new Exception("warning: scale == 1f");
