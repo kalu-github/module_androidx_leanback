@@ -6,29 +6,14 @@ import androidx.annotation.Keep;
 @Keep
 public interface OnTabChangeListener {
 
-    void onChecked(@IntRange(from = 0, to = Integer.MAX_VALUE) int position, @IntRange(from = 0, to = Integer.MAX_VALUE) int old);
+    void onChecked(int index);
 
-    default void onRepeatUp(@IntRange(from = 0, to = Integer.MAX_VALUE) int position) {
+    default void onUnChecked(int index) {
     }
 
-    default void onRepeatDown(@IntRange(from = 0, to = Integer.MAX_VALUE) int position) {
+    default void onRepeat(int direction, int index) {
     }
 
-    default void onRepeatLeft(@IntRange(from = 0, to = Integer.MAX_VALUE) int position) {
-    }
-
-    default void onRepeatRight(@IntRange(from = 0, to = Integer.MAX_VALUE) int position) {
-    }
-
-    default void onLeaveUp(@IntRange(from = 0, to = Integer.MAX_VALUE) int position) {
-    }
-
-    default void onLeaveDown(@IntRange(from = 0, to = Integer.MAX_VALUE) int position) {
-    }
-
-    default void onLeaveLeft(@IntRange(from = 0, to = Integer.MAX_VALUE) int position) {
-    }
-
-    default void onLeaveRight(@IntRange(from = 0, to = Integer.MAX_VALUE) int position) {
+    default void onLeave(int direction, int index) {
     }
 }

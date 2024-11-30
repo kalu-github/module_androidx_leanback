@@ -1,5 +1,6 @@
 package lib.kalu.leanback.tab;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Color;
@@ -35,6 +36,7 @@ import lib.kalu.leanback.util.LeanBackUtil;
 /**
  * TabLayout for TV
  */
+@SuppressLint("NewApi")
 public class TabLayout extends HorizontalScrollView {
 
     public OnTabChangeListener mListener;
@@ -290,16 +292,8 @@ public class TabLayout extends HorizontalScrollView {
             boolean requestChild = ((TabLinearLayout) getChildAt(0)).requestChild(index);
             if (!requestChild)
                 throw new Exception("requestChild warning: false");
-            if (null == mListener)
-                throw new Exception("mListener warning: null");
-            if (direction == View.FOCUS_UP) {
-                mListener.onRepeatUp(index);
-            } else if (direction == View.FOCUS_DOWN) {
-                mListener.onRepeatDown(index);
-            } else if (direction == View.FOCUS_LEFT) {
-                mListener.onRepeatLeft(index);
-            } else if (direction == View.FOCUS_RIGHT) {
-                mListener.onRepeatRight(index);
+            if (null != mListener) {
+                mListener.onRepeat(direction, index);
             }
             return true;
         } catch (Exception e) {
@@ -316,16 +310,8 @@ public class TabLayout extends HorizontalScrollView {
             boolean checkChild = ((TabLinearLayout) getChildAt(0)).checkChild(index);
             if (!checkChild)
                 throw new Exception("checkChild warning: false");
-            if (null == mListener)
-                throw new Exception("mListener warning: null");
-            if (direction == View.FOCUS_UP) {
-                mListener.onLeaveUp(index);
-            } else if (direction == View.FOCUS_DOWN) {
-                mListener.onLeaveDown(index);
-            } else if (direction == View.FOCUS_LEFT) {
-                mListener.onLeaveLeft(index);
-            } else if (direction == View.FOCUS_RIGHT) {
-                mListener.onLeaveRight(index);
+            if (null != mListener) {
+                mListener.onLeave(direction, index);
             }
             return true;
         } catch (Exception e) {
@@ -397,13 +383,9 @@ public class TabLayout extends HorizontalScrollView {
                 }
                 ((TabLinearLayout) getChildAt(0)).requestChild(next);
                 if (null != mListener) {
-                    if (next != position) {
-                        mListener.onChecked(next, position);
-                    } else if (init) {
-                        mListener.onChecked(next, position);
-                    }
+                    mListener.onChecked(next);
+                    mListener.onUnChecked(position);
                 }
-
             } else if (direction == View.FOCUS_LEFT) {
 
                 int scrollX = getScrollX();
@@ -418,11 +400,8 @@ public class TabLayout extends HorizontalScrollView {
                 }
                 ((TabLinearLayout) getChildAt(0)).requestChild(next);
                 if (null != mListener) {
-                    if (next != position) {
-                        mListener.onChecked(next, position);
-                    } else if (init) {
-                        mListener.onChecked(next, position);
-                    }
+                    mListener.onChecked(next);
+                    mListener.onUnChecked(position);
                 }
             } else if (direction == 0x9999) {
                 if (position != next) {
@@ -434,11 +413,8 @@ public class TabLayout extends HorizontalScrollView {
                     ((TabLinearLayout) getChildAt(0)).requestChild(next);
                 }
                 if (null != mListener) {
-                    if (next != position) {
-                        mListener.onChecked(next, position);
-                    } else if (init) {
-                        mListener.onChecked(next, position);
-                    }
+                    mListener.onChecked(next);
+                    mListener.onUnChecked(position);
                 }
             }
             return true;
