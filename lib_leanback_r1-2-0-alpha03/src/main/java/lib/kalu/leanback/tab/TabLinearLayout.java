@@ -43,24 +43,14 @@ final class TabLinearLayout extends LinearLayout {
                 View view = getChildAt(i);
                 if (null == view) continue;
                 if (view instanceof TabTextView) {
-                    boolean focus = ((TabTextView) view).isFocus();
-                    if (focus) {
+                    boolean checked = ((TabTextView) view).isSelected();
+                    if (checked) {
                         return i;
-                    } else {
-                        boolean checked = ((TabTextView) view).isChecked();
-                        if (checked) {
-                            return i;
-                        }
                     }
                 } else if (view instanceof TabImageView) {
-                    boolean focus = ((TabImageView) view).isFocus();
-                    if (focus) {
+                    boolean checked = ((TabImageView) view).isSelected();
+                    if (checked) {
                         return i;
-                    } else {
-                        boolean checked = ((TabImageView) view).isChecked();
-                        if (checked) {
-                            return i;
-                        }
                     }
                 }
             }
@@ -79,7 +69,7 @@ final class TabLinearLayout extends LinearLayout {
                 View view = getChildAt(i);
                 if (null == view) continue;
                 if (view instanceof TabTextView) {
-                    boolean checked = ((TabTextView) view).isChecked();
+                    boolean checked = ((TabTextView) view).isSelected();
                     if (checked) {
                         Object tag = view.getTag(R.id.tab_item_json_object);
                         if (null != tag) {
@@ -87,7 +77,7 @@ final class TabLinearLayout extends LinearLayout {
                         }
                     }
                 } else if (view instanceof TabImageView) {
-                    boolean checked = ((TabImageView) view).isChecked();
+                    boolean checked = ((TabImageView) view).isSelected();
                     if (checked) {
                         Object tag = view.getTag(R.id.tab_item_json_object);
                         if (null != tag) {
@@ -111,7 +101,7 @@ final class TabLinearLayout extends LinearLayout {
                 View view = getChildAt(i);
                 if (null == view) continue;
                 if (view instanceof TabTextView) {
-                    boolean checked = ((TabTextView) view).isChecked();
+                    boolean checked = ((TabTextView) view).isSelected();
                     if (checked) {
                         Object tag = view.getTag(R.id.tab_item_id);
                         if (null != tag) {
@@ -119,7 +109,7 @@ final class TabLinearLayout extends LinearLayout {
                         }
                     }
                 } else if (view instanceof TabImageView) {
-                    boolean checked = ((TabImageView) view).isChecked();
+                    boolean checked = ((TabImageView) view).isSelected();
                     if (checked) {
                         Object tag = view.getTag(R.id.tab_item_id);
                         if (null != tag) {
@@ -135,97 +125,83 @@ final class TabLinearLayout extends LinearLayout {
         }
     }
 
-    protected boolean requestChild(int index) {
+    protected boolean focusedItem(int index) {
 
         try {
             int childCount = getChildCount();
             if (childCount <= 0) throw new Exception("childCount <= 0");
             if (index < 0 || index + 1 > childCount)
                 throw new Exception("index error: " + index);
-            View view2 = getChildAt(index);
-            if (null != view2) {
-                if (view2 instanceof TabTextView) {
-                    view2.setEnabled(true);
-                    view2.setSelected(true);
-                } else if (view2 instanceof TabImageView) {
-                    view2.setEnabled(true);
-                    view2.setSelected(true);
-                }
+            View view = getChildAt(index);
+            if (null == view)
+                throw new Exception("error: view null");
+            if (view instanceof TabTextView) {
+                view.setHovered(true);
+                view.setSelected(true);
+                ((TabTextView) view).refreshUI();
+            } else if (view instanceof TabImageView) {
+                view.setHovered(true);
+                view.setSelected(true);
+                ((TabImageView) view).refreshUI();
             }
             return true;
         } catch (Exception e) {
-            LeanBackUtil.log("TabLinearLayout => focusItem => " + e.getMessage());
+            LeanBackUtil.log("TabLinearLayout => focusedItem => " + e.getMessage());
             return false;
         }
     }
 
-    protected boolean checkChild(int index) {
+    protected boolean checkedItem(int index) {
 
         try {
             int childCount = getChildCount();
             if (childCount <= 0) throw new Exception("childCount <= 0");
             if (index < 0 || index + 1 > childCount)
                 throw new Exception("index error: " + index);
-            View view1 = getChildAt(index);
-            if (null != view1) {
-                if (view1 instanceof TabTextView) {
-                    view1.setEnabled(false);
-                    view1.setSelected(true);
-                } else if (view1 instanceof TabImageView) {
-                    view1.setEnabled(false);
-                    view1.setSelected(true);
-                }
+            View view = getChildAt(index);
+            if (null == view)
+                throw new Exception("error: view null");
+            if (view instanceof TabTextView) {
+                view.setHovered(false);
+                view.setSelected(true);
+                ((TabTextView) view).refreshUI();
+            } else if (view instanceof TabImageView) {
+                view.setHovered(false);
+                view.setSelected(true);
+                ((TabImageView) view).refreshUI();
             }
             return true;
         } catch (Exception e) {
-            LeanBackUtil.log("TabLinearLayout => checkItem => " + e.getMessage());
+            LeanBackUtil.log("TabLinearLayout => checkedItem => " + e.getMessage());
             return false;
         }
     }
 
-    protected boolean resetChild(int index) {
+    protected boolean clearItem(int index) {
 
         try {
             int childCount = getChildCount();
             if (childCount <= 0) throw new Exception("childCount <= 0");
             if (index < 0 || index + 1 > childCount)
                 throw new Exception("index error: " + index);
-            View view1 = getChildAt(index);
-            if (null != view1) {
-                if (view1 instanceof TabTextView) {
-                    view1.setEnabled(false);
-                    view1.setSelected(false);
-                } else if (view1 instanceof TabImageView) {
-                    view1.setEnabled(false);
-                    view1.setSelected(false);
-                }
+            View view = getChildAt(index);
+            if (null == view)
+                throw new Exception("error: view null");
+            if (view instanceof TabTextView) {
+                view.setHovered(false);
+                view.setSelected(false);
+                ((TabTextView) view).refreshUI();
+            } else if (view instanceof TabImageView) {
+                view.setHovered(false);
+                view.setSelected(false);
+                ((TabImageView) view).refreshUI();
             }
             return true;
         } catch (Exception e) {
-            LeanBackUtil.log("TabLinearLayout => resetItem => " + e.getMessage());
+            LeanBackUtil.log("TabLinearLayout => clearItem => " + e.getMessage());
             return false;
         }
 
-    }
-
-    protected boolean scrollTo(int position) {
-        try {
-            int childCount = getChildCount();
-            if (childCount <= 0) throw new Exception("childCount <= 0");
-            if (position < 0 || position + 1 >= childCount)
-                throw new Exception("position error: " + position);
-            View view = getChildAt(position);
-            if (null == view) throw new Exception("view is null");
-            view.setFocusable(true);
-            view.setEnabled(true);
-            view.setSelected(true);
-            view.requestFocus();
-            view.setFocusable(false);
-            return true;
-        } catch (Exception e) {
-            LeanBackUtil.log("TabLinearLayout => checkItemVisable => " + e.getMessage());
-            return false;
-        }
     }
 
     protected int getItemgetMeasuredWidth(int position) {

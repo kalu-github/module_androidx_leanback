@@ -42,11 +42,12 @@ class TabImageView extends ImageView {
 
     private void init(@NonNull TabModel data) {
         this.mTabModel = data;
-        setEnabled(false);
-        setSelected(false);
-        setFocusable(false);
+        setSelected(false); // 选中
+        setHovered(false); // 获焦
         setScaleType(ScaleType.FIT_CENTER);
         setPadding(0, 0, 0, 0);
+        refreshDrawable(false, false);
+        refreshBackground(false, false);
     }
 
     @Override
@@ -162,44 +163,11 @@ class TabImageView extends ImageView {
         this.mWidthMin = max;
     }
 
-    protected boolean isChecked() {
-        return isSelected();
-    }
-
-    protected void setChecked(boolean v) {
-        setSelected(v);
-    }
-
-    protected boolean isFocus() {
-        return hasFocus();
-    }
-
-    protected void setFocus(boolean v) {
-        setEnabled(v);
-    }
-
-    @Override
-    public boolean hasFocus() {
-        return isEnabled();
-    }
-
-    @Override
-    public void setSelected(boolean selected) {
-        super.setSelected(selected);
-        refreshUI();
-    }
-
-    @Override
-    public void setEnabled(boolean enabled) {
-        super.setEnabled(enabled);
-        refreshUI();
-    }
-
-    private void refreshUI() {
-        boolean focus = isFocus();
-        boolean checked = isChecked();
-        refreshDrawable(focus, checked);
-        refreshBackground(focus, checked);
+    public void refreshUI() {
+        boolean hasFocus = isHovered();
+        boolean isChecked = isSelected();
+        refreshDrawable(hasFocus, isChecked);
+        refreshBackground(hasFocus, isChecked);
     }
 
     // text-color 优先级 ：resource > color
@@ -259,15 +227,15 @@ class TabImageView extends ImageView {
                 show(s1, true);
             } else if (null != s2 && s2.length() > 0) {
                 Drawable drawable = decodeDrawable(getContext(), s2, false);
-                setBackground(drawable);
+                setBackgroundDrawable(drawable);
             } else if (null != s3 && s3.length() > 0) {
                 Drawable drawable = decodeDrawable(getContext(), s2, true);
-                setBackground(drawable);
+                setBackgroundDrawable(drawable);
             } else if (i4 != 0) {
                 setBackgroundResource(i4);
             } else if (i5 != 0) {
                 ColorDrawable drawable = new ColorDrawable(i5);
-                setBackground(drawable);
+                setBackgroundDrawable(drawable);
             }
         } catch (Exception e) {
         }
@@ -284,7 +252,7 @@ class TabImageView extends ImageView {
                     throw new Exception("path error: null");
                 Drawable drawable = decodeDrawable(getContext(), path, false);
                 if (isBg) {
-                    setBackground(drawable);
+                    setBackgroundDrawable(drawable);
                 } else {
                     setImageDrawable(drawable);
                 }

@@ -54,12 +54,12 @@ class TabTextView extends TextView {
         if (mUnderlineHeight <= 0f)
             return;
 
-        boolean focus = isFocus();
-        if (focus)
+        boolean hasFocus = isHovered();
+        if (hasFocus)
             return;
 
-        boolean checked = isChecked();
-        if (!checked)
+        boolean isChecked = isSelected();
+        if (!isChecked)
             return;
 
         // 驻留文字下划线
@@ -123,13 +123,15 @@ class TabTextView extends TextView {
 
     private void init(@NonNull TabModel data) {
         this.mTabModel = data;
-        setEnabled(false);
-        setSelected(false);
-        setFocusable(false);
+        setSelected(false); // 选中
+        setHovered(false); // 获焦
         setMaxLines(1);
         setLines(1);
         setMinEms(2);
         setGravity(Gravity.CENTER);
+        refreshText();
+        refreshTextColor(false, false);
+        refreshBackground(false, false);
     }
 
     protected void setUnderlineColor(int color) {
@@ -144,51 +146,15 @@ class TabTextView extends TextView {
         this.mUnderlineHeight = height;
     }
 
+
     /*************************/
 
-
-    @Override
-    public void setSelected(boolean selected) {
-        super.setSelected(selected);
-//        LeanBackUtil.log("TabTextView => setSelected => selected = " + selected + ", text = " + getText());
-        refreshUI();
-    }
-
-    @Override
-    public void setEnabled(boolean enabled) {
-        super.setEnabled(enabled);
-//        LeanBackUtil.log("TabTextView => setEnabled => enabled = " + enabled + ", text = " + getText());
-        refreshUI();
-    }
-
-    protected boolean isChecked() {
-        return isSelected();
-    }
-
-    protected void setChecked(boolean v) {
-        setSelected(v);
-    }
-
-    protected boolean isFocus() {
-        return hasFocus();
-    }
-
-    protected void setFocus(boolean v) {
-        setEnabled(v);
-    }
-
-    @Override
-    public boolean hasFocus() {
-        return isEnabled();
-    }
-
-    private void refreshUI() {
-        boolean focus = isFocus();
-        boolean checked = isChecked();
-//        LeanBackUtil.log("TabTextView => refreshUI => focus = " + focus + ", checked = " + checked + ", text = " + getText());
+    public void refreshUI() {
+        boolean hasFocus = isHovered();
+        boolean isChecked = isSelected();
         refreshText();
-        refreshTextColor(focus, checked);
-        refreshBackground(focus, checked);
+        refreshTextColor(hasFocus, isChecked);
+        refreshBackground(hasFocus, isChecked);
     }
 
     private void refreshText() {
@@ -251,15 +217,15 @@ class TabTextView extends TextView {
                 show(s1);
             } else if (null != s2 && s2.length() > 0) {
                 Drawable drawable = decodeDrawable(getContext(), s2, false);
-                setBackground(drawable);
+                setBackgroundDrawable(drawable);
             } else if (null != s3 && s3.length() > 0) {
                 Drawable drawable = decodeDrawable(getContext(), s2, true);
-                setBackground(drawable);
+                setBackgroundDrawable(drawable);
             } else if (i4 != 0) {
                 setBackgroundResource(i4);
             } else if (i5 != 0) {
                 ColorDrawable drawable = new ColorDrawable(i5);
-                setBackground(drawable);
+                setBackgroundDrawable(drawable);
             }
         } catch (Exception e) {
             LeanBackUtil.log("TabTextView => refreshBackground => " + e.getMessage());
@@ -273,7 +239,7 @@ class TabTextView extends TextView {
         if (checkPath) {
             String path = getPath(url);
             Drawable drawable = decodeDrawable(getContext(), path, false);
-            setBackground(drawable);
+            setBackgroundDrawable(drawable);
         }
         // download
         else {
@@ -321,7 +287,7 @@ class TabTextView extends TextView {
                                     if (!url.equals(downloadUrl))
                                         throw new Exception("url warning: change url");
                                     Drawable drawable = decodeDrawable(getContext(), path, false);
-                                    setBackground(drawable);
+                                    setBackgroundDrawable(drawable);
                                 } catch (Exception e) {
                                     downloadUrl = null;
                                     LeanBackUtil.log("TabTextView => download => " + e.getMessage());

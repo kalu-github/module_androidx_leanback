@@ -74,7 +74,7 @@ public class TabLayout extends HorizontalScrollView {
 //        int repeatCount = event.getRepeatCount();
 //        if (repeatCount > 0)
 //            return true;
-//        LeanBackUtil.log("TabLayout => dispatchKeyEvent => action = " + event.getAction() + ", keyCode = " + event.getKeyCode());
+      //  LeanBackUtil.log("TabLayout => dispatchKeyEvent => action = " + event.getAction() + ", keyCode = " + event.getKeyCode());
 
 //        // action_up => keycode_dpad_down
 //        if (event.getAction() == KeyEvent.ACTION_UP && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_DOWN) {
@@ -98,7 +98,7 @@ public class TabLayout extends HorizontalScrollView {
 //        }
         // action_up => keycode_dpad_left
         if (event.getAction() == KeyEvent.ACTION_UP && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_LEFT) {
-            LeanBackUtil.log("TabLayout => dispatchKeyEvent => action = ACTION_UP, keyCode = KEYCODE_DPAD_LEFT, repeat = " + event.getRepeatCount());
+//            LeanBackUtil.log("TabLayout => dispatchKeyEvent => action = ACTION_UP, keyCode = KEYCODE_DPAD_LEFT, repeat = " + event.getRepeatCount());
             if (null != mOnTabCheckedListener) {
                 Object tag = getTag(R.id.tab_flag);
                 if (!"intercept".equals(tag)) {
@@ -112,7 +112,7 @@ public class TabLayout extends HorizontalScrollView {
         }
         // action_down => keycode_dpad_left
         else if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_LEFT) {
-            LeanBackUtil.log("TabLayout => dispatchKeyEvent => action = ACTION_DOWN, keyCode = KEYCODE_DPAD_LEFT, repeat = " + event.getRepeatCount());
+//            LeanBackUtil.log("TabLayout => dispatchKeyEvent => action = ACTION_DOWN, keyCode = KEYCODE_DPAD_LEFT, repeat = " + event.getRepeatCount());
             try {
                 int index = getCheckedIndex();
                 if (index <= 0) {
@@ -131,8 +131,7 @@ public class TabLayout extends HorizontalScrollView {
         }
         // action_up => keycode_dpad_right
         else if (event.getAction() == KeyEvent.ACTION_UP && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_RIGHT) {
-            LeanBackUtil.log("TabLayout => dispatchKeyEvent => action = ACTION_UP, keyCode = KEYCODE_DPAD_RIGHT, repeat = " + event.getRepeatCount());
-
+//            LeanBackUtil.log("TabLayout => dispatchKeyEvent => action = ACTION_UP, keyCode = KEYCODE_DPAD_RIGHT, repeat = " + event.getRepeatCount());
             if (null != mOnTabCheckedListener) {
                 Object tag = getTag(R.id.tab_flag);
                 if (!"intercept".equals(tag)) {
@@ -146,7 +145,7 @@ public class TabLayout extends HorizontalScrollView {
         }
         // action_down => keycode_dpad_right
         else if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_RIGHT) {
-            LeanBackUtil.log("TabLayout => dispatchKeyEvent => action = ACTION_DOWN, keyCode = KEYCODE_DPAD_RIGHT, repeat = " + event.getRepeatCount());
+//            LeanBackUtil.log("TabLayout => dispatchKeyEvent => action = ACTION_DOWN, keyCode = KEYCODE_DPAD_RIGHT, repeat = " + event.getRepeatCount());
             try {
                 int index = getCheckedIndex();
                 int itemCount = getItemCount();
@@ -204,16 +203,28 @@ public class TabLayout extends HorizontalScrollView {
     }
 
     @Override
+    public void clearChildFocus(View child) {
+        super.clearChildFocus(child);
+       // LeanBackUtil.log("TabLayout => clearChildFocus");
+    }
+
+    @Override
+    public void clearFocus() {
+        super.clearFocus();
+       // LeanBackUtil.log("TabLayout => clearFocus");
+    }
+
+    @Override
     public boolean requestFocus(int direction, Rect previouslyFocusedRect) {
-        LeanBackUtil.log("TabLayout => requestFocus => direction = " + direction);
+      //  LeanBackUtil.log("TabLayout => requestFocus => direction = " + direction);
         if (direction == FOCUS_DOWN) {
-            checked(View.FOCUS_DOWN, true, true);
+            focusedInto(View.FOCUS_DOWN);
         } else if (direction == FOCUS_UP) {
-            checked(View.FOCUS_UP, true, true);
+            focusedInto(View.FOCUS_UP);
         } else if (direction == FOCUS_LEFT) {
-            checked(View.FOCUS_LEFT, true, true);
+            focusedInto(View.FOCUS_LEFT);
         } else if (direction == FOCUS_RIGHT) {
-            checked(View.FOCUS_RIGHT, true, true);
+            focusedInto(View.FOCUS_RIGHT);
         }
         return super.requestFocus(direction, previouslyFocusedRect);
     }
@@ -221,11 +232,11 @@ public class TabLayout extends HorizontalScrollView {
     @Override
     protected void onFocusChanged(boolean gainFocus, int direction, @Nullable Rect previouslyFocusedRect) {
         super.onFocusChanged(gainFocus, direction, previouslyFocusedRect);
-//        LeanBackUtil.log("TabLayout => onFocusChanged => gainFocus = " + gainFocus + ", direction = " + direction);
+      //  LeanBackUtil.log("TabLayout => onFocusChanged => gainFocus = " + gainFocus + ", direction = " + direction);
         if (gainFocus) {
             //  requestTab(0x8888);
         } else {
-            checked(0x8888, false, false);
+            focusedOut(0x8888);
         }
     }
 
@@ -316,27 +327,36 @@ public class TabLayout extends HorizontalScrollView {
         }
     }
 
-    private boolean checked(int direction, boolean hasFocus, boolean call) {
+    private boolean focusedOut(int direction) {
         try {
             int childCount = getChildCount();
             if (childCount != 1)
                 throw new Exception("childCount is not 1");
 
             int index = getCheckedIndex();
-            if (hasFocus) {
-                ((TabLinearLayout) getChildAt(0)).requestChild(index);
-            } else {
-                ((TabLinearLayout) getChildAt(0)).checkChild(index);
-            }
+            ((TabLinearLayout) getChildAt(0)).checkedItem(index);
 
-            if (call) {
-                if (null != mOnTabCheckedListener) {
-                    mOnTabCheckedListener.onChecked(index);
-                }
+            return true;
+        } catch (Exception e) {
+            LeanBackUtil.log("TabLayout => focusedOut => " + e.getMessage());
+            return false;
+        }
+    }
+
+    private boolean focusedInto(int direction) {
+        try {
+            int childCount = getChildCount();
+            if (childCount != 1)
+                throw new Exception("childCount is not 1");
+
+            int index = getCheckedIndex();
+            ((TabLinearLayout) getChildAt(0)).focusedItem(index);
+            if (null != mOnTabCheckedListener) {
+                mOnTabCheckedListener.onChecked(index);
             }
             return true;
         } catch (Exception e) {
-            LeanBackUtil.log("TabLayout => requestTab => " + e.getMessage());
+            LeanBackUtil.log("TabLayout => focusedInto => " + e.getMessage());
             return false;
         }
     }
@@ -395,9 +415,9 @@ public class TabLayout extends HorizontalScrollView {
                 }
 
                 if (position != next) {
-                    ((TabLinearLayout) getChildAt(0)).resetChild(position);
+                    ((TabLinearLayout) getChildAt(0)).clearItem(position);
                 }
-                ((TabLinearLayout) getChildAt(0)).requestChild(next);
+                ((TabLinearLayout) getChildAt(0)).focusedItem(next);
             } else if (direction == View.FOCUS_LEFT) {
 
                 int scrollX = getScrollX();
@@ -408,17 +428,17 @@ public class TabLayout extends HorizontalScrollView {
                 }
 
                 if (position != next) {
-                    ((TabLinearLayout) getChildAt(0)).resetChild(position);
+                    ((TabLinearLayout) getChildAt(0)).clearItem(position);
                 }
-                ((TabLinearLayout) getChildAt(0)).requestChild(next);
+                ((TabLinearLayout) getChildAt(0)).focusedItem(next);
             } else if (direction == 0x9999) {
                 if (position != next) {
-                    ((TabLinearLayout) getChildAt(0)).resetChild(position);
+                    ((TabLinearLayout) getChildAt(0)).clearItem(position);
                 }
                 if (init) {
-                    ((TabLinearLayout) getChildAt(0)).checkChild(next);
+                    ((TabLinearLayout) getChildAt(0)).checkedItem(next);
                 } else {
-                    ((TabLinearLayout) getChildAt(0)).requestChild(next);
+                    ((TabLinearLayout) getChildAt(0)).focusedItem(next);
                 }
             }
             return true;
