@@ -30,6 +30,8 @@ import org.json.JSONObject;
 import java.util.List;
 
 import lib.kalu.leanback.tab.listener.OnTabChangeListener;
+import lib.kalu.leanback.tab.listener.OnTabCheckedListener;
+import lib.kalu.leanback.tab.listener.OnTabUnCheckedListener;
 import lib.kalu.leanback.tab.model.TabModel;
 import lib.kalu.leanback.util.LeanBackUtil;
 
@@ -39,7 +41,6 @@ import lib.kalu.leanback.util.LeanBackUtil;
 @SuppressLint("NewApi")
 public class TabLayout extends HorizontalScrollView {
 
-    public OnTabChangeListener mListener;
     private float mScale = 1f;
     private int mMargin = 0;
     private int mTextUnderlineColor = Color.TRANSPARENT;
@@ -74,7 +75,7 @@ public class TabLayout extends HorizontalScrollView {
     }
 
     @Override
-    public final boolean dispatchKeyEvent(KeyEvent event) {
+    public boolean dispatchKeyEvent(KeyEvent event) {
 
 //        int repeatCount = event.getRepeatCount();
 //        if (repeatCount > 0)
@@ -166,9 +167,35 @@ public class TabLayout extends HorizontalScrollView {
     }
 
     @Override
-    public final boolean onTouchEvent(MotionEvent ev) {
+    public boolean onTouchEvent(MotionEvent ev) {
 //        return super.onTouchEvent(ev);
         return false;
+    }
+
+    @Override
+    public boolean requestFocus(int direction, Rect previouslyFocusedRect) {
+        LeanBackUtil.log("TabLayout => requestFocus => direction = " + direction);
+        if (direction == FOCUS_DOWN) {
+            requestTab(View.FOCUS_DOWN);
+        } else if (direction == FOCUS_UP) {
+            requestTab(View.FOCUS_UP);
+        } else if (direction == FOCUS_LEFT) {
+            requestTab(View.FOCUS_LEFT);
+        } else if (direction == FOCUS_RIGHT) {
+            requestTab(View.FOCUS_RIGHT);
+        }
+        return super.requestFocus(direction, previouslyFocusedRect);
+    }
+
+    @Override
+    protected void onFocusChanged(boolean gainFocus, int direction, @Nullable Rect previouslyFocusedRect) {
+        super.onFocusChanged(gainFocus, direction, previouslyFocusedRect);
+//        LeanBackUtil.log("TabLayout => onFocusChanged => gainFocus = " + gainFocus + ", direction = " + direction);
+        if (gainFocus) {
+            //  requestTab(0x8888);
+        } else {
+            checkedTab(0x8888);
+        }
     }
 
     private void init(@Nullable AttributeSet attrs) {
@@ -258,32 +285,6 @@ public class TabLayout extends HorizontalScrollView {
         }
     }
 
-    @Override
-    public final boolean requestFocus(int direction, Rect previouslyFocusedRect) {
-        LeanBackUtil.log("TabLayout => requestFocus => direction = " + direction);
-        if (direction == FOCUS_DOWN) {
-            requestTab(View.FOCUS_DOWN);
-        } else if (direction == FOCUS_UP) {
-            requestTab(View.FOCUS_UP);
-        } else if (direction == FOCUS_LEFT) {
-            requestTab(View.FOCUS_LEFT);
-        } else if (direction == FOCUS_RIGHT) {
-            requestTab(View.FOCUS_RIGHT);
-        }
-        return super.requestFocus(direction, previouslyFocusedRect);
-    }
-
-    @Override
-    protected void onFocusChanged(boolean gainFocus, int direction, @Nullable Rect previouslyFocusedRect) {
-        super.onFocusChanged(gainFocus, direction, previouslyFocusedRect);
-        LeanBackUtil.log("TabLayout => onFocusChanged => gainFocus = " + gainFocus + ", direction = " + direction);
-        if (gainFocus) {
-            //  requestTab(0x8888);
-        } else {
-            checkedTab(0x8888);
-        }
-    }
-
     private boolean requestTab(int direction) {
         try {
             int childCount = getChildCount();
@@ -292,8 +293,8 @@ public class TabLayout extends HorizontalScrollView {
             boolean requestChild = ((TabLinearLayout) getChildAt(0)).requestChild(index);
             if (!requestChild)
                 throw new Exception("requestChild warning: false");
-            if (null != mListener) {
-                mListener.onRepeat(direction, index);
+            if (null != mOnTabChangeListener) {
+                mOnTabChangeListener.onRepeat(direction, index);
             }
             return true;
         } catch (Exception e) {
@@ -310,8 +311,8 @@ public class TabLayout extends HorizontalScrollView {
             boolean checkChild = ((TabLinearLayout) getChildAt(0)).checkChild(index);
             if (!checkChild)
                 throw new Exception("checkChild warning: false");
-            if (null != mListener) {
-                mListener.onLeave(direction, index);
+            if (null != mOnTabChangeListener) {
+                mOnTabChangeListener.onLeave(direction, index);
             }
             return true;
         } catch (Exception e) {
@@ -382,9 +383,11 @@ public class TabLayout extends HorizontalScrollView {
                     ((TabLinearLayout) getChildAt(0)).resetChild(position);
                 }
                 ((TabLinearLayout) getChildAt(0)).requestChild(next);
-                if (null != mListener) {
-                    mListener.onChecked(next);
-                    mListener.onUnChecked(position);
+                if (null != mOnTabCheckedListener) {
+                    mOnTabCheckedListener.onChecked(next);
+                }
+                if (null != mOnTabUnCheckedListener) {
+                    mOnTabUnCheckedListener.onUnChecked(position);
                 }
             } else if (direction == View.FOCUS_LEFT) {
 
@@ -399,9 +402,11 @@ public class TabLayout extends HorizontalScrollView {
                     ((TabLinearLayout) getChildAt(0)).resetChild(position);
                 }
                 ((TabLinearLayout) getChildAt(0)).requestChild(next);
-                if (null != mListener) {
-                    mListener.onChecked(next);
-                    mListener.onUnChecked(position);
+                if (null != mOnTabCheckedListener) {
+                    mOnTabCheckedListener.onChecked(next);
+                }
+                if (null != mOnTabUnCheckedListener) {
+                    mOnTabUnCheckedListener.onUnChecked(position);
                 }
             } else if (direction == 0x9999) {
                 if (position != next) {
@@ -412,9 +417,11 @@ public class TabLayout extends HorizontalScrollView {
                 } else {
                     ((TabLinearLayout) getChildAt(0)).requestChild(next);
                 }
-                if (null != mListener) {
-                    mListener.onChecked(next);
-                    mListener.onUnChecked(position);
+                if (null != mOnTabCheckedListener) {
+                    mOnTabCheckedListener.onChecked(next);
+                }
+                if (null != mOnTabUnCheckedListener) {
+                    mOnTabUnCheckedListener.onUnChecked(position);
                 }
             }
             return true;
@@ -559,9 +566,29 @@ public class TabLayout extends HorizontalScrollView {
         }
     }
 
+    /********/
+
+
+    public OnTabChangeListener mOnTabChangeListener;
+
     public final void setOnTabChangeListener(@NonNull OnTabChangeListener listener) {
-        this.mListener = listener;
+        this.mOnTabChangeListener = listener;
     }
 
     /********/
+
+
+    public OnTabCheckedListener mOnTabCheckedListener;
+
+    public final void setOnTabCheckedListener(@NonNull OnTabCheckedListener listener) {
+        this.mOnTabCheckedListener = listener;
+    }
+    /********/
+
+
+    public OnTabUnCheckedListener mOnTabUnCheckedListener;
+
+    public final void setOnTabUnCheckedListener(@NonNull OnTabUnCheckedListener listener) {
+        this.mOnTabUnCheckedListener = listener;
+    }
 }

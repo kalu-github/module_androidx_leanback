@@ -170,9 +170,13 @@
     public <fields>;
 }
 -keep class lib.kalu.leanback.tab.listener.OnTabChangeListener  {
-    protected <methods>;
     public <methods>;
-    public <fields>;
+}
+-keep class lib.kalu.leanback.tab.listener.OnTabCheckedListener  {
+    public <methods>;
+}
+-keep class lib.kalu.leanback.tab.listener.OnTabUnCheckedListener  {
+    public <methods>;
 }
 
 # tags
