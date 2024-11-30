@@ -191,7 +191,7 @@ public class TabLayout extends HorizontalScrollView {
     protected void onFocusChanged(boolean gainFocus, int direction, @Nullable Rect previouslyFocusedRect) {
         super.onFocusChanged(gainFocus, direction, previouslyFocusedRect);
         //  LeanBackUtil.log("TabLayout => onFocusChanged => gainFocus = " + gainFocus + ", direction = " + direction);
-        if(!gainFocus){
+        if (!gainFocus) {
             focusedOut(0x8888);
         }
     }
@@ -428,7 +428,9 @@ public class TabLayout extends HorizontalScrollView {
             if (index <= 0)
                 throw new Exception("index is :" + index);
             int next = index - 1;
-            return scrollRequest(View.FOCUS_LEFT, index, next, false);
+            boolean scrollRequest = scrollRequest(View.FOCUS_LEFT, index, next, false);
+            callListenerChecked();
+            return scrollRequest;
         } catch (Exception e) {
             LeanBackUtil.log("TabLayout => scrollLeft => " + e.getMessage());
             return false;
@@ -445,14 +447,16 @@ public class TabLayout extends HorizontalScrollView {
             if (index < 0 || index + 1 > itemCount)
                 throw new Exception("index error: " + index);
             int next = index + 1;
-            return scrollRequest(View.FOCUS_RIGHT, index, next, false);
+            boolean scrollRequest = scrollRequest(View.FOCUS_RIGHT, index, next, false);
+            callListenerChecked();
+            return scrollRequest;
         } catch (Exception e) {
             LeanBackUtil.log("TabLayout => scrollRight => " + e.getMessage());
             return false;
         }
     }
 
-    public final boolean scrollTop(int newCheckedIndex) {
+    public final boolean scrollTo(int newCheckedIndex) {
         try {
             int itemCount = getItemCount();
             if (itemCount <= 0)
@@ -462,7 +466,6 @@ public class TabLayout extends HorizontalScrollView {
             int checkedIndex = getCheckedIndex();
             if (newCheckedIndex == checkedIndex)
                 throw new Exception("error: newCheckedIndex == checkedIndex");
-            scrollTo(0, 0);
             boolean scrollRequest = scrollRequest(0x9999, checkedIndex, newCheckedIndex, false);
             callListenerChecked();
             return scrollRequest;
