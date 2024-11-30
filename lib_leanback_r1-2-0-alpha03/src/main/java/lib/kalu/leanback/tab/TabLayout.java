@@ -108,8 +108,9 @@ public class TabLayout extends HorizontalScrollView {
                 int index = getCheckedIndex();
                 if (index <= 0)
                     throw new Exception();
+                int repeatCount = event.getRepeatCount();
                 int next = findNextPosition(View.FOCUS_LEFT, index);
-                boolean scrollRequest = scrollRequest(View.FOCUS_LEFT, index, next);
+                boolean scrollRequest = scrollRequest(View.FOCUS_LEFT, index, next, false, repeatCount);
                 if (!scrollRequest)
                     throw new Exception();
                 return true;
@@ -124,8 +125,9 @@ public class TabLayout extends HorizontalScrollView {
                 int itemCount = getItemCount();
                 if (index + 1 >= itemCount)
                     throw new Exception();
+                int repeatCount = event.getRepeatCount();
                 int next = findNextPosition(View.FOCUS_RIGHT, index);
-                boolean scrollRequest = scrollRequest(View.FOCUS_RIGHT, index, next);
+                boolean scrollRequest = scrollRequest(View.FOCUS_RIGHT, index, next, false, repeatCount);
                 if (!scrollRequest)
                     throw new Exception();
                 return true;
@@ -245,7 +247,7 @@ public class TabLayout extends HorizontalScrollView {
             // 1
             addItems(list);
             // 2
-            scrollRequest(0x9999, position, position, true);
+            scrollRequest(0x9999, position, position, true, 0);
         } catch (Exception e) {
             LeanBackUtil.log("TabLayout => update => " + e.getMessage());
         }
@@ -359,11 +361,7 @@ public class TabLayout extends HorizontalScrollView {
         }
     }
 
-    private boolean scrollRequest(int direction, int position, int next) {
-        return scrollRequest(direction, position, next, false);
-    }
-
-    private boolean scrollRequest(int direction, int position, int next, boolean init) {
+    private boolean scrollRequest(int direction, int position, int next, boolean init, int repeaatCount) {
         try {
             int childCount = getChildCount();
             if (childCount != 1) throw new Exception("childCount is not 1");
@@ -383,10 +381,10 @@ public class TabLayout extends HorizontalScrollView {
                     ((TabLinearLayout) getChildAt(0)).resetChild(position);
                 }
                 ((TabLinearLayout) getChildAt(0)).requestChild(next);
-                if (null != mOnTabCheckedListener) {
+                if (repeaatCount == 0 && null != mOnTabCheckedListener) {
                     mOnTabCheckedListener.onChecked(next);
                 }
-                if (null != mOnTabUnCheckedListener) {
+                if (repeaatCount == 0 && null != mOnTabUnCheckedListener) {
                     mOnTabUnCheckedListener.onUnChecked(position);
                 }
             } else if (direction == View.FOCUS_LEFT) {
@@ -402,10 +400,10 @@ public class TabLayout extends HorizontalScrollView {
                     ((TabLinearLayout) getChildAt(0)).resetChild(position);
                 }
                 ((TabLinearLayout) getChildAt(0)).requestChild(next);
-                if (null != mOnTabCheckedListener) {
+                if (repeaatCount == 0 && null != mOnTabCheckedListener) {
                     mOnTabCheckedListener.onChecked(next);
                 }
-                if (null != mOnTabUnCheckedListener) {
+                if (repeaatCount == 0 && null != mOnTabUnCheckedListener) {
                     mOnTabUnCheckedListener.onUnChecked(position);
                 }
             } else if (direction == 0x9999) {
@@ -417,10 +415,10 @@ public class TabLayout extends HorizontalScrollView {
                 } else {
                     ((TabLinearLayout) getChildAt(0)).requestChild(next);
                 }
-                if (null != mOnTabCheckedListener) {
+                if (repeaatCount == 0 && null != mOnTabCheckedListener) {
                     mOnTabCheckedListener.onChecked(next);
                 }
-                if (null != mOnTabUnCheckedListener) {
+                if (repeaatCount == 0 && null != mOnTabUnCheckedListener) {
                     mOnTabUnCheckedListener.onUnChecked(position);
                 }
             }
@@ -457,7 +455,7 @@ public class TabLayout extends HorizontalScrollView {
             if (index <= 0)
                 throw new Exception("index is :" + index);
             int next = index - 1;
-            return scrollRequest(View.FOCUS_LEFT, index, next);
+            return scrollRequest( View.FOCUS_LEFT, index, next, false, 0);
         } catch (Exception e) {
             LeanBackUtil.log("TabLayout => scrollLeft => " + e.getMessage());
             return false;
@@ -474,7 +472,7 @@ public class TabLayout extends HorizontalScrollView {
             if (index < 0 || index + 1 > itemCount)
                 throw new Exception("index error: " + index);
             int next = index + 1;
-            return scrollRequest(View.FOCUS_RIGHT, index, next);
+            return scrollRequest(View.FOCUS_RIGHT, index, next, false, 0);
         } catch (Exception e) {
             LeanBackUtil.log("TabLayout => scrollRight => " + e.getMessage());
             return false;
@@ -498,7 +496,7 @@ public class TabLayout extends HorizontalScrollView {
                 scrollTo(0, 0);
             }
             int index = getCheckedIndex();
-            return scrollRequest(0x9999, index, position);
+            return scrollRequest(0x9999, index, position, false, 0);
         } catch (Exception e) {
             LeanBackUtil.log("TabLayout => checkedPosition => " + e.getMessage());
             return false;
