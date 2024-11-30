@@ -106,11 +106,8 @@ public class TabLayout extends HorizontalScrollView {
 //            LeanBackUtil.log("TabLayout => dispatchKeyEvent => action = ACTION_DOWN, keyCode = KEYCODE_DPAD_LEFT, repeat = " + event.getRepeatCount());
             try {
                 int index = getCheckedIndex();
-                if (index <= 0) {
-                    setTag(R.id.tab_flag, "first");
+                if (index <= 0)
                     throw new Exception();
-                }
-                setTag(R.id.tab_flag, null);
                 int next = findNextPosition(View.FOCUS_LEFT, index);
                 boolean scrollRequest = scrollRequest(View.FOCUS_LEFT, index, next, false);
                 if (!scrollRequest)
@@ -131,11 +128,8 @@ public class TabLayout extends HorizontalScrollView {
             try {
                 int index = getCheckedIndex();
                 int itemCount = getItemCount();
-                if (index + 1 >= itemCount) {
-                    setTag(R.id.tab_flag, "last");
+                if (index + 1 >= itemCount)
                     throw new Exception();
-                }
-                setTag(R.id.tab_flag, null);
                 int next = findNextPosition(View.FOCUS_RIGHT, index);
                 boolean scrollRequest = scrollRequest(View.FOCUS_RIGHT, index, next, false);
                 if (!scrollRequest)
@@ -402,22 +396,10 @@ public class TabLayout extends HorizontalScrollView {
         }
     }
 
-    private int getContainerWidth() {
-        try {
-            int childCount = getChildCount();
-            if (childCount != 1) throw new Exception("childCount is not 1");
-            return ((TabLinearLayout) getChildAt(0)).getWidth();
-        } catch (Exception e) {
-            LeanBackUtil.log("TabLayout => getContainerWidth => " + e.getMessage());
-            return 0;
-        }
+    public final void startAnim(boolean hasFocus) {
+        setScaleX(hasFocus ? mScale : 1f);
+        setScaleY(hasFocus ? mScale : 1f);
     }
-
-    public final void startAnim(boolean over) {
-        if (mScale <= 1f) return;
-        ViewCompat.animate(this).scaleX(over ? 1f : mScale).scaleY(over ? 1f : mScale).start();
-    }
-
 
     public final boolean scrollLeft() {
         try {
@@ -456,7 +438,7 @@ public class TabLayout extends HorizontalScrollView {
         }
     }
 
-    public final boolean scrollTo(int newCheckedIndex) {
+    public final boolean scrollToIndex(int newCheckedIndex) {
         try {
             int itemCount = getItemCount();
             if (itemCount <= 0)
@@ -470,7 +452,7 @@ public class TabLayout extends HorizontalScrollView {
             callListenerChecked();
             return scrollRequest;
         } catch (Exception e) {
-            LeanBackUtil.log("TabLayout => scrollTo => " + e.getMessage());
+            LeanBackUtil.log("TabLayout => scrollToIndex => " + e.getMessage());
             return false;
         }
     }
