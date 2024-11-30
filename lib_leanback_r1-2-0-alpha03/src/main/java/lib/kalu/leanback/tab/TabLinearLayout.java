@@ -12,6 +12,10 @@ import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.leanback.R;
+
+import org.json.JSONObject;
+
 import lib.kalu.leanback.util.LeanBackUtil;
 
 final class TabLinearLayout extends LinearLayout {
@@ -64,6 +68,70 @@ final class TabLinearLayout extends LinearLayout {
         } catch (Exception e) {
             LeanBackUtil.log("TabLinearLayout => getCheckedIndex => " + e.getMessage());
             return -1;
+        }
+    }
+
+    public JSONObject getCheckedItemJsonObject() {
+        try {
+            int childCount = getChildCount();
+            if (childCount <= 0) throw new Exception("childCount <= 0");
+            for (int i = 0; i < childCount; i++) {
+                View view = getChildAt(i);
+                if (null == view) continue;
+                if (view instanceof TabTextView) {
+                    boolean checked = ((TabTextView) view).isChecked();
+                    if (checked) {
+                        Object tag = view.getTag(R.id.tab_item_json_object);
+                        if (null != tag) {
+                            return (JSONObject) tag;
+                        }
+                    }
+                } else if (view instanceof TabImageView) {
+                    boolean checked = ((TabImageView) view).isChecked();
+                    if (checked) {
+                        Object tag = view.getTag(R.id.tab_item_json_object);
+                        if (null != tag) {
+                            return (JSONObject) tag;
+                        }
+                    }
+                }
+            }
+            throw new Exception("not find");
+        } catch (Exception e) {
+            LeanBackUtil.log("TabLinearLayout => getCheckedItemJsonObject => " + e.getMessage());
+            return null;
+        }
+    }
+
+    public int getCheckedItemId() {
+        try {
+            int childCount = getChildCount();
+            if (childCount <= 0) throw new Exception("childCount <= 0");
+            for (int i = 0; i < childCount; i++) {
+                View view = getChildAt(i);
+                if (null == view) continue;
+                if (view instanceof TabTextView) {
+                    boolean checked = ((TabTextView) view).isChecked();
+                    if (checked) {
+                        Object tag = view.getTag(R.id.tab_item_id);
+                        if (null != tag) {
+                            return (int) tag;
+                        }
+                    }
+                } else if (view instanceof TabImageView) {
+                    boolean checked = ((TabImageView) view).isChecked();
+                    if (checked) {
+                        Object tag = view.getTag(R.id.tab_item_id);
+                        if (null != tag) {
+                            return (int) tag;
+                        }
+                    }
+                }
+            }
+            throw new Exception("not find");
+        } catch (Exception e) {
+            LeanBackUtil.log("TabLinearLayout => getCheckedItemId => " + e.getMessage());
+            return Integer.MIN_VALUE;
         }
     }
 

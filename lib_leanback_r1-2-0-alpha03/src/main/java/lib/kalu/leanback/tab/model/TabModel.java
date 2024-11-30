@@ -7,6 +7,8 @@ import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import org.json.JSONObject;
+
 import java.io.File;
 import java.io.Serializable;
 
@@ -74,6 +76,25 @@ public abstract class TabModel implements Serializable {
     int imagePlaceholderResource;
 
     abstract int getType();
+
+    private JSONObject jsonObject;
+    private int id;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public JSONObject getJsonObject() {
+        return jsonObject;
+    }
+
+    public void setJsonObject(JSONObject jsonObject) {
+        this.jsonObject = jsonObject;
+    }
 
     public boolean isTxt() {
         return getType() == TYPE_TXT;
