@@ -5,10 +5,7 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.graphics.Rect;
-import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Build;
-import android.os.Handler;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.KeyEvent;
@@ -18,7 +15,6 @@ import android.view.ViewGroup;
 import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 
-import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
@@ -29,9 +25,7 @@ import org.json.JSONObject;
 
 import java.util.List;
 
-import lib.kalu.leanback.tab.listener.OnTabChangeListener;
 import lib.kalu.leanback.tab.listener.OnTabCheckedListener;
-import lib.kalu.leanback.tab.listener.OnTabUnCheckedListener;
 import lib.kalu.leanback.tab.model.TabModel;
 import lib.kalu.leanback.util.LeanBackUtil;
 
@@ -213,13 +207,13 @@ public class TabLayout extends HorizontalScrollView {
     public boolean requestFocus(int direction, Rect previouslyFocusedRect) {
         LeanBackUtil.log("TabLayout => requestFocus => direction = " + direction);
         if (direction == FOCUS_DOWN) {
-            requestTab(View.FOCUS_DOWN);
+            checked(View.FOCUS_DOWN, true, true);
         } else if (direction == FOCUS_UP) {
-            requestTab(View.FOCUS_UP);
+            checked(View.FOCUS_UP, true, true);
         } else if (direction == FOCUS_LEFT) {
-            requestTab(View.FOCUS_LEFT);
+            checked(View.FOCUS_LEFT, true, true);
         } else if (direction == FOCUS_RIGHT) {
-            requestTab(View.FOCUS_RIGHT);
+            checked(View.FOCUS_RIGHT, true, true);
         }
         return super.requestFocus(direction, previouslyFocusedRect);
     }
@@ -231,7 +225,7 @@ public class TabLayout extends HorizontalScrollView {
         if (gainFocus) {
             //  requestTab(0x8888);
         } else {
-            checkedTab(0x8888);
+            checked(0x8888, false, false);
         }
     }
 
@@ -322,16 +316,23 @@ public class TabLayout extends HorizontalScrollView {
         }
     }
 
-    private boolean requestTab(int direction) {
+    private boolean checked(int direction, boolean hasFocus, boolean call) {
         try {
             int childCount = getChildCount();
-            if (childCount != 1) throw new Exception("childCount is not 1");
+            if (childCount != 1)
+                throw new Exception("childCount is not 1");
+
             int index = getCheckedIndex();
-            boolean requestChild = ((TabLinearLayout) getChildAt(0)).requestChild(index);
-            if (!requestChild)
-                throw new Exception("requestChild warning: false");
-            if (null != mOnTabChangeListener) {
-                mOnTabChangeListener.onRepeat(direction, index);
+            if (hasFocus) {
+                ((TabLinearLayout) getChildAt(0)).requestChild(index);
+            } else {
+                ((TabLinearLayout) getChildAt(0)).checkChild(index);
+            }
+
+            if (call) {
+                if (null != mOnTabCheckedListener) {
+                    mOnTabCheckedListener.onChecked(index);
+                }
             }
             return true;
         } catch (Exception e) {
@@ -339,25 +340,6 @@ public class TabLayout extends HorizontalScrollView {
             return false;
         }
     }
-
-    private boolean checkedTab(int direction) {
-        try {
-            int childCount = getChildCount();
-            if (childCount != 1) throw new Exception("childCount is not 1");
-            int index = getCheckedIndex();
-            boolean checkChild = ((TabLinearLayout) getChildAt(0)).checkChild(index);
-            if (!checkChild)
-                throw new Exception("checkChild warning: false");
-            if (null != mOnTabChangeListener) {
-                mOnTabChangeListener.onLeave(direction, index);
-            }
-            return true;
-        } catch (Exception e) {
-            LeanBackUtil.log("TabLayout => checkedTab => " + e.getMessage());
-            return false;
-        }
-    }
-
 
     public final int getItemCount() {
         try {
@@ -502,18 +484,24 @@ public class TabLayout extends HorizontalScrollView {
     }
 
 
-    public final boolean checkedPosition(int position, boolean scrollTop) {
+    public final boolean checkedPosition(int nextCheckedIndex, boolean scrollTop) {
         try {
             int itemCount = getItemCount();
             if (itemCount <= 0)
                 throw new Exception("itemCount error: " + itemCount);
-            if (position < 0 || position + 1 > itemCount)
-                throw new Exception("position error:" + position);
+            if (nextCheckedIndex < 0 || nextCheckedIndex + 1 > itemCount)
+                throw new Exception("error: nextCheckedIndex < 0 || nextCheckedIndex + 1 > itemCount");
+            int checkedIndex = getCheckedIndex();
+            if (nextCheckedIndex == checkedIndex)
+                throw new Exception("error: position == checkedIndex");
             if (scrollTop) {
                 scrollTo(0, 0);
             }
-            int index = getCheckedIndex();
-            return scrollRequest(0x9999, index, position, false);
+            boolean scrollRequest = scrollRequest(0x9999, checkedIndex, nextCheckedIndex, false);
+            if (null != mOnTabCheckedListener) {
+                mOnTabCheckedListener.onChecked(nextCheckedIndex);
+            }
+            return scrollRequest;
         } catch (Exception e) {
             LeanBackUtil.log("TabLayout => checkedPosition => " + e.getMessage());
             return false;
@@ -582,16 +570,6 @@ public class TabLayout extends HorizontalScrollView {
     }
 
     /********/
-
-
-    public OnTabChangeListener mOnTabChangeListener;
-
-    public final void setOnTabChangeListener(@NonNull OnTabChangeListener listener) {
-        this.mOnTabChangeListener = listener;
-    }
-
-    /********/
-
 
     public OnTabCheckedListener mOnTabCheckedListener;
 
