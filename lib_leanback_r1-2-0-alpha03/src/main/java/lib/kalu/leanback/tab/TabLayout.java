@@ -479,31 +479,31 @@ public class TabLayout extends HorizontalScrollView {
     }
 
 
-    public final boolean checkedPosition(int position) {
-        return checkedPosition(position, false);
+    public final boolean scrollTo(int index) {
+        return scrollTo(index, false);
     }
 
 
-    public final boolean checkedPosition(int nextCheckedIndex, boolean scrollTop) {
+    public final boolean scrollTo(int index, boolean isScroll) {
         try {
             int itemCount = getItemCount();
             if (itemCount <= 0)
                 throw new Exception("itemCount error: " + itemCount);
-            if (nextCheckedIndex < 0 || nextCheckedIndex + 1 > itemCount)
-                throw new Exception("error: nextCheckedIndex < 0 || nextCheckedIndex + 1 > itemCount");
+            if (index < 0 || index + 1 > itemCount)
+                throw new Exception("error: index < 0 || index + 1 > itemCount");
             int checkedIndex = getCheckedIndex();
-            if (nextCheckedIndex == checkedIndex)
+            if (index == checkedIndex)
                 throw new Exception("error: position == checkedIndex");
-            if (scrollTop) {
+            if (isScroll) {
                 scrollTo(0, 0);
             }
-            boolean scrollRequest = scrollRequest(0x9999, checkedIndex, nextCheckedIndex, false);
+            boolean scrollRequest = scrollRequest(0x9999, checkedIndex, index, false);
             if (null != mOnTabCheckedListener) {
-                mOnTabCheckedListener.onChecked(nextCheckedIndex);
+                mOnTabCheckedListener.onChecked(index);
             }
             return scrollRequest;
         } catch (Exception e) {
-            LeanBackUtil.log("TabLayout => checkedPosition => " + e.getMessage());
+            LeanBackUtil.log("TabLayout => scrollTo => " + e.getMessage());
             return false;
         }
     }
