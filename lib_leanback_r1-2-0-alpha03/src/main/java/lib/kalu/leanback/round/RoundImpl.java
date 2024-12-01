@@ -1,21 +1,12 @@
 package lib.kalu.leanback.round;
 
-import android.animation.AnimatorSet;
-import android.animation.ObjectAnimator;
-import android.annotation.SuppressLint;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
-import android.graphics.Region;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.animation.AnimationSet;
-
-import androidx.core.view.ViewCompat;
-import androidx.leanback.widget.ObjectAdapter;
 
 import lib.kalu.leanback.util.LeanBackUtil;
 
@@ -50,7 +41,7 @@ public interface RoundImpl {
             int width = (int) (height * rateWidth);
             return View.MeasureSpec.makeMeasureSpec(width, View.MeasureSpec.EXACTLY);
         } catch (Exception e) {
-            LeanBackUtil.log("RoundImpl -> measureSpecWidth -> Exception -> " + e.getMessage());
+          //  LeanBackUtil.log("RoundImpl -> measureSpecWidth -> Exception -> " + e.getMessage());
             return widthMeasureSpec;
         }
     }
@@ -65,7 +56,7 @@ public interface RoundImpl {
             int height = (int) (width * rateHeight);
             return View.MeasureSpec.makeMeasureSpec(height, View.MeasureSpec.EXACTLY);
         } catch (Exception e) {
-            LeanBackUtil.log("RoundImpl -> measureSpecHeight -> Exception -> " + e.getMessage());
+           // LeanBackUtil.log("RoundImpl -> measureSpecHeight -> Exception -> " + e.getMessage());
             return heightMeasureSpec;
         }
     }
@@ -110,7 +101,7 @@ public interface RoundImpl {
             paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_OUT));
             canvas.drawPath(path, paint);
         } catch (Exception e) {
-            LeanBackUtil.log("RoundImpl -> clipCornerTopLeft -> Exception -> " + e.getMessage());
+           // LeanBackUtil.log("RoundImpl -> clipCornerTopLeft -> Exception -> " + e.getMessage());
         }
     }
 
@@ -151,7 +142,7 @@ public interface RoundImpl {
             paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_OUT));
             canvas.drawPath(path, paint);
         } catch (Exception e) {
-            LeanBackUtil.log("RoundImpl -> clipCornerTopRight -> Exception -> " + e.getMessage());
+          //  LeanBackUtil.log("RoundImpl -> clipCornerTopRight -> Exception -> " + e.getMessage());
         }
     }
 
@@ -192,7 +183,7 @@ public interface RoundImpl {
             paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_OUT));
             canvas.drawPath(path, paint);
         } catch (Exception e) {
-            LeanBackUtil.log("RoundImpl -> clipCornerBottomLeft -> Exception -> " + e.getMessage());
+         //   LeanBackUtil.log("RoundImpl -> clipCornerBottomLeft -> Exception -> " + e.getMessage());
         }
     }
 
@@ -234,7 +225,7 @@ public interface RoundImpl {
             paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_OUT));
             canvas.drawPath(path, paint);
         } catch (Exception e) {
-            LeanBackUtil.log("RoundImpl -> clipCornerBottomRight -> Exception -> " + e.getMessage());
+          //  LeanBackUtil.log("RoundImpl -> clipCornerBottomRight -> Exception -> " + e.getMessage());
         }
     }
 
@@ -320,7 +311,7 @@ public interface RoundImpl {
             paint.setXfermode(null);
             canvas.drawPath(path, paint);
         } catch (Exception e) {
-            LeanBackUtil.log("RoundImpl -> drawBorder -> Exception -> " + e.getMessage());
+           // LeanBackUtil.log("RoundImpl -> drawBorder -> Exception -> " + e.getMessage());
         }
     }
 
@@ -352,7 +343,7 @@ public interface RoundImpl {
 //            animatorSet.play(scaleX).with(scaleY);
 //            animatorSet.start();
         } catch (Exception e) {
-            LeanBackUtil.log("RoundImpl -> focusScale -> Exception -> " + e.getMessage());
+          //  LeanBackUtil.log("RoundImpl -> focusScale -> Exception -> " + e.getMessage());
         }
     }
 }
