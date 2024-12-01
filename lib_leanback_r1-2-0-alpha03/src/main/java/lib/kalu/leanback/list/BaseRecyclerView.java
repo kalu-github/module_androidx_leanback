@@ -2,6 +2,7 @@ package lib.kalu.leanback.list;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.view.FocusFinder;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewParent;
@@ -17,10 +18,6 @@ import lib.kalu.leanback.util.LeanBackUtil;
 
 class BaseRecyclerView extends RecyclerView {
 
-    /******************/
-
-    private OnBaseRecyclerViewChangeListener mOnBaseRecyclerViewChangeListener;
-
     public BaseRecyclerView(@NonNull Context context) {
         super(context);
         init();
@@ -34,6 +31,70 @@ class BaseRecyclerView extends RecyclerView {
     public BaseRecyclerView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init();
+    }
+
+    @Override
+    public boolean dispatchKeyEvent(KeyEvent event) {
+
+//        if (event.getRepeatCount() > 0)
+//            return true;
+//        LeanBackUtil.log("RecyclerViewGrid => dispatchKeyEvent => action = " + event.getAction() + ", keyCode = " + event.getKeyCode());
+
+        checkLoadmore(event);
+
+        // ACTION_DOWN KEYCODE_DPAD_UP
+        if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_UP) {
+            try {
+                View focus = findFocus();
+                if (null == focus)
+                    throw new Exception();
+                View nextFocus = FocusFinder.getInstance().findNextFocus(this, focus, View.FOCUS_UP);
+                if (null == nextFocus)
+                    throw new Exception();
+            } catch (Exception e) {
+                return false;
+            }
+        }
+        // ACTION_DOWN KEYCODE_DPAD_DOWN
+        else if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_DOWN) {
+            try {
+                View focus = findFocus();
+                if (null == focus)
+                    throw new Exception();
+                View nextFocus = FocusFinder.getInstance().findNextFocus(this, focus, View.FOCUS_DOWN);
+                if (null == nextFocus)
+                    throw new Exception();
+            } catch (Exception e) {
+                return false;
+            }
+        }
+        // ACTION_DOWN KEYCODE_DPAD_LEFT
+        else if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_LEFT) {
+            try {
+                View focus = findFocus();
+                if (null == focus)
+                    throw new Exception();
+                View nextFocus = FocusFinder.getInstance().findNextFocus(this, focus, View.FOCUS_LEFT);
+                if (null == nextFocus)
+                    throw new Exception();
+            } catch (Exception e) {
+                return false;
+            }
+        }
+        // ACTION_DOWN KEYCODE_DPAD_RIGHT
+        else if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_RIGHT) {
+            try {
+                View focus = findFocus();
+                if (null == focus)
+                    throw new Exception();
+                View nextFocus = FocusFinder.getInstance().findNextFocus(this, focus, View.FOCUS_RIGHT);
+                if (null == nextFocus)
+                    throw new Exception();
+            } catch (Exception e) {
+                return false;
+            }
+        }
+        return super.dispatchKeyEvent(event);
     }
 
     private void init() {
@@ -119,46 +180,6 @@ class BaseRecyclerView extends RecyclerView {
     public void into(int direction) {
     }
 
-    public final void setOnBaseRecyclerViewChangeListener(@NonNull OnBaseRecyclerViewChangeListener listener) {
-        this.mOnBaseRecyclerViewChangeListener = listener;
-    }
-
-    /********/
-
-    protected void addLoadmoreListener(KeyEvent event) {
-        if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_DOWN) {
-            try {
-                if (null == mOnBaseRecyclerViewChangeListener)
-                    throw new Exception();
-                int itemCount = getAdapterItemCount();
-                if (itemCount <= 0)
-                    throw new Exception();
-                int focusedChildPosition = findFocusedChildPosition();
-                if (focusedChildPosition < 0)
-                    throw new Exception();
-                int spanCount = getSpanCount();
-                if (spanCount <= 1) {
-                    if (focusedChildPosition + 1 >= itemCount) {
-                        mOnBaseRecyclerViewChangeListener.onLoadmore();
-                    }
-                } else {
-                    int value = focusedChildPosition % spanCount;
-                    if (value == 0) {
-                        if (itemCount - focusedChildPosition <= spanCount) {
-                            mOnBaseRecyclerViewChangeListener.onLoadmore();
-                        }
-                    } else {
-                        if (itemCount - focusedChildPosition <= value) {
-                            mOnBaseRecyclerViewChangeListener.onLoadmore();
-                        }
-                    }
-                }
-            } catch (Exception e) {
-                LeanBackUtil.log("BaseRecyclerView => addLoadmoreListener => " + e.getMessage());
-            }
-        }
-    }
-
     protected void leaveScrollFocusedChild() {
         try {
             View focusedChild = getFocusedChild();
@@ -201,14 +222,48 @@ class BaseRecyclerView extends RecyclerView {
         }
     }
 
+
+    /********/
+
+    protected void checkLoadmore(KeyEvent event) {
+        if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_DOWN) {
+            try {
+                if (null == mOnBaseRecyclerViewChangeListener)
+                    throw new Exception();
+                int itemCount = getAdapterItemCount();
+                if (itemCount <= 0)
+                    throw new Exception();
+                int focusedChildPosition = findFocusedChildPosition();
+                if (focusedChildPosition < 0)
+                    throw new Exception();
+                int spanCount = getSpanCount();
+                if (spanCount <= 1) {
+                    if (focusedChildPosition + 1 >= itemCount) {
+                        mOnBaseRecyclerViewChangeListener.onLoadmore();
+                    }
+                } else {
+                    int value = focusedChildPosition % spanCount;
+                    if (value == 0) {
+                        if (itemCount - focusedChildPosition <= spanCount) {
+                            mOnBaseRecyclerViewChangeListener.onLoadmore();
+                        }
+                    } else {
+                        if (itemCount - focusedChildPosition <= value) {
+                            mOnBaseRecyclerViewChangeListener.onLoadmore();
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                // LeanBackUtil.log("BaseRecyclerView => checkLoadmore => " + e.getMessage());
+            }
+        }
+    }
+
     /*****************/
 
-    @Override
-    public boolean dispatchKeyEvent(KeyEvent event) {
-        try {
-            return super.dispatchKeyEvent(event);
-        } catch (Exception e) {
-            return false;
-        }
+    private OnBaseRecyclerViewChangeListener mOnBaseRecyclerViewChangeListener;
+
+    public final void setOnBaseRecyclerViewChangeListener(@NonNull OnBaseRecyclerViewChangeListener listener) {
+        this.mOnBaseRecyclerViewChangeListener = listener;
     }
 }

@@ -79,7 +79,7 @@ class BaseVerticalGridView extends androidx.leanback.widget.VerticalGridView {
             View focusedChild = findFocus();
             if (null == focusedChild)
                 throw new Exception("focusedChild is null");
-            LeanBackUtil.log("BaseVerticalGridView => findFocusChild => focusedChild = " + focusedChild);
+        //    LeanBackUtil.log("BaseVerticalGridView => findFocusChild => focusedChild = " + focusedChild);
             return focusedChild;
         } catch (Exception e) {
             LeanBackUtil.log("BaseVerticalGridView => findFocusChild => " + e.getMessage());

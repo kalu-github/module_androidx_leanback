@@ -64,6 +64,13 @@
     *;
 }
 
+# frame
+-keep class lib.kalu.leanback.frame.FrameLayout  {
+    protected <fields>;
+    public <methods>;
+    public <fields>;
+}
+
 # list
 -keep class lib.kalu.leanback.list.**  {
     *;
@@ -82,6 +89,7 @@
     public <methods>;
     public <fields>;
 }
+
 # page
 -keep class lib.kalu.leanback.page.PageView  {
     protected <methods>;
