@@ -112,15 +112,15 @@ public class FrameLayout extends android.widget.FrameLayout {
         }
     }
 
-    protected final void onOutLeft() {
+    public void onOutLeft() {
     }
 
-    protected final void onOutRight() {
+    public void onOutRight() {
     }
 
-    protected final void onOutTop() {
+    public void onOutTop() {
     }
 
-    protected final void onOutBottom() {
+    public void onOutBottom() {
     }
 }
