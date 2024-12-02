@@ -28,8 +28,8 @@ public class RoundRelativeLayout extends RelativeLayout implements RoundImpl {
     private int mCornerBottomLeft;
     private int mCornerBottomRight;
 
-    private float mFocusScale;
-    private int mFocusDuration;
+    private boolean mClip;
+    private float mScale;
     private float mRateWidth;
     private float mRateHeight;
 
@@ -70,8 +70,8 @@ public class RoundRelativeLayout extends RelativeLayout implements RoundImpl {
             mCornerTopRight = typedArray.getDimensionPixelOffset(R.styleable.RoundView_rv_corner_top_right, 0);
             mCornerBottomLeft = typedArray.getDimensionPixelOffset(R.styleable.RoundView_rv_corner_bottom_left, 0);
             mCornerBottomRight = typedArray.getDimensionPixelOffset(R.styleable.RoundView_rv_corner_bottom_right, 0);
-            mFocusScale = typedArray.getFloat(R.styleable.RoundView_rv_focus_scale, 1f);
-            mFocusDuration = typedArray.getInteger(R.styleable.RoundView_rv_focus_duration, 100);
+            mClip = typedArray.getBoolean(R.styleable.RoundView_rv_clip, false);
+            mScale = typedArray.getFloat(R.styleable.RoundView_rv_scale, 1f);
             mRateWidth = typedArray.getFloat(R.styleable.RoundView_rv_rate_width, 0f);
             mRateHeight = typedArray.getFloat(R.styleable.RoundView_rv_rate_height, 0f);
         } catch (Exception e) {
@@ -86,15 +86,20 @@ public class RoundRelativeLayout extends RelativeLayout implements RoundImpl {
     @Override
     protected void dispatchDraw(Canvas canvas) {
         super.dispatchDraw(canvas);
-        int corner1 = mCornerTopLeft > 0 ? mCornerTopLeft : mCorner;
-        clipCornerTopLeft(canvas, mPaint, corner1);
-        int corner2 = mCornerTopRight > 0 ? mCornerTopRight : mCorner;
-        clipCornerTopRight(canvas, mPaint, corner2);
-        int corner3 = mCornerBottomLeft > 0 ? mCornerBottomLeft : mCorner;
-        clipCornerBottomLeft(canvas, mPaint, corner3);
-        int corner4 = mCornerBottomRight > 0 ? mCornerBottomRight : mCorner;
-        clipCornerBottomRight(canvas, mPaint, corner4);
-        drawBorder(canvas, mPaint, mStrokeWidth, mStrokeColor, corner1, corner2, corner3, corner4);
+        if (mClip) {
+            if (null == mPaint) {
+                mPaint = new Paint();
+            }
+            int corner1 = mCornerTopLeft > 0 ? mCornerTopLeft : mCorner;
+            clipCornerTopLeft(canvas, mPaint, corner1);
+            int corner2 = mCornerTopRight > 0 ? mCornerTopRight : mCorner;
+            clipCornerTopRight(canvas, mPaint, corner2);
+            int corner3 = mCornerBottomLeft > 0 ? mCornerBottomLeft : mCorner;
+            clipCornerBottomLeft(canvas, mPaint, corner3);
+            int corner4 = mCornerBottomRight > 0 ? mCornerBottomRight : mCorner;
+            clipCornerBottomRight(canvas, mPaint, corner4);
+            drawBorder(canvas, mPaint, mStrokeWidth, mStrokeColor, corner1, corner2, corner3, corner4);
+        }
     }
 
     @Override
@@ -111,6 +116,8 @@ public class RoundRelativeLayout extends RelativeLayout implements RoundImpl {
     @Override
     protected void onFocusChanged(boolean gainFocus, int direction, @Nullable Rect previouslyFocusedRect) {
         super.onFocusChanged(gainFocus, direction, previouslyFocusedRect);
-        focusScale(gainFocus, mFocusScale, mFocusDuration);
+        if (mScale != 1f){
+            focusScale(gainFocus, mScale);
+        }
     }
 }

@@ -6,9 +6,8 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
+import android.graphics.RectF;
 import android.view.View;
-
-import lib.kalu.leanback.util.LeanBackUtil;
 
 
 /**
@@ -41,7 +40,7 @@ public interface RoundImpl {
             int width = (int) (height * rateWidth);
             return View.MeasureSpec.makeMeasureSpec(width, View.MeasureSpec.EXACTLY);
         } catch (Exception e) {
-          //  LeanBackUtil.log("RoundImpl -> measureSpecWidth -> Exception -> " + e.getMessage());
+            //  LeanBackUtil.log("RoundImpl -> measureSpecWidth -> Exception -> " + e.getMessage());
             return widthMeasureSpec;
         }
     }
@@ -56,7 +55,7 @@ public interface RoundImpl {
             int height = (int) (width * rateHeight);
             return View.MeasureSpec.makeMeasureSpec(height, View.MeasureSpec.EXACTLY);
         } catch (Exception e) {
-           // LeanBackUtil.log("RoundImpl -> measureSpecHeight -> Exception -> " + e.getMessage());
+            // LeanBackUtil.log("RoundImpl -> measureSpecHeight -> Exception -> " + e.getMessage());
             return heightMeasureSpec;
         }
     }
@@ -70,28 +69,23 @@ public interface RoundImpl {
             int paddingLeft = ((View) this).getPaddingLeft();
             int paddingTop = ((View) this).getPaddingTop();
 
-            int startX = 0;
-            int startY = 0;
-
-            int centerX = paddingLeft + cornerWidth;
-            int centerY = 0;
-
-            int endX = 0;
-            int endY = paddingTop + cornerWidth;
-
             Path path = new Path();
-            path.moveTo(startX, startY);
-            path.lineTo(centerX, centerY);
-            path.quadTo(startX, startY, endX, endY);
-            path.lineTo(startX, startY);
+            int rx = paddingLeft + cornerWidth;
+            int ry = paddingTop + cornerWidth;
+            path.moveTo(rx, ry);
+            // 画圆弧 stratAngle是只开始的角度，X轴正方向为0度，sweepAngle是持续的角度;
+            float left = 0f;
+            float top = 0f;
+            float right = rx * 2f;
+            float bottom = ry * 2f;
+            path.addArc(new RectF(left, top, right, bottom), -180, 90);
+            path.lineTo(0f, 0f);
+            path.lineTo(0f, ry);
             path.close();
 
-            if (null == paint) {
-                paint = new Paint();
-            } else {
-                paint.reset();
-            }
+            paint.reset();
             paint.setAntiAlias(true);
+            paint.setStrokeWidth(0f);
             paint.setColor(Color.WHITE);
             paint.setStyle(Paint.Style.FILL_AND_STROKE);
             // CLEAR
@@ -100,8 +94,9 @@ public interface RoundImpl {
             // XOR
             paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_OUT));
             canvas.drawPath(path, paint);
+//            canvas.clipPath(path);
         } catch (Exception e) {
-           // LeanBackUtil.log("RoundImpl -> clipCornerTopLeft -> Exception -> " + e.getMessage());
+            // LeanBackUtil.log("RoundImpl -> clipCornerTopLeft -> Exception -> " + e.getMessage());
         }
     }
 
@@ -115,75 +110,29 @@ public interface RoundImpl {
             int paddingTop = ((View) this).getPaddingTop();
             int width = ((View) this).getWidth();
 
-            int startX = width;
-            int startY = 0;
-
-            int centerX = width;
-            int centerY = paddingTop + cornerWidth;
-
-            int endX = width - paddingRight - cornerWidth;
-            int endY = 0;
-
             Path path = new Path();
-            path.moveTo(startX, startY);
-            path.lineTo(centerX, centerY);
-            path.quadTo(startX, startY, endX, endY);
-            path.lineTo(startX, startY);
+            int rx = width - cornerWidth - paddingRight;
+            int ry = paddingTop + cornerWidth;
+            path.moveTo(rx, ry);
+            // 画圆弧 stratAngle是只开始的角度，X轴正方向为0度，sweepAngle是持续的角度;
+            float left = width - cornerWidth * 2f - paddingRight * 2f;
+            float top = 0f;
+            float right = width;
+            float bottom = ry * 2f;
+            path.addArc(new RectF(left, top, right, bottom), -90, 90);
+            path.lineTo(width, 0f);
+            path.lineTo(rx, 0f);
             path.close();
 
-            if (null == paint) {
-                paint = new Paint();
-            } else {
-                paint.reset();
-            }
+            paint.reset();
             paint.setAntiAlias(true);
+            paint.setStrokeWidth(0f);
             paint.setColor(Color.WHITE);
             paint.setStyle(Paint.Style.FILL_AND_STROKE);
             paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_OUT));
             canvas.drawPath(path, paint);
         } catch (Exception e) {
-          //  LeanBackUtil.log("RoundImpl -> clipCornerTopRight -> Exception -> " + e.getMessage());
-        }
-    }
-
-    default void clipCornerBottomLeft(Canvas canvas, Paint paint, int cornerWidth) {
-        try {
-
-            if (cornerWidth <= 0)
-                throw new Exception("error: cornerWidth <= 0");
-
-            int paddingLeft = ((View) this).getPaddingLeft();
-            int paddingBottom = ((View) this).getPaddingBottom();
-            int height = ((View) this).getHeight();
-
-            int startX = 0;
-            int startY = height;
-
-            int centerX = 0;
-            int centerY = height - paddingBottom - cornerWidth;
-
-            int endX = paddingLeft + cornerWidth;
-            int endY = height;
-
-            Path path = new Path();
-            path.moveTo(startX, startY);
-            path.lineTo(centerX, centerY);
-            path.quadTo(startX, startY, endX, endY);
-            path.lineTo(startX, startY);
-            path.close();
-
-            if (null == paint) {
-                paint = new Paint();
-            } else {
-                paint.reset();
-            }
-            paint.setAntiAlias(true);
-            paint.setColor(Color.WHITE);
-            paint.setStyle(Paint.Style.FILL_AND_STROKE);
-            paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_OUT));
-            canvas.drawPath(path, paint);
-        } catch (Exception e) {
-         //   LeanBackUtil.log("RoundImpl -> clipCornerBottomLeft -> Exception -> " + e.getMessage());
+            //  LeanBackUtil.log("RoundImpl -> clipCornerTopRight -> Exception -> " + e.getMessage());
         }
     }
 
@@ -198,34 +147,65 @@ public interface RoundImpl {
             int width = ((View) this).getWidth();
             int height = ((View) this).getHeight();
 
-            int startX = width;
-            int startY = height;
-
-            int centerX = width - paddingRight - cornerWidth;
-            int centerY = height;
-
-            int endX = width;
-            int endY = height - paddingBottom - cornerWidth;
-
             Path path = new Path();
-            path.moveTo(startX, startY);
-            path.lineTo(centerX, centerY);
-            path.quadTo(startX, startY, endX, endY);
-            path.lineTo(startX, startY);
+            int rx = width - cornerWidth - paddingRight;
+            int ry = height - cornerWidth - paddingBottom;
+            path.moveTo(rx, ry);
+            // 画圆弧 stratAngle是只开始的角度，X轴正方向为0度，sweepAngle是持续的角度;
+            float left = width - cornerWidth * 2f - paddingRight * 2f;
+            float top = height - cornerWidth * 2f - paddingBottom * 2f;
+            float right = width;
+            float bottom = height;
+            path.addArc(new RectF(left, top, right, bottom), 0, 90);
+            path.lineTo(width, height);
+            path.lineTo(width, ry);
             path.close();
 
-            if (null == paint) {
-                paint = new Paint();
-            } else {
-                paint.reset();
-            }
+            paint.reset();
             paint.setAntiAlias(true);
+            paint.setStrokeWidth(0f);
             paint.setColor(Color.WHITE);
             paint.setStyle(Paint.Style.FILL_AND_STROKE);
             paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_OUT));
             canvas.drawPath(path, paint);
         } catch (Exception e) {
-          //  LeanBackUtil.log("RoundImpl -> clipCornerBottomRight -> Exception -> " + e.getMessage());
+            //  LeanBackUtil.log("RoundImpl -> clipCornerBottomRight -> Exception -> " + e.getMessage());
+        }
+    }
+
+    default void clipCornerBottomLeft(Canvas canvas, Paint paint, int cornerWidth) {
+        try {
+
+            if (cornerWidth <= 0)
+                throw new Exception("error: cornerWidth <= 0");
+
+            int paddingLeft = ((View) this).getPaddingLeft();
+            int paddingBottom = ((View) this).getPaddingBottom();
+            int height = ((View) this).getHeight();
+
+            Path path = new Path();
+            int rx = cornerWidth + paddingLeft;
+            int ry = height - cornerWidth - paddingBottom;
+            path.moveTo(rx, ry);
+            // 画圆弧 stratAngle是只开始的角度，X轴正方向为0度，sweepAngle是持续的角度;
+            float left = 0f;
+            float top = height - cornerWidth * 2f - paddingBottom * 2f;
+            float right = rx * 2f;
+            float bottom = height;
+            path.addArc(new RectF(left, top, right, bottom), 90, 90);
+            path.lineTo(0f, height);
+            path.lineTo(rx, height);
+            path.close();
+
+            paint.reset();
+            paint.setAntiAlias(true);
+            paint.setStrokeWidth(0f);
+            paint.setColor(Color.WHITE);
+            paint.setStyle(Paint.Style.FILL_AND_STROKE);
+            paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_OUT));
+            canvas.drawPath(path, paint);
+        } catch (Exception e) {
+            //   LeanBackUtil.log("RoundImpl -> clipCornerBottomLeft -> Exception -> " + e.getMessage());
         }
     }
 
@@ -239,71 +219,98 @@ public interface RoundImpl {
             if (!focus)
                 throw new Exception("warning: focus false");
 
-            Path path = new Path();
             int width = ((View) this).getWidth();
             int height = ((View) this).getHeight();
 
-            // move
-            int move_x1 = strokeWidth / 2;
-            int move_y1 = roundTopLeft;
+            Path path = new Path();
+
+            // moveTo
+            float move_x1 = roundTopLeft;
+            float move_y1 = roundTopLeft;
             path.moveTo(move_x1, move_y1);
 
-            // topLeft
-            int top_left_x1 = 0;
-            int top_left_y1 = 0;
-            int top_left_x2 = roundTopLeft;
-            int top_left_y2 = strokeWidth / 2;
-            path.quadTo(top_left_x1, top_left_y1, top_left_x2, top_left_y2);
+            // top left
+            float left1 = strokeWidth * 0.5f;
+            float top1 = strokeWidth * 0.5f;
+            float right1 = roundTopLeft * 2f - strokeWidth * 0.5f;
+            float bottom1 = roundTopLeft * 2f - strokeWidth * 0.5f;
+            path.addArc(new RectF(left1, top1, right1, bottom1), -180, 90);
 
             // lineTo
-            int line_x2 = width - roundTopRight;
-            int line_y2 = strokeWidth / 2;
-            path.lineTo(line_x2, line_y2);
+            float line_x1 = width - roundTopRight + strokeWidth * 0.5f;
+            float line_y1 = strokeWidth * 0.5f;
+            path.lineTo(line_x1, line_y1);
 
-            // topRight
-            int top_right_x1 = width;
-            int top_right_y1 = 0;
-            int top_right_x2 = width - strokeWidth / 2;
-            int top_right_y2 = roundTopRight;
-            path.quadTo(top_right_x1, top_right_y1, top_right_x2, top_right_y2);
+            // moveTo
+            float move_x2 = line_x1;
+            float move_y2 = roundTopRight;
+            path.moveTo(move_x2, move_y2);
+
+            // top right
+            float left2 = width - roundTopRight * 2f;
+            float top2 = strokeWidth * 0.5f;
+            float right2 = width - strokeWidth * 0.5f;
+            float bottom2 = roundTopRight * 2f - strokeWidth * 0.5f;
+            path.addArc(new RectF(left2, top2, right2, bottom2), -90, 90);
+
+            // moveTo
+            float move_x3 = width - strokeWidth * 0.5f;
+            float move_y3 = roundTopRight - strokeWidth * 0.5f;
+            path.moveTo(move_x3, move_y3);
 
             // lineTo
-            int line_x3 = width - strokeWidth / 2;
-            int line_y3 = height - roundBottomRight;
+            float line_x3 = width - strokeWidth * 0.5f;
+            float line_y3 = height - roundBottomRight + strokeWidth * 0.5f;
             path.lineTo(line_x3, line_y3);
 
-            // bottomRight
-            int bottom_right_x1 = width;
-            int bottom_right_y1 = height;
-            int bottom_right_x2 = width - roundBottomRight;
-            int bottom_right_y2 = height - strokeWidth / 2;
-            path.quadTo(bottom_right_x1, bottom_right_y1, bottom_right_x2, bottom_right_y2);
+            // moveTo
+            float move_x4 = width - roundBottomRight;
+            float move_y4 = height - roundBottomRight;
+            path.moveTo(move_x4, move_y4);
+
+            // bottom right
+            float left3 = left2;
+            float top3 = height - roundBottomRight * 2f + strokeWidth * 0.5f;
+            float right3 = width - strokeWidth * 0.5f;
+            float bottom3 = height - strokeWidth * 0.5f;
+            path.addArc(new RectF(left3, top3, right3, bottom3), 0, 90);
+
+            // moveTo
+            float move_x5 = width - roundBottomRight + strokeWidth * 0.5f;
+            float move_y5 = height - strokeWidth * 0.5f;
+            path.moveTo(move_x5, move_y5);
 
             // lineTo
-            int line_x4 = roundBottomLeft;
-            int line_y4 = height - strokeWidth / 2;
+            float line_x4 = roundBottomLeft;
+            float line_y4 = height - strokeWidth * 0.5f;
             path.lineTo(line_x4, line_y4);
 
-            // bottomLeft
-            int bottom_left_x1 = 0;
-            int bottom_left_y1 = height;
-            int bottom_left_x2 = strokeWidth / 2;
-            int bottom_left_y2 = height - roundBottomLeft;
-            path.quadTo(bottom_left_x1, bottom_left_y1, bottom_left_x2, bottom_left_y2);
+            // moveTo
+            float move_x6 = roundBottomLeft;
+            float move_y6 = height - roundBottomLeft + strokeWidth * 0.5f;
+            path.moveTo(move_x6, move_y6);
+
+            // bottom left
+            float left4 = strokeWidth * 0.5f;
+            float top4 = height - roundBottomLeft * 2f + strokeWidth * 0.5f;
+            float right4 = roundBottomLeft * 2f - strokeWidth * 0.5f;
+            float bottom4 = height - strokeWidth * 0.5f;
+            path.addArc(new RectF(left4, top4, right4, bottom4), 90, 90);
+
+            // moveTo
+            float move_x7 = strokeWidth * 0.5f;
+            float move_y7 = height - roundBottomLeft + strokeWidth * 0.5f;
+            path.moveTo(move_x7, move_y7);
 
             // lineTo
-            int line_x5 = strokeWidth / 2;
-            int line_y5 = roundTopLeft;
+            float line_x5 = strokeWidth * 0.5f;
+            float line_y5 = roundTopLeft;
             path.lineTo(line_x5, line_y5);
 
             // close
             path.close();
 
-            if (null == paint) {
-                paint = new Paint();
-            } else {
-                paint.reset();
-            }
+            paint.reset();
             paint.setAntiAlias(true);
             paint.setStrokeWidth(strokeWidth);
             paint.setColor(strokeColor);
@@ -311,39 +318,16 @@ public interface RoundImpl {
             paint.setXfermode(null);
             canvas.drawPath(path, paint);
         } catch (Exception e) {
-           // LeanBackUtil.log("RoundImpl -> drawBorder -> Exception -> " + e.getMessage());
+            // LeanBackUtil.log("RoundImpl -> drawBorder -> Exception -> " + e.getMessage());
         }
     }
 
-    default void focusScale(boolean gainFocus, float scale, int duration) {
+    default void focusScale(boolean gainFocus, float scale) {
         try {
-            if (scale == 1f)
-                throw new Exception("warning: scale == 1f");
-            if (duration <= 0)
-                throw new Exception("warning: duration <= 0");
-//            ViewCompat.animate((View) this).scaleX(gainFocus ? scale : 1f).scaleY(gainFocus ? scale : 1f).setDuration(duration).start();
-
             ((View) this).setScaleX(gainFocus ? scale : 1f);
             ((View) this).setScaleY(gainFocus ? scale : 1f);
-
-//            ViewGroup.LayoutParams layoutParams = ((View) this).getLayoutParams();
-//            if (null == layoutParams)
-//                throw new Exception("error: layoutParams null");
-//            float value = gainFocus ? scale : 1f;
-//            layoutParams.width = (int) (layoutParams.width * 1.1f);
-//            layoutParams.height = (int) (layoutParams.height * 1.1f);
-//            ((View) this).setLayoutParams(layoutParams);
-
-//            ((View) this).setPivotX(((View) this).getWidth() / 2);
-//            ((View) this).setPivotY(((View) this).getHeight() / 2);
-//            ObjectAnimator scaleX = ObjectAnimator.ofFloat(this, "scaleX", gainFocus ? scale : 1f);
-//            ObjectAnimator scaleY = ObjectAnimator.ofFloat(this, "scaleY", gainFocus ? scale : 1f);
-//            AnimatorSet animatorSet = new AnimatorSet();
-//            animatorSet.setDuration(duration);
-//            animatorSet.play(scaleX).with(scaleY);
-//            animatorSet.start();
         } catch (Exception e) {
-          //  LeanBackUtil.log("RoundImpl -> focusScale -> Exception -> " + e.getMessage());
+            //  LeanBackUtil.log("RoundImpl -> focusScale -> Exception -> " + e.getMessage());
         }
     }
 }
