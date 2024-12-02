@@ -11,6 +11,6 @@
         <attr name="rv_stroke_width" format="reference|dimension" />
         <attr name="rv_stroke_color" format="color" />
         <attr name="rv_scale" format="float" />
-        <attr name="rv_clip" format="boolean"/>
+        <attr name="rv_clip" format="boolean" />
     </declare-styleable>
 </resources>

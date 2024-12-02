@@ -90,6 +90,7 @@ public class RoundImageView extends ImageView implements RoundImpl {
     @Override
     public void draw(Canvas canvas) {
         super.draw(canvas);
+        // 画布裁剪
         if (mClip) {
             if (null == mPaint) {
                 mPaint = new Paint();
@@ -102,7 +103,20 @@ public class RoundImageView extends ImageView implements RoundImpl {
             clipCornerBottomLeft(canvas, mPaint, corner3);
             int corner4 = mCornerBottomRight > 0 ? mCornerBottomRight : mCorner;
             clipCornerBottomRight(canvas, mPaint, corner4);
-            drawBorder(canvas, mPaint, mStrokeWidth, mStrokeColor, corner1, corner2, corner3, corner4);
+        }
+        // 获焦边框
+        if (mStrokeWidth > 0f) {
+            boolean hasFocus = hasFocus();
+            if (hasFocus) {
+                if (null == mPaint) {
+                    mPaint = new Paint();
+                }
+                int corner1 = mCornerTopLeft > 0 ? mCornerTopLeft : mCorner;
+                int corner2 = mCornerTopRight > 0 ? mCornerTopRight : mCorner;
+                int corner3 = mCornerBottomLeft > 0 ? mCornerBottomLeft : mCorner;
+                int corner4 = mCornerBottomRight > 0 ? mCornerBottomRight : mCorner;
+                drawBorder(canvas, mPaint, mStrokeWidth, mStrokeColor, corner1, corner2, corner3, corner4);
+            }
         }
     }
 

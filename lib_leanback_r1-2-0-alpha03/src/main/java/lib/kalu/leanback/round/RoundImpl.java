@@ -63,6 +63,9 @@ public interface RoundImpl {
     default void clipCornerTopLeft(Canvas canvas, Paint paint, int cornerWidth) {
         try {
 
+            if (null == paint)
+                throw new Exception("error: paint null");
+
             if (cornerWidth <= 0)
                 throw new Exception("error: cornerWidth <= 0");
 
@@ -103,6 +106,9 @@ public interface RoundImpl {
     default void clipCornerTopRight(Canvas canvas, Paint paint, int cornerWidth) {
         try {
 
+            if (null == paint)
+                throw new Exception("error: paint null");
+
             if (cornerWidth <= 0)
                 throw new Exception("error: cornerWidth <= 0");
 
@@ -138,6 +144,9 @@ public interface RoundImpl {
 
     default void clipCornerBottomRight(Canvas canvas, Paint paint, int cornerWidth) {
         try {
+
+            if (null == paint)
+                throw new Exception("error: paint null");
 
             if (cornerWidth <= 0)
                 throw new Exception("error: cornerWidth <= 0");
@@ -176,6 +185,9 @@ public interface RoundImpl {
     default void clipCornerBottomLeft(Canvas canvas, Paint paint, int cornerWidth) {
         try {
 
+            if (null == paint)
+                throw new Exception("error: paint null");
+
             if (cornerWidth <= 0)
                 throw new Exception("error: cornerWidth <= 0");
 
@@ -212,12 +224,11 @@ public interface RoundImpl {
     default void drawBorder(Canvas canvas, Paint paint, int strokeWidth, int strokeColor, int roundTopLeft, int roundTopRight, int roundBottomLeft, int roundBottomRight) {
         try {
 
+            if (null == paint)
+                throw new Exception("error: paint null");
+
             if (strokeWidth <= 0)
                 throw new Exception("warning: strokeWidth <= 0");
-
-            boolean focus = ((View) this).hasFocus();
-            if (!focus)
-                throw new Exception("warning: focus false");
 
             int width = ((View) this).getWidth();
             int height = ((View) this).getHeight();
