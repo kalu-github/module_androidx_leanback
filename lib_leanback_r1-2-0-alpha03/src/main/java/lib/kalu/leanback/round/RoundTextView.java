@@ -6,6 +6,7 @@ import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Path;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
@@ -20,7 +21,9 @@ import lib.kalu.leanback.util.LeanBackUtil;
 @SuppressLint("AppCompatCustomView")
 public class RoundTextView extends TextView implements RoundImpl {
 
+    private Path mPath;
     private Paint mPaint;
+
     private int mStrokeWidth;
     private int mStrokeColor;
 
@@ -86,19 +89,10 @@ public class RoundTextView extends TextView implements RoundImpl {
             if (null == mPaint) {
                 mPaint = new Paint();
             }
-            int corner1 = mCornerTopLeft > 0 ? mCornerTopLeft : mCorner;
-            clipCornerTopLeft(canvas, mPaint, corner1);
-            int corner2 = mCornerTopRight > 0 ? mCornerTopRight : mCorner;
-            clipCornerTopRight(canvas, mPaint, corner2);
-            int corner3 = mCornerBottomLeft > 0 ? mCornerBottomLeft : mCorner;
-            clipCornerBottomLeft(canvas, mPaint, corner3);
-            int corner4 = mCornerBottomRight > 0 ? mCornerBottomRight : mCorner;
-            clipCornerBottomRight(canvas, mPaint, corner4);
-//            int corner1 = mCornerTopLeft > 0 ? mCornerTopLeft : mCorner;
-//            int corner2 = mCornerTopRight > 0 ? mCornerTopRight : mCorner;
-//            int corner3 = mCornerBottomLeft > 0 ? mCornerBottomLeft : mCorner;
-//            int corner4 = mCornerBottomRight > 0 ? mCornerBottomRight : mCorner;
-//            clipRect(canvas, corner1, corner2, corner3, corner4);
+            if (null == mPath) {
+                mPath = new Path();
+            }
+            clipRect(canvas, mPaint, mPath, mCorner, mCornerTopLeft, mCornerTopRight, mCornerBottomRight, mCornerBottomLeft);
         }
         // 获焦边框
         if (mStrokeWidth > 0f) {
@@ -107,11 +101,10 @@ public class RoundTextView extends TextView implements RoundImpl {
                 if (null == mPaint) {
                     mPaint = new Paint();
                 }
-                int corner1 = mCornerTopLeft > 0 ? mCornerTopLeft : mCorner;
-                int corner2 = mCornerTopRight > 0 ? mCornerTopRight : mCorner;
-                int corner3 = mCornerBottomLeft > 0 ? mCornerBottomLeft : mCorner;
-                int corner4 = mCornerBottomRight > 0 ? mCornerBottomRight : mCorner;
-                drawBorder(canvas, mPaint, mStrokeWidth, mStrokeColor, corner1, corner2, corner3, corner4);
+                if (null == mPath) {
+                    mPath = new Path();
+                }
+                drawBorder(canvas, mPaint, mPath, mStrokeWidth, mStrokeColor, mCorner, mCornerTopLeft, mCornerTopRight, mCornerBottomRight, mCornerBottomLeft);
             }
         }
     }

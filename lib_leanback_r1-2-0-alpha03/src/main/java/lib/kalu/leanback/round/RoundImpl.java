@@ -43,7 +43,7 @@ public interface RoundImpl {
             int width = (int) (height * rateWidth);
             return View.MeasureSpec.makeMeasureSpec(width, View.MeasureSpec.EXACTLY);
         } catch (Exception e) {
-            //  LeanBackUtil.log("RoundImpl -> measureSpecWidth -> Exception -> " + e.getMessage());
+//            LeanBackUtil.log("RoundImpl -> measureSpecWidth -> Exception -> this = " + this + ", msg = " + e.getMessage());
             return widthMeasureSpec;
         }
     }
@@ -58,172 +58,13 @@ public interface RoundImpl {
             int height = (int) (width * rateHeight);
             return View.MeasureSpec.makeMeasureSpec(height, View.MeasureSpec.EXACTLY);
         } catch (Exception e) {
-            // LeanBackUtil.log("RoundImpl -> measureSpecHeight -> Exception -> " + e.getMessage());
+//            LeanBackUtil.log("RoundImpl -> measureSpecHeight -> Exception -> this = " + this + ", msg = " + e.getMessage());
             return heightMeasureSpec;
         }
     }
 
-    default void clipCornerTopLeft(Canvas canvas, Paint paint, int cornerWidth) {
-        try {
-
-            if (null == paint)
-                throw new Exception("error: paint null");
-
-            if (cornerWidth <= 0)
-                throw new Exception("error: cornerWidth <= 0");
-
-            int paddingLeft = ((View) this).getPaddingLeft();
-            int paddingTop = ((View) this).getPaddingTop();
-
-            Path path = new Path();
-            int rx = paddingLeft + cornerWidth;
-            int ry = paddingTop + cornerWidth;
-            path.moveTo(rx, ry);
-            // 画圆弧 stratAngle是只开始的角度，X轴正方向为0度，sweepAngle是持续的角度;
-            float left = 0f;
-            float top = 0f;
-            float right = rx * 2f;
-            float bottom = ry * 2f;
-            path.addArc(new RectF(left, top, right, bottom), -180, 90);
-            path.lineTo(0f, 0f);
-            path.lineTo(0f, ry);
-            path.close();
-
-            paint.reset();
-            paint.setAntiAlias(true);
-            paint.setStrokeWidth(0f);
-            paint.setColor(Color.WHITE);
-            paint.setStyle(Paint.Style.FILL_AND_STROKE);
-            // CLEAR
-            // DST_OUT
-            // SRC_OUT
-            // XOR
-            paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_ATOP));
-            canvas.drawPath(path, paint);
-        } catch (Exception e) {
-            // LeanBackUtil.log("RoundImpl -> clipCornerTopLeft -> Exception -> " + e.getMessage());
-        }
-    }
-
-    default void clipCornerTopRight(Canvas canvas, Paint paint, int cornerWidth) {
-        try {
-
-            if (null == paint)
-                throw new Exception("error: paint null");
-
-            if (cornerWidth <= 0)
-                throw new Exception("error: cornerWidth <= 0");
-
-            int paddingRight = ((View) this).getPaddingRight();
-            int paddingTop = ((View) this).getPaddingTop();
-            int width = ((View) this).getWidth();
-
-            Path path = new Path();
-            int rx = width - cornerWidth - paddingRight;
-            int ry = paddingTop + cornerWidth;
-            path.moveTo(rx, ry);
-            // 画圆弧 stratAngle是只开始的角度，X轴正方向为0度，sweepAngle是持续的角度;
-            float left = width - cornerWidth * 2f - paddingRight * 2f;
-            float top = 0f;
-            float right = width;
-            float bottom = ry * 2f;
-            path.addArc(new RectF(left, top, right, bottom), -90, 90);
-            path.lineTo(width, 0f);
-            path.lineTo(rx, 0f);
-            path.close();
-
-            paint.reset();
-            paint.setAntiAlias(true);
-            paint.setStrokeWidth(0f);
-            paint.setColor(Color.WHITE);
-            paint.setStyle(Paint.Style.FILL_AND_STROKE);
-            paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_OUT));
-            canvas.drawPath(path, paint);
-        } catch (Exception e) {
-            //  LeanBackUtil.log("RoundImpl -> clipCornerTopRight -> Exception -> " + e.getMessage());
-        }
-    }
-
-    default void clipCornerBottomRight(Canvas canvas, Paint paint, int cornerWidth) {
-        try {
-
-            if (null == paint)
-                throw new Exception("error: paint null");
-
-            if (cornerWidth <= 0)
-                throw new Exception("error: cornerWidth <= 0");
-
-            int paddingRight = ((View) this).getPaddingRight();
-            int paddingBottom = ((View) this).getPaddingBottom();
-            int width = ((View) this).getWidth();
-            int height = ((View) this).getHeight();
-
-            Path path = new Path();
-            int rx = width - cornerWidth - paddingRight;
-            int ry = height - cornerWidth - paddingBottom;
-            path.moveTo(rx, ry);
-            // 画圆弧 stratAngle是只开始的角度，X轴正方向为0度，sweepAngle是持续的角度;
-            float left = width - cornerWidth * 2f - paddingRight * 2f;
-            float top = height - cornerWidth * 2f - paddingBottom * 2f;
-            float right = width;
-            float bottom = height;
-            path.addArc(new RectF(left, top, right, bottom), 0, 90);
-            path.lineTo(width, height);
-            path.lineTo(width, ry);
-            path.close();
-
-            paint.reset();
-            paint.setAntiAlias(true);
-            paint.setStrokeWidth(0f);
-            paint.setColor(Color.WHITE);
-            paint.setStyle(Paint.Style.FILL_AND_STROKE);
-            paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_OUT));
-            canvas.drawPath(path, paint);
-        } catch (Exception e) {
-            //  LeanBackUtil.log("RoundImpl -> clipCornerBottomRight -> Exception -> " + e.getMessage());
-        }
-    }
-
-    default void clipCornerBottomLeft(Canvas canvas, Paint paint, int cornerWidth) {
-        try {
-
-            if (null == paint)
-                throw new Exception("error: paint null");
-
-            if (cornerWidth <= 0)
-                throw new Exception("error: cornerWidth <= 0");
-
-            int paddingLeft = ((View) this).getPaddingLeft();
-            int paddingBottom = ((View) this).getPaddingBottom();
-            int height = ((View) this).getHeight();
-
-            Path path = new Path();
-            int rx = cornerWidth + paddingLeft;
-            int ry = height - cornerWidth - paddingBottom;
-            path.moveTo(rx, ry);
-            // 画圆弧 stratAngle是只开始的角度，X轴正方向为0度，sweepAngle是持续的角度;
-            float left = 0f;
-            float top = height - cornerWidth * 2f - paddingBottom * 2f;
-            float right = rx * 2f;
-            float bottom = height;
-            path.addArc(new RectF(left, top, right, bottom), 90, 90);
-            path.lineTo(0f, height);
-            path.lineTo(rx, height);
-            path.close();
-
-            paint.reset();
-            paint.setAntiAlias(true);
-            paint.setStrokeWidth(0f);
-            paint.setColor(Color.WHITE);
-            paint.setStyle(Paint.Style.FILL_AND_STROKE);
-            paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_OUT));
-            canvas.drawPath(path, paint);
-        } catch (Exception e) {
-            //   LeanBackUtil.log("RoundImpl -> clipCornerBottomLeft -> Exception -> " + e.getMessage());
-        }
-    }
-
-    default void clipRect(Canvas canvas, int roundTopLeft, int roundTopRight, int roundBottomLeft, int roundBottomRight) {
+    default void clipRect(Canvas canvas, Path path, int roundTopLeft, int roundTopRight,
+                          int roundBottomLeft, int roundBottomRight) {
         try {
 
             int width = ((View) this).getWidth();
@@ -232,18 +73,150 @@ public interface RoundImpl {
             RectF rectF = new RectF(0, 0, width, height);
             float[] radii = {roundTopLeft, roundTopLeft, roundTopRight, roundTopRight, roundBottomRight, roundBottomRight, roundBottomLeft, roundBottomLeft};
 
-            Path path = new Path();
+            path.reset();
             path.addRoundRect(rectF, radii, Path.Direction.CCW);
             path.close();
 
             canvas.setDrawFilter(new PaintFlagsDrawFilter(0, Paint.ANTI_ALIAS_FLAG | Paint.FILTER_BITMAP_FLAG));
             canvas.clipPath(path);
         } catch (Exception e) {
-            LeanBackUtil.log("RoundImpl -> clipRect -> Exception -> this = " + this + ", msg = " + e.getMessage());
+//            LeanBackUtil.log("RoundImpl -> clipRect -> Exception -> this = " + this + ", msg = " + e.getMessage());
         }
     }
 
-    default void drawBorder(Canvas canvas, Paint paint, int strokeWidth, int strokeColor, int roundTopLeft, int roundTopRight, int roundBottomLeft, int roundBottomRight) {
+    default void clipRect(Canvas canvas, Paint paint, Path path, int corner, int cornerTopLeft, int cornerTopRight, int cornerBottomRight, int cornerBottomLeft) {
+        try {
+
+            if (null == paint)
+                throw new Exception("error: paint null");
+
+            int paddingLeft = ((View) this).getPaddingLeft();
+            int paddingRight = ((View) this).getPaddingRight();
+            int paddingTop = ((View) this).getPaddingTop();
+            int paddingBottom = ((View) this).getPaddingBottom();
+            int width = ((View) this).getWidth();
+            int height = ((View) this).getHeight();
+
+            // top left
+            int corner1 = cornerTopLeft > 0 ? cornerTopLeft : corner;
+            if (corner1 > 0) {
+
+                path.reset();
+                int rx = paddingLeft + corner1;
+                int ry = paddingTop + corner1;
+                path.moveTo(rx, ry);
+                // 画圆弧 stratAngle是只开始的角度，X轴正方向为0度，sweepAngle是持续的角度;
+                float left = 0f;
+                float top = 0f;
+                float right = rx * 2f;
+                float bottom = ry * 2f;
+                path.addArc(new RectF(left, top, right, bottom), -180, 90);
+                path.lineTo(0f, 0f);
+                path.lineTo(0f, ry);
+                path.close();
+
+                paint.reset();
+                paint.setAntiAlias(true);
+                paint.setStrokeWidth(0f);
+                paint.setColor(Color.WHITE);
+                paint.setStyle(Paint.Style.FILL_AND_STROKE);
+                // CLEAR
+                // DST_OUT
+                // SRC_OUT
+                // XOR
+                paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_ATOP));
+                canvas.drawPath(path, paint);
+            }
+
+            // top right
+            int corner2 = cornerTopRight > 0 ? cornerTopRight : corner;
+            if (corner2 > 0) {
+
+                path.reset();
+                int rx = width - corner2 - paddingRight;
+                int ry = paddingTop + corner2;
+                path.moveTo(rx, ry);
+                // 画圆弧 stratAngle是只开始的角度，X轴正方向为0度，sweepAngle是持续的角度;
+                float left = width - corner2 * 2f - paddingRight * 2f;
+                float top = 0f;
+                float right = width;
+                float bottom = ry * 2f;
+                path.addArc(new RectF(left, top, right, bottom), -90, 90);
+                path.lineTo(width, 0f);
+                path.lineTo(rx, 0f);
+                path.close();
+
+                paint.reset();
+                paint.setAntiAlias(true);
+                paint.setStrokeWidth(0f);
+                paint.setColor(Color.WHITE);
+                paint.setStyle(Paint.Style.FILL_AND_STROKE);
+                paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_OUT));
+                canvas.drawPath(path, paint);
+            }
+
+
+            // bottom right
+            int corner3 = cornerBottomRight > 0 ? cornerBottomRight : corner;
+            if (corner3 > 0) {
+
+                path.reset();
+                int rx = width - corner3 - paddingRight;
+                int ry = height - corner3 - paddingBottom;
+                path.moveTo(rx, ry);
+                // 画圆弧 stratAngle是只开始的角度，X轴正方向为0度，sweepAngle是持续的角度;
+                float left = width - corner3 * 2f - paddingRight * 2f;
+                float top = height - corner3 * 2f - paddingBottom * 2f;
+                float right = width;
+                float bottom = height;
+                path.addArc(new RectF(left, top, right, bottom), 0, 90);
+                path.lineTo(width, height);
+                path.lineTo(width, ry);
+                path.close();
+
+                paint.reset();
+                paint.setAntiAlias(true);
+                paint.setStrokeWidth(0f);
+                paint.setColor(Color.WHITE);
+                paint.setStyle(Paint.Style.FILL_AND_STROKE);
+                paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_OUT));
+                canvas.drawPath(path, paint);
+            }
+
+            // bottom left
+            int corner4 = cornerBottomLeft > 0 ? cornerBottomLeft : corner;
+            if (corner4 > 0) {
+
+                path.reset();
+                int rx = corner4 + paddingLeft;
+                int ry = height - corner4 - paddingBottom;
+                path.moveTo(rx, ry);
+                // 画圆弧 stratAngle是只开始的角度，X轴正方向为0度，sweepAngle是持续的角度;
+                float left = 0f;
+                float top = height - corner4 * 2f - paddingBottom * 2f;
+                float right = rx * 2f;
+                float bottom = height;
+                path.addArc(new RectF(left, top, right, bottom), 90, 90);
+                path.lineTo(0f, height);
+                path.lineTo(rx, height);
+                path.close();
+
+                paint.reset();
+                paint.setAntiAlias(true);
+                paint.setStrokeWidth(0f);
+                paint.setColor(Color.WHITE);
+                paint.setStyle(Paint.Style.FILL_AND_STROKE);
+                paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_OUT));
+                canvas.drawPath(path, paint);
+            }
+
+        } catch (Exception e) {
+//            LeanBackUtil.log("RoundImpl -> clipRect -> Exception -> this = " + this + ", msg = " + e.getMessage());
+        }
+    }
+
+    default void drawBorder(Canvas canvas, Paint paint, Path path, int strokeWidth, int strokeColor,
+                            int corner, int cornerTopLeft, int cornerTopRight, int cornerBottomRight, int cornerBottomLeft) {
         try {
 
             if (null == paint)
@@ -251,6 +224,11 @@ public interface RoundImpl {
 
             if (strokeWidth <= 0)
                 throw new Exception("warning: strokeWidth <= 0");
+
+            int roundTopLeft = cornerTopLeft > 0 ? cornerTopLeft : corner;
+            int roundTopRight = cornerTopRight > 0 ? cornerTopRight : corner;
+            int roundBottomRight = cornerBottomRight > 0 ? cornerBottomRight : corner;
+            int roundBottomLeft = cornerBottomLeft > 0 ? cornerBottomLeft : corner;
 
             int width = ((View) this).getWidth();
             int height = ((View) this).getHeight();
@@ -346,7 +324,7 @@ public interface RoundImpl {
             RectF rectF = new RectF(strokeWidth * 0.5f, strokeWidth * 0.5f, width - strokeWidth * 0.5f, height - strokeWidth * 0.5f);
             float[] radii = {roundTopLeft, roundTopLeft, roundTopRight, roundTopRight, roundBottomRight, roundBottomRight, roundBottomLeft, roundBottomLeft};
 
-            Path path = new Path();
+            path.reset();
             path.addRoundRect(rectF, radii, Path.Direction.CCW);
             path.close();
 
@@ -358,7 +336,7 @@ public interface RoundImpl {
             paint.setXfermode(null);
             canvas.drawPath(path, paint);
         } catch (Exception e) {
-            // LeanBackUtil.log("RoundImpl -> drawBorder -> Exception -> " + e.getMessage());
+//            LeanBackUtil.log("RoundImpl -> drawBorder -> Exception -> this = " + this + ", msg = " + e.getMessage());
         }
     }
 
@@ -367,7 +345,7 @@ public interface RoundImpl {
             ((View) this).setScaleX(gainFocus ? scale : 1f);
             ((View) this).setScaleY(gainFocus ? scale : 1f);
         } catch (Exception e) {
-            //  LeanBackUtil.log("RoundImpl -> focusScale -> Exception -> " + e.getMessage());
+//            LeanBackUtil.log("RoundImpl -> focusScale -> Exception -> this = " + this + ", msg = " + e.getMessage());
         }
     }
 }
