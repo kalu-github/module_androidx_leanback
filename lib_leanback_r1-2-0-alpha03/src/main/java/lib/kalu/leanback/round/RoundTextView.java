@@ -107,15 +107,15 @@ public class RoundTextView extends TextView implements RoundImpl {
         TypedArray typedArray = null;
         try {
             typedArray = context.obtainStyledAttributes(attrs, R.styleable.RoundView);
-            mStrokeColor = typedArray.getColor(R.styleable.RoundView_rv_stroke_width, Color.WHITE);
-            mStrokeWidth = typedArray.getDimensionPixelOffset(R.styleable.RoundView_rv_stroke_width, 0);
+            mStrokeColor = typedArray.getColor(R.styleable.RoundView_rv_focus_stroke_color, Color.WHITE);
+            mStrokeWidth = typedArray.getDimensionPixelOffset(R.styleable.RoundView_rv_focus_stroke_width, 0);
             mCorner = typedArray.getDimensionPixelOffset(R.styleable.RoundView_rv_corner, 0);
             mCornerTopLeft = typedArray.getDimensionPixelOffset(R.styleable.RoundView_rv_corner_top_left, 0);
             mCornerTopRight = typedArray.getDimensionPixelOffset(R.styleable.RoundView_rv_corner_top_right, 0);
             mCornerBottomLeft = typedArray.getDimensionPixelOffset(R.styleable.RoundView_rv_corner_bottom_left, 0);
             mCornerBottomRight = typedArray.getDimensionPixelOffset(R.styleable.RoundView_rv_corner_bottom_right, 0);
-            mClip = typedArray.getBoolean(R.styleable.RoundView_rv_clip, false);
-            mScale = typedArray.getFloat(R.styleable.RoundView_rv_scale, 1f);
+            mClip = typedArray.getBoolean(R.styleable.RoundView_rv_corner_clip, false);
+            mScale = typedArray.getFloat(R.styleable.RoundView_rv_focus_scale, 1f);
             mRateWidth = typedArray.getFloat(R.styleable.RoundView_rv_rate_width, 0f);
             mRateHeight = typedArray.getFloat(R.styleable.RoundView_rv_rate_height, 0f);
         } catch (Exception e) {

@@ -3,14 +3,14 @@
     <declare-styleable name="RoundView">
         <attr name="rv_rate_width" format="float" />
         <attr name="rv_rate_height" format="float" />
+        <attr name="rv_corner_clip" format="boolean" />
         <attr name="rv_corner_top_left" format="reference|dimension" />
         <attr name="rv_corner_top_right" format="reference|dimension" />
         <attr name="rv_corner_bottom_left" format="reference|dimension" />
         <attr name="rv_corner_bottom_right" format="reference|dimension" />
         <attr name="rv_corner" format="reference|dimension" />
-        <attr name="rv_stroke_width" format="reference|dimension" />
-        <attr name="rv_stroke_color" format="reference|color" />
-        <attr name="rv_scale" format="float" />
-        <attr name="rv_clip" format="boolean" />
+        <attr name="rv_focus_stroke_width" format="reference|dimension" />
+        <attr name="rv_focus_stroke_color" format="reference|color" />
+        <attr name="rv_focus_scale" format="float" />
     </declare-styleable>
 </resources>
