@@ -124,7 +124,7 @@ public interface RoundImpl {
                 // DST_OUT
                 // SRC_OUT
                 // XOR
-                paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_OUT));
+                paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
                 canvas.drawPath(path, paint);
             }
 
@@ -151,10 +151,9 @@ public interface RoundImpl {
                 paint.setStrokeWidth(0f);
                 paint.setColor(Color.WHITE);
                 paint.setStyle(Paint.Style.FILL_AND_STROKE);
-                paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_OUT));
+                paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
                 canvas.drawPath(path, paint);
             }
-
 
             // bottom right
             int corner3 = cornerBottomRight > 0 ? cornerBottomRight : corner;
@@ -179,7 +178,7 @@ public interface RoundImpl {
                 paint.setStrokeWidth(0f);
                 paint.setColor(Color.WHITE);
                 paint.setStyle(Paint.Style.FILL_AND_STROKE);
-                paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_OUT));
+                paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
                 canvas.drawPath(path, paint);
             }
 
@@ -206,7 +205,7 @@ public interface RoundImpl {
                 paint.setStrokeWidth(0f);
                 paint.setColor(Color.WHITE);
                 paint.setStyle(Paint.Style.FILL_AND_STROKE);
-                paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_OUT));
+                paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
                 canvas.drawPath(path, paint);
             }
 

@@ -9,6 +9,7 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Rect;
 import android.util.AttributeSet;
+import android.view.View;
 import android.widget.RelativeLayout;
 
 import androidx.annotation.NonNull;
@@ -61,29 +62,9 @@ public class RoundRelativeLayout extends RelativeLayout implements RoundImpl {
         init(context, attrs);
     }
 
-    private void init(@NonNull Context context, @NonNull AttributeSet attrs) {
-        TypedArray typedArray = null;
-        try {
-            typedArray = context.obtainStyledAttributes(attrs, R.styleable.RoundView);
-//            mStrokeColor = typedArray.getColor(R.styleable.RoundView_rv_stroke_width, Color.WHITE);
-            mStrokeColor = Color.WHITE;
-            mStrokeWidth = typedArray.getDimensionPixelOffset(R.styleable.RoundView_rv_stroke_width, 0);
-            mCorner = typedArray.getDimensionPixelOffset(R.styleable.RoundView_rv_corner, 0);
-            mCornerTopLeft = typedArray.getDimensionPixelOffset(R.styleable.RoundView_rv_corner_top_left, 0);
-            mCornerTopRight = typedArray.getDimensionPixelOffset(R.styleable.RoundView_rv_corner_top_right, 0);
-            mCornerBottomLeft = typedArray.getDimensionPixelOffset(R.styleable.RoundView_rv_corner_bottom_left, 0);
-            mCornerBottomRight = typedArray.getDimensionPixelOffset(R.styleable.RoundView_rv_corner_bottom_right, 0);
-            mClip = typedArray.getBoolean(R.styleable.RoundView_rv_clip, false);
-            mScale = typedArray.getFloat(R.styleable.RoundView_rv_scale, 1f);
-            mRateWidth = typedArray.getFloat(R.styleable.RoundView_rv_rate_width, 0f);
-            mRateHeight = typedArray.getFloat(R.styleable.RoundView_rv_rate_height, 0f);
-        } catch (Exception e) {
-            LeanBackUtil.log("RoundRelativeLayout -> init -> Exception -> " + e.getMessage(), e);
-        }
-
-        if (null != typedArray) {
-            typedArray.recycle();
-        }
+    @Override
+    protected boolean drawChild(Canvas canvas, View child, long drawingTime) {
+        return super.drawChild(canvas, child, drawingTime);
     }
 
     @Override
@@ -130,6 +111,30 @@ public class RoundRelativeLayout extends RelativeLayout implements RoundImpl {
         super.onFocusChanged(gainFocus, direction, previouslyFocusedRect);
         if (mScale != 1f) {
             focusScale(gainFocus, mScale);
+        }
+    }
+
+    private void init(@NonNull Context context, @NonNull AttributeSet attrs) {
+        TypedArray typedArray = null;
+        try {
+            typedArray = context.obtainStyledAttributes(attrs, R.styleable.RoundView);
+            mStrokeColor = typedArray.getColor(R.styleable.RoundView_rv_stroke_width, Color.WHITE);
+            mStrokeWidth = typedArray.getDimensionPixelOffset(R.styleable.RoundView_rv_stroke_width, 0);
+            mCorner = typedArray.getDimensionPixelOffset(R.styleable.RoundView_rv_corner, 0);
+            mCornerTopLeft = typedArray.getDimensionPixelOffset(R.styleable.RoundView_rv_corner_top_left, 0);
+            mCornerTopRight = typedArray.getDimensionPixelOffset(R.styleable.RoundView_rv_corner_top_right, 0);
+            mCornerBottomLeft = typedArray.getDimensionPixelOffset(R.styleable.RoundView_rv_corner_bottom_left, 0);
+            mCornerBottomRight = typedArray.getDimensionPixelOffset(R.styleable.RoundView_rv_corner_bottom_right, 0);
+            mClip = typedArray.getBoolean(R.styleable.RoundView_rv_clip, false);
+            mScale = typedArray.getFloat(R.styleable.RoundView_rv_scale, 1f);
+            mRateWidth = typedArray.getFloat(R.styleable.RoundView_rv_rate_width, 0f);
+            mRateHeight = typedArray.getFloat(R.styleable.RoundView_rv_rate_height, 0f);
+        } catch (Exception e) {
+            LeanBackUtil.log("RoundRelativeLayout -> init -> Exception -> " + e.getMessage(), e);
+        }
+
+        if (null != typedArray) {
+            typedArray.recycle();
         }
     }
 }

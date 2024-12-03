@@ -64,34 +64,9 @@ public class RoundImageView extends ImageView implements RoundImpl {
         init(context, attrs);
     }
 
-    private void init(@NonNull Context context, @NonNull AttributeSet attrs) {
-        TypedArray typedArray = null;
-        try {
-            typedArray = context.obtainStyledAttributes(attrs, R.styleable.RoundView);
-//            mStrokeColor = typedArray.getColor(R.styleable.RoundView_rv_stroke_width, Color.WHITE);
-            mStrokeColor = Color.RED;
-            mStrokeWidth = typedArray.getDimensionPixelOffset(R.styleable.RoundView_rv_stroke_width, 0);
-            mCorner = typedArray.getDimensionPixelOffset(R.styleable.RoundView_rv_corner, 0);
-            mCornerTopLeft = typedArray.getDimensionPixelOffset(R.styleable.RoundView_rv_corner_top_left, 0);
-            mCornerTopRight = typedArray.getDimensionPixelOffset(R.styleable.RoundView_rv_corner_top_right, 0);
-            mCornerBottomLeft = typedArray.getDimensionPixelOffset(R.styleable.RoundView_rv_corner_bottom_left, 0);
-            mCornerBottomRight = typedArray.getDimensionPixelOffset(R.styleable.RoundView_rv_corner_bottom_right, 0);
-            mClip = typedArray.getBoolean(R.styleable.RoundView_rv_clip, false);
-            mScale = typedArray.getFloat(R.styleable.RoundView_rv_scale, 1f);
-            mRateWidth = typedArray.getFloat(R.styleable.RoundView_rv_rate_width, 0f);
-            mRateHeight = typedArray.getFloat(R.styleable.RoundView_rv_rate_height, 0f);
-        } catch (Exception e) {
-            LeanBackUtil.log("RoundImageView -> init -> Exception -> " + e.getMessage(), e);
-        }
-
-        if (null != typedArray) {
-            typedArray.recycle();
-        }
-    }
-
     @Override
-    public void draw(Canvas canvas) {
-        super.draw(canvas);
+    protected void onDraw(Canvas canvas) {
+        super.onDraw(canvas);
         // 画布裁剪
         if (mClip) {
             if (null == mPaint) {
@@ -117,7 +92,6 @@ public class RoundImageView extends ImageView implements RoundImpl {
         }
     }
 
-
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         try {
@@ -134,6 +108,30 @@ public class RoundImageView extends ImageView implements RoundImpl {
         super.onFocusChanged(gainFocus, direction, previouslyFocusedRect);
         if (mScale != 1f) {
             focusScale(gainFocus, mScale);
+        }
+    }
+
+    private void init(@NonNull Context context, @NonNull AttributeSet attrs) {
+        TypedArray typedArray = null;
+        try {
+            typedArray = context.obtainStyledAttributes(attrs, R.styleable.RoundView);
+            mStrokeColor = typedArray.getColor(R.styleable.RoundView_rv_stroke_width, Color.WHITE);
+            mStrokeWidth = typedArray.getDimensionPixelOffset(R.styleable.RoundView_rv_stroke_width, 0);
+            mCorner = typedArray.getDimensionPixelOffset(R.styleable.RoundView_rv_corner, 0);
+            mCornerTopLeft = typedArray.getDimensionPixelOffset(R.styleable.RoundView_rv_corner_top_left, 0);
+            mCornerTopRight = typedArray.getDimensionPixelOffset(R.styleable.RoundView_rv_corner_top_right, 0);
+            mCornerBottomLeft = typedArray.getDimensionPixelOffset(R.styleable.RoundView_rv_corner_bottom_left, 0);
+            mCornerBottomRight = typedArray.getDimensionPixelOffset(R.styleable.RoundView_rv_corner_bottom_right, 0);
+            mClip = typedArray.getBoolean(R.styleable.RoundView_rv_clip, false);
+            mScale = typedArray.getFloat(R.styleable.RoundView_rv_scale, 1f);
+            mRateWidth = typedArray.getFloat(R.styleable.RoundView_rv_rate_width, 0f);
+            mRateHeight = typedArray.getFloat(R.styleable.RoundView_rv_rate_height, 0f);
+        } catch (Exception e) {
+            LeanBackUtil.log("RoundImageView -> init -> Exception -> " + e.getMessage(), e);
+        }
+
+        if (null != typedArray) {
+            typedArray.recycle();
         }
     }
 }
