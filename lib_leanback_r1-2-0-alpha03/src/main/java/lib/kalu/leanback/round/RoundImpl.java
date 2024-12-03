@@ -3,11 +3,14 @@ package lib.kalu.leanback.round;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.PaintFlagsDrawFilter;
 import android.graphics.Path;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.RectF;
 import android.view.View;
+
+import lib.kalu.leanback.util.LeanBackUtil;
 
 
 /**
@@ -95,9 +98,8 @@ public interface RoundImpl {
             // DST_OUT
             // SRC_OUT
             // XOR
-            paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_OUT));
+            paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_ATOP));
             canvas.drawPath(path, paint);
-//            canvas.clipPath(path);
         } catch (Exception e) {
             // LeanBackUtil.log("RoundImpl -> clipCornerTopLeft -> Exception -> " + e.getMessage());
         }
@@ -221,6 +223,26 @@ public interface RoundImpl {
         }
     }
 
+    default void clipRect(Canvas canvas, int roundTopLeft, int roundTopRight, int roundBottomLeft, int roundBottomRight) {
+        try {
+
+            int width = ((View) this).getWidth();
+            int height = ((View) this).getHeight();
+
+            RectF rectF = new RectF(0, 0, width, height);
+            float[] radii = {roundTopLeft, roundTopLeft, roundTopRight, roundTopRight, roundBottomRight, roundBottomRight, roundBottomLeft, roundBottomLeft};
+
+            Path path = new Path();
+            path.addRoundRect(rectF, radii, Path.Direction.CCW);
+            path.close();
+
+            canvas.setDrawFilter(new PaintFlagsDrawFilter(0, Paint.ANTI_ALIAS_FLAG | Paint.FILTER_BITMAP_FLAG));
+            canvas.clipPath(path);
+        } catch (Exception e) {
+            LeanBackUtil.log("RoundImpl -> clipRect -> Exception -> this = " + this + ", msg = " + e.getMessage());
+        }
+    }
+
     default void drawBorder(Canvas canvas, Paint paint, int strokeWidth, int strokeColor, int roundTopLeft, int roundTopRight, int roundBottomLeft, int roundBottomRight) {
         try {
 
@@ -233,92 +255,99 @@ public interface RoundImpl {
             int width = ((View) this).getWidth();
             int height = ((View) this).getHeight();
 
+//            Path path = new Path();
+//
+//            // moveTo
+//            float move_x1 = roundTopLeft;
+//            float move_y1 = roundTopLeft;
+//            path.moveTo(move_x1, move_y1);
+//
+//            // top left
+//            float left1 = strokeWidth * 0.5f;
+//            float top1 = strokeWidth * 0.5f;
+//            float right1 = roundTopLeft * 2f - strokeWidth * 0.5f;
+//            float bottom1 = roundTopLeft * 2f - strokeWidth * 0.5f;
+//            path.addArc(new RectF(left1, top1, right1, bottom1), -180, 90);
+//
+//            // lineTo
+//            float line_x1 = width - roundTopRight + strokeWidth * 0.5f;
+//            float line_y1 = strokeWidth * 0.5f;
+//            path.lineTo(line_x1, line_y1);
+//
+//            // moveTo
+//            float move_x2 = line_x1;
+//            float move_y2 = roundTopRight;
+//            path.moveTo(move_x2, move_y2);
+//
+//            // top right
+//            float left2 = width - roundTopRight * 2f;
+//            float top2 = strokeWidth * 0.5f;
+//            float right2 = width - strokeWidth * 0.5f;
+//            float bottom2 = roundTopRight * 2f - strokeWidth * 0.5f;
+//            path.addArc(new RectF(left2, top2, right2, bottom2), -90, 90);
+//
+//            // moveTo
+//            float move_x3 = width - strokeWidth * 0.5f;
+//            float move_y3 = roundTopRight - strokeWidth * 0.5f;
+//            path.moveTo(move_x3, move_y3);
+//
+//            // lineTo
+//            float line_x3 = width - strokeWidth * 0.5f;
+//            float line_y3 = height - roundBottomRight + strokeWidth * 0.5f;
+//            path.lineTo(line_x3, line_y3);
+//
+//            // moveTo
+//            float move_x4 = width - roundBottomRight;
+//            float move_y4 = height - roundBottomRight;
+//            path.moveTo(move_x4, move_y4);
+//
+//            // bottom right
+//            float left3 = left2;
+//            float top3 = height - roundBottomRight * 2f + strokeWidth * 0.5f;
+//            float right3 = width - strokeWidth * 0.5f;
+//            float bottom3 = height - strokeWidth * 0.5f;
+//            path.addArc(new RectF(left3, top3, right3, bottom3), 0, 90);
+//
+//            // moveTo
+//            float move_x5 = width - roundBottomRight + strokeWidth * 0.5f;
+//            float move_y5 = height - strokeWidth * 0.5f;
+//            path.moveTo(move_x5, move_y5);
+//
+//            // lineTo
+//            float line_x4 = roundBottomLeft;
+//            float line_y4 = height - strokeWidth * 0.5f;
+//            path.lineTo(line_x4, line_y4);
+//
+//            // moveTo
+//            float move_x6 = roundBottomLeft;
+//            float move_y6 = height - roundBottomLeft + strokeWidth * 0.5f;
+//            path.moveTo(move_x6, move_y6);
+//
+//            // bottom left
+//            float left4 = strokeWidth * 0.5f;
+//            float top4 = height - roundBottomLeft * 2f + strokeWidth * 0.5f;
+//            float right4 = roundBottomLeft * 2f - strokeWidth * 0.5f;
+//            float bottom4 = height - strokeWidth * 0.5f;
+//            path.addArc(new RectF(left4, top4, right4, bottom4), 90, 90);
+//
+//            // moveTo
+//            float move_x7 = strokeWidth * 0.5f;
+//            float move_y7 = height - roundBottomLeft + strokeWidth * 0.5f;
+//            path.moveTo(move_x7, move_y7);
+//
+//            // lineTo
+//            float line_x5 = strokeWidth * 0.5f;
+//            float line_y5 = roundTopLeft;
+//            path.lineTo(line_x5, line_y5);
+//
+//            // close
+//            path.close();
+
+            RectF rectF = new RectF(strokeWidth * 0.5f, strokeWidth * 0.5f, width - strokeWidth * 0.5f, height - strokeWidth * 0.5f);
+            float[] radii = {roundTopLeft, roundTopLeft, roundTopRight, roundTopRight, roundBottomRight, roundBottomRight, roundBottomLeft, roundBottomLeft};
+
             Path path = new Path();
-
-            // moveTo
-            float move_x1 = roundTopLeft;
-            float move_y1 = roundTopLeft;
-            path.moveTo(move_x1, move_y1);
-
-            // top left
-            float left1 = strokeWidth * 0.5f;
-            float top1 = strokeWidth * 0.5f;
-            float right1 = roundTopLeft * 2f - strokeWidth * 0.5f;
-            float bottom1 = roundTopLeft * 2f - strokeWidth * 0.5f;
-            path.addArc(new RectF(left1, top1, right1, bottom1), -180, 90);
-
-            // lineTo
-            float line_x1 = width - roundTopRight + strokeWidth * 0.5f;
-            float line_y1 = strokeWidth * 0.5f;
-            path.lineTo(line_x1, line_y1);
-
-            // moveTo
-            float move_x2 = line_x1;
-            float move_y2 = roundTopRight;
-            path.moveTo(move_x2, move_y2);
-
-            // top right
-            float left2 = width - roundTopRight * 2f;
-            float top2 = strokeWidth * 0.5f;
-            float right2 = width - strokeWidth * 0.5f;
-            float bottom2 = roundTopRight * 2f - strokeWidth * 0.5f;
-            path.addArc(new RectF(left2, top2, right2, bottom2), -90, 90);
-
-            // moveTo
-            float move_x3 = width - strokeWidth * 0.5f;
-            float move_y3 = roundTopRight - strokeWidth * 0.5f;
-            path.moveTo(move_x3, move_y3);
-
-            // lineTo
-            float line_x3 = width - strokeWidth * 0.5f;
-            float line_y3 = height - roundBottomRight + strokeWidth * 0.5f;
-            path.lineTo(line_x3, line_y3);
-
-            // moveTo
-            float move_x4 = width - roundBottomRight;
-            float move_y4 = height - roundBottomRight;
-            path.moveTo(move_x4, move_y4);
-
-            // bottom right
-            float left3 = left2;
-            float top3 = height - roundBottomRight * 2f + strokeWidth * 0.5f;
-            float right3 = width - strokeWidth * 0.5f;
-            float bottom3 = height - strokeWidth * 0.5f;
-            path.addArc(new RectF(left3, top3, right3, bottom3), 0, 90);
-
-            // moveTo
-            float move_x5 = width - roundBottomRight + strokeWidth * 0.5f;
-            float move_y5 = height - strokeWidth * 0.5f;
-            path.moveTo(move_x5, move_y5);
-
-            // lineTo
-            float line_x4 = roundBottomLeft;
-            float line_y4 = height - strokeWidth * 0.5f;
-            path.lineTo(line_x4, line_y4);
-
-            // moveTo
-            float move_x6 = roundBottomLeft;
-            float move_y6 = height - roundBottomLeft + strokeWidth * 0.5f;
-            path.moveTo(move_x6, move_y6);
-
-            // bottom left
-            float left4 = strokeWidth * 0.5f;
-            float top4 = height - roundBottomLeft * 2f + strokeWidth * 0.5f;
-            float right4 = roundBottomLeft * 2f - strokeWidth * 0.5f;
-            float bottom4 = height - strokeWidth * 0.5f;
-            path.addArc(new RectF(left4, top4, right4, bottom4), 90, 90);
-
-            // moveTo
-            float move_x7 = strokeWidth * 0.5f;
-            float move_y7 = height - roundBottomLeft + strokeWidth * 0.5f;
-            path.moveTo(move_x7, move_y7);
-
-            // lineTo
-            float line_x5 = strokeWidth * 0.5f;
-            float line_y5 = roundTopLeft;
-            path.lineTo(line_x5, line_y5);
-
-            // close
+            path.addRoundRect(rectF, radii, Path.Direction.CCW);
             path.close();
 
             paint.reset();
