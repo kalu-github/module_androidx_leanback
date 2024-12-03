@@ -124,7 +124,7 @@ public interface RoundImpl {
                 // DST_OUT
                 // SRC_OUT
                 // XOR
-                paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_ATOP));
+                paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_OUT));
                 canvas.drawPath(path, paint);
             }
 
