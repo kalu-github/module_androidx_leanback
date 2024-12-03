@@ -320,8 +320,13 @@ public interface RoundImpl {
 //            // close
 //            path.close();
 
-            RectF rectF = new RectF(strokeWidth * 0.5f, strokeWidth * 0.5f, width - strokeWidth * 0.5f, height - strokeWidth * 0.5f);
-            float[] radii = {roundTopLeft, roundTopLeft, roundTopRight, roundTopRight, roundBottomRight, roundBottomRight, roundBottomLeft, roundBottomLeft};
+            float half = strokeWidth * 0.5f;
+            RectF rectF = new RectF(half, half, width - half, height - half);
+            float radii1 = roundTopLeft - half;
+            float radii2 = roundTopRight - half;
+            float radii3 = roundBottomRight - half;
+            float radii4 = roundBottomLeft - half;
+            float[] radii = {radii1, radii1, radii2, radii2, radii3, radii3, radii4, radii4};
 
             path.reset();
             path.addRoundRect(rectF, radii, Path.Direction.CCW);
@@ -341,8 +346,12 @@ public interface RoundImpl {
 
     default void focusScale(boolean gainFocus, float scale) {
         try {
-            ((View) this).setScaleX(gainFocus ? scale : 1f);
-            ((View) this).setScaleY(gainFocus ? scale : 1f);
+            int width = ((View) this).getWidth();
+            int height = ((View) this).getHeight();
+            float scaleX = scale;
+            float scaleY = scaleX * height / width;
+            ((View) this).setScaleX(gainFocus ? scaleX : 1f);
+            ((View) this).setScaleY(gainFocus ? scaleY : 1f);
         } catch (Exception e) {
 //            LeanBackUtil.log("RoundImpl -> focusScale -> Exception -> this = " + this + ", msg = " + e.getMessage());
         }
