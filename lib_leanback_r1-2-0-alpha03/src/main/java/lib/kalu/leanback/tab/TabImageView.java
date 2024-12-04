@@ -37,10 +37,6 @@ class TabImageView extends ImageView {
 
     public TabImageView(@NonNull Context context, @NonNull TabModel data) {
         super(context);
-        init(data);
-    }
-
-    private void init(@NonNull TabModel data) {
         this.mTabModel = data;
         setSelected(false); // 选中
         setHovered(false); // 获焦

@@ -49,22 +49,54 @@ public class TabLayout extends HorizontalScrollView {
 
     public TabLayout(Context context) {
         super(context);
+        setFocusable(true);
+        setWillNotDraw(true);
+        setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
+        setSmoothScrollingEnabled(true);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            setNestedScrollingEnabled(true);
+        }
+        setHorizontalScrollBarEnabled(false);
         init(null);
     }
 
     public TabLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
+        setFocusable(true);
+        setWillNotDraw(true);
+        setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
+        setSmoothScrollingEnabled(true);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            setNestedScrollingEnabled(true);
+        }
+        setHorizontalScrollBarEnabled(false);
         init(attrs);
     }
 
     public TabLayout(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        setFocusable(true);
+        setWillNotDraw(true);
+        setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
+        setSmoothScrollingEnabled(true);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            setNestedScrollingEnabled(true);
+        }
+        setHorizontalScrollBarEnabled(false);
         init(attrs);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public TabLayout(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
+        setFocusable(true);
+        setWillNotDraw(true);
+        setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
+        setSmoothScrollingEnabled(true);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            setNestedScrollingEnabled(true);
+        }
+        setHorizontalScrollBarEnabled(false);
         init(attrs);
     }
 
@@ -191,18 +223,6 @@ public class TabLayout extends HorizontalScrollView {
     }
 
     private void init(@Nullable AttributeSet attrs) {
-        // 1
-        setFocusable(true);
-        setDescendantFocusability(ViewGroup.FOCUS_BLOCK_DESCENDANTS);
-        setSmoothScrollingEnabled(true);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            setNestedScrollingEnabled(true);
-        }
-        setHorizontalScrollBarEnabled(false);
-        setWillNotDraw(true);
-        // 2
-        addView(new TabLinearLayout(getContext()), 0);
-        // 3
         TypedArray attributes = null;
         try {
             attributes = getContext().obtainStyledAttributes(attrs, R.styleable.TabLayout);
@@ -232,8 +252,12 @@ public class TabLayout extends HorizontalScrollView {
     public final <T extends TabModel> void update(@NonNull List<T> list, int position) {
         try {
             int childCount = getChildCount();
-            if (childCount != 1)
-                throw new Exception("error: childCount != 1");
+            if (childCount != 1) {
+                TabLinearLayout layout = new TabLinearLayout(getContext());
+                LayoutParams layoutParams = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
+                layout.setLayoutParams(layoutParams);
+                addView(layout);
+            }
             // 1
             addItems(list);
             // 2
@@ -483,33 +507,34 @@ public class TabLayout extends HorizontalScrollView {
                 // 图片
                 if (t.isImg()) {
                     TabImageView view = new TabImageView(getContext(), t);
+                    int height = getHeight() - getPaddingTop() - getPaddingBottom();
+                    LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(0, height);
+                    if (i + 1 != size) {
+                        layoutParams.rightMargin = mMargin;
+                    }
+                    view.setLayoutParams(layoutParams);
                     view.setTag(R.id.tab_item_json_object, t.getJsonObject());
                     view.setWidthMin(mImageWidthMin);
                     view.setWidthMax(mImageWidthMax);
                     view.setHeight(mImageHeight);
                     view.setPadding(mImagePadding, 0, mImagePadding, 0);
-                    int height = getHeight() - getPaddingTop() - getPaddingBottom();
-                    LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(0, height);
-                    if (i + 1 != size) {
-                        layoutParams.rightMargin = mMargin;
-                    }
-                    view.setLayoutParams(layoutParams);
                     ((TabLinearLayout) getChildAt(0)).addView(view);
                 }
                 // 文字
                 else {
                     TabTextView view = new TabTextView(getContext(), t);
-                    view.setTextSize(TypedValue.COMPLEX_UNIT_PX, mTextSize);
-                    view.setUnderlineColor(mTextUnderlineColor);
-                    view.setUnderlineWidth(mTextUnderlineWidth);
-                    view.setUnderlineHeight(mTextUnderlineHeight);
-                    view.setPadding(mTextPadding, 0, mTextPadding, 0);
                     int height = getHeight() - getPaddingTop() - getPaddingBottom();
                     LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(0, height);
                     if (i + 1 != size) {
                         layoutParams.rightMargin = mMargin;
                     }
                     view.setLayoutParams(layoutParams);
+                    view.setTag(R.id.tab_item_json_object, t.getJsonObject());
+                    view.setTextSize(TypedValue.COMPLEX_UNIT_PX, mTextSize);
+                    view.setUnderlineColor(mTextUnderlineColor);
+                    view.setUnderlineWidth(mTextUnderlineWidth);
+                    view.setUnderlineHeight(mTextUnderlineHeight);
+                    view.setPadding(mTextPadding, 0, mTextPadding, 0);
                     ((TabLinearLayout) getChildAt(0)).addView(view);
                 }
             }

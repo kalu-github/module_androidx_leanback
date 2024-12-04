@@ -472,4 +472,43 @@ public abstract class TabModel implements Serializable {
             return getImagePathNormal();
         }
     }
+
+    @Override
+    public String toString() {
+        return "TabModel{" +
+                "TYPE_TXT=" + TYPE_TXT +
+                ", TYPE_IMG=" + TYPE_IMG +
+                ", text='" + text + '\'' +
+                ", textColorNormal=" + textColorNormal +
+                ", textColorFocus=" + textColorFocus +
+                ", textColorChecked=" + textColorChecked +
+                ", textColorResourceNormal=" + textColorResourceNormal +
+                ", textColorResourceFocus=" + textColorResourceFocus +
+                ", textColorResourceChecked=" + textColorResourceChecked +
+                ", backgroundResourceNormal=" + backgroundResourceNormal +
+                ", backgroundResourceFocus=" + backgroundResourceFocus +
+                ", backgroundResourceChecked=" + backgroundResourceChecked +
+                ", backgroundColorNormal=" + backgroundColorNormal +
+                ", backgroundColorFocus=" + backgroundColorFocus +
+                ", backgroundColorChecked=" + backgroundColorChecked +
+                ", backgroundImageUrlNormal='" + backgroundImageUrlNormal + '\'' +
+                ", backgroundImageUrlFocus='" + backgroundImageUrlFocus + '\'' +
+                ", backgroundImageUrlChecked='" + backgroundImageUrlChecked + '\'' +
+                ", backgroundImagePathNormal='" + backgroundImagePathNormal + '\'' +
+                ", backgroundImagePathFocus='" + backgroundImagePathFocus + '\'' +
+                ", backgroundImagePathChecked='" + backgroundImagePathChecked + '\'' +
+                ", backgroundImageAssetsNormal='" + backgroundImageAssetsNormal + '\'' +
+                ", backgroundImageAssetsFocus='" + backgroundImageAssetsFocus + '\'' +
+                ", backgroundImageAssetsChecked='" + backgroundImageAssetsChecked + '\'' +
+                ", imagePathNormal='" + imagePathNormal + '\'' +
+                ", imagePathFocus='" + imagePathFocus + '\'' +
+                ", imagePathChecked='" + imagePathChecked + '\'' +
+                ", imageUrlNormal='" + imageUrlNormal + '\'' +
+                ", imageUrlFocus='" + imageUrlFocus + '\'' +
+                ", imageUrlChecked='" + imageUrlChecked + '\'' +
+                ", imagePlaceholderResource=" + imagePlaceholderResource +
+                ", jsonObject=" + jsonObject +
+                ", id=" + id +
+                '}';
+    }
 }

@@ -43,7 +43,16 @@ class TabTextView extends TextView {
 
     public TabTextView(@NonNull Context context, @NonNull TabModel data) {
         super(context);
-        init(data);
+        this.mTabModel = data;
+        setSelected(false); // 选中
+        setHovered(false); // 获焦
+        setMaxLines(1);
+        setLines(1);
+        setMinEms(2);
+        setGravity(Gravity.CENTER);
+        refreshText();
+        refreshTextColor(false, false);
+        refreshBackground(false, false);
     }
 
     @Override
@@ -121,18 +130,25 @@ class TabTextView extends TextView {
         setMeasuredDimension(width, height);
     }
 
-    private void init(@NonNull TabModel data) {
-        this.mTabModel = data;
-        setSelected(false); // 选中
-        setHovered(false); // 获焦
-        setMaxLines(1);
-        setLines(1);
-        setMinEms(2);
-        setGravity(Gravity.CENTER);
-        refreshText();
-        refreshTextColor(false, false);
-        refreshBackground(false, false);
+    @Override
+    public void setText(CharSequence text, BufferType type) {
+        super.setText(text, type);
+//        LeanBackUtil.log("TabTextView => setText => text = " + text);
     }
+
+    @Override
+    public void setTextColor(int color) {
+        super.setTextColor(color);
+//        LeanBackUtil.log("TabTextView => setTextColor => color = " + color);
+    }
+
+    @Override
+    public void setBackgroundDrawable(Drawable background) {
+        super.setBackgroundDrawable(background);
+//        LeanBackUtil.log("TabTextView => setBackgroundDrawable => background = " + background);
+    }
+
+    /*************************/
 
     protected void setUnderlineColor(int color) {
         this.mUnderlineColor = color;
@@ -170,13 +186,15 @@ class TabTextView extends TextView {
 
     // text-color 优先级 ：resource > color
     private void refreshTextColor(boolean focus, boolean checked) {
-
+//        LeanBackUtil.log("TabTextView => refreshTextColor => focus = " + focus + ", checked = " + checked+ ", model = "+mTabModel.toString());
         try {
             @ColorRes int c1 = mTabModel.getTextColorResource(focus, checked);
+//            LeanBackUtil.log("TabTextView => refreshTextColor => c1 = " + c1);
             if (c1 != 0) {
                 setTextColor(getResources().getColor(c1));
             } else {
                 @ColorInt int c2 = mTabModel.getTextColor(focus, checked);
+//                LeanBackUtil.log("TabTextView => refreshTextColor => c2 = " + c2);
                 if (c2 != 0) {
                     setTextColor(c2);
                 }
@@ -383,4 +401,6 @@ class TabTextView extends TextView {
         }
         return drawable;
     }
+
+
 }

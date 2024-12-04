@@ -21,18 +21,13 @@ import lib.kalu.leanback.util.LeanBackUtil;
 final class TabLinearLayout extends LinearLayout {
     TabLinearLayout(Context context) {
         super(context);
-        init();
+        setFocusable(false);
+        setGravity(Gravity.CENTER);
+        setOrientation(LinearLayout.HORIZONTAL);
     }
 
     @Override
     public void setBackground(Drawable background) {
-    }
-
-    private void init() {
-        setFocusable(false);
-        setGravity(Gravity.CENTER);
-        setOrientation(LinearLayout.HORIZONTAL);
-        setLayoutParams(new HorizontalScrollView.LayoutParams(HorizontalScrollView.LayoutParams.WRAP_CONTENT, HorizontalScrollView.LayoutParams.MATCH_PARENT));
     }
 
     public int getCheckedIndex() {
