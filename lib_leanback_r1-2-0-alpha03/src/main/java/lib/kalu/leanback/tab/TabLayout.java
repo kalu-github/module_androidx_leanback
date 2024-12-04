@@ -6,6 +6,9 @@ import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.os.Build;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.KeyEvent;
@@ -250,23 +253,69 @@ public class TabLayout extends HorizontalScrollView {
     }
 
     public final <T extends TabModel> void update(@NonNull List<T> list, int position) {
-        try {
-            int childCount = getChildCount();
-            if (childCount != 1) {
-                TabLinearLayout layout = new TabLinearLayout(getContext());
-                LayoutParams layoutParams = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
-                layout.setLayoutParams(layoutParams);
-                addView(layout);
+
+        if (null == mHandler) {
+            try {
+                int childCount = getChildCount();
+                if (childCount != 1) {
+                    TabLinearLayout layout = new TabLinearLayout(getContext());
+                    LayoutParams layoutParams = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
+                    layout.setLayoutParams(layoutParams);
+                    addView(layout);
+                }
+                // 1
+                addItems(list);
+                // 2
+                scrollRequest(0x9999, position, position, true);
+            } catch (Exception e) {
+                LeanBackUtil.log("TabLayout => update => " + e.getMessage());
             }
-            // 1
-            addItems(list);
-            // 2
-            scrollRequest(0x9999, position, position, true);
-        } catch (Exception e) {
-            LeanBackUtil.log("TabLayout => update => " + e.getMessage());
+        } else {
+            mHandler.removeCallbacksAndMessages(null);
+            Message message = Message.obtain();
+            message.what = 1002;
+            message.obj = list;
+            message.arg1 = position;
+            mHandler.sendEmptyMessageDelayed(1002, 100);
         }
     }
 
+    private Handler mHandler = null;
+
+    @Override
+    protected void onFinishInflate() {
+        super.onFinishInflate();
+//        LeanBackUtil.log("TabLayout => onFinishInflate =>");
+        if (null == mHandler) {
+            mHandler = new Handler(Looper.getMainLooper()) {
+                @Override
+                public void handleMessage(@NonNull Message msg) {
+                    LeanBackUtil.log("TabLayout => onFinishInflate => handleMessage => what = " + msg.what);
+                    if (msg.what == 1001) {
+                        mHandler = null;
+                    } else if (msg.what == 1002) {
+                        mHandler = null;
+                        try {
+                            int childCount = getChildCount();
+                            if (childCount != 1) {
+                                TabLinearLayout layout = new TabLinearLayout(getContext());
+                                LayoutParams layoutParams = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
+                                layout.setLayoutParams(layoutParams);
+                                addView(layout);
+                            }
+                            // 1
+                            addItems((List<TabModel>) msg.obj);
+                            // 2
+                            scrollRequest(0x9999, msg.arg1, msg.arg1, true);
+                        } catch (Exception e) {
+                            LeanBackUtil.log("TabLayout => handleMessage => " + e.getMessage());
+                        }
+                    }
+                }
+            };
+        }
+        mHandler.sendEmptyMessageDelayed(1000, 100);
+    }
 
     public final int getCheckedIndex() {
         try {
@@ -309,7 +358,6 @@ public class TabLayout extends HorizontalScrollView {
 
             int index = getCheckedIndex();
             ((TabLinearLayout) getChildAt(0)).checkedItem(index);
-
             return true;
         } catch (Exception e) {
             LeanBackUtil.log("TabLayout => focusedOut => " + e.getMessage());
@@ -325,7 +373,6 @@ public class TabLayout extends HorizontalScrollView {
 
             int index = getCheckedIndex();
             ((TabLinearLayout) getChildAt(0)).focusedItem(index);
-            callListenerChecked();
             return true;
         } catch (Exception e) {
             LeanBackUtil.log("TabLayout => focusedInto => " + e.getMessage());
@@ -373,10 +420,15 @@ public class TabLayout extends HorizontalScrollView {
     private boolean scrollRequest(int direction, int position, int next, boolean init) {
         try {
             int childCount = getChildCount();
-            if (childCount != 1) throw new Exception("childCount is not 1");
+            if (childCount != 1)
+                throw new Exception("childCount is not 1");
+
+            View childAt = getChildAt(0);
+            if (!(childAt instanceof TabLinearLayout))
+                throw new Exception("error: childAt not instanceof TabLinearLayout");
 
             if (direction == View.FOCUS_RIGHT) {
-                int itemRight = ((TabLinearLayout) getChildAt(0)).getItemRight(next);
+                int itemRight = ((TabLinearLayout) childAt).getItemRight(next);
                 int scrollX = getScrollX();
                 int width = getWidth() - getPaddingLeft() - getPaddingRight();
 
@@ -387,30 +439,31 @@ public class TabLayout extends HorizontalScrollView {
                 }
 
                 if (position != next) {
-                    ((TabLinearLayout) getChildAt(0)).clearItem(position);
+                    ((TabLinearLayout) childAt).clearItem(position);
                 }
-                ((TabLinearLayout) getChildAt(0)).focusedItem(next);
+                ((TabLinearLayout) childAt).focusedItem(next);
             } else if (direction == View.FOCUS_LEFT) {
 
                 int scrollX = getScrollX();
-                int itemLeft = ((TabLinearLayout) getChildAt(0)).getItemLeft(next);
+                int itemLeft = ((TabLinearLayout) childAt).getItemLeft(next);
 
                 if (itemLeft < scrollX) {
                     scrollTo(itemLeft, 0);
                 }
 
                 if (position != next) {
-                    ((TabLinearLayout) getChildAt(0)).clearItem(position);
+                    ((TabLinearLayout) childAt).clearItem(position);
                 }
-                ((TabLinearLayout) getChildAt(0)).focusedItem(next);
+                ((TabLinearLayout) childAt).focusedItem(next);
             } else if (direction == 0x9999) {
                 if (position != next) {
-                    ((TabLinearLayout) getChildAt(0)).clearItem(position);
+                    ((TabLinearLayout) childAt).clearItem(position);
                 }
                 if (init) {
-                    ((TabLinearLayout) getChildAt(0)).checkedItem(next);
+                    ((TabLinearLayout) childAt).checkedItem(next);
+                    callListenerChecked();
                 } else {
-                    ((TabLinearLayout) getChildAt(0)).focusedItem(next);
+                    ((TabLinearLayout) childAt).focusedItem(next);
                 }
             }
             return true;
@@ -481,16 +534,6 @@ public class TabLayout extends HorizontalScrollView {
         }
     }
 
-    private void removeAllItem() {
-        try {
-            int childCount = getChildCount();
-            if (childCount != 1) throw new Exception("childCount is not 1");
-            ((TabLinearLayout) getChildAt(0)).removeAllViews();
-        } catch (Exception e) {
-            LeanBackUtil.log("TabLayout => removeAllItem => " + e.getMessage());
-        }
-    }
-
     private <T extends TabModel> void addItems(@NonNull List<T> list) {
         try {
             if (null == list || list.size() <= 0)
@@ -498,7 +541,12 @@ public class TabLayout extends HorizontalScrollView {
             int childCount = getChildCount();
             if (childCount != 1)
                 throw new Exception("childCount is not 1");
-            removeAllItem();
+
+            View childAt = getChildAt(0);
+            if (!(childAt instanceof TabLinearLayout))
+                throw new Exception("error: childAt not instanceof  TabLinearLayout");
+            ((TabLinearLayout) childAt).removeAllViews();
+
             int size = list.size();
             for (int i = 0; i < size; i++) {
                 T t = list.get(i);
@@ -518,7 +566,8 @@ public class TabLayout extends HorizontalScrollView {
                     view.setWidthMax(mImageWidthMax);
                     view.setHeight(mImageHeight);
                     view.setPadding(mImagePadding, 0, mImagePadding, 0);
-                    ((TabLinearLayout) getChildAt(0)).addView(view);
+                    ((TabLinearLayout) childAt).addView(view);
+                    view.refreshUI();
                 }
                 // 文字
                 else {
@@ -535,7 +584,8 @@ public class TabLayout extends HorizontalScrollView {
                     view.setUnderlineWidth(mTextUnderlineWidth);
                     view.setUnderlineHeight(mTextUnderlineHeight);
                     view.setPadding(mTextPadding, 0, mTextPadding, 0);
-                    ((TabLinearLayout) getChildAt(0)).addView(view);
+                    ((TabLinearLayout) childAt).addView(view);
+                    view.refreshUI();
                 }
             }
         } catch (Exception e) {
@@ -544,10 +594,12 @@ public class TabLayout extends HorizontalScrollView {
     }
 
     private void callListenerChecked() {
+//        LeanBackUtil.log("TabLayout => callListenerChecked => mOnTabCheckedListener = " + mOnTabCheckedListener);
         try {
             if (null != mOnTabCheckedListener) {
                 Object tag = getTag(R.id.tab_flag);
                 int checkedIndex = getCheckedIndex();
+//                LeanBackUtil.log("TabLayout => callListenerChecked => tag = " + tag + ", checkedIndex = " + checkedIndex);
                 if (null == tag) {
                     setTag(R.id.tab_flag, checkedIndex);
                     mOnTabCheckedListener.onChecked(checkedIndex);

@@ -50,9 +50,6 @@ class TabTextView extends TextView {
         setLines(1);
         setMinEms(2);
         setGravity(Gravity.CENTER);
-        refreshText();
-        refreshTextColor(false, false);
-        refreshBackground(false, false);
     }
 
     @Override
