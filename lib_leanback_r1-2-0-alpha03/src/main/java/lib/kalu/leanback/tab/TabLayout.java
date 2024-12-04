@@ -38,6 +38,7 @@ import lib.kalu.leanback.util.LeanBackUtil;
 @SuppressLint("NewApi")
 public class TabLayout extends HorizontalScrollView {
 
+    private Handler mHandler = null;
     private float mScale = 1f;
     private int mMargin = 0;
     private int mTextUnderlineColor = Color.TRANSPARENT;
@@ -253,34 +254,13 @@ public class TabLayout extends HorizontalScrollView {
     }
 
     public final <T extends TabModel> void update(@NonNull List<T> list, int position) {
-
-        if (null == mHandler) {
-            try {
-                int childCount = getChildCount();
-                if (childCount != 1) {
-                    TabLinearLayout layout = new TabLinearLayout(getContext());
-                    LayoutParams layoutParams = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
-                    layout.setLayoutParams(layoutParams);
-                    addView(layout);
-                }
-                // 1
-                addItems(list);
-                // 2
-                scrollRequest(0x9999, position, position, true);
-            } catch (Exception e) {
-                LeanBackUtil.log("TabLayout => update => " + e.getMessage());
-            }
-        } else {
-            mHandler.removeCallbacksAndMessages(null);
-            Message message = Message.obtain();
-            message.what = 1002;
-            message.obj = list;
-            message.arg1 = position;
-            mHandler.sendEmptyMessageDelayed(1002, 100);
-        }
+        boolean hasMessage = mHandler.hasMessages(1001);
+        Message message = Message.obtain();
+        message.what = 1002;
+        message.obj = list;
+        message.arg1 = position;
+        mHandler.sendMessageDelayed(message, hasMessage ? 100 : 0);
     }
-
-    private Handler mHandler = null;
 
     @Override
     protected void onFinishInflate() {
@@ -291,9 +271,7 @@ public class TabLayout extends HorizontalScrollView {
                 @Override
                 public void handleMessage(@NonNull Message msg) {
                     LeanBackUtil.log("TabLayout => onFinishInflate => handleMessage => what = " + msg.what);
-                    if (msg.what == 1001) {
-                        mHandler = null;
-                    } else if (msg.what == 1002) {
+                    if (msg.what == 1002) {
                         mHandler = null;
                         try {
                             int childCount = getChildCount();
@@ -314,7 +292,7 @@ public class TabLayout extends HorizontalScrollView {
                 }
             };
         }
-        mHandler.sendEmptyMessageDelayed(1000, 100);
+        mHandler.sendEmptyMessageDelayed(1001, 100);
     }
 
     public final int getCheckedIndex() {
