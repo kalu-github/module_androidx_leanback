@@ -250,16 +250,38 @@ public class TabLayout extends HorizontalScrollView {
     }
 
     public final <T extends TabModel> void update(@NonNull List<T> list) {
-        update(list, 0);
+        update(list, 0, true);
     }
 
     public final <T extends TabModel> void update(@NonNull List<T> list, int position) {
-        boolean hasMessage = mHandler.hasMessages(1001);
-        Message message = Message.obtain();
-        message.what = 1002;
-        message.obj = list;
-        message.arg1 = position;
-        mHandler.sendMessageDelayed(message, hasMessage ? 100 : 0);
+        update(list, position, true);
+    }
+
+    private <T extends TabModel> void update(@NonNull List<T> list, int position, boolean check) {
+        try {
+            if (check)
+                throw new IllegalAccessException();
+            int childCount = getChildCount();
+            if (childCount != 1) {
+                TabLinearLayout layout = new TabLinearLayout(getContext());
+                LayoutParams layoutParams = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
+                layout.setLayoutParams(layoutParams);
+                addView(layout);
+            }
+            // 1
+            addItems(list);
+            // 2
+            scrollRequest(0x9999, position, position, true);
+        } catch (IllegalAccessException e) {
+            boolean hasMessage = mHandler.hasMessages(1001);
+            Message message = Message.obtain();
+            message.what = 1002;
+            message.obj = list;
+            message.arg1 = position;
+            mHandler.sendMessageDelayed(message, hasMessage ? 100 : 0);
+        } catch (Exception e) {
+            LeanBackUtil.log("TabLayout => update => " + e.getMessage());
+        }
     }
 
     @Override
@@ -272,22 +294,8 @@ public class TabLayout extends HorizontalScrollView {
                 public void handleMessage(@NonNull Message msg) {
                     LeanBackUtil.log("TabLayout => onFinishInflate => handleMessage => what = " + msg.what);
                     if (msg.what == 1002) {
+                        update((List<TabModel>) msg.obj, msg.arg1, false);
                         mHandler = null;
-                        try {
-                            int childCount = getChildCount();
-                            if (childCount != 1) {
-                                TabLinearLayout layout = new TabLinearLayout(getContext());
-                                LayoutParams layoutParams = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
-                                layout.setLayoutParams(layoutParams);
-                                addView(layout);
-                            }
-                            // 1
-                            addItems((List<TabModel>) msg.obj);
-                            // 2
-                            scrollRequest(0x9999, msg.arg1, msg.arg1, true);
-                        } catch (Exception e) {
-                            LeanBackUtil.log("TabLayout => handleMessage => " + e.getMessage());
-                        }
                     }
                 }
             };
