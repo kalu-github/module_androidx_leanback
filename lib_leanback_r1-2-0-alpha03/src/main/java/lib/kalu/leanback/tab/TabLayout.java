@@ -259,7 +259,13 @@ public class TabLayout extends HorizontalScrollView {
 
     private <T extends TabModel> void update(@NonNull List<T> list, int position, boolean check) {
         try {
-            if (check)
+            boolean hasMessage;
+            if (null == mHandler) {
+                hasMessage = false;
+            } else {
+                hasMessage = mHandler.hasMessages(1001);
+            }
+            if (check && hasMessage)
                 throw new IllegalAccessException();
             int childCount = getChildCount();
             if (childCount != 1) {
@@ -273,12 +279,11 @@ public class TabLayout extends HorizontalScrollView {
             // 2
             scrollRequest(0x9999, position, position, true);
         } catch (IllegalAccessException e) {
-            boolean hasMessage = mHandler.hasMessages(1001);
             Message message = Message.obtain();
             message.what = 1002;
             message.obj = list;
             message.arg1 = position;
-            mHandler.sendMessageDelayed(message, hasMessage ? 100 : 0);
+            mHandler.sendMessageDelayed(message, 20);
         } catch (Exception e) {
             LeanBackUtil.log("TabLayout => update => " + e.getMessage());
         }
