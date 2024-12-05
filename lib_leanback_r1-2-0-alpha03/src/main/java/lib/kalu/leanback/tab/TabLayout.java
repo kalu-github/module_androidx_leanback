@@ -283,7 +283,7 @@ public class TabLayout extends HorizontalScrollView {
             message.what = 1002;
             message.obj = list;
             message.arg1 = position;
-            mHandler.sendMessageDelayed(message, 20);
+            mHandler.sendMessageDelayed(message, 1000);
         } catch (Exception e) {
             LeanBackUtil.log("TabLayout => update => " + e.getMessage());
         }
@@ -305,7 +305,7 @@ public class TabLayout extends HorizontalScrollView {
                 }
             };
         }
-        mHandler.sendEmptyMessageDelayed(1001, 100);
+        mHandler.sendEmptyMessageDelayed(1001, 1000);
     }
 
     public final int getCheckedIndex() {
