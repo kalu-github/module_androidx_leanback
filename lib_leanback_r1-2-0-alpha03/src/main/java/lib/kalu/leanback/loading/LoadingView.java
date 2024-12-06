@@ -93,7 +93,7 @@ public class LoadingView extends View {
     protected void onVisibilityChanged(@NonNull View changedView, int visibility) {
         setEnabled(visibility == View.VISIBLE);
         super.onVisibilityChanged(changedView, visibility);
-        LeanBackUtil.log("LoadingView => onVisibilityChanged => visibility = " + visibility);
+       // LeanBackUtil.log("LoadingView => onVisibilityChanged => visibility = " + visibility);
         if (visibility != View.VISIBLE) {
             cleanMessage();
         }
@@ -103,7 +103,7 @@ public class LoadingView extends View {
     protected void onWindowVisibilityChanged(int visibility) {
         setEnabled(visibility == View.VISIBLE);
         super.onWindowVisibilityChanged(visibility);
-        LeanBackUtil.log("LoadingView => onWindowVisibilityChanged => visibility = " + visibility);
+        //  LeanBackUtil.log("LoadingView => onWindowVisibilityChanged => visibility = " + visibility);
         if (visibility != View.VISIBLE) {
             cleanMessage();
         }
@@ -159,7 +159,7 @@ public class LoadingView extends View {
             if (!enabled)
                 throw new Exception("enabled warning: false");
             int visibility = getVisibility();
-            LeanBackUtil.log("LoadingView => onDraw => mLoop = " + mLoop + ", mCount = " + mCount + ", visibility = " + visibility);
+       //     LeanBackUtil.log("LoadingView => onDraw => mLoop = " + mLoop + ", mCount = " + mCount + ", visibility = " + visibility);
             if (visibility != View.VISIBLE)
                 throw new Exception("visibility warning: " + visibility);
             // 循环次数
@@ -276,7 +276,7 @@ public class LoadingView extends View {
         checkHandler();
         try {
             mHandler.sendEmptyMessageDelayed(9001, mDelayMillis);
-            LeanBackUtil.log("LoadingView => updateMessage => succ");
+         //   LeanBackUtil.log("LoadingView => updateMessage => succ");
         } catch (Exception e) {
             LeanBackUtil.log("LoadingView => updateMessage => " + e.getMessage());
         }
