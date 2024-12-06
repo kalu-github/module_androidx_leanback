@@ -10,6 +10,8 @@ import androidx.annotation.DrawableRes;
 import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
 
+import org.json.JSONObject;
+
 import java.util.List;
 
 import lib.kalu.leanback.tags.model.TagBean;
@@ -78,6 +80,19 @@ final class TagsHorizontalScrollView extends HorizontalScrollView {
             return null;
         }
     }
+    protected JSONObject getCheckedIndexJsonObject() {
+        try {
+            int childCount = getChildCount();
+            if (childCount != 1)
+                throw new Exception("childCount error: " + childCount);
+            TagsLinearLayoutChild tagsLinearLayoutChild = (TagsLinearLayoutChild) getChildAt(0);
+            return tagsLinearLayoutChild.getCheckedIndexJsonObject();
+        } catch (Exception e) {
+            LeanBackUtil.log("TagsHorizontalScrollView => getCheckedIndexJsonObject => " + e.getMessage());
+            return null;
+        }
+    }
+
 
     protected String getCheckedIndexName() {
         try {
@@ -92,15 +107,15 @@ final class TagsHorizontalScrollView extends HorizontalScrollView {
         }
     }
 
-    protected int getCheckedIndexCode() {
+    protected int getCheckedIndexId() {
         try {
             int childCount = getChildCount();
             if (childCount != 1)
                 throw new Exception("childCount error: " + childCount);
             TagsLinearLayoutChild tagsLinearLayoutChild = (TagsLinearLayoutChild) getChildAt(0);
-            return tagsLinearLayoutChild.getCheckedIndexCode();
+            return tagsLinearLayoutChild.getCheckedIndexId();
         } catch (Exception e) {
-            LeanBackUtil.log("TagsHorizontalScrollView => getCheckedIndexCode => " + e.getMessage());
+            LeanBackUtil.log("TagsHorizontalScrollView => getCheckedIndexId => " + e.getMessage());
             return -1;
         }
     }

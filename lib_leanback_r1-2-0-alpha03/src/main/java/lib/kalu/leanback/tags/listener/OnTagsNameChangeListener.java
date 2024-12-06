@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 import java.util.Map;
 
 @Keep
-public interface OnTagsChangeListener {
-    void onChange(@NonNull int row, @NonNull int column);
+public interface OnTagsNameChangeListener {
+
+    void onChange(@NonNull int row, @NonNull int column, @NonNull Map<String, String> data);
 }

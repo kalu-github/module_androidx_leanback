@@ -5,13 +5,41 @@ import androidx.annotation.ColorInt;
 import androidx.annotation.DrawableRes;
 import androidx.annotation.Keep;
 
+import org.json.JSONObject;
+
 import java.io.Serializable;
 
 @Keep
 public class TagBean implements Serializable {
 
-    private int code;
-    private String text;
+    private int id;
+    private String name;
+    private JSONObject jsonObject;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public JSONObject getJsonObject() {
+        return jsonObject;
+    }
+
+    public void setJsonObject(JSONObject jsonObject) {
+        this.jsonObject = jsonObject;
+    }
+
     private boolean checked;
     @ColorInt
     private int textColor;
@@ -25,22 +53,6 @@ public class TagBean implements Serializable {
     private int backgroundResourceFocus;
     @DrawableRes
     private int backgroundResourceChecked;
-
-    public int getCode() {
-        return code;
-    }
-
-    public void setCode(int code) {
-        this.code = code;
-    }
-
-    public String getText() {
-        return text;
-    }
-
-    public void setText(String text) {
-        this.text = text;
-    }
 
     public boolean isChecked() {
         return checked;

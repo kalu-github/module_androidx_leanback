@@ -12,6 +12,8 @@ import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.leanback.R;
 
+import org.json.JSONObject;
+
 import java.util.List;
 
 import lib.kalu.leanback.tags.model.TagBean;
@@ -58,7 +60,7 @@ final class TagsLinearLayoutChild extends LinearLayout {
                 TagBean o = data.get(i);
                 if (null == o)
                     continue;
-                String text = o.getText();
+                String text = o.getName();
                 if (null == text || text.length() <= 0)
                     continue;
                 o.setChecked(i == 0);
@@ -172,6 +174,26 @@ final class TagsLinearLayoutChild extends LinearLayout {
         }
     }
 
+    protected JSONObject getCheckedIndexJsonObject() {
+        try {
+            int checkedIndex = getCheckedIndex();
+            if (checkedIndex < 0)
+                throw new Exception("checkedIndex error: " + checkedIndex);
+            View view = getChildAt(checkedIndex);
+            if (null == view)
+                throw new Exception("view error: null");
+            Object tag = view.getTag(R.id.lb_tagslayout_data);
+            if (null == tag)
+                throw new Exception("tag error: null");
+            if (!(tag instanceof TagBean))
+                throw new Exception("tag error: " + tag);
+            return ((TagBean) tag).getJsonObject();
+        } catch (Exception e) {
+            LeanBackUtil.log("TagsLinearLayoutChild => getCheckedIndexJsonObject => " + e.getMessage());
+            return null;
+        }
+    }
+
     protected String getCheckedIndexName() {
         try {
             int checkedIndex = getCheckedIndex();
@@ -185,14 +207,14 @@ final class TagsLinearLayoutChild extends LinearLayout {
                 throw new Exception("tag error: null");
             if (!(tag instanceof TagBean))
                 throw new Exception("tag error: " + tag);
-            return ((TagBean) tag).getText();
+            return ((TagBean) tag).getName();
         } catch (Exception e) {
             LeanBackUtil.log("TagsLinearLayoutChild => getCheckedIndexName => " + e.getMessage());
             return null;
         }
     }
 
-    protected int getCheckedIndexCode() {
+    protected int getCheckedIndexId() {
         try {
             int checkedIndex = getCheckedIndex();
             if (checkedIndex < 0)
@@ -205,7 +227,7 @@ final class TagsLinearLayoutChild extends LinearLayout {
                 throw new Exception("tag error: null");
             if (!(tag instanceof TagBean))
                 throw new Exception("tag error: " + tag);
-            return ((TagBean) tag).getCode();
+            return ((TagBean) tag).getId();
         } catch (Exception e) {
             LeanBackUtil.log("TagsLinearLayoutChild => getCheckedIndexCode => " + e.getMessage());
             return -1;

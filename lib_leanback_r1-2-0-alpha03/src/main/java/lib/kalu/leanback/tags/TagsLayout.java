@@ -14,22 +14,24 @@ import android.widget.LinearLayout;
 
 import androidx.annotation.ColorInt;
 import androidx.annotation.DrawableRes;
-import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.leanback.R;
 
+import org.json.JSONObject;
+
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 import lib.kalu.leanback.tags.listener.OnTagsChangeListener;
+import lib.kalu.leanback.tags.listener.OnTagsIdChangeListener;
+import lib.kalu.leanback.tags.listener.OnTagsJsonObjectChangeListener;
+import lib.kalu.leanback.tags.listener.OnTagsNameChangeListener;
 import lib.kalu.leanback.tags.model.TagBean;
-import lib.kalu.leanback.tags.model.TagResultBean;
 import lib.kalu.leanback.util.LeanBackUtil;
 
-@Keep
+
 public final class TagsLayout extends LinearLayout {
 
     @DrawableRes
@@ -53,9 +55,9 @@ public final class TagsLayout extends LinearLayout {
     private int mUnderlineHeight = 0;
     private int mUnderlinePaddingLeft = 0;
     private int mUnderlinePaddingRight = 0;
+
     /*************************/
 
-    private OnTagsChangeListener onTagsChangeListener;
 
     public TagsLayout(Context context) {
         super(context);
@@ -191,7 +193,7 @@ public final class TagsLayout extends LinearLayout {
         }
     }
 
-    @Keep
+
     public void update(@NonNull Map<String, List<TagBean>> map) {
 
         if (null == map || map.size() == 0)
@@ -211,69 +213,6 @@ public final class TagsLayout extends LinearLayout {
             // 2
             scrollView.update(key, list, mTextSize, mItemMargin, mItemPaddingLeft, mItemPaddingRight, mTextColor, mTextColorFocus, mTextColorChecked, mBackgroundResource, mBackgroundResourceFocus, mBackgroundResourceChecked);
         }
-    }
-
-    @Keep
-    public Map<String, String> getData() {
-
-        try {
-            int childCount = getChildCount();
-            if (childCount <= 0)
-                throw new Exception("childCount error: " + childCount);
-            HashMap<String, String> map = new HashMap<>();
-            for (int i = 0; i < childCount; i++) {
-                TagsHorizontalScrollView tagsHorizontalScrollView = (TagsHorizontalScrollView) getChildAt(i);
-                if (null == tagsHorizontalScrollView)
-                    continue;
-                String key = tagsHorizontalScrollView.getCheckedIndexKey();
-                if (null == key || key.length() <= 0)
-                    continue;
-                String name = tagsHorizontalScrollView.getCheckedIndexName();
-                if (null == name || name.length() <= 0)
-                    continue;
-                map.put(key, name);
-            }
-            return map;
-        } catch (Exception e) {
-            LeanBackUtil.log("TagsLayout => getData => " + e.getMessage());
-            return null;
-        }
-    }
-
-    @Keep
-    public List<TagResultBean> getData2() {
-
-        try {
-            int childCount = getChildCount();
-            if (childCount <= 0)
-                throw new Exception("childCount error: " + childCount);
-            LinkedList<TagResultBean> list = new LinkedList<>();
-            for (int i = 0; i < childCount; i++) {
-                TagsHorizontalScrollView tagsHorizontalScrollView = (TagsHorizontalScrollView) getChildAt(i);
-                if (null == tagsHorizontalScrollView)
-                    continue;
-                String key = tagsHorizontalScrollView.getCheckedIndexKey();
-                if (null == key || key.length() <= 0)
-                    continue;
-                String name = tagsHorizontalScrollView.getCheckedIndexName();
-                if (null == name || name.length() <= 0)
-                    continue;
-                int code = tagsHorizontalScrollView.getCheckedIndexCode();
-                TagResultBean bean = new TagResultBean();
-                bean.setKey(key);
-                bean.setName(name);
-                bean.setCode(code);
-                list.add(bean);
-            }
-            return list;
-        } catch (Exception e) {
-            LeanBackUtil.log("TagsLayout => getData => " + e.getMessage());
-            return null;
-        }
-    }
-
-    public void setOnTagsChangeListener(@NonNull OnTagsChangeListener listener) {
-        this.onTagsChangeListener = listener;
     }
 
     /*************************/
@@ -308,7 +247,7 @@ public final class TagsLayout extends LinearLayout {
         }
     }
 
-    private int getCheckedIndexCode(int row) {
+    private int getCheckedIndexId(int row) {
         try {
             int childCount = getChildCount();
             if (childCount <= 0)
@@ -316,9 +255,9 @@ public final class TagsLayout extends LinearLayout {
             if (row >= childCount)
                 throw new Exception("row error: " + row);
             TagsHorizontalScrollView tagsHorizontalScrollView = (TagsHorizontalScrollView) getChildAt(row);
-            return tagsHorizontalScrollView.getCheckedIndexCode();
+            return tagsHorizontalScrollView.getCheckedIndexId();
         } catch (Exception e) {
-            LeanBackUtil.log("TagsLayout => getCheckedIndexCode => " + e.getMessage());
+            LeanBackUtil.log("TagsLayout => getCheckedIndexId => " + e.getMessage());
             return -1;
         }
     }
@@ -433,21 +372,157 @@ public final class TagsLayout extends LinearLayout {
     }
 
     private void callListener() {
+
         try {
-            if (null == onTagsChangeListener)
-                throw new Exception("onTagsChangeListener error: null");
             int checkedIndexRow = getCheckedIndexRow();
             if (checkedIndexRow < 0)
                 throw new Exception("checkedIndexRow error: " + checkedIndexRow);
             int checkedIndex = getCheckedIndex(checkedIndexRow);
             if (checkedIndex < 0)
                 throw new Exception("checkedIndex error: " + checkedIndex);
-            Map<String, String> data = getData();
-            if (null == data)
-                throw new Exception("data error: null");
-            onTagsChangeListener.onChange(checkedIndexRow, checkedIndex, data);
+
+            // mOnTagsChangeListener
+            if (null != mOnTagsChangeListener) {
+                mOnTagsChangeListener.onChange(checkedIndexRow, checkedIndex);
+            }
+
+            // mOnTagsIdChangeListener
+            if (null != mOnTagsIdChangeListener) {
+                Map<String, Integer> currentIds = getCurrentIds();
+                if (null == currentIds)
+                    throw new Exception("currentIds error: null");
+                mOnTagsIdChangeListener.onChange(checkedIndexRow, checkedIndex, currentIds);
+            }
+
+            // mOnTagsNameChangeListener
+            if (null != mOnTagsNameChangeListener) {
+                Map<String, String> currentNames = getCurrentNames();
+                if (null == currentNames)
+                    throw new Exception("currentNames error: null");
+                mOnTagsNameChangeListener.onChange(checkedIndexRow, checkedIndex, currentNames);
+            }
+
+            // mOnTagsJsonObjectChangeListener
+            if (null != mOnTagsJsonObjectChangeListener) {
+                Map<String, JSONObject> jsonObjects = getCurrentJsonObjects();
+                if (null == jsonObjects)
+                    throw new Exception("jsonObjects error: null");
+                mOnTagsJsonObjectChangeListener.onChange(checkedIndexRow, checkedIndex, jsonObjects);
+            }
+
+
         } catch (Exception e) {
             LeanBackUtil.log("TagsLayout => getData => " + e.getMessage());
         }
+    }
+
+    /*********************/
+
+    public Map<String, JSONObject> getCurrentJsonObjects() {
+        try {
+            int childCount = getChildCount();
+            if (childCount <= 0)
+                throw new Exception("childCount error: " + childCount);
+            HashMap<String, JSONObject> map = new HashMap<>();
+            for (int i = 0; i < childCount; i++) {
+                TagsHorizontalScrollView tagsHorizontalScrollView = (TagsHorizontalScrollView) getChildAt(i);
+                if (null == tagsHorizontalScrollView)
+                    continue;
+                String key = tagsHorizontalScrollView.getCheckedIndexKey();
+                if (null == key)
+                    continue;
+                JSONObject jsonObject = tagsHorizontalScrollView.getCheckedIndexJsonObject();
+                if (null == jsonObject)
+                    continue;
+                map.put(key, jsonObject);
+            }
+            return map;
+        } catch (Exception e) {
+            LeanBackUtil.log("TagsLayout => getCurrentJsonObjects => " + e.getMessage());
+            return null;
+        }
+    }
+
+    public Map<String, Integer> getCurrentIds() {
+        try {
+            int childCount = getChildCount();
+            if (childCount <= 0)
+                throw new Exception("childCount error: " + childCount);
+            HashMap<String, Integer> map = new HashMap<>();
+            for (int i = 0; i < childCount; i++) {
+                TagsHorizontalScrollView tagsHorizontalScrollView = (TagsHorizontalScrollView) getChildAt(i);
+                if (null == tagsHorizontalScrollView)
+                    continue;
+                String key = tagsHorizontalScrollView.getCheckedIndexKey();
+                if (null == key)
+                    continue;
+                int checkedIndexId = tagsHorizontalScrollView.getCheckedIndexId();
+                if (checkedIndexId == -1)
+                    continue;
+                map.put(key, checkedIndexId);
+            }
+            return map;
+        } catch (Exception e) {
+            LeanBackUtil.log("TagsLayout => getCurrentIds => " + e.getMessage());
+            return null;
+        }
+    }
+
+    public Map<String, String> getCurrentNames() {
+        try {
+            int childCount = getChildCount();
+            if (childCount <= 0)
+                throw new Exception("childCount error: " + childCount);
+            HashMap<String, String> map = new HashMap<>();
+            for (int i = 0; i < childCount; i++) {
+                TagsHorizontalScrollView tagsHorizontalScrollView = (TagsHorizontalScrollView) getChildAt(i);
+                if (null == tagsHorizontalScrollView)
+                    continue;
+                String key = tagsHorizontalScrollView.getCheckedIndexKey();
+                if (null == key)
+                    continue;
+                String checkedIndexName = tagsHorizontalScrollView.getCheckedIndexName();
+                if (null == checkedIndexName)
+                    continue;
+                map.put(key, checkedIndexName);
+            }
+            return map;
+        } catch (Exception e) {
+            LeanBackUtil.log("TagsLayout => getCurrentNames => " + e.getMessage());
+            return null;
+        }
+    }
+
+
+    /***********/
+
+    private OnTagsJsonObjectChangeListener mOnTagsJsonObjectChangeListener;
+
+    public void setOnTagsChangeListener(@NonNull OnTagsJsonObjectChangeListener listener) {
+        this.mOnTagsJsonObjectChangeListener = listener;
+    }
+
+    /***********/
+
+    private OnTagsNameChangeListener mOnTagsNameChangeListener;
+
+    public void setOnTagsNameChangeListener(@NonNull OnTagsNameChangeListener listener) {
+        this.mOnTagsNameChangeListener = listener;
+    }
+
+    /***********/
+
+    private OnTagsIdChangeListener mOnTagsIdChangeListener;
+
+    public void setOnTagsIdChangeListener(@NonNull OnTagsIdChangeListener listener) {
+        this.mOnTagsIdChangeListener = listener;
+    }
+
+    /***********/
+
+    private OnTagsChangeListener mOnTagsChangeListener;
+
+    public void setOnTagsChangeListener(@NonNull OnTagsChangeListener listener) {
+        this.mOnTagsChangeListener = listener;
     }
 }

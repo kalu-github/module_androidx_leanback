@@ -192,7 +192,7 @@
     public <methods>;
     public <fields>;
 }
--keep class lib.kalu.leanback.tags.listener.OnTagsChangeListener  {
+-keep class lib.kalu.leanback.tags.listener.**  {
     protected <methods>;
     public <methods>;
     public <fields>;
