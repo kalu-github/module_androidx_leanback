@@ -45,6 +45,49 @@ class BaseVerticalGridView extends androidx.leanback.widget.VerticalGridView {
     @Override
     public boolean dispatchKeyEvent(@NonNull KeyEvent event) {
         LeanBackUtil.log("BaseVerticalGridView => dispatchKeyEvent => action = " + event.getAction() + ", keyCode = " + event.getKeyCode());
+
+
+        // fix bug: 焦点向上移动时, view还未滚动到正确位置
+        try {
+            if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_UP) {
+                View focus = findFocus();
+                View nextFocus = FocusFinder.getInstance().findNextFocus(this, focus, View.FOCUS_UP);
+                if (null == nextFocus) {
+                    int positionAtGridView = findFocusedChildByPositionAtGridView();
+                    if (positionAtGridView > 0) {
+                        while (true) {
+                            scrollBy(0, -10);
+                            View view = FocusFinder.getInstance().findNextFocus(this, focus, View.FOCUS_UP);
+                            if (null != view)
+                                break;
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+        }
+
+        // fix bug: 焦点向下移动时, view还未滚动到正确位置
+        try {
+            if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_DOWN) {
+                View focus = findFocus();
+                View nextFocus = FocusFinder.getInstance().findNextFocus(this, focus, View.FOCUS_DOWN);
+                if (null == nextFocus) {
+                    int positionAtGridView = findFocusedChildByPositionAtGridView();
+                    int adapterItemCount = getAdapterItemCount();
+                    if (positionAtGridView+1<adapterItemCount) {
+                        while (true) {
+                            scrollBy(0, 10);
+                            View view = FocusFinder.getInstance().findNextFocus(this, focus, View.FOCUS_DOWN);
+                            if (null != view)
+                                break;
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+        }
+
         // ACTION_UP KEYCODE_DPAD_DOWN
         if (event.getAction() == KeyEvent.ACTION_UP && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_DOWN) {
             if (!hasFocusGridView) {
@@ -65,25 +108,9 @@ class BaseVerticalGridView extends androidx.leanback.widget.VerticalGridView {
                     }
                 }
             }
-
-            // fix bug: 焦点向上移动时, view还未滚动到正确位置
-            try {
-                View focus = findFocus();
-                View nextFocus = FocusFinder.getInstance().findNextFocus(this, focus, View.FOCUS_UP);
-                if (null == nextFocus) {
-                    int positionAtGridView = findFocusedChildByPositionAtGridView();
-                    if (positionAtGridView > 0) {
-                        while (true) {
-                            scrollBy(0, -10);
-                            View view = FocusFinder.getInstance().findNextFocus(this, focus, View.FOCUS_UP);
-                            if (null != view)
-                                break;
-                        }
-                    }
-                }
-            } catch (Exception e) {
-            }
         }
+
+
         return super.dispatchKeyEvent(event);
     }
 
