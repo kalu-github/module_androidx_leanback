@@ -513,6 +513,13 @@ public class TabLayout extends HorizontalScrollView {
                     ((TabImageView) child).setWidthMax(mImageWidthMax);
                     ((TabImageView) child).setHeight(mImageHeight);
                     ((TabImageView) child).setPadding(mImagePadding, 0, mImagePadding, 0);
+                    if (mMargin > 0) {
+                        if (i + 1 < size) {
+                            LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) ((TabImageView) child).getLayoutParams();
+                            layoutParams.rightMargin = mMargin;
+                            child.setLayoutParams(layoutParams);
+                        }
+                    }
                     ((TabImageView) child).refreshUI();
                 }
                 // 文字
@@ -526,6 +533,13 @@ public class TabLayout extends HorizontalScrollView {
                     ((TabTextView) child).setUnderlineWidth(mTextUnderlineWidth);
                     ((TabTextView) child).setUnderlineHeight(mTextUnderlineHeight);
                     ((TabTextView) child).setPadding(mTextPadding, 0, mTextPadding, 0);
+                    if (mMargin > 0) {
+                        if (i + 1 < size) {
+                            LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) ((TabImageView) child).getLayoutParams();
+                            layoutParams.rightMargin = mMargin;
+                            child.setLayoutParams(layoutParams);
+                        }
+                    }
                     ((TabTextView) child).refreshUI();
                 }
             }
