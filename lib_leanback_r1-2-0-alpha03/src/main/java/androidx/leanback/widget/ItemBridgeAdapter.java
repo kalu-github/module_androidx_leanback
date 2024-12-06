@@ -16,12 +16,10 @@ package androidx.leanback.widget;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewParent;
 
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Bridge from {@link Presenter} to {@link RecyclerView.Adapter}. Public to allow use by third

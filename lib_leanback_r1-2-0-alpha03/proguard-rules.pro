@@ -59,6 +59,12 @@
     public <fields>;
 }
 
+# drawable
+-keep class lib.kalu.leanback.drawable.**  {
+    protected <methods>;
+    public <methods>;
+}
+
 # flexbox
 -keep class lib.kalu.leanback.flexbox.**  {
     *;

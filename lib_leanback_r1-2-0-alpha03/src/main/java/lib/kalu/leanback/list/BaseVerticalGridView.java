@@ -5,16 +5,12 @@ import android.util.AttributeSet;
 import android.view.FocusFinder;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.ViewParent;
-import android.widget.BaseAdapter;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.leanback.widget.BaseGridView;
-import androidx.recyclerview.widget.LinearLayoutManager;
 
-import lib.kalu.leanback.recycler.RecyclerView;
 import lib.kalu.leanback.util.LeanBackUtil;
 
 class BaseVerticalGridView extends androidx.leanback.widget.VerticalGridView {

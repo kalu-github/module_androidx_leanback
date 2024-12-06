@@ -22,7 +22,6 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.collection.ArrayMap;
 
-import java.util.List;
 import java.util.Map;
 
 import lib.kalu.leanback.util.LeanBackUtil;

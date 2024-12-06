@@ -10,8 +10,6 @@ import android.graphics.PorterDuffXfermode;
 import android.graphics.RectF;
 import android.view.View;
 
-import lib.kalu.leanback.util.LeanBackUtil;
-
 
 /**
  * PorterDuff.Mode.CLEAR	所绘制不会提交到画布上

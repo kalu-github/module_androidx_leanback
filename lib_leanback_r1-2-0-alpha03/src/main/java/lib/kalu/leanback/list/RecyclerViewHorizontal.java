@@ -3,7 +3,6 @@ package lib.kalu.leanback.list;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.FocusFinder;
-import android.view.KeyEvent;
 import android.view.View;
 
 import androidx.annotation.NonNull;

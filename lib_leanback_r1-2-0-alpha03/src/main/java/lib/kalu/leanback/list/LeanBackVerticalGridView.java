@@ -2,14 +2,9 @@ package lib.kalu.leanback.list;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.view.FocusFinder;
-import android.view.View;
-import android.view.ViewParent;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
-import lib.kalu.leanback.util.LeanBackUtil;
 
 public class LeanBackVerticalGridView extends BaseVerticalGridView {
     public LeanBackVerticalGridView(@NonNull Context context) {
