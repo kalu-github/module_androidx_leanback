@@ -8,6 +8,7 @@ import android.graphics.Canvas;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.util.AttributeSet;
 import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
@@ -35,15 +36,37 @@ class TabImageView extends ImageView {
     private TabModel mTabModel;
     private String downloadUrl = null;
 
-    public TabImageView(@NonNull Context context, @NonNull TabModel data) {
+    public TabImageView(Context context) {
         super(context);
-        this.mTabModel = data;
         setSelected(false); // 选中
         setHovered(false); // 获焦
         setScaleType(ScaleType.FIT_CENTER);
         setPadding(0, 0, 0, 0);
-        refreshDrawable(false, false);
-        refreshBackground(false, false);
+    }
+
+    public TabImageView(Context context, @Nullable AttributeSet attrs) {
+        super(context, attrs);
+        setSelected(false); // 选中
+        setHovered(false); // 获焦
+        setScaleType(ScaleType.FIT_CENTER);
+        setPadding(0, 0, 0, 0);
+    }
+
+    public TabImageView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+        setSelected(false); // 选中
+        setHovered(false); // 获焦
+        setScaleType(ScaleType.FIT_CENTER);
+        setPadding(0, 0, 0, 0);
+    }
+
+    @SuppressLint("NewApi")
+    public TabImageView(Context context, @Nullable AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+        super(context, attrs, defStyleAttr, defStyleRes);
+        setSelected(false); // 选中
+        setHovered(false); // 获焦
+        setScaleType(ScaleType.FIT_CENTER);
+        setPadding(0, 0, 0, 0);
     }
 
     @Override
@@ -145,6 +168,10 @@ class TabImageView extends ImageView {
             super.setImageDrawable(drawable);
         } catch (Exception e) {
         }
+    }
+
+    protected void setData(TabModel tabModel){
+        this.mTabModel = tabModel;
     }
 
     protected void setHeight(int height) {

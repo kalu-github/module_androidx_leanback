@@ -1,10 +1,12 @@
 package lib.kalu.leanback.tab;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -12,6 +14,7 @@ import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.annotation.Nullable;
 import androidx.leanback.R;
 
 import org.json.JSONObject;
@@ -19,8 +22,32 @@ import org.json.JSONObject;
 import lib.kalu.leanback.util.LeanBackUtil;
 
 final class TabLinearLayout extends LinearLayout {
-    TabLinearLayout(Context context) {
+
+
+    public TabLinearLayout(Context context) {
         super(context);
+        setFocusable(false);
+        setGravity(Gravity.CENTER);
+        setOrientation(LinearLayout.HORIZONTAL);
+    }
+
+    public TabLinearLayout(Context context, @Nullable AttributeSet attrs) {
+        super(context, attrs);
+        setFocusable(false);
+        setGravity(Gravity.CENTER);
+        setOrientation(LinearLayout.HORIZONTAL);
+    }
+
+    public TabLinearLayout(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+        setFocusable(false);
+        setGravity(Gravity.CENTER);
+        setOrientation(LinearLayout.HORIZONTAL);
+    }
+
+    @SuppressLint("NewApi")
+    public TabLinearLayout(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+        super(context, attrs, defStyleAttr, defStyleRes);
         setFocusable(false);
         setGravity(Gravity.CENTER);
         setOrientation(LinearLayout.HORIZONTAL);

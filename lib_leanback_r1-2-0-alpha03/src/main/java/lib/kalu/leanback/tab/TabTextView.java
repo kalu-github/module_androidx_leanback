@@ -11,12 +11,14 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.text.TextPaint;
+import android.util.AttributeSet;
 import android.view.Gravity;
 import android.widget.TextView;
 
 import androidx.annotation.ColorInt;
 import androidx.annotation.ColorRes;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -41,9 +43,8 @@ class TabTextView extends TextView {
     private TabModel mTabModel;
     private String downloadUrl = null;
 
-    public TabTextView(@NonNull Context context, @NonNull TabModel data) {
+    public TabTextView(Context context) {
         super(context);
-        this.mTabModel = data;
         setSelected(false); // 选中
         setHovered(false); // 获焦
         setMaxLines(1);
@@ -51,6 +52,38 @@ class TabTextView extends TextView {
         setMinEms(2);
         setGravity(Gravity.CENTER);
     }
+
+    public TabTextView(Context context, @Nullable AttributeSet attrs) {
+        super(context, attrs);
+        setSelected(false); // 选中
+        setHovered(false); // 获焦
+        setMaxLines(1);
+        setLines(1);
+        setMinEms(2);
+        setGravity(Gravity.CENTER);
+    }
+
+    public TabTextView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+        setSelected(false); // 选中
+        setHovered(false); // 获焦
+        setMaxLines(1);
+        setLines(1);
+        setMinEms(2);
+        setGravity(Gravity.CENTER);
+    }
+
+    @SuppressLint("NewApi")
+    public TabTextView(Context context, @Nullable AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+        super(context, attrs, defStyleAttr, defStyleRes);
+        setSelected(false); // 选中
+        setHovered(false); // 获焦
+        setMaxLines(1);
+        setLines(1);
+        setMinEms(2);
+        setGravity(Gravity.CENTER);
+    }
+
 
     @Override
     protected void onDraw(Canvas canvas) {
@@ -146,6 +179,10 @@ class TabTextView extends TextView {
     }
 
     /*************************/
+
+    protected void setData(TabModel tabModel){
+        this.mTabModel = tabModel;
+    }
 
     protected void setUnderlineColor(int color) {
         this.mUnderlineColor = color;

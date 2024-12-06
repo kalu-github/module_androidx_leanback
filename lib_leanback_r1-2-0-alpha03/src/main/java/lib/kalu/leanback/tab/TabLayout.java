@@ -6,12 +6,10 @@ import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.os.Build;
-import android.os.Handler;
-import android.os.Looper;
-import android.os.Message;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,7 +19,6 @@ import android.widget.LinearLayout;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
-import androidx.core.view.ViewCompat;
 import androidx.leanback.R;
 
 import org.json.JSONObject;
@@ -38,7 +35,6 @@ import lib.kalu.leanback.util.LeanBackUtil;
 @SuppressLint("NewApi")
 public class TabLayout extends HorizontalScrollView {
 
-    private Handler mHandler = null;
     private float mScale = 1f;
     private int mMargin = 0;
     private int mTextUnderlineColor = Color.TRANSPARENT;
@@ -204,7 +200,7 @@ public class TabLayout extends HorizontalScrollView {
 
     @Override
     public boolean requestFocus(int direction, Rect previouslyFocusedRect) {
-        //  LeanBackUtil.log("TabLayout => requestFocus => direction = " + direction);
+        LeanBackUtil.log("TabLayout => requestFocus => direction = " + direction);
         if (direction == FOCUS_DOWN) {
             focusedInto(View.FOCUS_DOWN);
         } else if (direction == FOCUS_UP) {
@@ -220,7 +216,7 @@ public class TabLayout extends HorizontalScrollView {
     @Override
     protected void onFocusChanged(boolean gainFocus, int direction, @Nullable Rect previouslyFocusedRect) {
         super.onFocusChanged(gainFocus, direction, previouslyFocusedRect);
-        //  LeanBackUtil.log("TabLayout => onFocusChanged => gainFocus = " + gainFocus + ", direction = " + direction);
+        LeanBackUtil.log("TabLayout => onFocusChanged => gainFocus = " + gainFocus + ", direction = " + direction);
         if (!gainFocus) {
             focusedOut(0x8888);
         }
@@ -259,53 +255,17 @@ public class TabLayout extends HorizontalScrollView {
 
     private <T extends TabModel> void update(@NonNull List<T> list, int position, boolean check) {
         try {
-            boolean hasMessage;
-            if (null == mHandler) {
-                hasMessage = false;
-            } else {
-                hasMessage = mHandler.hasMessages(1001);
-            }
-            if (check && hasMessage)
-                throw new IllegalAccessException();
             int childCount = getChildCount();
             if (childCount != 1) {
-                TabLinearLayout layout = new TabLinearLayout(getContext());
-                LayoutParams layoutParams = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
-                layout.setLayoutParams(layoutParams);
-                addView(layout);
+                LayoutInflater.from(getContext()).inflate(R.layout.lb_tab_content, this);
             }
             // 1
             addItems(list);
             // 2
             scrollRequest(0x9999, position, position, true);
-        } catch (IllegalAccessException e) {
-            Message message = Message.obtain();
-            message.what = 1002;
-            message.obj = list;
-            message.arg1 = position;
-            mHandler.sendMessageDelayed(message, 20);
         } catch (Exception e) {
             LeanBackUtil.log("TabLayout => update => " + e.getMessage());
         }
-    }
-
-    @Override
-    protected void onFinishInflate() {
-        super.onFinishInflate();
-//        LeanBackUtil.log("TabLayout => onFinishInflate =>");
-        if (null == mHandler) {
-            mHandler = new Handler(Looper.getMainLooper()) {
-                @Override
-                public void handleMessage(@NonNull Message msg) {
-                    LeanBackUtil.log("TabLayout => onFinishInflate => handleMessage => what = " + msg.what);
-                    if (msg.what == 1002) {
-                        update((List<TabModel>) msg.obj, msg.arg1, false);
-                        mHandler = null;
-                    }
-                }
-            };
-        }
-        mHandler.sendEmptyMessageDelayed(1001, 100);
     }
 
     public final int getCheckedIndex() {
@@ -545,38 +505,28 @@ public class TabLayout extends HorizontalScrollView {
                     continue;
                 // 图片
                 if (t.isImg()) {
-                    TabImageView view = new TabImageView(getContext(), t);
-                    int height = getHeight() - getPaddingTop() - getPaddingBottom();
-                    LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(0, height);
-                    if (i + 1 != size) {
-                        layoutParams.rightMargin = mMargin;
-                    }
-                    view.setLayoutParams(layoutParams);
-                    view.setTag(R.id.tab_item_json_object, t.getJsonObject());
-                    view.setWidthMin(mImageWidthMin);
-                    view.setWidthMax(mImageWidthMax);
-                    view.setHeight(mImageHeight);
-                    view.setPadding(mImagePadding, 0, mImagePadding, 0);
-                    ((TabLinearLayout) childAt).addView(view);
-                    view.refreshUI();
+                    LayoutInflater.from(getContext()).inflate(R.layout.lb_tab_content_item_img, (ViewGroup) childAt);
+                    View child = ((ViewGroup) childAt).getChildAt(i);
+                    ((TabImageView) child).setData(t);
+                    ((TabImageView) child).setTag(R.id.tab_item_json_object, t.getJsonObject());
+                    ((TabImageView) child).setWidthMin(mImageWidthMin);
+                    ((TabImageView) child).setWidthMax(mImageWidthMax);
+                    ((TabImageView) child).setHeight(mImageHeight);
+                    ((TabImageView) child).setPadding(mImagePadding, 0, mImagePadding, 0);
+                    ((TabImageView) child).refreshUI();
                 }
                 // 文字
                 else {
-                    TabTextView view = new TabTextView(getContext(), t);
-                    int height = getHeight() - getPaddingTop() - getPaddingBottom();
-                    LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(0, height);
-                    if (i + 1 != size) {
-                        layoutParams.rightMargin = mMargin;
-                    }
-                    view.setLayoutParams(layoutParams);
-                    view.setTag(R.id.tab_item_json_object, t.getJsonObject());
-                    view.setTextSize(TypedValue.COMPLEX_UNIT_PX, mTextSize);
-                    view.setUnderlineColor(mTextUnderlineColor);
-                    view.setUnderlineWidth(mTextUnderlineWidth);
-                    view.setUnderlineHeight(mTextUnderlineHeight);
-                    view.setPadding(mTextPadding, 0, mTextPadding, 0);
-                    ((TabLinearLayout) childAt).addView(view);
-                    view.refreshUI();
+                    LayoutInflater.from(getContext()).inflate(R.layout.lb_tab_content_item_txt, (ViewGroup) childAt);
+                    View child = ((ViewGroup) childAt).getChildAt(i);
+                    ((TabTextView) child).setData(t);
+                    ((TabTextView) child).setTag(R.id.tab_item_json_object, t.getJsonObject());
+                    ((TabTextView) child).setTextSize(TypedValue.COMPLEX_UNIT_PX, mTextSize);
+                    ((TabTextView) child).setUnderlineColor(mTextUnderlineColor);
+                    ((TabTextView) child).setUnderlineWidth(mTextUnderlineWidth);
+                    ((TabTextView) child).setUnderlineHeight(mTextUnderlineHeight);
+                    ((TabTextView) child).setPadding(mTextPadding, 0, mTextPadding, 0);
+                    ((TabTextView) child).refreshUI();
                 }
             }
         } catch (Exception e) {
