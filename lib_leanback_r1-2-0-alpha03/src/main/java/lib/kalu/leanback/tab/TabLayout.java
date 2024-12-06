@@ -507,25 +507,34 @@ public class TabLayout extends HorizontalScrollView {
                 if (t.isImg()) {
                     LayoutInflater.from(getContext()).inflate(R.layout.lb_tab_content_item_img, (ViewGroup) childAt);
                     View child = ((ViewGroup) childAt).getChildAt(i);
+                    if (mMargin > 0) {
+                        if (i + 1 < size) {
+                            LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) child.getLayoutParams();
+                            layoutParams.rightMargin = mMargin;
+                            child.setLayoutParams(layoutParams);
+                        }
+                    }
+
                     ((TabImageView) child).setData(t);
                     ((TabImageView) child).setTag(R.id.tab_item_json_object, t.getJsonObject());
                     ((TabImageView) child).setWidthMin(mImageWidthMin);
                     ((TabImageView) child).setWidthMax(mImageWidthMax);
                     ((TabImageView) child).setHeight(mImageHeight);
                     ((TabImageView) child).setPadding(mImagePadding, 0, mImagePadding, 0);
-                    if (mMargin > 0) {
-                        if (i + 1 < size) {
-                            LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) ((TabImageView) child).getLayoutParams();
-                            layoutParams.rightMargin = mMargin;
-                            child.setLayoutParams(layoutParams);
-                        }
-                    }
                     ((TabImageView) child).refreshUI();
                 }
                 // 文字
                 else {
                     LayoutInflater.from(getContext()).inflate(R.layout.lb_tab_content_item_txt, (ViewGroup) childAt);
                     View child = ((ViewGroup) childAt).getChildAt(i);
+                    if (mMargin > 0) {
+                        if (i + 1 < size) {
+                            LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) child.getLayoutParams();
+                            layoutParams.rightMargin = mMargin;
+                            child.setLayoutParams(layoutParams);
+                        }
+                    }
+
                     ((TabTextView) child).setData(t);
                     ((TabTextView) child).setTag(R.id.tab_item_json_object, t.getJsonObject());
                     ((TabTextView) child).setTextSize(TypedValue.COMPLEX_UNIT_PX, mTextSize);
@@ -533,13 +542,6 @@ public class TabLayout extends HorizontalScrollView {
                     ((TabTextView) child).setUnderlineWidth(mTextUnderlineWidth);
                     ((TabTextView) child).setUnderlineHeight(mTextUnderlineHeight);
                     ((TabTextView) child).setPadding(mTextPadding, 0, mTextPadding, 0);
-                    if (mMargin > 0) {
-                        if (i + 1 < size) {
-                            LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) ((TabImageView) child).getLayoutParams();
-                            layoutParams.rightMargin = mMargin;
-                            child.setLayoutParams(layoutParams);
-                        }
-                    }
                     ((TabTextView) child).refreshUI();
                 }
             }
