@@ -1,5 +1,6 @@
 package lib.kalu.leanback.round;
 
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -8,7 +9,10 @@ import android.graphics.Path;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.RectF;
+import android.graphics.drawable.Drawable;
 import android.view.View;
+
+import androidx.annotation.NonNull;
 
 
 /**
@@ -174,9 +178,9 @@ public interface RoundImpl {
                 paint.reset();
                 paint.setAntiAlias(true);
                 paint.setStrokeWidth(0f);
-                paint.setColor(Color.WHITE);
+                paint.setColor(Color.parseColor("#00000000"));
                 paint.setStyle(Paint.Style.FILL_AND_STROKE);
-                paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
+                paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_OVER));
                 canvas.drawPath(path, paint);
             }
 

@@ -8,6 +8,8 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
 import android.util.AttributeSet;
 import android.widget.TextView;
 
@@ -58,6 +60,7 @@ public class RoundTextView extends TextView implements RoundImpl {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
+        // 保存Canvas状态
         // 画布裁剪
         if (mClip) {
             if (null == mPaint) {
