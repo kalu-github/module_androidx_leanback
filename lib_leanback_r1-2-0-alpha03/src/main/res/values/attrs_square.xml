@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="SquareImageView">
+        <attr name="siv_type">
+            <enum name="vt" value="1" />
+            <enum name="hz" value="2" />
+        </attr>
+    </declare-styleable>
+</resources>
