@@ -178,9 +178,9 @@ public interface RoundImpl {
                 paint.reset();
                 paint.setAntiAlias(true);
                 paint.setStrokeWidth(0f);
-                paint.setColor(Color.parseColor("#00000000"));
+                paint.setColor(Color.WHITE);
                 paint.setStyle(Paint.Style.FILL_AND_STROKE);
-                paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_OVER));
+                paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
                 canvas.drawPath(path, paint);
             }
 
