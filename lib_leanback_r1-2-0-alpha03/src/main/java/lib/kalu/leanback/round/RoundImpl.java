@@ -10,19 +10,20 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.view.View;
 
 import androidx.annotation.NonNull;
 
 
 /**
- * PorterDuff.Mode.CLEAR	所绘制不会提交到画布上
+ * PorterDuff.Mode.DST_OUT	所绘制不会提交到画布上
  * PorterDuff.Mode.SRC	显示上层绘制图片
  * PorterDuff.Mode.DST	显示下层绘制图片
  * PorterDuff.Mode.SRC_OVER	正常绘制显示，上下层绘制叠盖
  * PorterDuff.Mode.DST_OVER	上下层都显示。下层居上显示
  * PorterDuff.Mode.SRC_IN	取两层绘制交集。显示上层
- * PorterDuff.Mode.DST_IN	取两层绘制交集。显示下层
+ * PorterDuff.Mode.DST_OUT	取两层绘制交集。显示下层
  * PorterDuff.Mode.SRC_OUT	取上层绘制非交集部分
  * PorterDuff.Mode.DST_OUT	取下层绘制非交集部分
  * PorterDuff.Mode.SRC_ATOP	取下层非交集部分与上层交集部分
@@ -121,12 +122,12 @@ public interface RoundImpl {
                 paint.setAntiAlias(true);
                 paint.setStrokeWidth(0f);
                 paint.setColor(Color.WHITE);
-                paint.setStyle(Paint.Style.FILL_AND_STROKE);
-                // CLEAR
+                paint.setStyle(Paint.Style.FILL);
+                // DST_OUT
                 // DST_OUT
                 // SRC_OUT
                 // XOR
-                paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
+                paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_OUT));
                 canvas.drawPath(path, paint);
             }
 
@@ -152,8 +153,8 @@ public interface RoundImpl {
                 paint.setAntiAlias(true);
                 paint.setStrokeWidth(0f);
                 paint.setColor(Color.WHITE);
-                paint.setStyle(Paint.Style.FILL_AND_STROKE);
-                paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
+                paint.setStyle(Paint.Style.FILL);
+                paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_OUT));
                 canvas.drawPath(path, paint);
             }
 
@@ -179,8 +180,8 @@ public interface RoundImpl {
                 paint.setAntiAlias(true);
                 paint.setStrokeWidth(0f);
                 paint.setColor(Color.WHITE);
-                paint.setStyle(Paint.Style.FILL_AND_STROKE);
-                paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
+                paint.setStyle(Paint.Style.FILL);
+                paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_OUT));
                 canvas.drawPath(path, paint);
             }
 
@@ -206,8 +207,8 @@ public interface RoundImpl {
                 paint.setAntiAlias(true);
                 paint.setStrokeWidth(0f);
                 paint.setColor(Color.WHITE);
-                paint.setStyle(Paint.Style.FILL_AND_STROKE);
-                paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
+                paint.setStyle(Paint.Style.FILL);
+                paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_OUT));
                 canvas.drawPath(path, paint);
             }
 
