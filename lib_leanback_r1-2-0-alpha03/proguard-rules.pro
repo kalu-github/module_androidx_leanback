@@ -166,6 +166,13 @@
     public <fields>;
 }
 
+# square
+-keep class lib.kalu.leanback.square.**  {
+    protected <methods>;
+    public <methods>;
+    public <fields>;
+}
+
 # tab
 -keep class lib.kalu.leanback.tab.TabLayout  {
     protected <methods>;
