@@ -72,6 +72,7 @@ public class CornerTextView extends TextView implements CornerImpl {
         try {
             if (!(background instanceof ColorDrawable))
                 throw new Exception("warning: background not instanceof ColorDrawable");
+            LeanBackUtil.log("CornerTextView -> setBackground -> mCorner = " + mCorner + ", mCornerTopLeft = " + mCornerTopLeft + ", mCornerTopRight = " + mCornerTopRight + ", mCornerBottomRight = " + mCornerBottomRight + ", mCornerBottomLeft = " + mCornerBottomLeft);
             Drawable drawable = clipCornerGradientDrawable(background, mCorner, mCornerTopLeft, mCornerTopRight, mCornerBottomRight, mCornerBottomLeft);
             super.setBackground(drawable);
         } catch (Exception e) {
@@ -80,6 +81,8 @@ public class CornerTextView extends TextView implements CornerImpl {
     }
 
     private void init(@NonNull Context context, @NonNull AttributeSet attrs) {
+        LeanBackUtil.log("CornerTextView -> init -> context = " + context + ", attrs = " + attrs);
+
         TypedArray typedArray = null;
         try {
             typedArray = context.obtainStyledAttributes(attrs, R.styleable.CornerView);
@@ -93,6 +96,8 @@ public class CornerTextView extends TextView implements CornerImpl {
         } catch (Exception e) {
             LeanBackUtil.log("CornerTextView -> init -> Exception -> " + e.getMessage(), e);
         }
+
+        LeanBackUtil.log("CornerTextView -> init -> mCorner = " + mCorner + ", mCornerTopLeft = " + mCornerTopLeft + ", mCornerTopRight = " + mCornerTopRight + ", mCornerBottomRight = " + mCornerBottomRight + ", mCornerBottomLeft = " + mCornerBottomLeft);
 
         if (null != typedArray) {
             typedArray.recycle();

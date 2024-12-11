@@ -194,8 +194,9 @@ public interface CornerImpl {
     }
 
     default Drawable clipCornerGradientDrawable(Drawable background,
-                                                       int corner, int cornerTopLeft, int cornerTopRight, int cornerBottomRight, int cornerBottomLeft) {
+                                                int corner, int cornerTopLeft, int cornerTopRight, int cornerBottomRight, int cornerBottomLeft) {
 
+        LeanBackUtil.log("CornerImpl -> clipCornerGradientDrawable -> corner = " + corner + ", cornerTopLeft = " + cornerTopLeft + ", cornerTopRight = " + cornerTopRight + ", cornerBottomRight = " + cornerBottomRight + ", cornerBottomLeft = " + cornerBottomLeft);
         try {
 
             if (null == background)
