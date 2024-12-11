@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PorterDuff;
@@ -15,6 +16,8 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.LayerDrawable;
+import android.net.Uri;
 import android.os.Build;
 import android.util.AttributeSet;
 import android.widget.ImageView;
@@ -76,8 +79,61 @@ public class CornerImageView extends ImageView implements CornerImpl {
     }
 
     @Override
-    public void setImageDrawable(@Nullable Drawable drawable) {
+    public void setImageMatrix(Matrix matrix) {
+        LeanBackUtil.log("CornerImageView -> setImageMatrix -> matrix = " + matrix);
+        super.setImageMatrix(matrix);
+    }
+
+    @Override
+    public void setImageURI(@Nullable Uri uri) {
+        LeanBackUtil.log("CornerImageView -> setImageURI -> uri = " + uri);
+        super.setImageURI(uri);
+    }
+
+    @Override
+    public void setImageResource(int resId) {
+        LeanBackUtil.log("CornerImageView -> setImageResource -> resId = " + resId);
         try {
+            Bitmap bm = BitmapFactory.decodeResource(getResources(), resId);
+            if (null == bm)
+                throw new Exception("warning: bm null");
+            setImageBitmap(bm);
+        } catch (Exception e) {
+            LeanBackUtil.log("CornerImageView -> setImageResource -> Exception -> " + e.getMessage());
+        }
+    }
+
+    @Override
+    public void setImageBitmap(Bitmap bm) {
+        LeanBackUtil.log("CornerImageView -> setImageBitmap -> bm = " + bm);
+        try {
+            if (null == bm)
+                throw new Exception("warning: bm null");
+            if (null == mPaint) {
+                mPaint = new Paint();
+            }
+            if (null == mPath) {
+                mPath = new Path();
+            }
+            Bitmap bitmap = clipCornerBitmap(bm, mPaint, mPath, mCorner, mCornerTopLeft, mCornerTopRight, mCornerBottomRight, mCornerBottomLeft);
+            super.setImageBitmap(bitmap);
+        } catch (Exception e) {
+            LeanBackUtil.log("CornerImageView -> setImageBitmap -> Exception -> " + e.getMessage());
+            super.setImageBitmap(bm);
+        }
+    }
+
+    @Override
+    public void setImageDrawable(@Nullable Drawable data) {
+        LeanBackUtil.log("CornerImageView -> setImageDrawable -> drawable = " + data);
+        super.setImageDrawable(data);
+
+        try {
+            Drawable drawable = getDrawable();
+            if (null == drawable)
+                throw new Exception("warning: drawable null");
+            if (drawable instanceof LayerDrawable)
+                throw new Exception("warning: drawable instanceof LayerDrawable");
             if (null == mPaint) {
                 mPaint = new Paint();
             }
@@ -87,11 +143,42 @@ public class CornerImageView extends ImageView implements CornerImpl {
             Drawable cornerDrawable = clipCornerDrawable(drawable, mPaint, mPath, mCorner, mCornerTopLeft, mCornerTopRight, mCornerBottomRight, mCornerBottomLeft);
             super.setImageDrawable(cornerDrawable);
         } catch (Exception e) {
-            LeanBackUtil.log("CornerImageView -> setImageDrawable -> Exception -> " + e.getMessage(), e);
+            LeanBackUtil.log("CornerImageView -> setImageDrawable -> Exception -> " + e.getMessage());
+        }
+    }
+
+    @Override
+    public void setBackgroundResource(int resid) {
+        LeanBackUtil.log("CornerImageView -> setBackgroundResource -> resid = " + resid);
+        super.setBackgroundResource(resid);
+    }
+
+    @Override
+    public void setBackground(Drawable background) {
+        LeanBackUtil.log("CornerImageView -> setBackground -> background = " + background);
+        try {
+            if (null == background)
+                throw new Exception("warning: background null");
+            if (background instanceof LayerDrawable)
+                throw new Exception("warning: background instanceof LayerDrawable");
+            if (null == mPaint) {
+                mPaint = new Paint();
+            }
+            if (null == mPath) {
+                mPath = new Path();
+            }
+            Drawable cornerDrawable = clipCornerDrawable(background, mPaint, mPath, mCorner, mCornerTopLeft, mCornerTopRight, mCornerBottomRight, mCornerBottomLeft);
+            super.setBackground(cornerDrawable);
+        } catch (Exception e) {
+            LeanBackUtil.log("CornerImageView -> setBackground -> Exception -> " + e.getMessage());
+            super.setBackground(background);
         }
     }
 
     private void init(@NonNull Context context, @NonNull AttributeSet attrs) {
+
+        LeanBackUtil.log("CornerImageView -> init -> context = " + context + ", attrs = " + attrs);
+
         TypedArray typedArray = null;
         try {
             typedArray = context.obtainStyledAttributes(attrs, R.styleable.CornerView);
@@ -105,6 +192,8 @@ public class CornerImageView extends ImageView implements CornerImpl {
         } catch (Exception e) {
             LeanBackUtil.log("CornerImageView -> init -> Exception -> " + e.getMessage(), e);
         }
+
+        LeanBackUtil.log("CornerImageView -> init -> mCorner = " + mCorner + ", mCornerTopLeft = " + mCornerTopLeft + ", mCornerTopRight = " + mCornerTopRight + ", mCornerBottomLeft = " + mCornerBottomLeft + ", mCornerBottomLeft = " + mCornerBottomLeft);
 
         if (null != typedArray) {
             typedArray.recycle();

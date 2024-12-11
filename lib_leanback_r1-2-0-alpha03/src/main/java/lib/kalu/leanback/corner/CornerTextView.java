@@ -6,6 +6,7 @@ import android.content.res.TypedArray;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.LayerDrawable;
 import android.os.Build;
 import android.util.AttributeSet;
 import android.widget.TextView;
@@ -66,26 +67,23 @@ public class CornerTextView extends TextView implements CornerImpl {
 
     @Override
     public void setBackgroundResource(int resid) {
+        LeanBackUtil.log("CornerTextView -> setBackgroundResource -> resid = " + resid);
         super.setBackgroundResource(resid);
-        LeanBackUtil.log("CornerTextView -> setBackgroundResource ->");
     }
 
     @Override
     public void setBackgroundColor(int color) {
+        LeanBackUtil.log("CornerTextView -> setBackgroundColor -> color = " + color);
         super.setBackgroundColor(color);
-        LeanBackUtil.log("CornerTextView -> setBackgroundColor ->");
     }
 
     @Override
     public void setBackground(Drawable background) {
-        super.setBackground(background);
-        LeanBackUtil.log("CornerTextView -> setBackground ->");
-    }
-
-    @Override
-    public void setBackgroundDrawable(Drawable background) {
-        LeanBackUtil.log("CornerTextView -> setBackgroundDrawable ->");
+        LeanBackUtil.log("CornerTextView -> setBackground -> background = " + background);
+//        super.setBackground(background);
         try {
+            if (null == background)
+                throw new Exception("warning: background null");
             if (null == mPaint) {
                 mPaint = new Paint();
             }
@@ -93,9 +91,10 @@ public class CornerTextView extends TextView implements CornerImpl {
                 mPath = new Path();
             }
             Drawable cornerDrawable = clipCornerDrawable(background, mPaint, mPath, mCorner, mCornerTopLeft, mCornerTopRight, mCornerBottomRight, mCornerBottomLeft);
-            super.setBackgroundDrawable(cornerDrawable);
+            super.setBackground(cornerDrawable);
         } catch (Exception e) {
-            LeanBackUtil.log("CornerTextView -> setImageDrawable -> Exception -> " + e.getMessage(), e);
+            LeanBackUtil.log("CornerTextView -> setBackground -> Exception -> " + e.getMessage(), e);
+            super.setBackground(background);
         }
     }
 
