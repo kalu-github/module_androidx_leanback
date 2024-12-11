@@ -11,6 +11,7 @@ import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
 import android.view.View;
 import android.widget.ImageView;
 
@@ -51,8 +52,8 @@ public interface CornerImpl {
     }
 
     default Drawable clipCornerDrawable(Drawable drawable,
-                                        Paint paint1,
-                                        Path path1,
+                                        Paint paint,
+                                        Path path,
                                         int corner, int cornerTopLeft, int cornerTopRight, int cornerBottomRight, int cornerBottomLeft) {
 
         LeanBackUtil.log("CornerImpl -> clipCornerDrawable -> corner = " + corner + ", cornerTopLeft = " + cornerTopLeft + ", cornerTopRight = " + cornerTopRight + ", cornerBottomRight = " + cornerBottomRight + ", cornerBottomLeft = " + cornerBottomLeft);
@@ -62,20 +63,18 @@ public interface CornerImpl {
             if (null == drawable)
                 throw new Exception("error: drawable null");
 
-            Bitmap bm =null;
+            Bitmap bm = null;
             if (drawable instanceof BitmapDrawable) {
                 bm = ((BitmapDrawable) drawable).getBitmap();
             } else if (drawable instanceof ColorDrawable) {
-                int width = ((View) this).getMeasuredWidth();
-                if (width <= 0) {
-                    width = 1;
+                int width = ((View) this).getWidth();
+                LeanBackUtil.log("CornerImpl -> clipCornerDrawable -> width = " + width);
+                if (width <= 0)
                     throw new Exception("error: width <= 0");
-                }
-                int height = ((View) this).getMeasuredHeight();
-                if (height <= 0) {
-                    height = 1;
+                int height = ((View) this).getHeight();
+                LeanBackUtil.log("CornerImpl -> clipCornerDrawable -> height = " + height);
+                if (height <= 0)
                     throw new Exception("error: height <= 0");
-                }
                 bm = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
                 Canvas canvas = new Canvas(bm);
                 drawable.setBounds(0, 0, width, height);
@@ -85,7 +84,7 @@ public interface CornerImpl {
             if (null == bm)
                 throw new Exception("error: bm null");
 
-            Bitmap bitmap = clipCornerBitmap(bm, paint1, path1, corner, cornerTopLeft, cornerTopRight, cornerBottomRight, cornerBottomLeft);
+            Bitmap bitmap = clipCornerBitmap(bm, paint, path, corner, cornerTopLeft, cornerTopRight, cornerBottomRight, cornerBottomLeft);
             if (null == bitmap)
                 throw new Exception("error: bitmap null");
             return new BitmapDrawable(bitmap);
@@ -96,8 +95,8 @@ public interface CornerImpl {
     }
 
     default Bitmap clipCornerBitmap(Bitmap bm,
-                                    Paint paint1,
-                                    Path path1,
+                                    Paint paint,
+                                    Path path,
                                     int corner, int cornerTopLeft, int cornerTopRight, int cornerBottomRight, int cornerBottomLeft) {
 
         LeanBackUtil.log("CornerImpl -> clipCornerBitmap -> corner = " + corner + ", cornerTopLeft = " + cornerTopLeft + ", cornerTopRight = " + cornerTopRight + ", cornerBottomRight = " + cornerBottomRight + ", cornerBottomLeft = " + cornerBottomLeft);
@@ -153,7 +152,8 @@ public interface CornerImpl {
 
 
             Canvas canvas = new Canvas(bitmap);
-            Paint paint = new Paint();
+
+            paint.reset();
             paint.setAntiAlias(true);
 
             //设置矩形大小
@@ -176,8 +176,9 @@ public interface CornerImpl {
             float radii4 = cornerBottomLeft > 0 ? cornerBottomLeft : corner;
             float[] radii = {radii1, radii1, radii2, radii2, radii3, radii3, radii4, radii4};
 
-            Path path = new Path();
+            path.reset();
             path.addRoundRect(rectF, radii, Path.Direction.CCW);
+            path.close();
             canvas.drawPath(path, paint);
 
             // 取两层绘制，显示上层
@@ -188,6 +189,40 @@ public interface CornerImpl {
             return bitmap;
         } catch (Exception e) {
             LeanBackUtil.log("CornerImpl -> clipCornerBitmap -> Exception -> this = " + this + ", msg = " + e.getMessage());
+            return null;
+        }
+    }
+
+    default Drawable clipCornerGradientDrawable(Drawable background,
+                                                       int corner, int cornerTopLeft, int cornerTopRight, int cornerBottomRight, int cornerBottomLeft) {
+
+        try {
+
+            if (null == background)
+                throw new Exception("error: background null");
+
+            GradientDrawable drawable = new GradientDrawable();
+
+            // 设置形状为矩形
+            drawable.setShape(GradientDrawable.RECTANGLE);
+
+            // 设置圆角半径，单位是像素，这里设为20像素
+            float radii1 = cornerTopLeft > 0 ? cornerTopLeft : corner;
+            float radii2 = cornerTopRight > 0 ? cornerTopRight : corner;
+            float radii3 = cornerBottomRight > 0 ? cornerBottomRight : corner;
+            float radii4 = cornerBottomLeft > 0 ? cornerBottomLeft : corner;
+            float[] radii = {radii1, radii1, radii2, radii2, radii3, radii3, radii4, radii4};
+            drawable.setCornerRadii(radii);
+
+            // 设置边框宽度和颜色，宽度为2像素，颜色为黑色
+//                drawable.setStroke(2, 0xff000000);
+
+            // 设置填充颜色，这里设为白色
+            drawable.setColor(((ColorDrawable) background).getColor());
+
+            return drawable;
+        } catch (Exception e) {
+            LeanBackUtil.log("CornerImpl -> clipCornerGradientDrawable -> Exception -> this = " + this + ", msg = " + e.getMessage());
             return null;
         }
     }

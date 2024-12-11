@@ -3,9 +3,14 @@ package lib.kalu.leanback.corner;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.Canvas;
+import android.graphics.ColorFilter;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.RectF;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
 import android.graphics.drawable.LayerDrawable;
 import android.os.Build;
 import android.util.AttributeSet;
@@ -20,9 +25,6 @@ import lib.kalu.leanback.util.LeanBackUtil;
 
 @SuppressLint("AppCompatCustomView")
 public class CornerTextView extends TextView implements CornerImpl {
-
-    private Path mPath;
-    private Paint mPaint;
 
     private float mRateWidth;
     private float mRateHeight;
@@ -61,40 +63,19 @@ public class CornerTextView extends TextView implements CornerImpl {
             int specH = measureSpecHeight(widthMeasureSpec, heightMeasureSpec, mRateHeight);
             super.onMeasure(specW, specH);
         } catch (Exception e) {
-            LeanBackUtil.log("CornerTextView -> onMeasure -> Exception -> " + e.getMessage(), e);
+            LeanBackUtil.log("CornerTextView -> onMeasure -> Exception -> " + e.getMessage());
         }
     }
 
     @Override
-    public void setBackgroundResource(int resid) {
-        LeanBackUtil.log("CornerTextView -> setBackgroundResource -> resid = " + resid);
-        super.setBackgroundResource(resid);
-    }
-
-    @Override
-    public void setBackgroundColor(int color) {
-        LeanBackUtil.log("CornerTextView -> setBackgroundColor -> color = " + color);
-        super.setBackgroundColor(color);
-    }
-
-    @Override
     public void setBackground(Drawable background) {
-        LeanBackUtil.log("CornerTextView -> setBackground -> background = " + background);
-//        super.setBackground(background);
         try {
-            if (null == background)
-                throw new Exception("warning: background null");
-            if (null == mPaint) {
-                mPaint = new Paint();
-            }
-            if (null == mPath) {
-                mPath = new Path();
-            }
-            Drawable cornerDrawable = clipCornerDrawable(background, mPaint, mPath, mCorner, mCornerTopLeft, mCornerTopRight, mCornerBottomRight, mCornerBottomLeft);
-            super.setBackground(cornerDrawable);
+            if (!(background instanceof ColorDrawable))
+                throw new Exception("warning: background not instanceof ColorDrawable");
+            Drawable drawable = clipCornerGradientDrawable(background, mCorner, mCornerTopLeft, mCornerTopRight, mCornerBottomRight, mCornerBottomLeft);
+            super.setBackground(drawable);
         } catch (Exception e) {
-            LeanBackUtil.log("CornerTextView -> setBackground -> Exception -> " + e.getMessage(), e);
-            super.setBackground(background);
+            LeanBackUtil.log("CornerTextView -> setBackground -> Exception -> " + e.getMessage());
         }
     }
 
