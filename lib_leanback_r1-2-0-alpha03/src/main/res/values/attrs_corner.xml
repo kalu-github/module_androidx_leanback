@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="CornerView">
+        <attr name="cv_rate_width" format="float" />
+        <attr name="cv_rate_height" format="float" />
+        <attr name="cv_corner_top_left" format="reference|dimension" />
+        <attr name="cv_corner_top_right" format="reference|dimension" />
+        <attr name="cv_corner_bottom_left" format="reference|dimension" />
+        <attr name="cv_corner_bottom_right" format="reference|dimension" />
+        <attr name="cv_corner" format="reference|dimension" />
+    </declare-styleable>
+</resources>

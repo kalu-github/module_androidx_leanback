@@ -59,6 +59,14 @@
     public <fields>;
 }
 
+# corner
+-keep class lib.kalu.leanback.corner.CornerImageView  {
+    public <methods>;
+}
+-keep class lib.kalu.leanback.corner.CornerTextView  {
+    public <methods>;
+}
+
 # flexbox
 -keep class lib.kalu.leanback.flexbox.**  {
     *;
