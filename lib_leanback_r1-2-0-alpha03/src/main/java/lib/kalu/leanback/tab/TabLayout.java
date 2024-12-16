@@ -106,7 +106,7 @@ public class TabLayout extends HorizontalScrollView {
 //        int repeatCount = event.getRepeatCount();
 //        if (repeatCount > 0)
 //            return true;
-        //  LeanBackUtil.log("TabLayout => dispatchKeyEvent => action = " + event.getAction() + ", keyCode = " + event.getKeyCode());
+//          LeanBackUtil.log("TabLayout => dispatchKeyEvent => action = " + event.getAction() + ", keyCode = " + event.getKeyCode());
 
 //        // action_up => keycode_dpad_down
 //        if (event.getAction() == KeyEvent.ACTION_UP && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_DOWN) {
