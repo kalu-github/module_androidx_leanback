@@ -71,16 +71,18 @@ class BaseVerticalGridView extends androidx.leanback.widget.VerticalGridView {
         try {
             if (event.getAction() == KeyEvent.ACTION_DOWN && event.getKeyCode() == KeyEvent.KEYCODE_DPAD_DOWN) {
                 View focus = findFocus();
-                View nextFocus = FocusFinder.getInstance().findNextFocus(this, focus, View.FOCUS_DOWN);
-                if (null == nextFocus) {
-                    int positionAtGridView = findFocusedChildByPositionAtGridView();
-                    int adapterItemCount = getAdapterItemCount();
-                    if (positionAtGridView+1<adapterItemCount) {
-                        while (true) {
-                            scrollBy(0, 10);
-                            View view = FocusFinder.getInstance().findNextFocus(this, focus, View.FOCUS_DOWN);
-                            if (null != view)
-                                break;
+                if(null != focus){
+                    View nextFocus = FocusFinder.getInstance().findNextFocus(this, focus, View.FOCUS_DOWN);
+                    if (null == nextFocus) {
+                        int positionAtGridView = findFocusedChildByPositionAtGridView();
+                        int adapterItemCount = getAdapterItemCount();
+                        if (positionAtGridView+1<adapterItemCount) {
+                            while (true) {
+                                scrollBy(0, 10);
+                                View view = FocusFinder.getInstance().findNextFocus(this, focus, View.FOCUS_DOWN);
+                                if (null != view)
+                                    break;
+                            }
                         }
                     }
                 }
